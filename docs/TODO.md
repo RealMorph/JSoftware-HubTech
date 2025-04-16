@@ -1,310 +1,240 @@
-# Project TODO List
+# Project Roadmap & Task Tracking
 
 > **IMPORTANT REMINDER:** Please reference [UI Enhancement Strategy](docs/ui-enhancements.md) document for implementing modern UI styling. It contains detailed guidance on the styling architecture, theme enhancement, component refactoring approach, and implementation timeline.
 
-## 🚀 Next Action Items (Priority Order)
+## 📋 Project Overview
 
-### 1. Component Migration (Theme Unification)
-- [x] Update Form/Input Components with direct theme
-  - [x] Select component
-  - [x] DatePicker component
-  - [x] TimePicker component
-  - [ ] FileUpload component
-  - [ ] FormField component
-  - [ ] FormContainer component
-  - [ ] Radio component
-  - [ ] Checkbox component
-- [x] Update Data Visualization Components with direct theme
-  - [x] DataGrid component
-  - [ ] Chart component
-  - [ ] Graph component
-  - [ ] Map component
+This project follows a strictly modular, self-contained frontend architecture, focusing on:
 
+1. **Independent Modules**: Self-contained and independently enable/disable-able features
+2. **Loose Coupling**: Communication through well-defined interfaces
+3. **Feature Isolation**: Independent state, UI components, and business logic
+4. **Consistent API Boundaries**: Standardized public APIs
+5. **Independent Testing**: Modules testable in isolation
 
-### 2. Type System Completion
-- [ ] Fix component-specific type errors (~200 errors)
-  - [x] Fix mock theme types in Select tests
-  - [ ] Update Form component types
-  - [ ] Fix Button component prop types
-  - [ ] Address miscellaneous component prop type issues
+### Current Systems Status
 
-### 3. Developer Experience Enhancements
-- [ ] Develop visual regression tests for theme changes
-- [ ] Add theme property explorer with visual examples
-
-### 4. Performance Optimizations
-- [ ] Optimize theme property access for production builds
-- [ ] Add performance benchmarks for theme operations
-- [ ] Implement tree-shaking for unused theme properties
-- [ ] Add performance monitoring for theme operations
-
-## Recent Accomplishments ✅
-
-1. **Layout Components**
-   - ✅ Migrated Card, Panel, Container, Grid, Flex, and Box components to use direct theme
-   - ✅ Implemented Container component with responsive breakpoint support
-   - ✅ Fixed handling of numeric spacing values in Box component
-   - ✅ Enhanced spacing utilities to properly handle direct pixel values
-   - ✅ Improved type safety with proper theme property access
-
-2. **Data Display Components**
-   - ✅ Migrated List, Table, and DataGrid components to use DirectThemeProvider
-   - ✅ Added comprehensive test suites for all components
-   - ✅ Fixed sorting functionality in DataGrid with proper theme access
-   - ✅ Improved code organization with styled components inside components
-   - ✅ Added DataGrid theming test suite to verify theme integration
-
-3. **Form Components**
-   - ✅ Migrated TextField component to use DirectThemeProvider
-   - ✅ Migrated Select component to use DirectThemeProvider
-   - ✅ Migrated DatePicker component to use DirectThemeProvider
-   - ✅ Migrated TimePicker component to use DirectThemeProvider
-   - ✅ Improved theme property access with type safety
-   - ✅ Added category-based theme property resolution
-   - ✅ Maintained backward compatibility
-
-4. **Button Component**
-   - ✅ Replaced getThemeValue with useDirectTheme hook
-   - ✅ Implemented clean typed theme property access
-   - ✅ Added comprehensive test suite with DirectThemeProvider
-   - ✅ Enhanced theming with proper fallback values
-
-5. **Fixed Tests**
-   - ✅ Card, List, TextField, DataDisplayDemo, Panel, ThemePreview, TabList, ButtonDemo, Box, Spacing, and DataGrid tests
-   - ✅ Added DataGridTheme test to verify proper theme integration for data visualization components
-
-## Modular Architecture Principles
-
-This project follows a strictly modular, self-contained frontend architecture, where:
-
-1. **Independent Modules**: Each feature must be self-contained and independently enable/disable-able without breaking other features
-2. **Loose Coupling**: Modules should communicate through well-defined interfaces, not direct dependencies
-3. **Feature Isolation**: Features should be isolated with their own state, UI components, and business logic
-4. **Consistent API Boundaries**: All modules should expose consistent public APIs 
-5. **Independent Testing**: Each module must be testable in isolation from other modules
-
-## Core Systems Status
-
-### Completed Core Systems
-- Theme System - Modular theme management with direct theme consumption
-- State Management - Modular state services
-- Tab Management - Self-contained tab system
-- Build System - Supports modular builds
-
-### Current Frontend Systems
-- [ ] **UI Components Library** - ~75% complete
-- [ ] **Layout System** - ~90% complete
-- **Routing System** - Completed
+- ✅ **Theme System** - Direct theme consumption architecture complete
+- ✅ **State Management** - Modular state services implemented
+- ✅ **Tab Management** - Self-contained tab system complete
+- ✅ **Routing System** - Complete and operational
+- ✅ **Build System** - Supporting modular builds
+- [ ] **UI Components Library** - ~95% complete
+- [ ] **Layout System** - ~95% complete
 - [ ] **API Integration** - ~40% complete
 
-## Detailed Roadmap
+---
 
-### 1. Theme System Unification
+## 🚀 Current Priority Tasks
 
-#### Theme Infrastructure (Done)
-- Create base theme configuration (colors, typography, spacing, etc.)
-- Implement theme context and provider
-- Create theme persistence layer
-- Implement theme validation
-- Build CI/CD integration for theme validation
-- Create comprehensive documentation
+### 1. Theme System Cleanup
+- [ ] Remove deprecated theme utilities
+  - [ ] Create an inventory of all theme utility functions (`getThemeValue`, `resolveThemeValue`, etc.)
+  - [ ] Perform static code analysis to identify usage patterns of old theme utilities
+  - [ ] Search for import statements referencing deprecated theme modules
+  - [ ] Implement automated deprecation warnings for old theme utilities
+  - [ ] Create mapping between old theme access patterns and DirectTheme equivalents
+  - [ ] Refactor any remaining components still using old utilities
+  - [ ] Add runtime warnings for legacy theme access in development mode
+  - [ ] Remove old theme transformation layers and intermediate adapters
+  - [ ] Delete unused theme utility files and modules
+  - [ ] Update import paths in any files that referenced removed modules
+- [ ] Clean up theme-related types
+  - [ ] Remove duplicate or overlapping theme type definitions
+  - [ ] Consolidate theme interfaces to a single location
+  - [ ] Update type documentation for DirectThemeProvider
+- [ ] Audit and remove legacy theme code
+  - [ ] Check for components still using old theme patterns
+  - [ ] Remove unused theme imports across the codebase
+  - [ ] Clean up any lingering references to the old theme system
+- [ ] Update test utilities
+  - [ ] Standardize theme mocks across all test files
+  - [ ] Replace old theme test utilities with DirectTheme equivalents
+  - [ ] Ensure consistent theme testing approach
+- [ ] Review for performance optimization
+  - [ ] Identify theme properties defined but never used
+  - [ ] Remove unnecessary theme nesting structures
+  - [ ] Mark theme code paths for tree-shaking
 
-#### Direct Theme Integration (Completed)
-- Refactor ThemeProvider to work directly with ThemeConfig
-- Eliminate intermediate theme transformation layers
-- Streamline theme type definitions across the system
-- Document direct theme usage patterns
-- Create comprehensive type safety for theme properties
+### 2. Animation System Development
+- [ ] Create modular animation system integrated with DirectThemeProvider
+  - [ ] Define animation properties in ThemeConfig
+  - [ ] Implement animation primitives (transitions, durations, easings)
+  - [ ] Create core animation components (Transition, Fade, Slide, etc.)
+  - [ ] Build animation hooks and utilities
+  - [ ] Implement accessibility features (respect prefers-reduced-motion)
 
-#### Unified Component Theme Implementation
-- Create consistent theme property access pattern
-- [ ] Update all components to use standardized theme access (~85% complete)
-- Prioritize high-impact components (Button, Form)
-- [ ] Apply consistent theming to Form/Input components
-  - [x] Select component migration
-  - [x] DatePicker component migration
-  - [x] TimePicker component migration
-  - [ ] FileUpload component migration
-  - [ ] Complete Checkbox and Radio components migration
-- [ ] Apply consistent theming to Data Visualization components
-  - [ ] Chart component migration
-  - [ ] Graph component migration
-  - [ ] Map component migration
+### 3. Advanced Component Development
 - [ ] Implement advanced selection controls
   - [ ] MultiSelect component
   - [ ] Typeahead component
-- [ ] Implement animation system using direct theme properties
-
-#### Developer Experience
-- Build theme migration tools
-- Create theme unification script
-- Implement standardized fallback patterns for theme properties
-- [ ] Build interactive theme editor/preview tool
-- [ ] Create theme migration wizard
-- [ ] Build visual diffing tools for theme changes
-- [ ] Add theme property explorer with visual examples
-
-#### Theme Optimization Strategy
-- Standardize on direct ThemeConfig usage for:
-  - **Consistency**: Single unified theme structure across all components
-  - **Type Safety**: Full TypeScript support through ThemeConfig interface
-  - **Performance**: Eliminate transformation overhead
-  - **Simplicity**: Reduce complexity by removing adapter layers
-  - **Maintainability**: Single pattern for all component theming
-- Implement strict type checking for theme property access
-- [ ] Optimize theme property access for production builds
-- [ ] Implement tree-shaking for unused theme properties
-- [ ] Add performance monitoring for theme operations
-- Create unified theme API documentation
-
-### 2. Component Library Completion
-
-#### Critical Components
-- [ ] Complete form component family
-  - Basic text inputs, checkboxes, radios
-  - [ ] Advanced selection controls (multi-select, typeahead)
-  - [ ] Form validation and submission framework
-  
-- [ ] Finalize data visualization components
-  - Basic charts (bar, line, pie)
-  - [ ] Interactive data grid
-  - [ ] Data filtering and sorting utilities
-  
 - [ ] Complete navigation components
-  - Tabs, breadcrumbs, pagination
   - [ ] Advanced menu systems
   - [ ] Application navigation framework
 
-#### Component Architecture
-- [ ] Standardize component APIs
-- [ ] Implement accessibility features (ARIA, keyboard navigation)
-- [ ] Create comprehensive test coverage
-- [ ] Build storybook documentation
+### 4. Type System Completion
+- [ ] Fix component-specific type errors (~150 errors remaining)
+  - [ ] Fix Button component prop types
+  - [ ] Address miscellaneous component prop type issues
 
-### 3. Application Architecture Enhancements
+### 5. Developer Experience Enhancements
+- [ ] Build visual regression tests for theme changes
+- [ ] Add theme property explorer with visual examples
+- [ ] Create interactive theme editor/preview tool
 
-#### State Management
-- [ ] Create state persistence strategies for modules
-- [ ] Implement cross-module state coordination
-- [ ] Build state debug tools and visualizers
-
-#### Performance Optimization
-- [ ] Implement code splitting by module
-- [ ] Create asset optimization pipeline
-- [ ] Build performance monitoring tools
-- [ ] Implement rendering optimization strategies
-
-#### API Integration
-- [ ] Create modular API client architecture
-- [ ] Build mock API layer for development
-- [ ] Implement caching and state synchronization
-- [ ] Create API error handling framework
-
-## Implementation Tasks (By Area)
-
-### Theme System Tasks
-
-#### Type System Improvements
-- Fix theme-related type errors (~300 errors)
-- Fix theme property access in components
-- Update test utilities to use proper theme types
-
-#### Theme Migration Tools
-- Create theme validation in CI pipeline
-- Implement theme validation scripts
-- Build documentation for theme system
-- Create theme unification migration script
-- Build theme migration tools
-- Create comprehensive theme migration guide
-- [ ] Create visual comparison tools for themes
-
-#### Theme Testing Strategy
-- Implement basic theme validator utility
-- Create test-specific theme validator with descriptive errors
-- Build mock theme generator for testing
-- Create standardized mock theme for use across tests
-- [ ] Develop visual regression tests for theme changes
+### 6. Performance Optimizations
+- [ ] Optimize theme property access for production builds
 - [ ] Add performance benchmarks for theme operations
-- [ ] Implement theme diff utility to compare themes
-- [ ] Create theme migration testing helpers
+- [ ] Implement tree-shaking for unused theme properties
 
-#### Theme Developer Experience
-- Add theme debugging utilities
-- Implement validation warnings in dev mode
-- Create proper error messages for theme issues
-- Implement robust fallback mechanism for missing properties
-- Build DirectThemeProvider with utility functions
-- Create theme usage example component
-- [ ] Build theme showcase pages
-- [ ] Create theme property explorer
+---
 
-#### Theme System Hardening
-- Implement robust validation for all theme properties
-- Create proper fallback mechanisms for missing properties
-- Add theme composition utilities for extending base themes
-- Create unified DirectThemeProvider implementation
-- [ ] Add theme validation for all component usage
-- [ ] Create theme property audit tools
-- [ ] Implement theme security features for enterprise
+## 📝 Detailed Implementation Roadmap
 
-#### Component Theming Strategy
-- Establish unified component theming pattern
-- [ ] Update components in priority order:
-  1. Button component family (highest usage)
-  2. Form component family (complex theming)
-  3. Panel component
-  4. Layout components
-  5. Data Display components
-- Build theme demonstration components
+### Theme System
 
-### UI Component Tasks
+#### Theme Cleanup Strategy
+- [ ] Create theme usage audit tool
+  - [ ] Build utility to detect old theme patterns in code
+  - [ ] Generate report of deprecated theme usage
+  - [ ] Identify safe removal targets
+- [ ] Implement staged deprecation
+  - [ ] Mark old theme utilities as deprecated (with warnings)
+  - [ ] Create migration guide for any remaining uses
+  - [ ] Set timeline for complete removal
+- [ ] Test coverage for theme changes
+  - [ ] Ensure all theme removals are covered by tests
+  - [ ] Verify no regressions from cleanup
+  - [ ] Add performance tests to measure impact
 
-#### Form Components
-- Basic input controls
-- [ ] Advanced selection components
-- [ ] Form layout and grouping components
-- [ ] Form validation framework
-- [ ] Accessible form controls
+### UI Component Library
 
-#### Data Display
-- Card, List components
-- Table component (implementation and tests complete)
-- DataGrid components
-- [ ] Infinite scrolling containers
-- [ ] Virtual rendering for large datasets
+#### Animation System
+- [ ] Theme Configuration
+  - [ ] Add animation properties to ThemeConfig interface
+  - [ ] Implement animation property resolution in DirectThemeProvider
+  - [ ] Create theme utility functions for animations
+
+- [ ] Core Animation Components
+  - [ ] Base transition component
+  - [ ] AnimatePresence for enter/exit animations
+  - [ ] Motion variants of existing components
+  - [ ] Pattern components (Fade, Slide, Scale, Collapse)
+
+- [ ] Animation Hooks
+  - [ ] useAnimation - Imperative animation control
+  - [ ] useAnimationState - Toggle between states
+  - [ ] useAnimationSequence - Chained animations
+  - [ ] useAnimationGroup - Coordinated animations
+
+- [ ] Animation Utilities
+  - [ ] getAnimationStyles - Theme-based animation styles
+  - [ ] createKeyframes - Generate from theme values
+  - [ ] composeAnimations - Combine multiple animations
+  - [ ] generateTransition - Create CSS transitions from theme
+
+#### Selection Controls
+- [ ] MultiSelect Component
+  - [ ] Core functionality with keyboard navigation
+  - [ ] Filtering and sorting capabilities
+  - [ ] Integration with Form system
+  - [ ] Accessibility implementation
+
+- [ ] Typeahead Component
+  - [ ] Asynchronous data fetching support
+  - [ ] Debounced input handling
+  - [ ] Custom rendering options
+  - [ ] Keyboard navigation and accessibility
 
 #### Feedback Components
-- Toast/notification system
-- Modal/Dialog system
-- Progress indicators
-- [ ] Advanced feedback patterns (guided tours, etc.)
+- [ ] Toast/Notification System
+  - [ ] Global notification management
+  - [ ] Various notification types (success, error, etc.)
+  - [ ] Animation integration
+  
+- [ ] Modal/Dialog System
+  - [ ] Accessible modal implementation
+  - [ ] Various modal types and sizes
+  - [ ] Animation integration
 
-#### Navigation Components
-- Tabs navigation
-- Breadcrumbs
-- Pagination
-- [ ] Advanced menu systems
-- [ ] Application navigation framework
+- [ ] Progress Indicators
+  - [ ] Linear and circular progress
+  - [ ] Indeterminate states
+  - [ ] Skeleton screens for content loading
 
-### Testing Infrastructure
+### Layout System
 
-- Component testing framework
-- Theme testing utilities
-- Accessibility testing setup
-- [ ] Visual regression testing system
-- [ ] Performance testing harness
+- [ ] Advanced Navigation Patterns
+  - [ ] Responsive navigation menu
+  - [ ] Breadcrumb system with routing integration
+  - [ ] Tabbed interface enhancements
 
-## UI/UX Enhancement Path
-- Phase 1: Theme Enhancement (Completed)
-- Phase 2: Styling Architecture (Completed)
-- [ ] Phase 3: Core Component Refactoring
-  - [ ] Add motion and transitions using theme properties
-- [ ] Phase 4: UI Patterns
+- [ ] Page Layout Templates
+  - [ ] Application layouts with header/footer/sidebar
+  - [ ] Content layout patterns
+  - [ ] Responsive grid system enhancements
+
+- [ ] Virtual Rendering
+  - [ ] Virtual list for large datasets
+  - [ ] Infinite scrolling containers
+  - [ ] Performance optimizations for data rendering
+
+### API Integration
+
+- [ ] Modular API Client Architecture
+  - [ ] Service-based API organization
+  - [ ] Request/response interceptors
+  - [ ] Error handling framework
+
+- [ ] State Synchronization
+  - [ ] Optimistic updates
+  - [ ] Background polling/sync
+  - [ ] Offline support strategies
+
+- [ ] Caching Layer
+  - [ ] Request caching
+  - [ ] Cache invalidation strategies
+  - [ ] Persistent cache support
+
+## 📊 UI/UX Enhancement Path
+
+- ✅ Phase 1: Theme Enhancement (Completed)
+- ✅ Phase 2: Styling Architecture (Completed)
+- [ ] Phase 3: Animation & Interaction
+  - [ ] Define animation theme properties
+  - [ ] Implement core animation components
+  - [ ] Add entrance/exit animations
+  - [ ] Create interaction feedback animations
+- [ ] Phase 4: Advanced UI Patterns
   - [ ] Implement consistent headers and footers
   - [ ] Create page layouts and containers
   - [ ] Add loading states and skeleton screens
 
-## Success Criteria
+---
+
+## ✅ Key Completed Milestones
+
+### Theme System Unification
+- ✅ Implemented DirectThemeProvider for direct theme consumption
+- ✅ Eliminated intermediate theme transformation layers
+- ✅ Created comprehensive type safety for theme properties
+- ✅ Updated all UI components to use standardized theme access
+
+### Component Migrations
+- ✅ Layout Components (Card, Panel, Container, Grid, Flex, Box)
+- ✅ Form Components (Input, Select, DatePicker, Checkbox, Radio, etc.)
+- ✅ Data Display Components (List, Table, DataGrid)
+- ✅ Data Visualization Components (Charts, Graph, Map)
+- ✅ Button Component Family
+
+### Test Infrastructure
+- ✅ Component testing framework implementation
+- ✅ Theme testing utilities
+- ✅ Comprehensive test coverage for migrated components
+
+---
+
+## 🎯 Success Criteria
 
 - All components follow modular architecture principles
 - Full test coverage for all modules
@@ -316,26 +246,84 @@ This project follows a strictly modular, self-contained frontend architecture, w
 - Consistent theme property access pattern across all components
 - Single, unified theme system throughout the application
 
+---
+
+## Animation System Design
+
+### Animation Theme Properties
+```typescript
+// To be added to ThemeConfig
+animations: {
+  durations: {
+    instant: '0ms',
+    fastest: '100ms',
+    fast: '200ms',
+    normal: '300ms', 
+    slow: '500ms',
+    slowest: '800ms',
+  },
+  easings: {
+    linear: 'linear',
+    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  transitions: {
+    default: 'all {{durations.normal}} {{easings.easeInOut}}',
+    fade: 'opacity {{durations.normal}} {{easings.easeInOut}}',
+    transform: 'transform {{durations.normal}} {{easings.easeOut}}',
+    background: 'background-color {{durations.slow}} {{easings.easeInOut}}',
+    color: 'color {{durations.fast}} {{easings.easeOut}}',
+    height: 'height {{durations.normal}} {{easings.easeInOut}}',
+    width: 'width {{durations.normal}} {{easings.easeInOut}}',
+    maxHeight: 'max-height {{durations.normal}} {{easings.easeInOut}}',
+    spacing: 'margin {{durations.normal}} {{easings.easeInOut}}, padding {{durations.normal}} {{easings.easeInOut}}',
+    border: 'border {{durations.fast}} {{easings.easeInOut}}',
+    shadow: 'box-shadow {{durations.normal}} {{easings.easeInOut}}',
+  },
+  presets: {
+    // Common animation combinations
+    buttonHover: {
+      properties: ['background-color', 'box-shadow', 'transform'],
+      duration: '{{durations.fast}}',
+      easing: '{{easings.easeOut}}',
+      transform: 'scale(1.03)',
+    },
+    fadeIn: {
+      properties: ['opacity'],
+      from: 0,
+      to: 1,
+      duration: '{{durations.normal}}',
+      easing: '{{easings.easeOut}}',
+    },
+    fadeOut: {
+      properties: ['opacity'],
+      from: 1,
+      to: 0,
+      duration: '{{durations.normal}}',
+      easing: '{{easings.easeIn}}',
+    },
+    slideIn: {
+      properties: ['transform', 'opacity'],
+      from: { transform: 'translateY(20px)', opacity: 0 },
+      to: { transform: 'translateY(0)', opacity: 1 },
+      duration: '{{durations.normal}}',
+      easing: '{{easings.easeOut}}',
+    },
+    // More presets as needed
+  }
+}
+```
+
+### Integration Strategy
+
+The animation system will be designed to work with both:
+1. **Styled-components** - For CSS transitions/animations
+2. **Framer Motion** - For more complex animations (optional dependency)
+
+All animations will be configurable through the theme and respect user preferences for reduced motion. The system will provide sensible defaults while allowing for customization where needed.
+
 ## Notes
 - Each module has its own detailed TODO list in its respective markdown file
 - Regular updates to these lists will be made as the project evolves
-- All work should follow the architectural principles outlined above 
-
-## Progress Summary (Latest Update)
-
-### Completed Tasks
-- Successfully migrated core layout components to use DirectThemeProvider (Card, List, Table, Panel, Grid, Flex, Container, and Box)
-- Migrated Button and TextField components to DirectThemeProvider with consistent theming
-- Completed DataGrid component migration to DirectThemeProvider
-- Migrated Select, DatePicker, and TimePicker components to DirectThemeProvider
-
-### Current Issues
-- Several form components still using the old theme system (FileUpload, etc.)
-- Data visualization components need theme migration
-- Advanced selection controls need to be created
-- All tests are now passing! ✅
-
-### Next Steps
-1. Continue migrating form components to use DirectThemeProvider
-2. Implement advanced selection controls (MultiSelect, Typeahead)
-3. Begin migrating data visualization components to use DirectThemeProvider
+- All work should follow the architectural principles outlined above
