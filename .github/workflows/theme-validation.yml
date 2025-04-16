@@ -1,0 +1,114 @@
+name: Theme Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - 'src/core/theme/**/*'
+      - 'scripts/validate-themes.js'
+      - '.github/workflows/theme-validation.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - 'src/core/theme/**/*'
+      - 'scripts/validate-themes.js'
+      - '.github/workflows/theme-validation.yml'
+  workflow_dispatch:
+    inputs:
+      strict_mode:
+        description: 'Run validation in strict mode'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  validate-themes:
+    name: Validate Themes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install additional dependencies
+        run: npm install -D ts-node glob chalk minimist
+      
+      - name: Generate detailed validation report
+        id: report
+        run: |
+          mkdir -p reports
+          npm run validate:themes -- --format=json > reports/theme-validation.json
+      
+      - name: Run theme validation for CI
+        id: validate
+        run: |
+          if [ "${{ github.event.inputs.strict_mode }}" == "true" ]; then
+            npx node scripts/validate-themes.js --format=github --strict
+          else
+            npx node scripts/validate-themes.js --format=github
+          fi
+      
+      - name: Upload validation report
+        uses: actions/upload-artifact@v3
+        with:
+          name: theme-validation-report
+          path: reports/theme-validation.json
+      
+      - name: Generate validation summary
+        if: always()
+        run: |
+          echo "# Theme Validation Results" > theme-summary.md
+          echo "" >> theme-summary.md
+          
+          # Parse the results from the JSON file
+          TOTAL=$(jq '.summary.total' reports/theme-validation.json)
+          VALID=$(jq '.summary.valid' reports/theme-validation.json)
+          INVALID=$(jq '.summary.invalid' reports/theme-validation.json)
+          
+          echo "- **Total themes analyzed:** $TOTAL" >> theme-summary.md
+          echo "- **Valid themes:** $VALID" >> theme-summary.md
+          echo "- **Invalid themes:** $INVALID" >> theme-summary.md
+          
+          if [ "$INVALID" -gt 0 ]; then
+            echo "" >> theme-summary.md
+            echo "## Most Common Issues" >> theme-summary.md
+            echo "" >> theme-summary.md
+            jq '.errors[0:5][] | "- **" + .theme + "** in " + .file + ": " + (.errors | first)' reports/theme-validation.json -r >> theme-summary.md
+            
+            echo "" >> theme-summary.md
+            echo "Please see the uploaded artifact for a complete validation report." >> theme-summary.md
+          fi
+      
+      - name: Post validation summary
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('theme-summary.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+      
+      - name: Check for theme errors
+        if: steps.validate.outputs.error_count != '0'
+        run: |
+          echo "::error::Found ${steps.validate.outputs.error_count} theme validation errors. Please fix them before merging."
+          exit 1 

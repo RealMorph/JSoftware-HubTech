@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dependency Graph Visualization</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body { 
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #333;
+    }
+    #graph {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      height: 600px;
+      margin-bottom: 20px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .stats-card {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .node {
+      cursor: pointer;
+    }
+    .link {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+    .entry-point {
+      fill: #4caf50;
+    }
+    .normal-module {
+      fill: #2196f3;
+    }
+    .highly-connected {
+      fill: #f44336;
+    }
+    .isolated {
+      fill: #9e9e9e;
+    }
+    .circular-module {
+      fill: #ff9800;
+    }
+    .panel {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dependency Graph Visualization</h1>
+    
+    <div class="stats">
+      <div class="stats-card">
+        <h3>Summary</h3>
+        <p>Total Files: <strong>125</strong></p>
+        <p>Total Dependencies: <strong>159</strong></p>
+        <p>Entry Points: <strong>1</strong></p>
+      </div>
+      <div class="stats-card">
+        <h3>Potential Issues</h3>
+        <p>Circular Dependencies: <strong>3</strong></p>
+        <p>Highly Connected Modules: <strong>4</strong></p>
+        <p>Isolated Modules: <strong>33</strong></p>
+      </div>
+    </div>
+    
+    <div id="graph"></div>
+    
+    <div class="panel">
+      <h2>Legend</h2>
+      <div style="display: flex; gap: 20px;">
+        <div><span style="color: #4caf50;">●</span> Entry Point</div>
+        <div><span style="color: #2196f3;">●</span> Normal Module</div>
+        <div><span style="color: #f44336;">●</span> Highly Connected Module</div>
+        <div><span style="color: #ff9800;">●</span> Circular Dependency</div>
+        <div><span style="color: #9e9e9e;">●</span> Isolated Module</div>
+      </div>
+    </div>
+    
+    <div class="panel">
+      <h2>Circular Dependencies</h2>
+      <table>
+            <tr>
+              <th>Cycle</th>
+            </tr>
+            <tr><td>core\theme\styled.ts → core\theme\styled.ts → core\theme\styled.ts</td></tr><tr><td>core\tabs\tab-manager.ts → core\tabs\tab-storage.ts → core\tabs\tab-manager.ts → core\tabs\tab-manager.ts</td></tr><tr><td>core\tabs\tab-storage.ts → core\tabs\tab-manager.ts → core\tabs\tab-storage.ts → core\tabs\tab-storage.ts</td></tr>
+          </table>
+    </div>
+    
+    <div class="panel">
+      <h2>Highly Connected Modules</h2>
+      <table>
+            <tr>
+              <th>Module</th>
+              <th>Dependencies</th>
+              <th>Dependents</th>
+            </tr>
+            <tr>
+                <td>core\theme\styled.ts</td>
+                <td>2</td>
+                <td>11</td>
+              </tr><tr>
+                <td>core\theme\theme-context.tsx</td>
+                <td>2</td>
+                <td>11</td>
+              </tr><tr>
+                <td>core\theme\theme-persistence.ts</td>
+                <td>4</td>
+                <td>20</td>
+              </tr><tr>
+                <td>core\theme\types.ts</td>
+                <td>0</td>
+                <td>16</td>
+              </tr>
+          </table>
+    </div>
+    
+    <div class="panel">
+      <h2>Isolated Modules</h2>
+      <table>
+            <tr>
+              <th>Module</th>
+            </tr>
+            <tr><td>components\base\index.js</td></tr><tr><td>components\base\index.ts</td></tr><tr><td>components\data-display\index.ts</td></tr><tr><td>components\index.ts</td></tr><tr><td>core\app.js</td></tr><tr><td>core\debug\debug-config.ts</td></tr><tr><td>core\debug\DebugPanel.tsx</td></tr><tr><td>core\state\state-manager.js</td></tr><tr><td>core\state\types.js</td></tr><tr><td>core\state\types.ts</td></tr><tr><td>core\tabs\components\index.ts</td></tr><tr><td>core\tabs\hooks\index.ts</td></tr><tr><td>core\tabs\tab-manager.js</td></tr><tr><td>core\tabs\types.js</td></tr><tr><td>core\tabs\types.ts</td></tr><tr><td>core\theme\breakpoints.js</td></tr><tr><td>core\theme\colorPalette.js</td></tr><tr><td>core\theme\colorPalette.ts</td></tr><tr><td>core\theme\colors.js</td></tr><tr><td>core\theme\components\ThemeEditor.js</td></tr><tr><td>core\theme\hooks\useTheme.js</td></tr><tr><td>core\theme\palette-generator.js</td></tr><tr><td>core\theme\palette-generator.ts</td></tr><tr><td>core\theme\schema\migrations.js</td></tr><tr><td>core\theme\schema\theme-schema.js</td></tr><tr><td>core\theme\setup-dom.ts</td></tr><tr><td>core\theme\spacing.js</td></tr><tr><td>core\theme\theme-export-import.js</td></tr><tr><td>core\theme\theme-system.js</td></tr><tr><td>core\theme\types.js</td></tr><tr><td>core\theme\typography.js</td></tr><tr><td>core\theme\typography.ts</td></tr><tr><td>types\vite-plugins.d.ts</td></tr>
+          </table>
+    </div>
+  </div>
+
+  <script>
+    // Graph data
+    const graphData = {"nodes":[{"id":0,"path":"components\\base\\Button.tsx","isEntryPoint":false,"dependencies":[100,109],"dependents":[1,68]},{"id":1,"path":"components\\base\\ButtonDemo.tsx","isEntryPoint":false,"dependencies":[0],"dependents":[]},{"id":2,"path":"components\\base\\index.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":3,"path":"components\\base\\index.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":4,"path":"components\\base\\TextField.js","isEntryPoint":false,"dependencies":[104,100],"dependents":[]},{"id":5,"path":"components\\base\\TextField.tsx","isEntryPoint":false,"dependencies":[104,100],"dependents":[6,7,68]},{"id":6,"path":"components\\base\\TextFieldDemo.js","isEntryPoint":false,"dependencies":[5],"dependents":[]},{"id":7,"path":"components\\base\\TextFieldDemo.tsx","isEntryPoint":false,"dependencies":[5],"dependents":[]},{"id":8,"path":"components\\data-display\\Card.tsx","isEntryPoint":false,"dependencies":[100,109],"dependents":[9]},{"id":9,"path":"components\\data-display\\CardDemo.tsx","isEntryPoint":false,"dependencies":[8],"dependents":[10]},{"id":10,"path":"components\\data-display\\DataDisplayTest.tsx","isEntryPoint":false,"dependencies":[15,13,9],"dependents":[]},{"id":11,"path":"components\\data-display\\index.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":12,"path":"components\\data-display\\List.tsx","isEntryPoint":false,"dependencies":[100,109],"dependents":[13]},{"id":13,"path":"components\\data-display\\ListDemo.tsx","isEntryPoint":false,"dependencies":[12],"dependents":[10]},{"id":14,"path":"components\\data-display\\Table.tsx","isEntryPoint":false,"dependencies":[100,109],"dependents":[15]},{"id":15,"path":"components\\data-display\\TableDemo.tsx","isEntryPoint":false,"dependencies":[14],"dependents":[10]},{"id":16,"path":"components\\index.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":17,"path":"core\\app.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":18,"path":"core\\app.ts","isEntryPoint":false,"dependencies":[],"dependents":[121,122]},{"id":19,"path":"core\\debug\\debug-config.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":20,"path":"core\\debug\\DebugPanel.tsx","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":21,"path":"core\\error\\error-logger.ts","isEntryPoint":false,"dependencies":[],"dependents":[22]},{"id":22,"path":"core\\error\\ErrorBoundary.tsx","isEntryPoint":false,"dependencies":[21],"dependents":[]},{"id":23,"path":"core\\handlers\\business-handler.ts","isEntryPoint":false,"dependencies":[25,24],"dependents":[]},{"id":24,"path":"core\\services\\ai-service.ts","isEntryPoint":false,"dependencies":[25],"dependents":[23]},{"id":25,"path":"core\\state\\business-state-manager.ts","isEntryPoint":false,"dependencies":[29],"dependents":[23,24]},{"id":26,"path":"core\\state\\index.js","isEntryPoint":false,"dependencies":[29],"dependents":[]},{"id":27,"path":"core\\state\\index.ts","isEntryPoint":false,"dependencies":[29],"dependents":[]},{"id":28,"path":"core\\state\\state-manager.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":29,"path":"core\\state\\state-manager.ts","isEntryPoint":false,"dependencies":[],"dependents":[25,26,27]},{"id":30,"path":"core\\state\\types.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":31,"path":"core\\state\\types.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":32,"path":"core\\tabs\\components\\CustomTabStyles.tsx","isEntryPoint":false,"dependencies":[40,51,52,51],"dependents":[]},{"id":33,"path":"core\\tabs\\components\\index.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":34,"path":"core\\tabs\\components\\TabAnimationCustomizer.tsx","isEntryPoint":false,"dependencies":[52,50],"dependents":[35]},{"id":35,"path":"core\\tabs\\components\\TabAnimationsPage.tsx","isEntryPoint":false,"dependencies":[34,50,52],"dependents":[]},{"id":36,"path":"core\\tabs\\components\\TabConnector.tsx","isEntryPoint":false,"dependencies":[47,48],"dependents":[]},{"id":37,"path":"core\\tabs\\components\\TabContainer.tsx","isEntryPoint":false,"dependencies":[47,39,38],"dependents":[]},{"id":38,"path":"core\\tabs\\components\\TabGroupList.tsx","isEntryPoint":false,"dependencies":[47],"dependents":[37]},{"id":39,"path":"core\\tabs\\components\\TabList.tsx","isEntryPoint":false,"dependencies":[47],"dependents":[37]},{"id":40,"path":"core\\tabs\\components\\TabThemeCustomizer.tsx","isEntryPoint":false,"dependencies":[52],"dependents":[32]},{"id":41,"path":"core\\tabs\\hooks\\index.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":42,"path":"core\\tabs\\hooks\\useTabMessaging.ts","isEntryPoint":false,"dependencies":[47,48],"dependents":[]},{"id":43,"path":"core\\tabs\\hooks\\useTabState.ts","isEntryPoint":false,"dependencies":[47,48],"dependents":[]},{"id":44,"path":"core\\tabs\\index.js","isEntryPoint":false,"dependencies":[47],"dependents":[]},{"id":45,"path":"core\\tabs\\index.ts","isEntryPoint":false,"dependencies":[47,49],"dependents":[]},{"id":46,"path":"core\\tabs\\tab-manager.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":47,"path":"core\\tabs\\tab-manager.ts","isEntryPoint":false,"dependencies":[120,49,48],"dependents":[36,37,38,39,42,43,44,45,49]},{"id":48,"path":"core\\tabs\\tab-messaging.ts","isEntryPoint":false,"dependencies":[120],"dependents":[36,42,43,47]},{"id":49,"path":"core\\tabs\\tab-storage.ts","isEntryPoint":false,"dependencies":[47],"dependents":[45,47]},{"id":50,"path":"core\\tabs\\theme\\AnimatedTab.tsx","isEntryPoint":false,"dependencies":[51,53,52],"dependents":[34,35]},{"id":51,"path":"core\\tabs\\theme\\StyledTab.tsx","isEntryPoint":false,"dependencies":[52,53,109],"dependents":[32,32,50]},{"id":52,"path":"core\\tabs\\theme\\tab-theme-extension.ts","isEntryPoint":false,"dependencies":[117,109],"dependents":[32,34,35,40,50,51,53]},{"id":53,"path":"core\\tabs\\theme\\useTabTheme.ts","isEntryPoint":false,"dependencies":[52],"dependents":[50,51]},{"id":54,"path":"core\\tabs\\types.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":55,"path":"core\\tabs\\types.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":56,"path":"core\\test-utils.tsx","isEntryPoint":false,"dependencies":[104,62,98,58],"dependents":[]},{"id":57,"path":"core\\theme\\breakpoints.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":58,"path":"core\\theme\\breakpoints.ts","isEntryPoint":false,"dependencies":[],"dependents":[56,68,108,109]},{"id":59,"path":"core\\theme\\colorPalette.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":60,"path":"core\\theme\\colorPalette.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":61,"path":"core\\theme\\colors.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":62,"path":"core\\theme\\colors.ts","isEntryPoint":false,"dependencies":[],"dependents":[56,68,108,109]},{"id":63,"path":"core\\theme\\components\\Button.js","isEntryPoint":false,"dependencies":[100],"dependents":[]},{"id":64,"path":"core\\theme\\components\\Button.tsx","isEntryPoint":false,"dependencies":[100,109],"dependents":[65,66]},{"id":65,"path":"core\\theme\\components\\ButtonDemo.js","isEntryPoint":false,"dependencies":[64,100,104],"dependents":[]},{"id":66,"path":"core\\theme\\components\\ButtonDemo.tsx","isEntryPoint":false,"dependencies":[64,100,104,109],"dependents":[]},{"id":67,"path":"core\\theme\\components\\CustomThemeEditor.js","isEntryPoint":false,"dependencies":[114],"dependents":[]},{"id":68,"path":"core\\theme\\components\\CustomThemeEditor.tsx","isEntryPoint":false,"dependencies":[104,109,62,98,58,0,5],"dependents":[]},{"id":69,"path":"core\\theme\\components\\PaletteDemo.js","isEntryPoint":false,"dependencies":[104],"dependents":[]},{"id":70,"path":"core\\theme\\components\\PaletteDemo.tsx","isEntryPoint":false,"dependencies":[104],"dependents":[]},{"id":71,"path":"core\\theme\\components\\ThemeEditor.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":72,"path":"core\\theme\\components\\ThemeEditor.tsx","isEntryPoint":false,"dependencies":[117],"dependents":[73,74]},{"id":73,"path":"core\\theme\\components\\ThemeManager.js","isEntryPoint":false,"dependencies":[84,72],"dependents":[]},{"id":74,"path":"core\\theme\\components\\ThemeManager.tsx","isEntryPoint":false,"dependencies":[84,117,72],"dependents":[]},{"id":75,"path":"core\\theme\\components\\ThemePreview.js","isEntryPoint":false,"dependencies":[114],"dependents":[]},{"id":76,"path":"core\\theme\\components\\ThemePreview.tsx","isEntryPoint":false,"dependencies":[109,114],"dependents":[]},{"id":77,"path":"core\\theme\\css-variables.ts","isEntryPoint":false,"dependencies":[117,102],"dependents":[101,115]},{"id":78,"path":"core\\theme\\dark-theme.ts","isEntryPoint":false,"dependencies":[117],"dependents":[90,110]},{"id":79,"path":"core\\theme\\database\\LocalStorageThemeDatabase.ts","isEntryPoint":false,"dependencies":[117,87],"dependents":[]},{"id":80,"path":"core\\theme\\db-adapters\\sql-theme-database.js","isEntryPoint":false,"dependencies":[94,92],"dependents":[]},{"id":81,"path":"core\\theme\\db-adapters\\sql-theme-database.ts","isEntryPoint":false,"dependencies":[109,94,92],"dependents":[]},{"id":82,"path":"core\\theme\\default-theme.ts","isEntryPoint":false,"dependencies":[117],"dependents":[86,90,101,110]},{"id":83,"path":"core\\theme\\hooks\\useTheme.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":84,"path":"core\\theme\\hooks\\useTheme.ts","isEntryPoint":false,"dependencies":[117],"dependents":[73,74]},{"id":85,"path":"core\\theme\\index.js","isEntryPoint":false,"dependencies":[109],"dependents":[]},{"id":86,"path":"core\\theme\\index.ts","isEntryPoint":false,"dependencies":[109,104,107,82],"dependents":[]},{"id":87,"path":"core\\theme\\interfaces\\ThemeDatabase.ts","isEntryPoint":false,"dependencies":[117],"dependents":[79,95,115]},{"id":88,"path":"core\\theme\\palette-generator.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":89,"path":"core\\theme\\palette-generator.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":90,"path":"core\\theme\\run-benchmark.ts","isEntryPoint":false,"dependencies":[101,82,78],"dependents":[]},{"id":91,"path":"core\\theme\\schema\\migrations.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":92,"path":"core\\theme\\schema\\migrations.ts","isEntryPoint":false,"dependencies":[],"dependents":[80,81]},{"id":93,"path":"core\\theme\\schema\\theme-schema.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":94,"path":"core\\theme\\schema\\theme-schema.ts","isEntryPoint":false,"dependencies":[109],"dependents":[80,81]},{"id":95,"path":"core\\theme\\services\\ThemeService.ts","isEntryPoint":false,"dependencies":[117,87],"dependents":[]},{"id":96,"path":"core\\theme\\setup-dom.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":97,"path":"core\\theme\\spacing.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":98,"path":"core\\theme\\spacing.ts","isEntryPoint":false,"dependencies":[],"dependents":[56,68,108,109]},{"id":99,"path":"core\\theme\\styled.js","isEntryPoint":false,"dependencies":[109],"dependents":[]},{"id":100,"path":"core\\theme\\styled.ts","isEntryPoint":false,"dependencies":[109,100],"dependents":[0,4,5,8,12,14,63,64,65,66,100]},{"id":101,"path":"core\\theme\\theme-benchmark.ts","isEntryPoint":false,"dependencies":[117,77,102,107,82],"dependents":[90]},{"id":102,"path":"core\\theme\\theme-cache.ts","isEntryPoint":false,"dependencies":[117],"dependents":[77,101,115]},{"id":103,"path":"core\\theme\\theme-context.js","isEntryPoint":false,"dependencies":[114],"dependents":[]},{"id":104,"path":"core\\theme\\theme-context.tsx","isEntryPoint":false,"dependencies":[109,114],"dependents":[4,5,56,65,66,68,69,70,86,111,123]},{"id":105,"path":"core\\theme\\theme-export-import.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":106,"path":"core\\theme\\theme-export-import.ts","isEntryPoint":false,"dependencies":[109],"dependents":[]},{"id":107,"path":"core\\theme\\theme-manager.ts","isEntryPoint":false,"dependencies":[117],"dependents":[86,101]},{"id":108,"path":"core\\theme\\theme-persistence.js","isEntryPoint":false,"dependencies":[62,98,58],"dependents":[]},{"id":109,"path":"core\\theme\\theme-persistence.ts","isEntryPoint":false,"dependencies":[62,98,58,117],"dependents":[0,8,12,14,51,52,64,66,68,76,81,85,86,94,99,100,104,106,114,123]},{"id":110,"path":"core\\theme\\theme-registry.ts","isEntryPoint":false,"dependencies":[117,82,78],"dependents":[115]},{"id":111,"path":"core\\theme\\theme-switcher.js","isEntryPoint":false,"dependencies":[104],"dependents":[]},{"id":112,"path":"core\\theme\\theme-switcher.tsx","isEntryPoint":false,"dependencies":[115],"dependents":[]},{"id":113,"path":"core\\theme\\theme-system.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":114,"path":"core\\theme\\theme-system.ts","isEntryPoint":false,"dependencies":[109],"dependents":[67,75,76,103,104]},{"id":115,"path":"core\\theme\\ThemeContext.tsx","isEntryPoint":false,"dependencies":[117,110,87,77,102],"dependents":[112]},{"id":116,"path":"core\\theme\\types.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":117,"path":"core\\theme\\types.ts","isEntryPoint":false,"dependencies":[],"dependents":[52,72,74,77,78,79,82,84,87,95,101,102,107,109,110,115]},{"id":118,"path":"core\\theme\\typography.js","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":119,"path":"core\\theme\\typography.ts","isEntryPoint":false,"dependencies":[],"dependents":[]},{"id":120,"path":"core\\utils\\uuid.ts","isEntryPoint":false,"dependencies":[],"dependents":[47,48]},{"id":121,"path":"index.js","isEntryPoint":false,"dependencies":[18],"dependents":[]},{"id":122,"path":"index.ts","isEntryPoint":true,"dependencies":[18],"dependents":[]},{"id":123,"path":"test-utils.tsx","isEntryPoint":false,"dependencies":[104,109],"dependents":[]},{"id":124,"path":"types\\vite-plugins.d.ts","isEntryPoint":false,"dependencies":[],"dependents":[]}],"edges":[{"source":0,"target":100},{"source":0,"target":109},{"source":1,"target":0},{"source":4,"target":104},{"source":4,"target":100},{"source":5,"target":104},{"source":5,"target":100},{"source":6,"target":5},{"source":7,"target":5},{"source":8,"target":100},{"source":8,"target":109},{"source":9,"target":8},{"source":10,"target":15},{"source":10,"target":13},{"source":10,"target":9},{"source":12,"target":100},{"source":12,"target":109},{"source":13,"target":12},{"source":14,"target":100},{"source":14,"target":109},{"source":15,"target":14},{"source":22,"target":21},{"source":23,"target":25},{"source":23,"target":24},{"source":24,"target":25},{"source":25,"target":29},{"source":26,"target":29},{"source":27,"target":29},{"source":32,"target":40},{"source":32,"target":51},{"source":32,"target":52},{"source":32,"target":51},{"source":34,"target":52},{"source":34,"target":50},{"source":35,"target":34},{"source":35,"target":50},{"source":35,"target":52},{"source":36,"target":47},{"source":36,"target":48},{"source":37,"target":47},{"source":37,"target":39},{"source":37,"target":38},{"source":38,"target":47},{"source":39,"target":47},{"source":40,"target":52},{"source":42,"target":47},{"source":42,"target":48},{"source":43,"target":47},{"source":43,"target":48},{"source":44,"target":47},{"source":45,"target":47},{"source":45,"target":49},{"source":47,"target":120},{"source":47,"target":49},{"source":47,"target":48},{"source":48,"target":120},{"source":49,"target":47},{"source":50,"target":51},{"source":50,"target":53},{"source":50,"target":52},{"source":51,"target":52},{"source":51,"target":53},{"source":51,"target":109},{"source":52,"target":117},{"source":52,"target":109},{"source":53,"target":52},{"source":56,"target":104},{"source":56,"target":62},{"source":56,"target":98},{"source":56,"target":58},{"source":63,"target":100},{"source":64,"target":100},{"source":64,"target":109},{"source":65,"target":64},{"source":65,"target":100},{"source":65,"target":104},{"source":66,"target":64},{"source":66,"target":100},{"source":66,"target":104},{"source":66,"target":109},{"source":67,"target":114},{"source":68,"target":104},{"source":68,"target":109},{"source":68,"target":62},{"source":68,"target":98},{"source":68,"target":58},{"source":68,"target":0},{"source":68,"target":5},{"source":69,"target":104},{"source":70,"target":104},{"source":72,"target":117},{"source":73,"target":84},{"source":73,"target":72},{"source":74,"target":84},{"source":74,"target":117},{"source":74,"target":72},{"source":75,"target":114},{"source":76,"target":109},{"source":76,"target":114},{"source":77,"target":117},{"source":77,"target":102},{"source":78,"target":117},{"source":79,"target":117},{"source":79,"target":87},{"source":80,"target":94},{"source":80,"target":92},{"source":81,"target":109},{"source":81,"target":94},{"source":81,"target":92},{"source":82,"target":117},{"source":84,"target":117},{"source":85,"target":109},{"source":86,"target":109},{"source":86,"target":104},{"source":86,"target":107},{"source":86,"target":82},{"source":87,"target":117},{"source":90,"target":101},{"source":90,"target":82},{"source":90,"target":78},{"source":94,"target":109},{"source":95,"target":117},{"source":95,"target":87},{"source":99,"target":109},{"source":100,"target":109},{"source":100,"target":100},{"source":101,"target":117},{"source":101,"target":77},{"source":101,"target":102},{"source":101,"target":107},{"source":101,"target":82},{"source":102,"target":117},{"source":103,"target":114},{"source":104,"target":109},{"source":104,"target":114},{"source":106,"target":109},{"source":107,"target":117},{"source":108,"target":62},{"source":108,"target":98},{"source":108,"target":58},{"source":109,"target":62},{"source":109,"target":98},{"source":109,"target":58},{"source":109,"target":117},{"source":110,"target":117},{"source":110,"target":82},{"source":110,"target":78},{"source":111,"target":104},{"source":112,"target":115},{"source":114,"target":109},{"source":115,"target":117},{"source":115,"target":110},{"source":115,"target":87},{"source":115,"target":77},{"source":115,"target":102},{"source":121,"target":18},{"source":122,"target":18},{"source":123,"target":104},{"source":123,"target":109}]};
+    const analysisData = {"totalFiles":125,"totalDependencies":159,"entryPoints":1,"circularDependencies":[["core\\theme\\styled.ts","core\\theme\\styled.ts"],["core\\tabs\\tab-manager.ts","core\\tabs\\tab-storage.ts","core\\tabs\\tab-manager.ts"],["core\\tabs\\tab-storage.ts","core\\tabs\\tab-manager.ts","core\\tabs\\tab-storage.ts"]],"highlyConnectedModules":[{"path":"core\\theme\\styled.ts","dependencies":2,"dependents":11},{"path":"core\\theme\\theme-context.tsx","dependencies":2,"dependents":11},{"path":"core\\theme\\theme-persistence.ts","dependencies":4,"dependents":20},{"path":"core\\theme\\types.ts","dependencies":0,"dependents":16}],"isolatedModules":["components\\base\\index.js","components\\base\\index.ts","components\\data-display\\index.ts","components\\index.ts","core\\app.js","core\\debug\\debug-config.ts","core\\debug\\DebugPanel.tsx","core\\state\\state-manager.js","core\\state\\types.js","core\\state\\types.ts","core\\tabs\\components\\index.ts","core\\tabs\\hooks\\index.ts","core\\tabs\\tab-manager.js","core\\tabs\\types.js","core\\tabs\\types.ts","core\\theme\\breakpoints.js","core\\theme\\colorPalette.js","core\\theme\\colorPalette.ts","core\\theme\\colors.js","core\\theme\\components\\ThemeEditor.js","core\\theme\\hooks\\useTheme.js","core\\theme\\palette-generator.js","core\\theme\\palette-generator.ts","core\\theme\\schema\\migrations.js","core\\theme\\schema\\theme-schema.js","core\\theme\\setup-dom.ts","core\\theme\\spacing.js","core\\theme\\theme-export-import.js","core\\theme\\theme-system.js","core\\theme\\types.js","core\\theme\\typography.js","core\\theme\\typography.ts","types\\vite-plugins.d.ts"]};
+    
+    // Set up the visualization
+    const width = document.getElementById('graph').clientWidth;
+    const height = 600;
+    
+    // Create SVG
+    const svg = d3.select('#graph')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+    
+    // Create force simulation
+    const simulation = d3.forceSimulation(graphData.nodes)
+      .force('link', d3.forceLink(graphData.edges).id(d => d.id).distance(100))
+      .force('charge', d3.forceManyBody().strength(-300))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide().radius(30));
+    
+    // Create the links
+    const link = svg.append('g')
+      .selectAll('line')
+      .data(graphData.edges)
+      .enter()
+      .append('line')
+      .attr('class', 'link');
+    
+    // Create the nodes
+    const node = svg.append('g')
+      .selectAll('circle')
+      .data(graphData.nodes)
+      .enter()
+      .append('circle')
+      .attr('class', 'node')
+      .attr('r', d => getNodeSize(d))
+      .attr('class', d => getNodeClass(d))
+      .on('mouseover', showTooltip)
+      .on('mouseout', hideTooltip);
+    
+    // Add tooltips
+    const tooltip = d3.select('body')
+      .append('div')
+      .style('position', 'absolute')
+      .style('background', 'white')
+      .style('padding', '10px')
+      .style('border', '1px solid #ddd')
+      .style('border-radius', '4px')
+      .style('box-shadow', '0 2px 5px rgba(0,0,0,0.1)')
+      .style('pointer-events', 'none')
+      .style('opacity', 0)
+      .style('transition', 'opacity 0.3s');
+    
+    function showTooltip(event, d) {
+      tooltip.transition()
+        .duration(200)
+        .style('opacity', 0.9);
+      tooltip.html(`
+        <strong>Path:</strong> ${d.path}<br>
+        <strong>Dependencies:</strong> ${d.dependencies.length}<br>
+        <strong>Dependents:</strong> ${d.dependents.length}
+      `)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 28) + 'px');
+    }
+    
+    function hideTooltip() {
+      tooltip.transition()
+        .duration(500)
+        .style('opacity', 0);
+    }
+    
+    // Helper functions for node visualization
+    function getNodeClass(d) {
+      const inCircular = analysisData.circularDependencies.some(cycle => 
+        cycle.includes(d.path)
+      );
+      
+      if (inCircular) return 'circular-module';
+      if (d.isEntryPoint) return 'entry-point';
+      if (d.dependencies.length === 0 && d.dependents.length === 0) return 'isolated';
+      if (d.dependencies.length > 10 || d.dependents.length > 10) return 'highly-connected';
+      return 'normal-module';
+    }
+    
+    function getNodeSize(d) {
+      if (d.isEntryPoint) return 10;
+      const size = 4 + (d.dependencies.length + d.dependents.length) / 5;
+      return Math.min(size, 12);
+    }
+    
+    // Update positions on tick
+    simulation.on('tick', () => {
+      link
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+        
+      node
+        .attr('cx', d => d.x = Math.max(20, Math.min(width - 20, d.x)))
+        .attr('cy', d => d.y = Math.max(20, Math.min(height - 20, d.y)));
+    });
+    
+    // Drag functionality
+    node.call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended));
+      
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+  </script>
+</body>
+</html>
+  

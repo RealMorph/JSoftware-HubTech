@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+1. **Independent Modules**: Each feature must be self-contained and independently enable/disable-able without breaking other features, but all share fundamental logic, such as theming. 
+2. **Loose Coupling**: Modules should communicate through well-defined interfaces, not direct dependencies
+3. **Feature Isolation**: Features should be isolated with their own state, UI components, and business logic
+4. **Consistent API Boundaries**: All modules should expose consistent public APIs 
+5. **Independent Testing**: Each module must be testable in isolation from other modules
+
+This architecture ensures that:
+- Features can be enabled/disabled at runtime
+- The application remains maintainable as it scales
+- Teams can work on different modules simultaneously
+- Testing is simplified and more reliable
+- New features can be added without refactoring existing ones
+
+> **IMPORTANT REMINDER:** Please reference [UI Enhancement Strategy](mdc:docs/ui-enhancements.md) document for implementing modern UI styling. It contains detailed guidance on the styling architecture, theme enhancement, component refactoring approach, and implementation timeline.

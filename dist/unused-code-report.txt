@@ -1,0 +1,142 @@
+UNUSED CODE REPORT
+=================
+
+Total Issues Found: 43
+- Unused Imports/Variables: 0
+- Unused Components: 2
+- Potentially Unused Files: 41
+
+DETAILS BY FILE
+==============
+
+src\core\theme\theme-switcher.tsx:
+- Unused Component: Component 'ThemeSwitcher' is not used in other files
+- Potentially Unused File: File 'theme-switcher.tsx' is not imported in any other file
+
+src\core\error\ErrorBoundary.tsx:
+- Unused Component: Component 'ErrorBoundary' is not used in other files
+- Potentially Unused File: File 'ErrorBoundary.tsx' is not imported in any other file
+
+src\test-utils.tsx:
+- Potentially Unused File: File 'test-utils.tsx' is not imported in any other file
+
+src\index.js:
+- Potentially Unused File: File 'index.js' is not imported in any other file
+
+src\types\vite-plugins.d.ts:
+- Potentially Unused File: File 'vite-plugins.d.ts' is not imported in any other file
+
+src\core\test-utils.tsx:
+- Potentially Unused File: File 'test-utils.tsx' is not imported in any other file
+
+src\core\utils\uuid.ts:
+- Potentially Unused File: File 'uuid.ts' is not imported in any other file
+
+src\core\tabs\types.js:
+- Potentially Unused File: File 'types.js' is not imported in any other file
+
+src\core\tabs\index.js:
+- Potentially Unused File: File 'index.js' is not imported in any other file
+
+src\core\theme\theme-switcher.js:
+- Potentially Unused File: File 'theme-switcher.js' is not imported in any other file
+
+src\core\theme\run-benchmark.ts:
+- Potentially Unused File: File 'run-benchmark.ts' is not imported in any other file
+
+src\core\theme\index.js:
+- Potentially Unused File: File 'index.js' is not imported in any other file
+
+src\core\theme\colorPalette.ts:
+- Potentially Unused File: File 'colorPalette.ts' is not imported in any other file
+
+src\core\theme\colorPalette.js:
+- Potentially Unused File: File 'colorPalette.js' is not imported in any other file
+
+src\core\state\types.js:
+- Potentially Unused File: File 'types.js' is not imported in any other file
+
+src\core\state\index.js:
+- Potentially Unused File: File 'index.js' is not imported in any other file
+
+src\core\state\business-state-manager.ts:
+- Potentially Unused File: File 'business-state-manager.ts' is not imported in any other file
+
+src\core\handlers\business-handler.ts:
+- Potentially Unused File: File 'business-handler.ts' is not imported in any other file
+
+src\core\services\ai-service.ts:
+- Potentially Unused File: File 'ai-service.ts' is not imported in any other file
+
+src\core\debug\DebugPanel.tsx:
+- Potentially Unused File: File 'DebugPanel.tsx' is not imported in any other file
+
+src\components\base\TextFieldDemo.tsx:
+- Potentially Unused File: File 'TextFieldDemo.tsx' is not imported in any other file
+
+src\components\base\TextFieldDemo.js:
+- Potentially Unused File: File 'TextFieldDemo.js' is not imported in any other file
+
+src\components\base\index.js:
+- Potentially Unused File: File 'index.js' is not imported in any other file
+
+src\components\data-display\DataDisplayTest.tsx:
+- Potentially Unused File: File 'DataDisplayTest.tsx' is not imported in any other file
+
+src\core\tabs\theme\AnimatedTab.tsx:
+- Potentially Unused File: File 'AnimatedTab.tsx' is not imported in any other file
+
+src\core\tabs\components\TabAnimationsPage.tsx:
+- Potentially Unused File: File 'TabAnimationsPage.tsx' is not imported in any other file
+
+src\core\theme\services\ThemeService.ts:
+- Potentially Unused File: File 'ThemeService.ts' is not imported in any other file
+
+src\core\theme\interfaces\ThemeDatabase.ts:
+- Potentially Unused File: File 'ThemeDatabase.ts' is not imported in any other file
+
+src\core\theme\schema\theme-schema.ts:
+- Potentially Unused File: File 'theme-schema.ts' is not imported in any other file
+
+src\core\theme\schema\theme-schema.js:
+- Potentially Unused File: File 'theme-schema.js' is not imported in any other file
+
+src\core\theme\schema\migrations.ts:
+- Potentially Unused File: File 'migrations.ts' is not imported in any other file
+
+src\core\theme\schema\migrations.js:
+- Potentially Unused File: File 'migrations.js' is not imported in any other file
+
+src\core\theme\hooks\useTheme.ts:
+- Potentially Unused File: File 'useTheme.ts' is not imported in any other file
+
+src\core\theme\hooks\useTheme.js:
+- Potentially Unused File: File 'useTheme.js' is not imported in any other file
+
+src\core\theme\db-adapters\sql-theme-database.ts:
+- Potentially Unused File: File 'sql-theme-database.ts' is not imported in any other file
+
+src\core\theme\db-adapters\sql-theme-database.js:
+- Potentially Unused File: File 'sql-theme-database.js' is not imported in any other file
+
+src\core\theme\database\LocalStorageThemeDatabase.ts:
+- Potentially Unused File: File 'LocalStorageThemeDatabase.ts' is not imported in any other file
+
+src\core\theme\components\PaletteDemo.tsx:
+- Potentially Unused File: File 'PaletteDemo.tsx' is not imported in any other file
+
+src\core\theme\components\PaletteDemo.js:
+- Potentially Unused File: File 'PaletteDemo.js' is not imported in any other file
+
+src\core\theme\components\CustomThemeEditor.tsx:
+- Potentially Unused File: File 'CustomThemeEditor.tsx' is not imported in any other file
+
+src\core\theme\components\CustomThemeEditor.js:
+- Potentially Unused File: File 'CustomThemeEditor.js' is not imported in any other file
+
+RECOMMENDATIONS
+==============
+
+1. Analyze usage of imports, components, and files to eliminate dead code
+2. Consider implementing tree shaking if not already done
+3. Review your entry points and ensure all components are properly used

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-04-08T16:16:48.397Z",
+  "stats": {
+    "coldStart": {
+      "min": 3,
+      "max": 3,
+      "average": 3,
+      "median": 3,
+      "p95": 3
+    },
+    "themeSwitch": {
+      "min": 0,
+      "max": 0,
+      "average": 0,
+      "median": 0,
+      "p95": 0
+    },
+    "memoryUsage": {
+      "min": -3221152,
+      "max": 10695264,
+      "average": 5.53,
+      "median": 9.43,
+      "p95": 10.2
+    }
+  },
+  "recommendations": [
+    "Performance is good. No recommendations."
+  ]
+}

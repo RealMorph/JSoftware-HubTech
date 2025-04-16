@@ -1,0 +1,260 @@
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tab-list {
+  display: flex;
+  background-color: var(--tab-bg-color, #f5f5f5);
+  border-bottom: 1px solid var(--tab-border-color, #ddd);
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-right: 1px solid var(--tab-border-color, #ddd);
+  cursor: pointer;
+  background-color: var(--tab-bg-color, #f5f5f5);
+  transition: background-color 0.2s;
+  position: relative;
+  user-select: none;
+}
+
+.tab:hover {
+  background-color: var(--tab-hover-bg-color, #e9e9e9);
+}
+
+.tab.active {
+  background-color: var(--tab-active-bg-color, #fff);
+  border-bottom: 2px solid var(--tab-active-border-color, #0078d7);
+}
+
+.tab-title {
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.tab-close {
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-close:hover {
+  background-color: var(--tab-close-hover-bg-color, rgba(0, 0, 0, 0.1));
+}
+
+.tab-content {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  background-color: var(--tab-content-bg-color, #fff);
+}
+
+.tab-panel {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
+/* Tab Group Styles */
+.tab-group-list {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--tab-group-bg-color, #f5f5f5);
+  border-right: 1px solid var(--tab-border-color, #ddd);
+  width: 240px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.tab-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+  border: 1px solid var(--tab-border-color, #ddd);
+  border-radius: 4px;
+  background-color: var(--tab-bg-color, #f5f5f5);
+  overflow: hidden;
+}
+
+.tab-group.dragging {
+  opacity: 0.5;
+}
+
+.tab-group-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: var(--tab-group-header-bg-color, #e5e5e5);
+  cursor: grab;
+  position: relative;
+}
+
+.tab-group-indicator {
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.tab-group-title {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tab-group-count {
+  font-size: 0.85em;
+  color: var(--tab-count-color, #666);
+  margin-left: 4px;
+}
+
+.tab-group-title-edit {
+  flex: 1;
+}
+
+.tab-group-title-edit input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--tab-border-color, #ddd);
+  border-radius: 3px;
+}
+
+.tab-group-actions {
+  display: flex;
+  align-items: center;
+}
+
+.tab-group-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
+  margin-left: 4px;
+  border-radius: 3px;
+}
+
+.tab-group-action:hover {
+  background-color: var(--tab-action-hover-bg-color, rgba(0, 0, 0, 0.1));
+}
+
+.tab-group-content {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.tab-group-content .tab {
+  border-right: none;
+  border-bottom: 1px solid var(--tab-border-color, #ddd);
+  padding: 6px 8px 6px 16px;
+}
+
+.tab-group-content .tab:last-child {
+  border-bottom: none;
+}
+
+.tab-group-empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--tab-empty-color, #999);
+  font-style: italic;
+  border: 1px dashed var(--tab-border-color, #ddd);
+  margin: 8px;
+  border-radius: 4px;
+}
+
+.tab-actions {
+  display: flex;
+  align-items: center;
+}
+
+.tab-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
+  margin-left: 4px;
+  border-radius: 3px;
+}
+
+.tab-action:hover {
+  background-color: var(--tab-action-hover-bg-color, rgba(0, 0, 0, 0.1));
+}
+
+.tab-group-add {
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--tab-group-add-bg-color, #e5e5e5);
+  border: 1px dashed var(--tab-border-color, #ddd);
+  border-radius: 4px;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.tab-group-add:hover {
+  background-color: var(--tab-group-add-hover-bg-color, #d5d5d5);
+}
+
+.tab-group-create {
+  padding: 8px;
+  margin-top: 8px;
+}
+
+.tab-group-create input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--tab-border-color, #ddd);
+  border-radius: 4px;
+}
+
+/* Improved layout for tab container with groups */
+.tab-container-with-groups {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.tab-container-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Add the tab group badge style */
+.tab-group-badge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: var(--tab-group-badge-color, #0078d7);
+} 

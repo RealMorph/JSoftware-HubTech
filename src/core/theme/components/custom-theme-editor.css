@@ -1,0 +1,175 @@
+.custom-theme-editor {
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.save-button,
+.cancel-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.cancel-button {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.cancel-button:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.editor-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.theme-info {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.color-editor {
+  grid-column: 1 / -1;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.color-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.color-input label {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.color-picker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-picker input[type="color"] {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-picker input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-family-mono);
+}
+
+.theme-preview {
+  grid-column: 1 / -1;
+  background-color: var(--color-background);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.preview-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.preview-section {
+  padding: 16px;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.preview-section h4 {
+  margin-bottom: 16px;
+  color: var(--color-text);
+}
+
+.preview-section p {
+  margin-bottom: 16px;
+  color: var(--color-text-secondary);
+}
+
+.preview-section button {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-section button:hover {
+  opacity: 0.9;
+} 

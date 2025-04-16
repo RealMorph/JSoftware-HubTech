@@ -1,0 +1,96 @@
+import { Theme, ThemeVisualConfig } from './types';
+
+export const darkTheme: Theme = {
+  id: 'dark',
+  name: 'Dark Theme',
+  description: 'The default dark theme',
+  config: {
+    colors: {
+      primary: '#0A84FF',
+      secondary: '#5E5CE6',
+      background: {
+        primary: '#000000',
+        secondary: '#1C1C1E',
+        tertiary: '#2C2C2E',
+      },
+      text: {
+        primary: '#FFFFFF',
+        secondary: '#EBEBF5',
+        disabled: '#666666',
+      },
+      border: {
+        primary: '#38383A',
+        secondary: '#48484A',
+      },
+      success: '#32D74B',
+      warning: '#FF9F0A',
+      error: '#FF453A',
+    },
+    typography: {
+      scale: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+      },
+      weights: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      lineHeights: {
+        none: '1',
+        tight: '1.25',
+        snug: '1.375',
+        normal: '1.5',
+        relaxed: '1.625',
+        loose: '2',
+      },
+    },
+    spacing: {
+      xs: '0.25rem',
+      sm: '0.5rem',
+      base: '1rem',
+      lg: '1.5rem',
+      xl: '2rem',
+      '2xl': '2.5rem',
+      '3xl': '3rem',
+      '4xl': '4rem',
+    },
+    breakpoints: {
+      xs: '320px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
+    borderRadius: {
+      none: '0',
+      sm: '0.125rem',
+      base: '0.25rem',
+      lg: '0.5rem',
+      full: '9999px',
+    },
+    shadows: {
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.2)',
+      base: '0 1px 3px 0 rgba(0, 0, 0, 0.3)',
+      lg: '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
+      xl: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+    },
+    transitions: {
+      fast: '150ms',
+      normal: '300ms',
+      slow: '500ms',
+    },
+  },
+  isDefault: false,
+  isDark: true,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};

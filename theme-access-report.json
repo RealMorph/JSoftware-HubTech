@@ -1,0 +1,49 @@
+{
+  "totalFiles": 89,
+  "filesWithPatterns": 8,
+  "patternCounts": {
+    "theme.typography.weights": 7,
+    "theme.colors.primary[": 7,
+    "theme.spacing[": 3,
+    "theme.typography.scale": 7,
+    "theme.typography.lineHeights": 6,
+    "theme.typography.family": 4,
+    "theme.colors.textColors": 2
+  },
+  "fileResults": {
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\components\\Button.js": {
+      "theme.typography.weights": 1,
+      "theme.colors.primary[": 6
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\components\\ButtonDemo.js": {
+      "theme.spacing[": 1
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\components\\ThemePreview.js": {
+      "theme.typography.scale": 3,
+      "theme.typography.weights": 3,
+      "theme.typography.lineHeights": 3
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\styled.ts": {
+      "theme.spacing[": 1
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\theme-system.js": {
+      "theme.typography.scale": 1,
+      "theme.typography.weights": 1,
+      "theme.typography.lineHeights": 1
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\theme-system.ts": {
+      "theme.typography.scale": 2,
+      "theme.typography.weights": 2,
+      "theme.typography.lineHeights": 2,
+      "theme.typography.family": 4,
+      "theme.colors.textColors": 2
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\theme-utils.ts": {
+      "theme.spacing[": 1
+    },
+    "C:\\RealMorphSoftware\\!money making Apps\\_BASE_Modular Frontend_RESTART _USEME\\src\\core\\theme\\__tests__\\styled.test.ts": {
+      "theme.typography.scale": 1,
+      "theme.colors.primary[": 1
+    }
+  }
+}

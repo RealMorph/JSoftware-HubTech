@@ -1,0 +1,1067 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>TypeScript Error Analysis Report</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        h1, h2, h3, h4 {
+          color: #0066cc;
+        }
+        .summary {
+          background-color: #f5f5f5;
+          padding: 20px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px 12px;
+          text-align: left;
+        }
+        th {
+          background-color: #0066cc;
+          color: white;
+        }
+        tr:nth-child(even) {
+          background-color: #f2f2f2;
+        }
+        .recommendations {
+          background-color: #e6f7ff;
+          padding: 20px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+        }
+        .high-priority {
+          color: #d50000;
+          font-weight: bold;
+        }
+        .medium-priority {
+          color: #ff6d00;
+        }
+        .low-priority {
+          color: #2962ff;
+        }
+        .error-code {
+          color: #d50000;
+          font-family: monospace;
+        }
+        .error-message {
+          font-family: monospace;
+        }
+        .error-category {
+          font-size: 0.9em;
+          color: #666;
+          margin-left: 8px;
+        }
+        .file-errors {
+          margin-bottom: 30px;
+          border-left: 3px solid #0066cc;
+          padding-left: 15px;
+        }
+        .error-list {
+          list-style-type: none;
+          padding-left: 10px;
+        }
+        .error-list li {
+          margin-bottom: 10px;
+          border-bottom: 1px dashed #ccc;
+          padding-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>TypeScript Error Analysis Report</h1>
+      <p>Generated on: 4/8/2025, 6:31:00 PM</p>
+      
+      <div class="summary">
+        <h2>Summary</h2>
+        <p>Found <strong>96</strong> TypeScript errors across <strong>24</strong> files.</p>
+      </div>
+      
+      <h2>Error Categories</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Count</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr>
+      <td>Type Mismatch</td>
+      <td>59</td>
+      <td>61.5%</td>
+    </tr>
+  
+    <tr>
+      <td>Other</td>
+      <td>31</td>
+      <td>32.3%</td>
+    </tr>
+  
+    <tr>
+      <td>Missing Property/Argument</td>
+      <td>6</td>
+      <td>6.3%</td>
+    </tr>
+  
+        </tbody>
+      </table>
+      
+      <h2>Top Problematic Files</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Errors</th>
+            <th>Categories</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr>
+      <td>src/core/theme/components/CustomThemeEditor.tsx</td>
+      <td>61</td>
+      <td>Other, Type Mismatch, Missing Property/Argument</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/theme/components/ThemeEditor.tsx</td>
+      <td>12</td>
+      <td>Other, Type Mismatch</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/theme/__tests__/ButtonDemo.test.tsx</td>
+      <td>2</td>
+      <td>Missing Property/Argument, Type Mismatch</td>
+    </tr>
+  
+    <tr>
+      <td>src/components/base/__tests__/TextFieldDemo.test.tsx</td>
+      <td>1</td>
+      <td>Other</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/app.ts</td>
+      <td>1</td>
+      <td>Missing Property/Argument</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/debug/DebugPanel.tsx</td>
+      <td>1</td>
+      <td>Missing Property/Argument</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/error/ErrorBoundary.tsx</td>
+      <td>1</td>
+      <td>Type Mismatch</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/tabs/index.ts</td>
+      <td>1</td>
+      <td>Other</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/theme/__tests__/Button.test.tsx</td>
+      <td>1</td>
+      <td>Type Mismatch</td>
+    </tr>
+  
+    <tr>
+      <td>src/core/theme/__tests__/styled.test.ts</td>
+      <td>1</td>
+      <td>Other</td>
+    </tr>
+  
+        </tbody>
+      </table>
+      
+      <div class="recommendations">
+        <h2>Recommendations</h2>
+        
+        <h3 class="high-priority">High Priority</h3>
+        <ul>
+          <li>Review and fix type mismatches in component props</li><li>Add missing required props to component calls</li><li>Focus first on fixing errors in src/core/theme/components/CustomThemeEditor.tsx (61 errors)</li>
+        </ul>
+        
+        <h3 class="medium-priority">Medium Priority</h3>
+        <ul>
+          <li>Create more specific interfaces for complex data structures</li><li>Review function argument usage across the codebase</li><li>Address issues in the next 3 most problematic files: ThemeEditor.tsx, ButtonDemo.test.tsx, TextFieldDemo.test.tsx</li>
+        </ul>
+        
+        <h3 class="low-priority">Low Priority</h3>
+        <ul>
+          <li>Address miscellaneous TypeScript errors</li>
+        </ul>
+      </div>
+      
+      <h2>Detailed Error Listing</h2>
+      <div class="error-details">
+        
+      <div class="file-errors">
+        <h4>src/components/base/__tests__/TextFieldDemo.test.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 9:7</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ id: string; name: string; description: string; colors: { gray: { 50: string; 100: string; 200: string; 300: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; red: { 50: string; ... 8 more ...; 900: string; }; ... 19 more ...; info: { ...; }; }; ... 5 more ...; updatedAt: Date...' is missing the following properties from type 'ThemeConfig': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/app.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 21:26</strong> - 
+        <span class="error-code">TS2554</span>: 
+        <span class="error-message">Expected 1 arguments, but got 0.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/debug/DebugPanel.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 127:52</strong> - 
+        <span class="error-code">TS2339</span>: 
+        <span class="error-message">Property 'memory' does not exist on type 'Performance'.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/error/ErrorBoundary.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 35:7</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'ErrorInfo' is not assignable to type '{ [key: string]: any; componentStack?: string | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/tabs/index.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 7:1</strong> - 
+        <span class="error-code">TS2308</span>: 
+        <span class="error-message">Module './tab-manager' has already exported a member named 'Tab'. Consider explicitly re-exporting to resolve the ambiguity.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/Button.test.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 110:51</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '{ id: string; name: string; colors: { success: { 50: string; 100: string; 200: string; 300: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; warning: { 50: string; 100: string; ... 7 more ...; 900: string; }; ... 19 more ...; rose: { ...; }; }; ... 5 more ...; updatedAt: Date; }' is not assignable to parameter of type 'Omit<ThemeConfig, "id" | "createdAt" | "updatedAt">'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/ButtonDemo.test.tsx (2 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 29:17</strong> - 
+        <span class="error-code">TS2339</span>: 
+        <span class="error-message">Property 'primary' does not exist on type '{ gray: { 50: string; 100: string; 200: string; 300: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; red: { 50: string; 100: string; 200: string; 300: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; ... 11 more ...; rose: { ...; }; }'.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+      <li>
+        <strong>Line 118:51</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '{ id: string; name: string; colors: { primary: any; gray: { 200: string; 300: string; 50: string; 100: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; white: string; success: { ...; }; ... 18 more ...; rose: { ...; }; }; ... 5 more ...; updatedAt: Date; }' is not assignable to parameter of type 'Omit<ThemeConfig, "id" | "createdAt" | "updatedAt">'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/styled.test.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 17:3</strong> - 
+        <span class="error-code">TS2741</span>: 
+        <span class="error-message">Property 'family' is missing in type '{ scale: { xs: string; sm: string; base: string; lg: string; xl: string; '2xl': string; '3xl': string; '4xl': string; '5xl': string; '6xl': string; '7xl': string; '8xl': string; '9xl': string; }; weights: { thin: string; extralight: string; ... 6 more ...; black: string; }; lineHeights: { ...; }; letterSpacing: { .....' but required in type '{ scale: { xs: string; sm: string; base: string; lg: string; xl: string; '2xl': string; '3xl': string; '4xl': string; '5xl': string; '6xl': string; '7xl': string; '8xl': string; '9xl': string; }; weights: { thin: string; extralight: string; ... 6 more ...; black: string; }; lineHeights: { ...; }; letterSpacing: { .....'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/theme-context.test.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 64:11</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ name: string; description: string; colors: { success: { 50: string; 100: string; 200: string; 300: string; 400: string; 500: string; 600: string; 700: string; 800: string; 900: string; }; warning: { 50: string; ... 8 more ...; 900: string; }; ... 19 more ...; rose: { ...; }; }; typography: { ...; }; spacing: { ......' is missing the following properties from type 'Omit<ThemeConfig, "id" | "createdAt" | "updatedAt">': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/theme-export-import.test.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 84:7</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ id: string; name: string; description: string; colors: any; typography: any; spacing: any; breakpoints: any; isDefault: false; createdAt: Date; updatedAt: Date; }' is missing the following properties from type 'ThemeConfig': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/__tests__/theme-persistence.test.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 121:7</strong> - 
+        <span class="error-code">TS2741</span>: 
+        <span class="error-message">Property 'family' is missing in type '{ scale: { xs: string; sm: string; base: string; lg: string; xl: string; '2xl': string; '3xl': string; '4xl': string; '5xl': string; '6xl': string; '7xl': string; '8xl': string; '9xl': string; }; weights: { thin: string; extralight: string; ... 6 more ...; black: string; }; lineHeights: { ...; }; letterSpacing: { .....' but required in type '{ scale: { xs: string; sm: string; base: string; lg: string; xl: string; '2xl': string; '3xl': string; '4xl': string; '5xl': string; '6xl': string; '7xl': string; '8xl': string; '9xl': string; }; weights: { thin: string; extralight: string; ... 6 more ...; black: string; }; lineHeights: { ...; }; letterSpacing: { .....'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/__tests__/ThemeManager.test.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 5:10</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/__tests__/ThemePreview.test.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 12:7</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ id: string; name: string; description: string; colors: any; typography: { scale: { xs: string; sm: string; base: string; lg: string; xl: string; '2xl': string; '3xl': string; '4xl': string; '5xl': string; '6xl': string; '7xl': string; '8xl': string; '9xl': string; }; weights: { ...; }; lineHeights: { ...; }; lette...' is missing the following properties from type 'ThemeConfig': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/CustomThemeEditor.tsx (61 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 5:3</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 145:9</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type 'ThemeVisualConfig | { colors: { primary: string; secondary: string; background: { primary: string; secondary: string; tertiary: string; }; text: { primary: string; secondary: string; disabled: string; }; border: { ...; }; success: string; warning: string; error: string; }; ... 5 more ...; transitions: { ...; }; }' is not assignable to parameter of type 'ThemeVisualConfig | (() => ThemeVisualConfig)'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 260:9</strong> - 
+        <span class="error-code">TS2367</span>: 
+        <span class="error-message">This comparison appears to be unintentional because the types 'keyof TypographyConfig' and '"fontFamily"' have no overlap.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 261:9</strong> - 
+        <span class="error-code">TS2367</span>: 
+        <span class="error-message">This comparison appears to be unintentional because the types 'keyof TypographyConfig' and '"fontSize"' have no overlap.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 262:9</strong> - 
+        <span class="error-code">TS2367</span>: 
+        <span class="error-message">This comparison appears to be unintentional because the types 'keyof TypographyConfig' and '"fontWeight"' have no overlap.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 263:9</strong> - 
+        <span class="error-code">TS2367</span>: 
+        <span class="error-message">This comparison appears to be unintentional because the types 'keyof TypographyConfig' and '"lineHeight"' have no overlap.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 265:9</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'string' is not assignable to type 'never'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 342:25</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type 'Omit<Theme, "id" | "createdAt" | "updatedAt">' is not assignable to parameter of type 'Omit<ThemeConfig, "id" | "createdAt" | "updatedAt">'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 347:23</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type 'void' is not assignable to parameter of type 'SetStateAction<ThemeConfig[]>'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 367:25</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type 'void' is not assignable to parameter of type 'SetStateAction<ThemeConfig[]>'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 408:6</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: any[]; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 410:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 414:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 422:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 432:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 435:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 436:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 445:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 446:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 455:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 456:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 465:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 466:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 475:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 476:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 485:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 486:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 495:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 496:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 505:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 506:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 515:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ color: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 516:14</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ type: "color"; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 528:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 531:41</strong> - 
+        <span class="error-code">TS2339</span>: 
+        <span class="error-message">Property 'fontFamily' does not exist on type 'TypographyConfig'.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+      <li>
+        <strong>Line 532:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 533:36</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '"fontFamily"' is not assignable to parameter of type 'keyof TypographyConfig'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 539:41</strong> - 
+        <span class="error-code">TS2339</span>: 
+        <span class="error-message">Property 'fontSize' does not exist on type 'TypographyConfig'.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+      <li>
+        <strong>Line 540:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 541:36</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '"fontSize"' is not assignable to parameter of type 'keyof TypographyConfig'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 547:41</strong> - 
+        <span class="error-code">TS2339</span>: 
+        <span class="error-message">Property 'fontWeight' does not exist on type 'TypographyConfig'.</span>
+        <span class="error-category">(Missing Property/Argument)</span>
+      </li>
+    
+      <li>
+        <strong>Line 548:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 549:36</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '"fontWeight"' is not assignable to parameter of type 'keyof TypographyConfig'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 555:41</strong> - 
+        <span class="error-code">TS2551</span>: 
+        <span class="error-message">Property 'lineHeight' does not exist on type 'TypographyConfig'. Did you mean 'lineHeights'?</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 556:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 557:36</strong> - 
+        <span class="error-code">TS2345</span>: 
+        <span class="error-message">Argument of type '"lineHeight"' is not assignable to parameter of type 'keyof TypographyConfig'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 564:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 568:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 576:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 584:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 592:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 600:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 604:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 612:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 620:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 628:11</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '(e: React.ChangeEvent<HTMLInputElement>) => void' is not assignable to type '(value: string, event: ChangeEvent<HTMLInputElement>) => void'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 643:47</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '"danger"' is not assignable to type '"primary" | "secondary" | "accent" | "ghost" | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 654:12</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 671:10</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: Element[]; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 672:12</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '{ children: string; theme: ThemeVisualConfig; }' is not assignable to type '{ theme?: Theme | undefined; as?: ElementType<any, keyof IntrinsicElements> | undefined; }'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 676:21</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type '"danger"' is not assignable to type '"primary" | "secondary" | "accent" | "ghost" | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/ThemeEditor.tsx (12 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 2:10</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 112:20</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 126:20</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 139:20</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 149:20</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 185:45</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 193:45</strong> - 
+        <span class="error-code">TS7006</span>: 
+        <span class="error-message">Parameter 'prev' implicitly has an 'any' type.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 206:17</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'unknown' is not assignable to type 'string | number | readonly string[] | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 220:31</strong> - 
+        <span class="error-code">TS2769</span>: 
+        <span class="error-message">No overload matches this call.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+      <li>
+        <strong>Line 226:21</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'unknown' is not assignable to type 'string | number | readonly string[] | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 249:17</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'unknown' is not assignable to type 'string | number | readonly string[] | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+      <li>
+        <strong>Line 264:17</strong> - 
+        <span class="error-code">TS2322</span>: 
+        <span class="error-message">Type 'unknown' is not assignable to type 'string | number | readonly string[] | undefined'.</span>
+        <span class="error-category">(Type Mismatch)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/ThemeManager.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 3:10</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/components/ThemePreview.tsx (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 35:5</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ id: string; name: string; colors: any; typography: any; spacing: any; breakpoints: any; createdAt: Date; updatedAt: Date; }' is missing the following properties from type 'ThemeConfig': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/hooks/useTheme.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 2:10</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/index.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 14:15</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"./types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/schema/theme-schema.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 136:3</strong> - 
+        <span class="error-code">TS2739</span>: 
+        <span class="error-message">Type '{ id: any; name: any; description: any; colors: any; typography: any; spacing: any; breakpoints: any; isDefault: any; createdAt: Date; updatedAt: Date; }' is missing the following properties from type 'ThemeConfig': borderRadius, transitions</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/services/ThemeService.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 1:17</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"../types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/core/theme/theme-registry.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 1:10</strong> - 
+        <span class="error-code">TS2305</span>: 
+        <span class="error-message">Module '"./types"' has no exported member 'ThemeConfig'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>src/index.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 8:3</strong> - 
+        <span class="error-code">TS2740</span>: 
+        <span class="error-message">Type 'Promise<ThemeManager>' is missing the following properties from type 'ThemeManager': state, subscribers, initialize, setMode, and 4 more.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      <div class="file-errors">
+        <h4>vite.config.ts (1 errors)</h4>
+        <ul class="error-list">
+          
+      <li>
+        <strong>Line 14:7</strong> - 
+        <span class="error-code">TS2353</span>: 
+        <span class="error-message">Object literal may only specify known properties, and 'fastRefresh' does not exist in type 'Options'.</span>
+        <span class="error-category">(Other)</span>
+      </li>
+    
+        </ul>
+      </div>
+    
+      </div>
+    </body>
+    </html>
+  

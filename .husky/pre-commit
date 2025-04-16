@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged for code formatting and linting
+npx lint-staged
+
+# Validate themes in staged files
+echo "Running theme validation on staged files..."
+npm run theme:validate:pre-commit 
