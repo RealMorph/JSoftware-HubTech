@@ -4,6 +4,11 @@ import { ThemeConfig, defaultTheme } from './theme-persistence';
 import { Theme, ThemeVisualConfig } from './types';
 import { themeValueFallbacks } from './theme-utils';
 
+/**
+ * @deprecated This entire file is deprecated. Use DirectThemeProvider and its hooks instead.
+ * This file will be removed in a future release.
+ */
+
 // Type for our theme-aware CSS properties
 type ThemeValue = string | number;
 type ThemeObject = { [key: string]: ThemeValue | ThemeObject };
@@ -13,8 +18,21 @@ export type ThemeAwareCSS = CSSProperties & {
   [key: string]: ThemeValue | ThemeObject;
 };
 
-// Updated getThemeValue function that uses theme fallbacks
+/**
+ * Get a value from the theme using a path string
+ * @param theme - The theme object
+ * @param path - Dot-notation path to the theme property
+ * @returns The theme value as a string
+ * @deprecated Use useDirectTheme() hook instead: const { getColor, getTypography, etc. } = useDirectTheme();
+ */
 export function getThemeValue(theme: any, path: string): string {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeValue from styled.ts is deprecated and will be removed in a future release. Use useDirectTheme() hook instead.`
+    );
+  }
+
   // If no theme is provided, use the fallbacks right away
   if (!theme) {
     return themeValueFallbacks[path] || '';
@@ -49,8 +67,20 @@ export function getThemeValue(theme: any, path: string): string {
   return fallbackValue;
 }
 
-// Create a theme-aware CSS function
+/**
+ * Create a theme-aware CSS function
+ * @param cssFn - A function that accepts a theme and returns CSS properties
+ * @returns A function that applies the theme to the CSS
+ * @deprecated Use useDirectTheme() hook in your component and create ThemeStyles instead
+ */
 export const themed = (cssFn: (theme: ThemeConfig) => ThemeAwareCSS) => {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] themed function is deprecated and will be removed in a future release. Use useDirectTheme() hook and ThemeStyles pattern instead.`
+    );
+  }
+
   return (theme: ThemeConfig | undefined) => {
     // Use default theme if no theme is provided
     const themeToUse = theme || defaultTheme;
@@ -59,7 +89,10 @@ export const themed = (cssFn: (theme: ThemeConfig) => ThemeAwareCSS) => {
   };
 };
 
-// Common theme-aware style mixins
+/**
+ * Collection of theme-aware style mixins
+ * @deprecated Use useDirectTheme() hook and ThemeStyles pattern instead
+ */
 export const mixins = {
   // Typography mixins
   text: (size: string = 'base') =>

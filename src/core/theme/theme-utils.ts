@@ -128,12 +128,20 @@ export const themeValueFallbacks: Record<string, string> = {
  * @param path - Dot notation path to the theme property (e.g. 'colors.primary')
  * @param defaultValue - Fallback value if path doesn't exist in theme
  * @returns The value from the theme or the default value
+ * @deprecated Use useDirectTheme() hook instead: const { getColor, getTypography, etc. } = useDirectTheme();
  */
 export function getThemeValue<T = string>(
   theme: DefaultTheme | ThemeConfig,
   path: string,
   defaultValue?: T
 ): T {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeValue is deprecated and will be removed in a future release. Use useDirectTheme() hook instead.`
+    );
+  }
+
   const value = get(theme, path, defaultValue);
 
   // Special handling for text color which can be string or object
@@ -149,8 +157,16 @@ export function getThemeValue<T = string>(
  * @param path - Dot notation path to the theme property
  * @param defaultValue - Default value if path doesn't exist
  * @returns A function that accepts a theme and returns the value at the path
+ * @deprecated Use useDirectTheme() hook instead with the appropriate getter method
  */
 export function createThemeValueGetter<T = string>(path: string, defaultValue?: T) {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] createThemeValueGetter is deprecated and will be removed in a future release. Use useDirectTheme() hook instead.`
+    );
+  }
+
   return (theme: DefaultTheme | ThemeConfig): T => {
     return getThemeValue<T>(theme, path, defaultValue);
   };
@@ -194,13 +210,20 @@ export function isCompleteTheme(theme: unknown): boolean {
  * @param variant Optional variant of the color (for complex color objects)
  * @param fallback Optional fallback value
  * @returns The color value or fallback
+ * @deprecated Use useDirectTheme().getColor() instead
  */
 export function getThemeColor(
   theme: Partial<ThemeConfig>,
   colorName: string,
   variant?: string,
-  fallback?: string
+  fallback: string = '#000000'
 ): string {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeColor is deprecated and will be removed in a future release. Use useDirectTheme().getColor() instead.`
+    );
+  }
   if (!theme.colors) {
     return fallback || '';
   }
@@ -220,63 +243,84 @@ export function getThemeColor(
 }
 
 /**
- * Helper to access spacing values from a theme
- *
+ * Gets a spacing value from the theme
  * @param theme The theme object
- * @param size The spacing size key
- * @param fallback Optional fallback value
- * @returns The spacing value or fallback
+ * @param size The key of the spacing value to retrieve
+ * @param fallback Fallback value if not found in theme
+ * @returns The spacing value as a string
+ * @deprecated Use useDirectTheme().getSpacing() instead
  */
 export function getThemeSpacing(
   theme: Partial<ThemeConfig>,
   size: keyof ThemeConfig['spacing'],
   fallback?: string
 ): string {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeSpacing is deprecated and will be removed in a future release. Use useDirectTheme().getSpacing() instead.`
+    );
+  }
+
   if (!theme.spacing) {
     return fallback || '0';
   }
 
-  return theme.spacing[size] || fallback || '0';
+  return (theme.spacing[size] || fallback || '0') as string;
 }
 
 /**
- * Helper to access font size values from a theme
- *
+ * Gets a font size value from the theme
  * @param theme The theme object
- * @param size The font size key
- * @param fallback Optional fallback value
- * @returns The font size value or fallback
+ * @param size The key of the font size to retrieve
+ * @param fallback Fallback value if not found in theme
+ * @returns The font size value as a string
+ * @deprecated Use useDirectTheme().getTypography('fontSize.value') instead
  */
 export function getThemeFontSize(
   theme: Partial<ThemeConfig>,
   size: keyof ThemeConfig['typography']['fontSize'],
   fallback?: string
 ): string {
-  if (!theme.typography?.fontSize) {
-    return fallback || '16px';
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeFontSize is deprecated and will be removed in a future release. Use useDirectTheme().getTypography() instead.`
+    );
   }
 
-  return theme.typography.fontSize[size] || fallback || '16px';
+  if (!theme.typography || !theme.typography.fontSize) {
+    return fallback || '1rem';
+  }
+
+  return (theme.typography.fontSize[size] || fallback || '1rem') as string;
 }
 
 /**
- * Helper to access shadow values from a theme
- *
+ * Gets a shadow value from the theme
  * @param theme The theme object
- * @param size The shadow size key
- * @param fallback Optional fallback value
- * @returns The shadow value or fallback
+ * @param size The key of the shadow to retrieve
+ * @param fallback Fallback value if not found in theme
+ * @returns The shadow value as a string
+ * @deprecated Use useDirectTheme().getShadow() instead
  */
 export function getThemeShadow(
   theme: Partial<ThemeConfig>,
   size: keyof ThemeConfig['shadows'],
   fallback?: string
 ): string {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeShadow is deprecated and will be removed in a future release. Use useDirectTheme().getShadow() instead.`
+    );
+  }
+
   if (!theme.shadows) {
     return fallback || 'none';
   }
 
-  return theme.shadows[size] || fallback || 'none';
+  return (theme.shadows[size] || fallback || 'none') as string;
 }
 
 /**

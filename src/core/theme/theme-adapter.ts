@@ -53,8 +53,16 @@ const COLORS_PATH_MAP: PropertyPathMap = {
  *
  * @param themeConfig Our internal theme configuration
  * @returns A theme object compatible with Emotion's Theme type
+ * @deprecated Use DirectThemeProvider instead of theme adapters
  */
 export function adaptThemeForEmotion(themeConfig: ThemeConfig): any {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] adaptThemeForEmotion is deprecated and will be removed in a future release. Use DirectThemeProvider instead.`
+    );
+  }
+
   // Base colors to satisfy Emotion's expected color schema
   const baseColors = {
     // Neutral colors
@@ -245,8 +253,16 @@ export function adaptThemeForEmotion(themeConfig: ThemeConfig): any {
  *
  * @param emotionTheme The Emotion theme to convert
  * @returns Our internal ThemeConfig format
+ * @deprecated Use DirectThemeProvider instead of theme adapters
  */
 export function adaptEmotionTheme(emotionTheme: Theme | any): ThemeConfig {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] adaptEmotionTheme is deprecated and will be removed in a future release. Use DirectThemeProvider instead.`
+    );
+  }
+
   // Extract or provide default values for text colors
   const textColors = emotionTheme.colors.textColors || {
     primary: emotionTheme.colors.text || '#000000',
@@ -436,15 +452,22 @@ export function normalizePropertyPath(path: string): string {
 }
 
 /**
- * Gets a value from the theme using a dot-notation path
- * Supports both legacy and modern property paths
+ * Gets a value from the theme, handling both our ThemeConfig and Emotion Theme formats
  *
- * @param theme The theme object to extract from
- * @param path The property path in dot notation (e.g., 'typography.fontSize.sm')
- * @param fallback Optional fallback value if the path doesn't exist
- * @returns The value at the specified path, or the fallback if not found
+ * @param theme The theme object (either format)
+ * @param path The path to the property
+ * @param fallback Optional fallback value
+ * @returns The theme value or fallback
+ * @deprecated Use useDirectTheme() hook instead
  */
 export function getThemeValue(theme: ThemeConfig | Theme, path: string, fallback?: any): any {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] getThemeValue (adapter) is deprecated and will be removed in a future release. Use useDirectTheme() hook instead.`
+    );
+  }
+
   // Check for empty theme
   if (!theme) return fallback;
 
@@ -545,17 +568,24 @@ export function getThemeSpacing(
 }
 
 /**
- * Creates a theme adapter wrapper for a React component
- * This HOC provides compatibility for components that expect a different theme format
+ * Creates a component wrapper that adapts theme objects
  *
  * @param Component The component to wrap
- * @param adapter The adapter function to use (defaults to adaptThemeForEmotion)
- * @returns A wrapped component with theme adaptation
+ * @param adapter The adapter function to use
+ * @returns A wrapped component with theme adaption
+ * @deprecated Use DirectThemeProvider instead for consistent theme access
  */
 export function withThemeAdapter(
   Component: React.ComponentType<any>,
   adapter: (theme: any) => any = adaptThemeForEmotion
 ): React.FC<any> {
+  // In development, warn about deprecated usage
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[Theme] withThemeAdapter is deprecated and will be removed in a future release. Use DirectThemeProvider instead.`
+    );
+  }
+
   return function ThemeAdapterWrapper(props: any) {
     const { theme, ...rest } = props;
     const adaptedTheme = theme ? adapter(theme) : undefined;

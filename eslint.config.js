@@ -5,6 +5,7 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettier from 'eslint-plugin-prettier';
+import deprecatedThemeUtils from './src/eslint-plugins/deprecated-theme-utils.js';
 
 export default [
   js.configs.recommended,
@@ -50,6 +51,7 @@ export default [
       'react-hooks': reactHooks,
       'jsx-a11y': jsxA11y,
       prettier: prettier,
+      'deprecated-theme-utils': { rules: { 'detect-deprecated': deprecatedThemeUtils } },
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
@@ -59,6 +61,7 @@ export default [
       'jsx-a11y/anchor-is-valid': 'warn',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'deprecated-theme-utils/detect-deprecated': 'warn',
     },
     settings: {
       react: {
