@@ -14,69 +14,247 @@ interface ThemeStyles {
   colors: {
     background: {
       default: string;
+      overlay: string;
+      paper: string;
+      hover: string;
     };
     text: {
       primary: string;
       secondary: string;
+      disabled: string;
     };
     border: {
       primary: string;
+      divider: string;
+      hover: string;
+    };
+    focus: {
+      ring: string;
     };
   };
-  borders: {
-    radius: {
-      medium: string;
+  typography: {
+    family: string;
+    size: {
+      sm: string;
+      base: string;
+      lg: string;
+      xl: string;
+      xxl: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+      semibold: number;
+      bold: number;
+    };
+    lineHeight: {
+      none: number;
+      tight: number;
+      normal: number;
+      relaxed: number;
     };
   };
   spacing: {
-    2: string;
-    3: string;
-    4: string;
-    5: string;
+    container: {
+      padding: {
+        small: string;
+        medium: string;
+        large: string;
+      };
+      gap: string;
+    };
+    content: {
+      padding: {
+        x: string;
+        y: string;
+      };
+      gap: string;
+    };
+    element: {
+      padding: {
+        small: string;
+        medium: string;
+        large: string;
+      };
+    };
   };
-  typography: {
-    scale: {
-      xl: string;
+  borders: {
+    width: {
+      thin: string;
+      normal: string;
+      thick: string;
     };
-    weights: {
-      semibold: string;
+    radius: {
+      none: string;
+      small: string;
+      medium: string;
+      large: string;
+      full: string;
     };
+    style: {
+      solid: string;
+      dashed: string;
+    };
+  };
+  shadows: {
+    none: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+    inner: string;
+  };
+  animation: {
+    duration: {
+      fastest: string;
+      fast: string;
+      normal: string;
+      slow: string;
+      slowest: string;
+    };
+    easing: {
+      linear: string;
+      easeIn: string;
+      easeOut: string;
+      easeInOut: string;
+    };
+    transition: {
+      property: {
+        common: string;
+        colors: string;
+        transform: string;
+        opacity: string;
+      };
+    };
+  };
+  zIndex: {
+    modal: number;
+    overlay: number;
   };
 }
 
 // Function to create theme styles from theme context
-const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => {
   return {
     colors: {
       background: {
-        default: themeContext.getColor('background.default', '#ffffff'),
+        default: theme.getColor('background.default', '#ffffff'),
+        overlay: theme.getColor('background.overlay', 'rgba(0, 0, 0, 0.5)'),
+        paper: theme.getColor('background.paper', '#ffffff'),
+        hover: theme.getColor('background.hover', '#f5f5f5'),
       },
       text: {
-        primary: themeContext.getColor('text.primary', '#374151'),
-        secondary: themeContext.getColor('text.secondary', '#6b7280'),
+        primary: theme.getColor('text.primary', '#374151'),
+        secondary: theme.getColor('text.secondary', '#6b7280'),
+        disabled: theme.getColor('text.disabled', '#9ca3af'),
       },
       border: {
-        primary: themeContext.getColor('border.primary', '#e5e7eb'),
+        primary: theme.getColor('border.primary', '#e5e7eb'),
+        divider: theme.getColor('border.divider', '#f3f4f6'),
+        hover: theme.getColor('border.hover', '#d1d5db'),
+      },
+      focus: {
+        ring: theme.getColor('primary.main', '#3b82f6') + '40',
       },
     },
-    borders: {
-      radius: {
-        medium: themeContext.getBorderRadius('medium', '4px'),
+    typography: {
+      family: String(theme.getTypography('family.base', 'system-ui')),
+      size: {
+        sm: String(theme.getTypography('scale.sm', '0.875rem')),
+        base: String(theme.getTypography('scale.base', '1rem')),
+        lg: String(theme.getTypography('scale.lg', '1.125rem')),
+        xl: String(theme.getTypography('scale.xl', '1.25rem')),
+        xxl: String(theme.getTypography('scale.xxl', '1.5rem')),
+      },
+      weight: {
+        normal: Number(theme.getTypography('weights.normal', 400)),
+        medium: Number(theme.getTypography('weights.medium', 500)),
+        semibold: Number(theme.getTypography('weights.semibold', 600)),
+        bold: Number(theme.getTypography('weights.bold', 700)),
+      },
+      lineHeight: {
+        none: 1,
+        tight: 1.25,
+        normal: 1.5,
+        relaxed: 1.75,
       },
     },
     spacing: {
-      2: themeContext.getSpacing('2', '0.5rem'),
-      3: themeContext.getSpacing('3', '0.75rem'),
-      4: themeContext.getSpacing('4', '1rem'),
-      5: themeContext.getSpacing('5', '1.25rem'),
+      container: {
+        padding: {
+          small: theme.getSpacing('4', '1rem'),
+          medium: theme.getSpacing('6', '1.5rem'),
+          large: theme.getSpacing('8', '2rem'),
+        },
+        gap: theme.getSpacing('4', '1rem'),
+      },
+      content: {
+        padding: {
+          x: theme.getSpacing('6', '1.5rem'),
+          y: theme.getSpacing('4', '1rem'),
+        },
+        gap: theme.getSpacing('3', '0.75rem'),
+      },
+      element: {
+        padding: {
+          small: theme.getSpacing('2', '0.5rem'),
+          medium: theme.getSpacing('3', '0.75rem'),
+          large: theme.getSpacing('4', '1rem'),
+        },
+      },
     },
-    typography: {
-      scale: {
-        xl: String(themeContext.getTypography('scale.xl', '1.25rem')),
+    borders: {
+      width: {
+        thin: '1px',
+        normal: '2px',
+        thick: '3px',
       },
-      weights: {
-        semibold: String(themeContext.getTypography('weights.semibold', '600')),
+      radius: {
+        none: '0',
+        small: theme.getBorderRadius('sm', '0.25rem'),
+        medium: theme.getBorderRadius('md', '0.375rem'),
+        large: theme.getBorderRadius('lg', '0.5rem'),
+        full: '9999px',
       },
+      style: {
+        solid: 'solid',
+        dashed: 'dashed',
+      },
+    },
+    shadows: {
+      none: 'none',
+      sm: theme.getShadow('sm', '0 1px 2px rgba(0, 0, 0, 0.05)'),
+      md: theme.getShadow('md', '0 4px 6px -1px rgba(0, 0, 0, 0.1)'),
+      lg: theme.getShadow('lg', '0 10px 15px -3px rgba(0, 0, 0, 0.1)'),
+      xl: theme.getShadow('xl', '0 20px 25px -5px rgba(0, 0, 0, 0.1)'),
+      inner: 'inset 0 2px 4px rgba(0, 0, 0, 0.05)',
+    },
+    animation: {
+      duration: {
+        fastest: '100ms',
+        fast: '150ms',
+        normal: '200ms',
+        slow: '300ms',
+        slowest: '400ms',
+      },
+      easing: {
+        linear: 'linear',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      transition: {
+        property: {
+          common: 'all',
+          colors: 'background-color, border-color, color, fill, stroke',
+          transform: 'transform',
+          opacity: 'opacity',
+        },
+      },
+    },
+    zIndex: {
+      modal: 1000,
+      overlay: 999,
     },
   };
 };
@@ -211,24 +389,24 @@ interface ModalOverlayProps {
   isClosing: boolean;
 }
 
-const ModalOverlay = styled.div<ModalOverlayProps>`
+const ModalOverlay = styled.div<ModalOverlayProps & { $themeStyles: ThemeStyles }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.$themeStyles.colors.background.overlay};
   display: ${props => (props.isOpen ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: ${props => props.$themeStyles.zIndex.overlay};
   animation: ${props =>
     props.isClosing
       ? css`
-          ${fadeOut} 0.2s ease-in-out
+          ${fadeOut} ${props.$themeStyles.animation.duration.normal} ${props.$themeStyles.animation.easing.easeIn}
         `
       : css`
-          ${fadeIn} 0.2s ease-in-out
+          ${fadeIn} ${props.$themeStyles.animation.duration.normal} ${props.$themeStyles.animation.easing.easeOut}
         `};
 `;
 
@@ -241,106 +419,93 @@ interface ModalContainerProps {
 }
 
 const ModalContainer = styled.div<ModalContainerProps>`
-  background-color: ${props => props.$themeStyles.colors.background.default};
+  background-color: ${props => props.$themeStyles.colors.background.paper};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: ${props => props.$themeStyles.shadows.xl};
   width: ${props => getModalWidth(props.size)};
   max-width: 95%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  font-family: ${props => props.$themeStyles.typography.family};
+  z-index: ${props => props.$themeStyles.zIndex.modal};
+  animation: ${props => {
+    const { duration, easing } = props.$themeStyles.animation;
+    const animationDuration = duration.normal;
+    const animationEasing = props.isClosing ? easing.easeIn : easing.easeOut;
 
-  ${props => {
-    // Position styling
-    switch (props.position) {
-      case 'top':
-        return 'margin-top: 5vh; align-self: flex-start;';
-      case 'bottom':
-        return 'margin-bottom: 5vh; align-self: flex-end;';
-      case 'left':
-        return 'margin-left: 5vw; align-self: flex-start; height: 80vh;';
-      case 'right':
-        return 'margin-right: 5vw; align-self: flex-end; height: 80vh;';
+    switch (props.animation) {
+      case 'fade':
+        return props.isClosing
+          ? css`${fadeOut} ${animationDuration} ${animationEasing}`
+          : css`${fadeIn} ${animationDuration} ${animationEasing}`;
+      case 'slide':
+        return props.isClosing
+          ? css`${slideOut} ${animationDuration} ${animationEasing}`
+          : css`${slideIn} ${animationDuration} ${animationEasing}`;
+      case 'scale':
+        return props.isClosing
+          ? css`${scaleOut} ${animationDuration} ${animationEasing}`
+          : css`${scaleIn} ${animationDuration} ${animationEasing}`;
       default:
-        return '';
+        return 'none';
     }
-  }}
-
-  ${props => {
-    // Animation styling
-    if (props.animation === 'none') return '';
-
-    const getAnimation = () => {
-      switch (props.animation) {
-        case 'slide':
-          return props.isClosing ? slideOut : slideIn;
-        case 'scale':
-          return props.isClosing ? scaleOut : scaleIn;
-        case 'fade':
-        default:
-          return props.isClosing ? fadeOut : fadeIn;
-      }
-    };
-
-    return css`
-      animation: ${getAnimation()} 0.3s ease-in-out;
-    `;
-  }}
+  }};
 `;
 
 const ModalHeader = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.content.padding.y} ${props => props.$themeStyles.spacing.content.padding.x};
+  border-bottom: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.divider};
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: ${props => props.$themeStyles.spacing[4]};
-  border-bottom: 1px solid ${props => props.$themeStyles.colors.border.primary};
+  justify-content: space-between;
 `;
 
 const ModalTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
   margin: 0;
-  font-size: ${props => props.$themeStyles.typography.scale.xl};
-  font-weight: ${props => props.$themeStyles.typography.weights.semibold};
+  font-size: ${props => props.$themeStyles.typography.size.xl};
+  font-weight: ${props => props.$themeStyles.typography.weight.semibold};
   color: ${props => props.$themeStyles.colors.text.primary};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.tight};
 `;
 
-const CloseButton = styled.button`
-  background: transparent;
+const CloseButton = styled.button<{ $themeStyles: ThemeStyles }>`
+  background: none;
   border: none;
-  font-size: 1.5rem;
+  padding: ${props => props.$themeStyles.spacing.element.padding.small};
   cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  color: ${props => props.$themeStyles.colors.text.secondary};
+  font-size: ${props => props.$themeStyles.typography.size.xl};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.none};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+  transition: all ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
-    opacity: 0.7;
+    color: ${props => props.$themeStyles.colors.text.primary};
+    background-color: ${props => props.$themeStyles.colors.background.hover};
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
-    opacity: 0.7;
+    box-shadow: 0 0 0 2px ${props => props.$themeStyles.colors.focus.ring};
   }
 `;
 
-const ModalBody = styled.div<{ $themeStyles: ThemeStyles }>`
-  flex: 1;
-  padding: ${props => props.$themeStyles.spacing[4]};
+const ModalContent = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.content.padding.y} ${props => props.$themeStyles.spacing.content.padding.x};
   overflow-y: auto;
+  color: ${props => props.$themeStyles.colors.text.primary};
+  font-size: ${props => props.$themeStyles.typography.size.base};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.normal};
 `;
 
 const ModalFooter = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.content.padding.y} ${props => props.$themeStyles.spacing.content.padding.x};
+  border-top: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.divider};
   display: flex;
   justify-content: flex-end;
-  padding: ${props => props.$themeStyles.spacing[3]} ${props => props.$themeStyles.spacing[4]};
-  border-top: 1px solid ${props => props.$themeStyles.colors.border.primary};
-
-  & > * + * {
-    margin-left: ${props => props.$themeStyles.spacing[2]};
-  }
+  gap: ${props => props.$themeStyles.spacing.content.gap};
 `;
 
 /**
@@ -410,7 +575,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isInDom) return null;
 
   return (
-    <ModalOverlay isOpen={isOpen} isClosing={isClosing} onClick={handleBackdropClick}>
+    <ModalOverlay isOpen={isOpen} isClosing={isClosing} onClick={handleBackdropClick} $themeStyles={themeStyles}>
       <FocusTrap active={isOpen}>
         <ModalContainer
           ref={modalRef}
@@ -432,20 +597,20 @@ export const Modal: React.FC<ModalProps> = ({
               <ModalTitle id={`modal-title-${id}`} $themeStyles={themeStyles}>
                 {title}
               </ModalTitle>
-              <CloseButton aria-label="Close modal" onClick={handleClose}>
+              <CloseButton aria-label="Close modal" onClick={handleClose} $themeStyles={themeStyles}>
                 ×
               </CloseButton>
             </ModalHeader>
           )}
 
-          <ModalBody $themeStyles={themeStyles}>
+          <ModalContent $themeStyles={themeStyles}>
             {ariaDescription && (
               <div id={`modal-desc-${id}`} className="sr-only">
                 {ariaDescription}
               </div>
             )}
             {children}
-          </ModalBody>
+          </ModalContent>
 
           {footer && <ModalFooter $themeStyles={themeStyles}>{footer}</ModalFooter>}
         </ModalContainer>

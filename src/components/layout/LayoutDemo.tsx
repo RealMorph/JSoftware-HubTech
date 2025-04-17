@@ -895,3 +895,151 @@ const LayoutDemo: React.FC = () => {
 };
 
 export default LayoutDemo;
+
+                </DashboardBox>
+              </GridItem>
+              <GridItem>
+                <DashboardBox p="3">
+                  <ExampleBox $themeStyles={themeStyles}>Card 3</ExampleBox>
+                </DashboardBox>
+              </GridItem>
+              <GridItem colSpan={3}>
+                <DashboardBox p="3">
+                  <ExampleBox $themeStyles={themeStyles}>Main Content (full width)</ExampleBox>
+                </DashboardBox>
+              </GridItem>
+            </Grid>
+          </GridItem>
+
+          <GridItem colSpan={12}>
+            <DashboardBox p="3">
+              <ExampleBox $themeStyles={themeStyles}>Footer (12 columns)</ExampleBox>
+            </DashboardBox>
+          </GridItem>
+        </Grid>
+
+        <CodeBlock $themeStyles={themeStyles}>{`<Grid columns={12} gap={16} fullWidth>
+  <GridItem colSpan={12}>
+    <DashboardBox p="3">
+      <ExampleBox>Header (12 columns)</ExampleBox>
+    </DashboardBox>
+  </GridItem>
+  
+  <GridItem colSpan={3}>
+    <DashboardBox p="3">
+      <ExampleBox>Sidebar (3 columns)</ExampleBox>
+    </DashboardBox>
+  </GridItem>
+  
+  <GridItem colSpan={9}>
+    <Grid columns={3} gap={16} fullWidth>
+      <GridItem>
+        <DashboardBox p="3">
+          <ExampleBox>Card 1</ExampleBox>
+        </DashboardBox>
+      </GridItem>
+      <GridItem>
+        <DashboardBox p="3">
+          <ExampleBox>Card 2</ExampleBox>
+        </DashboardBox>
+      </GridItem>
+      <GridItem>
+        <DashboardBox p="3">
+          <ExampleBox>Card 3</ExampleBox>
+        </DashboardBox>
+      </GridItem>
+      <GridItem colSpan={3}>
+        <DashboardBox p="3">
+          <ExampleBox>Main Content (full width)</ExampleBox>
+        </DashboardBox>
+      </GridItem>
+    </Grid>
+  </GridItem>
+  
+  <GridItem colSpan={12}>
+    <DashboardBox p="3">
+      <ExampleBox>Footer (12 columns)</ExampleBox>
+    </DashboardBox>
+  </GridItem>
+</Grid>`}</CodeBlock>
+
+        <DemoSubtitle $themeStyles={themeStyles}>Holy Grail Layout</DemoSubtitle>
+        <HolyGrailContainer direction="column" gap={16} fullWidth>
+          <FlexItem>
+            <LayoutItemBox p="3">
+              <ExampleBox $themeStyles={themeStyles}>Header</ExampleBox>
+            </LayoutItemBox>
+          </FlexItem>
+
+          <FlexItem grow={1}>
+            <Flex gap={16} fullWidth fullHeight>
+              <FlexItem basis="200px" shrink={0}>
+                <SidebarBox p="3">
+                  <ExampleBox $themeStyles={themeStyles}>Left Sidebar</ExampleBox>
+                </SidebarBox>
+              </FlexItem>
+
+              <FlexItem grow={1}>
+                <MainContentBox p="3">
+                  <ExampleBox $themeStyles={themeStyles}>Main Content</ExampleBox>
+                </MainContentBox>
+              </FlexItem>
+
+              <FlexItem basis="200px" shrink={0}>
+                <SidebarBox p="3">
+                  <ExampleBox $themeStyles={themeStyles}>Right Sidebar</ExampleBox>
+                </SidebarBox>
+              </FlexItem>
+            </Flex>
+          </FlexItem>
+
+          <FlexItem>
+            <LayoutItemBox p="3">
+              <ExampleBox $themeStyles={themeStyles}>Footer</ExampleBox>
+            </LayoutItemBox>
+          </FlexItem>
+        </HolyGrailContainer>
+
+        <CodeBlock
+          $themeStyles={themeStyles}
+        >{`<HolyGrailContainer direction="column" gap={16} fullWidth>
+  <FlexItem>
+    <LayoutItemBox p="3">
+      <ExampleBox>Header</ExampleBox>
+    </LayoutItemBox>
+  </FlexItem>
+  
+  <FlexItem grow={1}>
+    <Flex gap={16} fullWidth fullHeight>
+      <FlexItem basis="200px" shrink={0}>
+        <SidebarBox p="3">
+          <ExampleBox>Left Sidebar</ExampleBox>
+        </SidebarBox>
+      </FlexItem>
+      
+      <FlexItem grow={1}>
+        <MainContentBox p="3">
+          <ExampleBox>Main Content</ExampleBox>
+        </MainContentBox>
+      </FlexItem>
+      
+      <FlexItem basis="200px" shrink={0}>
+        <SidebarBox p="3">
+          <ExampleBox>Right Sidebar</ExampleBox>
+        </SidebarBox>
+      </FlexItem>
+    </Flex>
+  </FlexItem>
+  
+  <FlexItem>
+    <LayoutItemBox p="3">
+      <ExampleBox>Footer</ExampleBox>
+    </LayoutItemBox>
+  </FlexItem>
+</HolyGrailContainer>`}</CodeBlock>
+      </DemoSection>
+    </DemoContainer>
+  );
+};
+
+export default LayoutDemo;

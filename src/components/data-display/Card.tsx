@@ -279,3 +279,100 @@ export const Card: React.FC<CardProps> = ({
     </StyledCard>
   );
 };
+
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  `}
+`;
+
+const CardHeader = styled.div<{ variant?: string; $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing[4]};
+  border-bottom: 1px solid ${props => props.$themeStyles.colors.border.primary};
+`;
+
+const CardTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin: 0;
+  font-size: ${props => props.$themeStyles.typography.scale.lg};
+  font-weight: ${props => props.$themeStyles.typography.weights.semibold};
+`;
+
+const CardSubtitle = styled.div<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.scale.sm};
+  color: ${props => props.$themeStyles.colors.text.secondary};
+  margin-top: ${props => props.$themeStyles.spacing[1]};
+`;
+
+const CardContent = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing[4]};
+  flex: 1;
+`;
+
+const CardFooter = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing[4]};
+  border-top: 1px solid ${props => props.$themeStyles.colors.border.primary};
+`;
+
+const CardImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+`;
+
+/**
+ * Card component for displaying content in a contained format
+ */
+export const Card: React.FC<CardProps> = ({
+  children,
+  title,
+  subtitle,
+  header,
+  footer,
+  coverImage,
+  coverImageAlt = 'Card image',
+  elevation = 1,
+  variant = 'default',
+  fullWidth = false,
+  clickable = false,
+  onClick,
+  className,
+  style,
+}) => {
+  const isClickable = clickable || !!onClick;
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  return (
+    <StyledCard
+      elevation={elevation}
+      variant={variant}
+      fullWidth={fullWidth}
+      clickable={isClickable}
+      onClick={isClickable ? onClick : undefined}
+      className={className}
+      style={style}
+      $themeStyles={themeStyles}
+    >
+      {coverImage && <CardImage src={coverImage} alt={coverImageAlt} />}
+
+      {header ? (
+        <CardHeader variant={variant} $themeStyles={themeStyles}>
+          {header}
+        </CardHeader>
+      ) : (
+        (title || subtitle) && (
+          <CardHeader variant={variant} $themeStyles={themeStyles}>
+            {title && <CardTitle $themeStyles={themeStyles}>{title}</CardTitle>}
+            {subtitle && <CardSubtitle $themeStyles={themeStyles}>{subtitle}</CardSubtitle>}
+          </CardHeader>
+        )
+      )}
+
+      <CardContent $themeStyles={themeStyles}>{children}</CardContent>
+
+      {footer && <CardFooter $themeStyles={themeStyles}>{footer}</CardFooter>}
+    </StyledCard>
+  );
+};

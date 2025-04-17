@@ -22,26 +22,61 @@ export interface TabsProps {
 
 // Define theme style interface
 interface ThemeStyles {
-  spacing2: string;
-  spacing1: string;
-  spacing3: string;
-  spacing4: string;
-  spacing6: string;
-  borderPrimary: string;
-  fontSizeSm: string;
-  fontSizeLg: string;
-  fontSizeBase: string;
-  fontWeightSemibold: string;
-  fontWeightNormal: string;
-  transitions: string;
-  textPrimary: string;
-  textSecondary: string;
-  borderRadiusFull: string;
-  borderRadiusNone: string;
-  borderRadiusMd: string;
-  primary: string;
-  backgroundPaper: string;
-  backgroundSecondary: string;
+  colors: {
+    text: {
+      primary: string;
+      secondary: string;
+      disabled: string;
+    };
+    background: {
+      paper: string;
+      secondary: string;
+      hover: string;
+      active: string;
+    };
+    primary: {
+      main: string;
+      hover: string;
+      active: string;
+    };
+    border: {
+      main: string;
+    };
+  };
+  typography: {
+    sizes: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    weights: {
+      normal: string;
+      semibold: string;
+    };
+  };
+  spacing: {
+    small: {
+      x: string;
+      y: string;
+    };
+    medium: {
+      x: string;
+      y: string;
+    };
+    large: {
+      x: string;
+      y: string;
+    };
+    content: string;
+  };
+  borderRadius: {
+    none: string;
+    md: string;
+    full: string;
+  };
+  transitions: {
+    default: string;
+  };
 }
 
 // Function to create ThemeStyles from DirectThemeProvider
@@ -49,26 +84,61 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
   const { getColor, getSpacing, getBorderRadius, getTypography, getTransition } = themeContext;
 
   return {
-    spacing1: getSpacing('1', '0.25rem'),
-    spacing2: getSpacing('2', '0.5rem'),
-    spacing3: getSpacing('3', '0.75rem'),
-    spacing4: getSpacing('4', '1rem'),
-    spacing6: getSpacing('6', '1.5rem'),
-    borderPrimary: getColor('border.primary', '#e0e0e0'),
-    fontSizeSm: getTypography('scale.sm', '0.875rem') as string,
-    fontSizeLg: getTypography('scale.lg', '1.25rem') as string,
-    fontSizeBase: getTypography('scale.base', '1rem') as string,
-    fontWeightSemibold: getTypography('weights.semibold', '600') as string,
-    fontWeightNormal: getTypography('weights.normal', '400') as string,
-    transitions: getTransition('normal', '0.2s ease'),
-    textPrimary: getColor('text.primary', '#333333'),
-    textSecondary: getColor('text.secondary', '#666666'),
-    borderRadiusFull: getBorderRadius('full', '9999px'),
-    borderRadiusNone: getBorderRadius('none', '0'),
-    borderRadiusMd: getBorderRadius('md', '0.375rem'),
-    primary: getColor('primary', '#3366CC'),
-    backgroundPaper: getColor('background.paper', '#ffffff'),
-    backgroundSecondary: getColor('background.secondary', '#f5f5f5'),
+    colors: {
+      text: {
+        primary: getColor('text.primary', '#333333'),
+        secondary: getColor('text.secondary', '#666666'),
+        disabled: getColor('text.disabled', '#999999'),
+      },
+      background: {
+        paper: getColor('background.paper', '#ffffff'),
+        secondary: getColor('background.secondary', '#f5f5f5'),
+        hover: getColor('action.hover', '#f5f5f5'),
+        active: getColor('action.active', '#e0e0e0'),
+      },
+      primary: {
+        main: getColor('primary.main', '#3366CC'),
+        hover: getColor('primary.light', '#4477DD'),
+        active: getColor('primary.dark', '#2255BB'),
+      },
+      border: {
+        main: getColor('border.primary', '#e0e0e0'),
+      },
+    },
+    typography: {
+      sizes: {
+        small: getTypography('size.small', '0.875rem') as string,
+        medium: getTypography('size.medium', '1rem') as string,
+        large: getTypography('size.large', '1.25rem') as string,
+      },
+      weights: {
+        normal: getTypography('weights.normal', '400') as string,
+        semibold: getTypography('weights.semibold', '600') as string,
+      },
+    },
+    spacing: {
+      small: {
+        x: getSpacing('2', '0.5rem'),
+        y: getSpacing('1', '0.25rem'),
+      },
+      medium: {
+        x: getSpacing('3', '0.75rem'),
+        y: getSpacing('2', '0.5rem'),
+      },
+      large: {
+        x: getSpacing('4', '1rem'),
+        y: getSpacing('3', '0.75rem'),
+      },
+      content: getSpacing('4', '1rem'),
+    },
+    borderRadius: {
+      none: getBorderRadius('none', '0'),
+      md: getBorderRadius('md', '0.375rem'),
+      full: getBorderRadius('full', '9999px'),
+    },
+    transitions: {
+      default: getTransition('normal', '0.2s ease'),
+    },
   };
 }
 
@@ -79,10 +149,10 @@ const TabsContainer = styled.div<{ fullWidth?: boolean }>`
 
 const TabsList = styled.div<{ variant: TabsProps['variant']; $themeStyles: ThemeStyles }>`
   display: flex;
-  gap: ${props => props.$themeStyles.spacing2};
+  gap: ${props => props.$themeStyles.spacing.medium.x};
   border-bottom: ${props =>
-    props.variant === 'underline' ? `1px solid ${props.$themeStyles.borderPrimary}` : 'none'};
-  margin-bottom: ${props => props.$themeStyles.spacing4};
+    props.variant === 'underline' ? `1px solid ${props.$themeStyles.colors.border.main}` : 'none'};
+  margin-bottom: ${props => props.$themeStyles.spacing.content};
 `;
 
 const TabButton = styled.button<{
@@ -93,77 +163,78 @@ const TabButton = styled.button<{
   $themeStyles: ThemeStyles;
 }>`
   padding: ${props => {
-    switch (props.size) {
-      case 'small':
-        return `${props.$themeStyles.spacing1} ${props.$themeStyles.spacing2}`;
-      case 'large':
-        return `${props.$themeStyles.spacing3} ${props.$themeStyles.spacing4}`;
-      default:
-        return `${props.$themeStyles.spacing2} ${props.$themeStyles.spacing3}`;
-    }
+    const spacing = props.$themeStyles.spacing[props.size || 'medium'];
+    return `${spacing.y} ${spacing.x}`;
   }};
-  font-size: ${props => {
-    switch (props.size) {
-      case 'small':
-        return props.$themeStyles.fontSizeSm;
-      case 'large':
-        return props.$themeStyles.fontSizeLg;
-      default:
-        return props.$themeStyles.fontSizeBase;
-    }
-  }};
+  font-size: ${props => props.$themeStyles.typography.sizes[props.size || 'medium']};
   font-weight: ${props =>
-    props.active ? props.$themeStyles.fontWeightSemibold : props.$themeStyles.fontWeightNormal};
+    props.active
+      ? props.$themeStyles.typography.weights.semibold
+      : props.$themeStyles.typography.weights.normal};
   border: none;
   background: none;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   opacity: ${props => (props.disabled ? 0.5 : 1)};
-  transition: all ${props => props.$themeStyles.transitions};
+  transition: all ${props => props.$themeStyles.transitions.default};
   color: ${props =>
-    props.active ? props.$themeStyles.textPrimary : props.$themeStyles.textSecondary};
-  border-radius: ${props => {
-    switch (props.variant) {
-      case 'pills':
-        return props.$themeStyles.borderRadiusFull;
-      default:
-        return props.$themeStyles.borderRadiusNone;
-    }
-  }};
+    props.disabled
+      ? props.$themeStyles.colors.text.disabled
+      : props.active
+      ? props.$themeStyles.colors.text.primary
+      : props.$themeStyles.colors.text.secondary};
+  border-radius: ${props =>
+    props.variant === 'pills'
+      ? props.$themeStyles.borderRadius.full
+      : props.$themeStyles.borderRadius.none};
   background-color: ${props => {
+    if (props.disabled) return 'transparent';
     if (props.active) {
       switch (props.variant) {
         case 'pills':
-          return props.$themeStyles.primary;
+          return props.$themeStyles.colors.primary.main;
         case 'underline':
           return 'transparent';
         default:
-          return props.$themeStyles.backgroundPaper;
+          return props.$themeStyles.colors.background.paper;
       }
     }
     return 'transparent';
   }};
   border-bottom: ${props => {
     if (props.variant === 'underline' && props.active) {
-      return `2px solid ${props.$themeStyles.primary}`;
+      return `2px solid ${props.$themeStyles.colors.primary.main}`;
     }
     return 'none';
   }};
 
-  &:hover {
-    color: ${props => props.$themeStyles.primary};
+  &:hover:not(:disabled) {
+    color: ${props =>
+      props.active
+        ? props.$themeStyles.colors.primary.hover
+        : props.$themeStyles.colors.primary.main};
     background-color: ${props => {
       if (props.variant === 'pills') {
-        return props.active ? props.$themeStyles.primary : props.$themeStyles.backgroundSecondary;
+        return props.active
+          ? props.$themeStyles.colors.primary.hover
+          : props.$themeStyles.colors.background.hover;
       }
       return 'transparent';
     }};
   }
+
+  &:active:not(:disabled) {
+    color: ${props => props.$themeStyles.colors.primary.active};
+    background-color: ${props =>
+      props.variant === 'pills'
+        ? props.$themeStyles.colors.primary.active
+        : props.$themeStyles.colors.background.active};
+  }
 `;
 
 const TabContent = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing4};
-  background-color: ${props => props.$themeStyles.backgroundPaper};
-  border-radius: ${props => props.$themeStyles.borderRadiusMd};
+  padding: ${props => props.$themeStyles.spacing.content};
+  background-color: ${props => props.$themeStyles.colors.background.paper};
+  border-radius: ${props => props.$themeStyles.borderRadius.md};
 `;
 
 /**
@@ -179,7 +250,7 @@ export const Tabs: React.FC<TabsProps> = ({
   fullWidth = false,
   className,
 }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
+  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
   const themeContext = useDirectTheme();
   const themeStyles = createThemeStyles(themeContext);
 

@@ -2,6 +2,228 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
+// Theme styles interface
+interface ThemeStyles {
+  colors: {
+    primary: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    secondary: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+      disabled: string;
+    };
+    background: {
+      default: string;
+      paper: string;
+      hover: string;
+      selected: string;
+      disabled: string;
+    };
+    border: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    surface: {
+      main: string;
+      hover: string;
+    };
+  };
+  typography: {
+    family: string;
+    size: {
+      xs: string;
+      sm: string;
+      base: string;
+      lg: string;
+      xl: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+      semibold: number;
+      bold: number;
+    };
+    lineHeight: {
+      none: number;
+      tight: number;
+      normal: number;
+      relaxed: number;
+    };
+  };
+  spacing: {
+    unit: string;
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  borders: {
+    width: {
+      thin: string;
+      normal: string;
+      thick: string;
+    };
+    radius: {
+      none: string;
+      small: string;
+      medium: string;
+      large: string;
+      full: string;
+    };
+    style: {
+      solid: string;
+      dashed: string;
+    };
+  };
+  shadows: {
+    none: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  animation: {
+    duration: {
+      fastest: string;
+      fast: string;
+      normal: string;
+      slow: string;
+      slowest: string;
+    };
+    easing: {
+      linear: string;
+      easeIn: string;
+      easeOut: string;
+      easeInOut: string;
+    };
+  };
+  zIndex: {
+    sticky: number;
+  };
+}
+
+// Function to create theme styles
+const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+  return {
+    colors: {
+      primary: {
+        main: theme.getColor('primary.main', '#1976d2'),
+        light: theme.getColor('primary.light', '#42a5f5'),
+        dark: theme.getColor('primary.dark', '#1565c0'),
+      },
+      secondary: {
+        main: theme.getColor('secondary.main', '#9c27b0'),
+        light: theme.getColor('secondary.light', '#ba68c8'),
+        dark: theme.getColor('secondary.dark', '#7b1fa2'),
+      },
+      text: {
+        primary: theme.getColor('text.primary', '#1f2937'),
+        secondary: theme.getColor('text.secondary', '#4b5563'),
+        disabled: theme.getColor('text.disabled', '#9ca3af'),
+      },
+      background: {
+        default: theme.getColor('background.default', '#ffffff'),
+        paper: theme.getColor('background.paper', '#ffffff'),
+        hover: theme.getColor('background.hover', '#f3f4f6'),
+        selected: theme.getColor('background.selected', '#e5e7eb'),
+        disabled: theme.getColor('background.disabled', '#f9fafb'),
+      },
+      border: {
+        main: theme.getColor('border.main', '#e5e7eb'),
+        light: theme.getColor('border.light', '#f3f4f6'),
+        dark: theme.getColor('border.dark', '#d1d5db'),
+      },
+      surface: {
+        main: theme.getColor('surface.main', '#f9fafb'),
+        hover: theme.getColor('surface.hover', '#f3f4f6'),
+      },
+    },
+    typography: {
+      family: String(theme.getTypography('family.base', 'system-ui')),
+      size: {
+        xs: String(theme.getTypography('scale.xs', '0.75rem')),
+        sm: String(theme.getTypography('scale.sm', '0.875rem')),
+        base: String(theme.getTypography('scale.base', '1rem')),
+        lg: String(theme.getTypography('scale.lg', '1.125rem')),
+        xl: String(theme.getTypography('scale.xl', '1.25rem')),
+      },
+      weight: {
+        normal: Number(theme.getTypography('weights.normal', 400)),
+        medium: Number(theme.getTypography('weights.medium', 500)),
+        semibold: Number(theme.getTypography('weights.semibold', 600)),
+        bold: Number(theme.getTypography('weights.bold', 700)),
+      },
+      lineHeight: {
+        none: 1,
+        tight: 1.25,
+        normal: 1.5,
+        relaxed: 1.75,
+      },
+    },
+    spacing: {
+      unit: theme.getSpacing('1', '0.25rem'),
+      xs: theme.getSpacing('2', '0.5rem'),
+      sm: theme.getSpacing('3', '0.75rem'),
+      md: theme.getSpacing('4', '1rem'),
+      lg: theme.getSpacing('6', '1.5rem'),
+      xl: theme.getSpacing('8', '2rem'),
+    },
+    borders: {
+      width: {
+        thin: '1px',
+        normal: '2px',
+        thick: '3px',
+      },
+      radius: {
+        none: '0',
+        small: theme.getBorderRadius('sm', '0.25rem'),
+        medium: theme.getBorderRadius('md', '0.375rem'),
+        large: theme.getBorderRadius('lg', '0.5rem'),
+        full: '9999px',
+      },
+      style: {
+        solid: 'solid',
+        dashed: 'dashed',
+      },
+    },
+    shadows: {
+      none: 'none',
+      sm: theme.getShadow('sm', '0 1px 2px rgba(0, 0, 0, 0.05)'),
+      md: theme.getShadow('md', '0 4px 6px -1px rgba(0, 0, 0, 0.1)'),
+      lg: theme.getShadow('lg', '0 10px 15px -3px rgba(0, 0, 0, 0.1)'),
+      xl: theme.getShadow('xl', '0 20px 25px -5px rgba(0, 0, 0, 0.1)'),
+    },
+    animation: {
+      duration: {
+        fastest: '100ms',
+        fast: '150ms',
+        normal: '200ms',
+        slow: '300ms',
+        slowest: '400ms',
+      },
+      easing: {
+        linear: 'linear',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+    },
+    zIndex: {
+      sticky: 10,
+    },
+  };
+};
+
 // Types
 export interface Column<T = any> {
   id: string;
@@ -71,6 +293,51 @@ export interface DataGridProps<T = any> {
   testId?: string;
 }
 
+// Styled component interfaces
+interface StyledComponentProps {
+  $themeStyles: ThemeStyles;
+}
+
+interface PageSizeSelectorProps extends StyledComponentProps {
+  children: React.ReactNode;
+}
+
+interface PageSizeLabelProps extends StyledComponentProps {
+  children: React.ReactNode;
+}
+
+interface SelectWrapperProps extends StyledComponentProps {
+  children: React.ReactNode;
+}
+
+interface PageSizeSelectProps extends StyledComponentProps {
+  value: number;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children: React.ReactNode;
+}
+
+interface PaginationControlsProps extends StyledComponentProps {
+  children: React.ReactNode;
+}
+
+interface PaginationInfoProps extends StyledComponentProps {
+  children: React.ReactNode;
+}
+
+interface PaginationButtonProps extends StyledComponentProps {
+  onClick: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+}
+
+interface FilterInputProps {
+  $themeStyles: ThemeStyles;
+  type: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+}
+
 // DataGrid component
 function DataGrid<T extends Record<string, any> = any>({
   data,
@@ -92,8 +359,8 @@ function DataGrid<T extends Record<string, any> = any>({
   loadingComponent,
   testId,
 }: DataGridProps<T>): React.ReactElement {
-  // Access the theme
   const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
 
   // Add gridRef for container reference
   const gridRef = useRef<HTMLDivElement>(null);
@@ -232,74 +499,100 @@ function DataGrid<T extends Record<string, any> = any>({
     return processedData.slice(startIndex, endIndex);
   }, [processedData, startIndex, endIndex]);
 
-  // Styled components with inline theme access
-  const GridContainer = styled.div<{ height?: string }>`
+  // Styled components
+  const GridContainer = styled.div<{ height?: string; $themeStyles: ThemeStyles }>`
     width: 100%;
-    border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    border-radius: 4px;
+    border: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    border-radius: ${props => props.$themeStyles.borders.radius.medium};
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: ${props => props.height || 'auto'};
+    font-family: ${props => props.$themeStyles.typography.family};
   `;
 
-  const GridHeader = styled.div<{ stickyHeader?: boolean }>`
+  const GridHeader = styled.div<{ stickyHeader?: boolean; $themeStyles: ThemeStyles }>`
     display: flex;
     align-items: center;
-    padding: 16px;
-    background-color: ${() => theme.getColor('background', '#ffffff')};
-    border-bottom: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
+    padding: ${props => props.$themeStyles.spacing.sm} ${props => props.$themeStyles.spacing.md};
+    background-color: ${props => props.$themeStyles.colors.surface.main};
+    border-bottom: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
     ${props =>
       props.stickyHeader &&
       `
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: ${props.$themeStyles.zIndex.sticky};
     `}
   `;
 
-  const FilterSection = styled.div`
+  const FilterSection = styled.div<{ $themeStyles: ThemeStyles }>`
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: ${props => props.$themeStyles.spacing.sm};
+    margin-bottom: ${props => props.$themeStyles.spacing.sm};
+    padding: ${props => props.$themeStyles.spacing.sm};
+    border-bottom: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
   `;
 
-  const FilterItem = styled.div`
+  const FilterItem = styled.div<{ $themeStyles: ThemeStyles }>`
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: ${props => props.$themeStyles.spacing.sm};
   `;
 
-  const FilterLabel = styled.span`
-    font-size: 14px;
-    font-weight: 500;
+  const FilterLabel = styled.span<{ $themeStyles: ThemeStyles }>`
+    font-size: ${props => props.$themeStyles.typography.size.sm};
+    font-weight: ${props => props.$themeStyles.typography.weight.medium};
+    color: ${props => props.$themeStyles.colors.text.secondary};
   `;
 
-  const FilterInput = styled.input`
-    padding: 8px;
-    border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    border-radius: 4px;
+  const FilterInput = styled.input<FilterInputProps>`
+    padding: ${props => props.$themeStyles.spacing.sm};
+    border: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    border-radius: ${props => props.$themeStyles.borders.radius.small};
     min-width: 150px;
+    font-family: ${props => props.$themeStyles.typography.family};
+    font-size: ${props => props.$themeStyles.typography.size.sm};
+    color: ${props => props.$themeStyles.colors.text.primary};
+    transition: all ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
 
     &:focus {
       outline: none;
-      border-color: ${() => theme.getColor('primary', '#1976d2')};
+      border-color: ${props => props.$themeStyles.colors.primary.main};
+      box-shadow: 0 0 0 2px ${props => props.$themeStyles.colors.primary.light}33;
+    }
+
+    &:hover {
+      border-color: ${props => props.$themeStyles.colors.border.dark};
+    }
+
+    &:disabled {
+      background-color: ${props => props.$themeStyles.colors.background.disabled};
+      color: ${props => props.$themeStyles.colors.text.disabled};
+      cursor: not-allowed;
     }
   `;
 
-  const TableContainer = styled.div`
+  const TableContainer = styled.div<{ $themeStyles: ThemeStyles }>`
     overflow: auto;
     flex: 1;
   `;
 
-  const Table = styled.table`
+  const Table = styled.table<{ $themeStyles: ThemeStyles }>`
     width: 100%;
     border-collapse: collapse;
   `;
 
-  const TableHead = styled.thead`
-    background-color: ${() => theme.getColor('surface', '#f5f5f5')};
+  const TableHead = styled.thead<{ $themeStyles: ThemeStyles; stickyHeader?: boolean }>`
+    background-color: ${props => props.$themeStyles.colors.surface.main};
+    ${props =>
+      props.stickyHeader &&
+      `
+      position: sticky;
+      top: 0;
+      z-index: ${props.$themeStyles.zIndex.sticky};
+    `}
   `;
 
   interface TableHeadCellProps {
@@ -311,9 +604,9 @@ function DataGrid<T extends Record<string, any> = any>({
     sortDirection?: 'asc' | 'desc';
   }
 
-  const TableHeadCell = styled.th<TableHeadCellProps>`
-    padding: 12px 16px;
-    font-weight: 600;
+  const TableHeadCell = styled.th<TableHeadCellProps & { $themeStyles: ThemeStyles }>`
+    padding: ${props => props.$themeStyles.spacing.sm} ${props => props.$themeStyles.spacing.md};
+    font-weight: ${props => props.$themeStyles.typography.weight.semibold};
     text-align: left;
     position: relative;
     width: ${props => props.width || 'auto'};
@@ -322,12 +615,15 @@ function DataGrid<T extends Record<string, any> = any>({
     cursor: ${props => (props.sortable ? 'pointer' : 'default')};
     user-select: none;
     white-space: nowrap;
+    color: ${props => props.$themeStyles.colors.text.primary};
+    border-bottom: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    transition: background-color ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
 
     &:hover {
       ${props =>
         props.sortable &&
         `
-        background-color: ${theme.getColor('background.hover', '#f0f0f0')};
+        background-color: ${props.$themeStyles.colors.surface.hover};
       `}
     }
 
@@ -336,13 +632,14 @@ function DataGrid<T extends Record<string, any> = any>({
         props.isSorted &&
         `
         content: '${props.sortDirection === 'asc' ? '▲' : '▼'}';
-        margin-left: 8px;
-        font-size: 12px;
+        margin-left: ${props.$themeStyles.spacing.xs};
+        font-size: ${props.$themeStyles.typography.size.xs};
+        color: ${props.$themeStyles.colors.primary.main};
       `}
     }
   `;
 
-  const TableBody = styled.tbody``;
+  const TableBody = styled.tbody<{ $themeStyles: ThemeStyles }>``;
 
   interface TableRowProps {
     highlightOnHover?: boolean;
@@ -351,19 +648,20 @@ function DataGrid<T extends Record<string, any> = any>({
     clickable?: boolean;
   }
 
-  const TableRow = styled.tr<TableRowProps>`
+  const TableRow = styled.tr<TableRowProps & { $themeStyles: ThemeStyles }>`
     background-color: ${props => {
       if (props.striped && props.isEven) {
-        return theme.getColor('surface', '#f5f5f5');
+        return props.$themeStyles.colors.surface.main;
       }
-      return theme.getColor('background', '#ffffff');
+      return props.$themeStyles.colors.background.default;
     }};
+    transition: background-color ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
 
     ${props =>
       props.highlightOnHover &&
       `
       &:hover {
-        background-color: ${theme.getColor('background.hover', '#f0f0f0')};
+        background-color: ${props.$themeStyles.colors.background.hover};
       }
     `}
 
@@ -378,72 +676,103 @@ function DataGrid<T extends Record<string, any> = any>({
     dense?: boolean;
   }
 
-  const TableCell = styled.td<TableCellProps>`
-    padding: ${props => (props.dense ? '8px 16px' : '12px 16px')};
-    border-bottom: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
+  const TableCell = styled.td<TableCellProps & { $themeStyles: ThemeStyles }>`
+    padding: ${props => (props.dense ? props.$themeStyles.spacing.sm : props.$themeStyles.spacing.md)} ${props => props.$themeStyles.spacing.md};
+    border-bottom: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    color: ${props => props.$themeStyles.colors.text.primary};
+    font-size: ${props => props.$themeStyles.typography.size.sm};
   `;
 
-  const Pagination = styled.div`
+  const Pagination = styled.div<{ $themeStyles: ThemeStyles }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    border-top: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    background-color: ${() => theme.getColor('background', '#ffffff')};
+    padding: ${props => props.$themeStyles.spacing.sm} ${props => props.$themeStyles.spacing.md};
+    border-top: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    background-color: ${props => props.$themeStyles.colors.background.default};
   `;
 
-  const PageSizeSelector = styled.div`
+  const PageSizeSelector = styled.div<PageSizeSelectorProps>`
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: ${props => props.$themeStyles.spacing.sm};
   `;
 
-  const PageSizeLabel = styled.span`
-    font-size: 14px;
+  const PageSizeLabel = styled.span<PageSizeLabelProps>`
+    font-size: ${props => props.$themeStyles.typography.size.sm};
+    color: ${props => props.$themeStyles.colors.text.secondary};
   `;
 
-  const SelectWrapper = styled.div`
+  const SelectWrapper = styled.div<SelectWrapperProps>`
     position: relative;
   `;
 
-  const PageSizeSelect = styled.select`
-    padding: 6px 8px;
-    border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    border-radius: 4px;
-    background-color: ${() => theme.getColor('background', '#ffffff')};
+  const PageSizeSelect = styled.select<PageSizeSelectProps>`
+    padding: ${props => props.$themeStyles.spacing.xs} ${props => props.$themeStyles.spacing.sm};
+    border: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    border-radius: ${props => props.$themeStyles.borders.radius.small};
+    background-color: ${props => props.$themeStyles.colors.background.default};
+    color: ${props => props.$themeStyles.colors.text.primary};
+    font-family: ${props => props.$themeStyles.typography.family};
+    font-size: ${props => props.$themeStyles.typography.size.sm};
     min-width: 80px;
+    cursor: pointer;
+    transition: all ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
 
     &:focus {
       outline: none;
-      border-color: ${() => theme.getColor('primary', '#1976d2')};
+      border-color: ${props => props.$themeStyles.colors.primary.main};
+      box-shadow: 0 0 0 2px ${props => props.$themeStyles.colors.primary.light}33;
     }
-  `;
-
-  const PaginationControls = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  `;
-
-  const PaginationInfo = styled.span`
-    font-size: 14px;
-  `;
-
-  const PaginationButton = styled.button<{ disabled?: boolean }>`
-    padding: 6px 10px;
-    border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    border-radius: 4px;
-    background-color: ${() => theme.getColor('background', '#ffffff')};
-    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-    opacity: ${props => (props.disabled ? 0.5 : 1)};
 
     &:hover:not(:disabled) {
-      background-color: ${() => theme.getColor('background.hover', '#f0f0f0')};
+      border-color: ${props => props.$themeStyles.colors.border.dark};
+    }
+
+    &:disabled {
+      background-color: ${props => props.$themeStyles.colors.background.disabled};
+      color: ${props => props.$themeStyles.colors.text.disabled};
+      cursor: not-allowed;
+    }
+  `;
+
+  const PaginationControls = styled.div<PaginationControlsProps>`
+    display: flex;
+    align-items: center;
+    gap: ${props => props.$themeStyles.spacing.sm};
+  `;
+
+  const PaginationInfo = styled.span<PaginationInfoProps>`
+    font-size: ${props => props.$themeStyles.typography.size.sm};
+    color: ${props => props.$themeStyles.colors.text.secondary};
+  `;
+
+  const PaginationButton = styled.button<PaginationButtonProps>`
+    padding: ${props => props.$themeStyles.spacing.xs} ${props => props.$themeStyles.spacing.sm};
+    border: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid} ${props => props.$themeStyles.colors.border.main};
+    border-radius: ${props => props.$themeStyles.borders.radius.small};
+    background-color: ${props => props.$themeStyles.colors.background.default};
+    color: ${props => props.$themeStyles.colors.text.primary};
+    font-family: ${props => props.$themeStyles.typography.family};
+    font-size: ${props => props.$themeStyles.typography.size.sm};
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+    opacity: ${props => (props.disabled ? 0.5 : 1)};
+    transition: all ${props => props.$themeStyles.animation.duration.fast} ${props => props.$themeStyles.animation.easing.easeInOut};
+
+    &:hover:not(:disabled) {
+      background-color: ${props => props.$themeStyles.colors.background.hover};
+      border-color: ${props => props.$themeStyles.colors.border.dark};
     }
 
     &:focus {
       outline: none;
-      border-color: ${() => theme.getColor('primary', '#1976d2')};
+      border-color: ${props => props.$themeStyles.colors.primary.main};
+      box-shadow: 0 0 0 2px ${props => props.$themeStyles.colors.primary.light}33;
+    }
+
+    &:disabled {
+      background-color: ${props => props.$themeStyles.colors.background.disabled};
+      color: ${props => props.$themeStyles.colors.text.disabled};
     }
   `;
 
@@ -499,38 +828,89 @@ function DataGrid<T extends Record<string, any> = any>({
 
   // Filter components
   const renderFilters = () => {
-    if (!enableFiltering) return null;
-
-    const filterableColumns = columns.filter(col => col.filterable !== false);
-    if (filterableColumns.length === 0) return null;
+    if (!enableFiltering || columns.length === 0) return null;
 
     return (
-      <FilterSection>
-        {filterableColumns.map(column => {
-          const FilterComponent = column.filterComponent || DefaultFilter;
-
-          return (
-            <FilterItem key={column.id}>
-              <FilterLabel>{column.header}:</FilterLabel>
-              <FilterComponent
-                column={column}
-                value={filters[column.id] || ''}
-                onChange={value => handleFilterChange(column.id, value)}
-              />
+      <FilterSection $themeStyles={themeStyles}>
+        {columns
+          .filter(column => column.filterable !== false)
+          .map(column => (
+            <FilterItem key={column.id} $themeStyles={themeStyles}>
+              <FilterLabel $themeStyles={themeStyles}>{column.header}</FilterLabel>
+              {column.filterComponent ? (
+                <column.filterComponent
+                  column={column}
+                  value={filters[column.id] || ''}
+                  onChange={value => handleFilterChange(column.id, value)}
+                />
+              ) : (
+                <FilterInput
+                  $themeStyles={themeStyles}
+                  type="text"
+                  value={filters[column.id] || ''}
+                  onChange={e => handleFilterChange(column.id, e.target.value)}
+                  placeholder={`Filter by ${column.header.toLowerCase()}`}
+                />
+              )}
             </FilterItem>
-          );
-        })}
+          ))}
       </FilterSection>
     );
   };
 
-  return (
-    <GridContainer ref={gridRef} className={className} data-testid={testId} style={{ height }}>
-      {renderFilters()}
+  const renderPagination = () => {
+    const totalPages = Math.ceil(processedData.length / pageSize);
+    const startIndex = currentPage * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, processedData.length);
 
-      <TableContainer>
-        <Table>
-          <TableHead>
+    return (
+      <Pagination $themeStyles={themeStyles}>
+        <PageSizeSelector $themeStyles={themeStyles}>
+          <PageSizeLabel $themeStyles={themeStyles}>Rows per page:</PageSizeLabel>
+          <SelectWrapper $themeStyles={themeStyles}>
+            <PageSizeSelect
+              $themeStyles={themeStyles}
+              value={pageSize}
+              onChange={handlePageSizeChange}
+            >
+              {pageSizeOptions.map(size => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </PageSizeSelect>
+          </SelectWrapper>
+        </PageSizeSelector>
+
+        <PaginationControls $themeStyles={themeStyles}>
+          <PaginationInfo $themeStyles={themeStyles}>
+            {startIndex + 1}-{endIndex} of {processedData.length}
+          </PaginationInfo>
+          <PaginationButton
+            $themeStyles={themeStyles}
+            onClick={handlePreviousPage}
+            disabled={currentPage === 0}
+          >
+            Previous
+          </PaginationButton>
+          <PaginationButton
+            $themeStyles={themeStyles}
+            onClick={() => handleNextPage(totalPages)}
+            disabled={currentPage >= totalPages - 1}
+          >
+            Next
+          </PaginationButton>
+        </PaginationControls>
+      </Pagination>
+    );
+  };
+
+  return (
+    <GridContainer height={height} $themeStyles={themeStyles} className={className} data-testid={testId}>
+      {renderFilters()}
+      <TableContainer $themeStyles={themeStyles}>
+        <Table $themeStyles={themeStyles}>
+          <TableHead $themeStyles={themeStyles} stickyHeader={stickyHeader}>
             <tr>
               {columns.map(column => (
                 <TableHeadCell
@@ -541,86 +921,38 @@ function DataGrid<T extends Record<string, any> = any>({
                   sortable={enableSorting && column.sortable !== false}
                   isSorted={sortConfig?.key === column.id}
                   sortDirection={sortConfig?.key === column.id ? sortConfig.direction : undefined}
-                  onClick={() => {
-                    if (enableSorting && column.sortable !== false) {
-                      handleSort(column.id);
-                    }
-                  }}
+                  onClick={() => handleSort(column.id)}
+                  $themeStyles={themeStyles}
                 >
                   {column.header}
                 </TableHeadCell>
               ))}
             </tr>
           </TableHead>
-
-          <TableBody>
-            {paginatedData.length > 0 ? (
-              paginatedData.map((row, rowIndex) => (
-                <TableRow
-                  key={rowIndex}
-                  isEven={rowIndex % 2 === 0}
-                  highlightOnHover={highlightOnHover}
-                  striped={striped}
-                  clickable={!!onRowClick}
-                  onClick={() => onRowClick && onRowClick(row)}
-                >
-                  {columns.map(column => (
-                    <TableCell key={column.id} dense={dense}>
-                      {column.renderCell
-                        ? column.renderCell(getRowValue(row, column.accessor), row)
-                        : getRowValue(row, column.accessor)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={columns.length}>
-                  <NoDataMessage>{noDataMessage}</NoDataMessage>
-                </td>
-              </tr>
-            )}
+          <TableBody $themeStyles={themeStyles}>
+            {paginatedData.map((row, index) => (
+              <TableRow
+                key={index}
+                isEven={index % 2 === 0}
+                highlightOnHover={highlightOnHover}
+                striped={striped}
+                clickable={!!onRowClick}
+                onClick={() => onRowClick?.(row)}
+                $themeStyles={themeStyles}
+              >
+                {columns.map(column => (
+                  <TableCell key={column.id} dense={dense} $themeStyles={themeStyles}>
+                    {column.renderCell
+                      ? column.renderCell(getRowValue(row, column.accessor), row)
+                      : getRowValue(row, column.accessor)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      {totalPages > 0 && (
-        <Pagination>
-          <PageSizeSelector>
-            <PageSizeLabel>Rows per page:</PageSizeLabel>
-            <SelectWrapper>
-              <PageSizeSelect value={pageSize} onChange={handlePageSizeChange}>
-                {pageSizeOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </PageSizeSelect>
-            </SelectWrapper>
-          </PageSizeSelector>
-
-          <PaginationControls>
-            <PaginationInfo>
-              {startIndex + 1}-{endIndex} of {totalItems}
-            </PaginationInfo>
-            <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 0}>
-              Previous
-            </PaginationButton>
-            <PaginationButton
-              onClick={() => handleNextPage(totalPages)}
-              disabled={currentPage === totalPages - 1}
-            >
-              Next
-            </PaginationButton>
-          </PaginationControls>
-        </Pagination>
-      )}
-
-      {loading && (
-        <LoadingOverlay data-testid="loading-overlay">
-          {loadingComponent || <LoadingSpinner />}
-        </LoadingOverlay>
-      )}
+      {renderPagination()}
     </GridContainer>
   );
 }

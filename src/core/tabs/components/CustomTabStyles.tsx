@@ -7,45 +7,92 @@ import {
   TabThemeExtension,
 } from '../theme/tab-theme-extension';
 import { ThemeProvider } from '@emotion/react';
-import { useTheme } from '../../theme';
+import { useDirectTheme } from '../../theme/DirectThemeProvider';
 import styled from '@emotion/styled';
 
+interface ThemeStyles {
+  colors: {
+    background: {
+      primary: string;
+      secondary: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    border: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      base: string;
+      small: string;
+    };
+    fontWeight: {
+      normal: number;
+      medium: number;
+      bold: number;
+    };
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+  };
+  borders: {
+    radius: {
+      sm: string;
+      md: string;
+    };
+  };
+}
+
 // Styled components for the custom tab styles page
-const Container = styled.div`
-  padding: 20px;
+const Container = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.lg};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background.primary};
+  color: ${({ $themeStyles }) => $themeStyles.colors.text.primary};
+  font-family: ${({ $themeStyles }) => $themeStyles.typography.fontFamily};
 `;
 
-const Layout = styled.div`
+const Layout = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
-  margin-top: 20px;
+  gap: ${({ $themeStyles }) => $themeStyles.spacing.lg};
+  margin-top: ${({ $themeStyles }) => $themeStyles.spacing.lg};
 `;
 
-const CustomizerPanel = styled.div`
+const CustomizerPanel = styled.div<{ $themeStyles: ThemeStyles }>`
   flex: 1;
   min-width: 300px;
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.md};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background.secondary};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.md};
 `;
 
-const PreviewPanel = styled.div`
+const PreviewPanel = styled.div<{ $themeStyles: ThemeStyles }>`
   flex: 2;
   min-width: 500px;
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.md};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background.secondary};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.md};
 `;
 
-const CodeExample = styled.div`
-  margin-top: 30px;
-  padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+const CodeExample = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${({ $themeStyles }) => $themeStyles.spacing.lg};
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.md};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background.primary};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.sm};
 `;
 
-const CodeBlock = styled.pre`
+const CodeBlock = styled.pre<{ $themeStyles: ThemeStyles }>`
   overflow-x: auto;
-  padding: 15px;
-  background-color: #f0f0f0;
-  border-radius: 4px;
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.md};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background.secondary};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.sm};
   font-family: monospace;
-  font-size: 14px;
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.fontSize.small};
 `;
 
 /**
@@ -53,19 +100,56 @@ const CodeBlock = styled.pre`
  * to showcase custom tab styles in action
  */
 export const CustomTabStyles: React.FC = () => {
-  const themeContext = useTheme();
+  const { theme, getColor, getTypography, getSpacing, getBorderRadius } = useDirectTheme();
   const [customTheme, setCustomTheme] = useState<any>({
-    currentTheme: themeContext.currentTheme,
+    currentTheme: theme,
     tabs: defaultTabThemeExtension.tabs,
   });
 
-  const handleApplyTheme = (newTheme: any) => {
+  const themeStyles: ThemeStyles = {
+    colors: {
+      background: {
+        primary: getColor('background.main'),
+        secondary: getColor('background.light'),
+      },
+      text: {
+        primary: getColor('text.primary'),
+        secondary: getColor('text.secondary'),
+      },
+      border: getColor('border'),
+    },
+    typography: {
+      fontFamily: String(getTypography('family.base')),
+      fontSize: {
+        base: String(getTypography('size.base')),
+        small: String(getTypography('size.sm')),
+      },
+      fontWeight: {
+        normal: Number(getTypography('weight.normal')),
+        medium: Number(getTypography('weight.medium')),
+        bold: Number(getTypography('weight.bold')),
+      },
+    },
+    spacing: {
+      xs: getSpacing('1'),
+      sm: getSpacing('2'),
+      md: getSpacing('4'),
+      lg: getSpacing('6'),
+    },
+    borders: {
+      radius: {
+        sm: getBorderRadius('sm'),
+        md: getBorderRadius('md'),
+      },
+    },
+  };
+
+  const handleApplyTheme = (newTheme: TabThemeExtension) => {
     setCustomTheme({
       ...customTheme,
       tabs: newTheme.tabs,
     });
 
-    // Apply theme to CSS variables for traditional styling
     applyTabThemeToCssVars(newTheme.tabs);
   };
 
@@ -112,25 +196,25 @@ export const CustomTabStyles: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container $themeStyles={themeStyles}>
       <h2>Custom Tab Styles</h2>
       <p>Customize the appearance of tabs using the controls below.</p>
 
-      <Layout>
-        <CustomizerPanel>
+      <Layout $themeStyles={themeStyles}>
+        <CustomizerPanel $themeStyles={themeStyles}>
           <TabThemeCustomizer onApplyTheme={handleApplyTheme} />
         </CustomizerPanel>
 
-        <PreviewPanel>
+        <PreviewPanel $themeStyles={themeStyles}>
           <h3>Live Preview</h3>
 
           <ThemeProvider theme={customTheme}>
             <TabsDemo />
           </ThemeProvider>
 
-          <CodeExample>
+          <CodeExample $themeStyles={themeStyles}>
             <h4>Usage Example</h4>
-            <CodeBlock>
+            <CodeBlock $themeStyles={themeStyles}>
               {`import { Tab, StyledTabContainer } from '../theme/StyledTab';
 
 // Basic usage

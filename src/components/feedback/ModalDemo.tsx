@@ -209,3 +209,27 @@ export const ModalDemo: React.FC<ModalDemoProps> = ({ title = 'Modal Demo' }) =>
 
 // Add default export
 export default ModalDemo;
+
+              <Button $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                $themeStyles={themeStyles}
+                primary
+                onClick={() => {
+                  window.alert('Action confirmed!');
+                  setIsConfirmModalOpen(false);
+                }}
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </DemoContainer>
+  );
+};
+
+// Add default export
+export default ModalDemo;

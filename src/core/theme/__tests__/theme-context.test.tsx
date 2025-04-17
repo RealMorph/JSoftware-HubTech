@@ -133,10 +133,6 @@ jest.mock('../theme-system', () => ({
   applyTheme: jest.fn(),
 }));
 
-jest.mock('../theme-adapter', () => ({
-  adaptThemeForEmotion: jest.fn().mockReturnValue({}),
-}));
-
 // Test component that uses the theme context
 function TestComponent() {
   const { currentTheme, setTheme, toggleDarkMode } = useTheme();

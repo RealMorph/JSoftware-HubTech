@@ -1,108 +1,6 @@
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import styled from '@emotion/styled';
-
-// Default theme values to use as fallbacks
-const defaultTheme = {
-  colors: {
-    primary: '#3f51b5',
-    primaryDark: '#303f9f',
-    secondary: '#f50057',
-    secondaryDark: '#c51162',
-    gray: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#eeeeee',
-      300: '#e0e0e0',
-      400: '#bdbdbd',
-      500: '#9e9e9e',
-      600: '#757575',
-      700: '#616161',
-      800: '#424242',
-      900: '#212121',
-    },
-    text: {
-      primary: '#212121',
-      secondary: '#757575',
-    },
-    white: '#ffffff',
-    surface: '#ffffff',
-    background: {
-      default: '#ffffff',
-      paper: '#ffffff',
-      secondary: '#f5f5f5',
-      tertiary: '#fafafa',
-    },
-    border: {
-      primary: '#e0e0e0',
-    },
-  },
-  typography: {
-    family: {
-      primary: 'system-ui, -apple-system, sans-serif',
-      secondary: 'system-ui, -apple-system, sans-serif',
-      monospace: 'monospace',
-    },
-    scale: {
-      xs: '0.75rem',
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
-      '2xl': '1.5rem',
-      '3xl': '1.875rem',
-      '4xl': '2.25rem',
-      '5xl': '3rem',
-    },
-    weights: {
-      light: '300',
-      normal: '400',
-      medium: '500',
-      semibold: '600',
-      bold: '700',
-    },
-    lineHeights: {
-      tight: '1.25',
-      normal: '1.5',
-      loose: '1.75',
-    },
-    letterSpacing: {
-      tight: '-0.025em',
-      normal: '0',
-      wide: '0.025em',
-    },
-  },
-  spacing: {
-    '0': '0',
-    '1': '0.25rem',
-    '2': '0.5rem',
-    '3': '0.75rem',
-    '4': '1rem',
-    '5': '1.25rem',
-    '6': '1.5rem',
-    '8': '2rem',
-    '10': '2.5rem',
-    '12': '3rem',
-    '16': '4rem',
-    '20': '5rem',
-    '24': '6rem',
-    '32': '8rem',
-  },
-  borderRadius: {
-    none: '0',
-    sm: '0.125rem',
-    md: '0.25rem',
-    lg: '0.5rem',
-    full: '9999px',
-  },
-  shadows: {
-    none: 'none',
-    sm: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
-    md: '0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12)',
-    lg: '0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)',
-    xl: '0 15px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05)',
-  },
-};
 
 export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
   /** Variant of the table */
@@ -153,6 +51,223 @@ export interface TableHeaderCellProps extends React.ThHTMLAttributes<HTMLTableCe
   className?: string;
 }
 
+// Theme styles interfaces
+interface TableThemeStyles {
+  borderRadius: string;
+  border: string;
+  backgroundColor: string;
+  width: string;
+  borderCollapse: string;
+  fontSize: string;
+  fontFamily: string;
+}
+
+interface TableHeaderThemeStyles {
+  backgroundColor: string;
+  borderBottom: string;
+  position: string;
+  top: string;
+  zIndex: number;
+}
+
+interface TableRowThemeStyles {
+  backgroundColor: string;
+  color: string;
+  borderBottom: string;
+  cursor: string;
+  opacity: number;
+  hoverBackgroundColor?: string;
+}
+
+interface TableCellThemeStyles {
+  padding: string;
+  borderRight?: string;
+  textAlign: string;
+  fontWeight?: string;
+  color: string;
+}
+
+// Styled components
+const StyledTable = styled.table<{
+  $themeStyles: TableThemeStyles;
+  $variant: TableProps['variant'];
+}>`
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  border: ${props => props.$themeStyles.border};
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  width: ${props => props.$themeStyles.width};
+  border-collapse: ${props => props.$themeStyles.borderCollapse};
+  font-size: ${props => props.$themeStyles.fontSize};
+  font-family: ${props => props.$themeStyles.fontFamily};
+`;
+
+const StyledTableHeader = styled.thead<{
+  $themeStyles: TableHeaderThemeStyles;
+  $stickyHeader?: boolean;
+}>`
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  border-bottom: ${props => props.$themeStyles.borderBottom};
+  position: ${props => props.$stickyHeader ? 'sticky' : 'static'};
+  top: ${props => props.$stickyHeader ? '0' : 'auto'};
+  z-index: ${props => props.$stickyHeader ? 1 : 'auto'};
+`;
+
+const StyledTableBody = styled.tbody``;
+
+const StyledTableRow = styled.tr<{
+  $themeStyles: TableRowThemeStyles;
+  $hoverable?: boolean;
+  $selected?: boolean;
+  $disabled?: boolean;
+  $isEven?: boolean;
+  $variant?: TableProps['variant'];
+}>`
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  color: ${props => props.$themeStyles.color};
+  border-bottom: ${props => props.$themeStyles.borderBottom};
+  cursor: ${props => props.$themeStyles.cursor};
+  opacity: ${props => props.$themeStyles.opacity};
+
+  ${props =>
+    props.$hoverable &&
+    !props.$disabled &&
+    `
+    &:hover {
+      background-color: ${props.$themeStyles.hoverBackgroundColor};
+    }
+  `}
+`;
+
+const StyledTableCell = styled.td<{
+  $themeStyles: TableCellThemeStyles;
+  $variant?: TableProps['variant'];
+}>`
+  padding: ${props => props.$themeStyles.padding};
+  border-right: ${props => props.$themeStyles.borderRight};
+  text-align: ${props => props.$themeStyles.textAlign};
+  color: ${props => props.$themeStyles.color};
+`;
+
+const StyledTableHeaderCell = styled.th<{
+  $themeStyles: TableCellThemeStyles;
+  $sortable?: boolean;
+  $variant?: TableProps['variant'];
+}>`
+  padding: ${props => props.$themeStyles.padding};
+  border-right: ${props => props.$themeStyles.borderRight};
+  text-align: ${props => props.$themeStyles.textAlign};
+  font-weight: ${props => props.$themeStyles.fontWeight};
+  color: ${props => props.$themeStyles.color};
+  cursor: ${props => (props.$sortable ? 'pointer' : 'default')};
+`;
+
+// Create theme styles functions
+const createTableThemeStyles = (
+  themeContext: ReturnType<typeof useDirectTheme>,
+  variant: TableProps['variant'],
+  fullWidth: boolean
+): TableThemeStyles => {
+  const { getColor, getTypography, getBorderRadius } = themeContext;
+
+  return {
+    borderRadius: getBorderRadius('md', '0.375rem'),
+    border: variant === 'bordered' ? `1px solid ${getColor('border.primary', '#e0e0e0')}` : 'none',
+    backgroundColor: getColor('background.default', '#ffffff'),
+    width: fullWidth ? '100%' : 'auto',
+    borderCollapse: 'separate',
+    fontSize: getTypography('fontSize.sm', '0.875rem') as string,
+    fontFamily: getTypography('fontFamily.base', 'system-ui, sans-serif') as string,
+  };
+};
+
+const createTableHeaderThemeStyles = (
+  themeContext: ReturnType<typeof useDirectTheme>
+): TableHeaderThemeStyles => {
+  const { getColor } = themeContext;
+
+  return {
+    backgroundColor: getColor('background.secondary', '#f5f5f5'),
+    borderBottom: `1px solid ${getColor('border.primary', '#e0e0e0')}`,
+    position: 'relative',
+    top: '0',
+    zIndex: 1,
+  };
+};
+
+const createTableRowThemeStyles = (
+  themeContext: ReturnType<typeof useDirectTheme>,
+  {
+    selected,
+    disabled,
+    isEven,
+    variant,
+  }: {
+    selected?: boolean;
+    disabled?: boolean;
+    isEven?: boolean;
+    variant?: TableProps['variant'];
+  }
+): TableRowThemeStyles => {
+  const { getColor } = themeContext;
+
+  let backgroundColor = getColor('background.default', '#ffffff');
+  if (selected) {
+    backgroundColor = getColor('primary.50', '#e3f2fd');
+  } else if (variant === 'striped' && isEven) {
+    backgroundColor = getColor('background.secondary', '#f5f5f5');
+  }
+
+  return {
+    backgroundColor,
+    color: disabled
+      ? getColor('text.disabled', '#9e9e9e')
+      : getColor('text.primary', '#212121'),
+    borderBottom: `1px solid ${getColor('border.primary', '#e0e0e0')}`,
+    cursor: disabled ? 'not-allowed' : 'default',
+    opacity: disabled ? 0.5 : 1,
+    hoverBackgroundColor: getColor('background.tertiary', '#fafafa'),
+  };
+};
+
+const createTableCellThemeStyles = (
+  themeContext: ReturnType<typeof useDirectTheme>,
+  {
+    variant,
+    size,
+    isHeader,
+    align,
+  }: {
+    variant?: TableProps['variant'];
+    size?: TableProps['size'];
+    isHeader?: boolean;
+    align?: TableCellProps['align'];
+  }
+): TableCellThemeStyles => {
+  const { getColor, getSpacing, getTypography } = themeContext;
+
+  const getPadding = () => {
+    switch (size) {
+      case 'small':
+        return getSpacing('2', '0.5rem');
+      case 'large':
+        return getSpacing('4', '1rem');
+      default:
+        return getSpacing('3', '0.75rem');
+    }
+  };
+
+  return {
+    padding: getPadding() as string,
+    borderRight:
+      variant === 'bordered' ? `1px solid ${getColor('border.primary', '#e0e0e0')}` : undefined,
+    textAlign: align || 'left',
+    fontWeight: isHeader ? getTypography('fontWeight.semibold', '600') as string : undefined,
+    color: isHeader
+      ? getColor('text.primary', '#212121')
+      : getColor('text.secondary', '#616161'),
+  };
+};
+
 /**
  * Table component - Displays tabular data
  */
@@ -170,443 +285,184 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     },
     ref
   ) => {
-    const { theme, getColor, getBorderRadius } = useDirectTheme();
-
-    // Helper function to access theme values with fallbacks
-    const getThemeVal = (path: string): string => {
-      if (!theme) return getNestedValue(defaultTheme, path);
-
-      // Use direct theme access with fallbacks
-      const parts = path.split('.');
-      if (parts[0] === 'colors') {
-        return getColor(parts.slice(1).join('.'), getNestedValue(defaultTheme, path));
-      } else if (parts[0] === 'borderRadius') {
-        return getBorderRadius(parts[1], getNestedValue(defaultTheme, path));
-      }
-
-      // Use default theme as fallback for other properties
-      return getNestedValue(defaultTheme, path);
-    };
-
-    // Helper to extract nested values from an object using a path string
-    function getNestedValue(obj: any, path: string): string {
-      const keys = path.split('.');
-      let current = obj;
-
-      for (const key of keys) {
-        if (current === undefined || current === null) return '';
-        current = current[key];
-      }
-
-      return current?.toString() || '';
-    }
-
-    const styles: React.CSSProperties = {
-      width: fullWidth ? '100%' : 'auto',
-      borderCollapse: 'separate',
-      borderSpacing: 0,
-      ...(variant === 'bordered'
-        ? {
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            borderColor: getColor('gray.200', '#E5E7EB'),
-            borderRadius: getBorderRadius('md', '0.25rem'),
-          }
-        : {
-            borderWidth: '0',
-            borderStyle: 'none',
-          }),
-      overflow: 'hidden',
-      fontFamily: getThemeVal('typography.family.primary'),
-      fontSize: getThemeVal('typography.scale.base'),
-    };
-
-    // Clone children to add context properties
-    const enhancedChildren = React.Children.map(children, child => {
-      if (React.isValidElement(child)) {
-        return React.cloneElement(child, {
-          _variant: variant,
-          _size: size,
-          _hoverable: hoverable.toString(),
-          _stickyheader: stickyHeader.toString(),
-        } as any);
-      }
-      return child;
-    });
+    const themeContext = useDirectTheme();
+    const themeStyles = createTableThemeStyles(themeContext, variant, fullWidth);
 
     return (
-      <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table ref={ref} style={styles} className={className} {...props}>
-          {enhancedChildren}
-        </table>
-      </div>
-    );
-  }
-);
-
-Table.displayName = 'Table';
-
-/**
- * TableHeader component - Header section of a table
- */
-export const TableHeader = forwardRef<
-  HTMLTableSectionElement,
-  TableHeaderProps & {
-    _variant?: 'default' | 'bordered' | 'striped';
-    _size?: 'small' | 'medium' | 'large';
-    _stickyheader?: string;
-  }
->(
-  (
-    {
-      children,
-      className,
-      _variant = 'default',
-      _size = 'medium',
-      _stickyheader = 'false',
-      ...props
-    },
-    ref
-  ) => {
-    const { getColor } = useDirectTheme();
-
-    // Helper function to access theme values with fallbacks
-    const getThemeVal = (path: string): string => {
-      // Use direct theme access for colors
-      if (path.startsWith('colors.')) {
-        const colorPath = path.substring(7); // Remove 'colors.' prefix
-        return getColor(colorPath, getNestedValue(defaultTheme, path));
-      }
-
-      // Use default theme for other properties
-      return getNestedValue(defaultTheme, path);
-    };
-
-    // Helper to extract nested values from an object using a path string
-    function getNestedValue(obj: any, path: string): string {
-      const keys = path.split('.');
-      let current = obj;
-
-      for (const key of keys) {
-        if (current === undefined || current === null) return '';
-        current = current[key];
-      }
-
-      return current?.toString() || '';
-    }
-
-    const styles: React.CSSProperties = {
-      backgroundColor:
-        _variant === 'striped'
-          ? getThemeVal('colors.gray.100')
-          : getThemeVal('colors.background.default'),
-      ...(_stickyheader === 'true'
-        ? {
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
-            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-          }
-        : {}),
-    };
-
-    return (
-      <thead ref={ref} style={styles} className={className} {...props}>
-        {children}
-      </thead>
-    );
-  }
-);
-
-TableHeader.displayName = 'TableHeader';
-
-/**
- * TableBody component - Body section of a table
- */
-export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <tbody ref={ref} className={className} {...props}>
-        {children}
-      </tbody>
-    );
-  }
-);
-
-TableBody.displayName = 'TableBody';
-
-/**
- * TableRow component - Row within a table
- */
-export const TableRow = forwardRef<
-  HTMLTableRowElement,
-  TableRowProps & {
-    _variant?: 'default' | 'bordered' | 'striped';
-    _size?: 'small' | 'medium' | 'large';
-    _hoverable?: string;
-  }
->(
-  (
-    {
-      children,
-      selected,
-      disabled,
-      className,
-      _variant = 'default',
-      _size = 'medium',
-      _hoverable = 'false',
-      ...props
-    },
-    ref
-  ) => {
-    const [isHovered, setIsHovered] = useState(false);
-    const { getColor } = useDirectTheme();
-
-    // Helper function to access theme values with fallbacks
-    const getThemeVal = (path: string): string => {
-      // Use direct theme access for colors
-      if (path.startsWith('colors.')) {
-        const colorPath = path.substring(7); // Remove 'colors.' prefix
-        return getColor(colorPath, getNestedValue(defaultTheme, path));
-      }
-
-      // Use default theme for other properties
-      return getNestedValue(defaultTheme, path);
-    };
-
-    // Helper to extract nested values from an object using a path string
-    function getNestedValue(obj: any, path: string): string {
-      const keys = path.split('.');
-      let current = obj;
-
-      for (const key of keys) {
-        if (current === undefined || current === null) return '';
-        current = current[key];
-      }
-
-      return current?.toString() || '';
-    }
-
-    const getBackgroundColor = (): string => {
-      if (selected) return getThemeVal('colors.primary.50');
-      if (disabled) return getThemeVal('colors.gray.50');
-      if (_hoverable === 'true' && isHovered) return getThemeVal('colors.gray.50');
-      if (_variant === 'striped') return 'inherit'; // Striping is handled by CSS in the parent
-      return 'transparent';
-    };
-
-    const getTextColor = (): string => {
-      if (disabled) return getThemeVal('colors.gray.400');
-      if (selected) return getThemeVal('colors.primary.700');
-      return getThemeVal('colors.text.primary');
-    };
-
-    const styles: React.CSSProperties = {
-      backgroundColor: getBackgroundColor(),
-      color: getTextColor(),
-      cursor: props.onClick ? 'pointer' : 'default',
-      opacity: disabled ? 0.6 : 1,
-      transition: 'background-color 150ms ease, color 150ms ease',
-    };
-
-    const handleMouseOver = (e: React.MouseEvent<HTMLTableRowElement>) => {
-      if (_hoverable === 'true' && !disabled) {
-        setIsHovered(true);
-      }
-      props.onMouseOver?.(e);
-    };
-
-    const handleMouseOut = (e: React.MouseEvent<HTMLTableRowElement>) => {
-      if (_hoverable === 'true') {
-        setIsHovered(false);
-      }
-      props.onMouseOut?.(e);
-    };
-
-    return (
-      <tr
+      <StyledTable
         ref={ref}
         className={className}
-        style={styles}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
-        aria-selected={selected}
-        aria-disabled={disabled}
+        $themeStyles={themeStyles}
+        $variant={variant}
         {...props}
       >
         {children}
-      </tr>
+      </StyledTable>
     );
   }
 );
 
-TableRow.displayName = 'TableRow';
+/**
+ * TableHeader component
+ */
+export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps & { stickyHeader?: boolean }>(
+  ({ children, className, stickyHeader, ...props }, ref) => {
+    const themeContext = useDirectTheme();
+    const themeStyles = createTableHeaderThemeStyles(themeContext);
+
+    return (
+      <StyledTableHeader
+        ref={ref}
+        className={className}
+        $themeStyles={themeStyles}
+        $stickyHeader={stickyHeader}
+        {...props}
+      >
+        {children}
+      </StyledTableHeader>
+    );
+  }
+);
 
 /**
- * TableCell component - Cell within a table row
+ * TableBody component
  */
-export const TableCell = forwardRef<
-  HTMLTableCellElement,
-  TableCellProps & {
-    _size?: 'small' | 'medium' | 'large';
-  }
->(({ children, align = 'left', className, _size = 'medium', ...props }, ref) => {
-  const { getSpacing } = useDirectTheme();
-
-  // Helper function to access theme values with fallbacks
-  const getThemeVal = (path: string): string => {
-    // Use direct theme access for spacing
-    if (path.startsWith('spacing.')) {
-      const spacingKey = path.substring(8); // Remove 'spacing.' prefix
-      return getSpacing(spacingKey, getNestedValue(defaultTheme, path));
-    }
-
-    // Use default theme for other properties
-    return getNestedValue(defaultTheme, path);
-  };
-
-  // Helper to extract nested values from an object using a path string
-  function getNestedValue(obj: any, path: string): string {
-    const keys = path.split('.');
-    let current = obj;
-
-    for (const key of keys) {
-      if (current === undefined || current === null) return '';
-      current = current[key];
-    }
-
-    return current?.toString() || '';
-  }
-
-  const getPadding = (): string => {
-    switch (_size) {
-      case 'small':
-        return `${getThemeVal('spacing.2')} ${getThemeVal('spacing.3')}`;
-      case 'large':
-        return `${getThemeVal('spacing.4')} ${getThemeVal('spacing.6')}`;
-      default: // medium
-        return `${getThemeVal('spacing.3')} ${getThemeVal('spacing.4')}`;
-    }
-  };
-
-  const styles: React.CSSProperties = {
-    padding: getPadding(),
-    textAlign: align,
-    borderBottom: `1px solid ${getThemeVal('colors.gray.200')}`,
-    fontWeight: 'normal',
-    whiteSpace: 'nowrap',
-  };
-
-  return (
-    <td ref={ref} style={styles} className={className} {...props}>
+export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
+  ({ children, className, ...props }, ref) => (
+    <StyledTableBody ref={ref} className={className} {...props}>
       {children}
-    </td>
-  );
-});
-
-TableCell.displayName = 'TableCell';
+    </StyledTableBody>
+  )
+);
 
 /**
- * TableHeaderCell component - Header cell within a table row
+ * TableRow component
  */
-export const TableHeaderCell = forwardRef<
-  HTMLTableCellElement,
-  TableHeaderCellProps & {
-    _size?: 'small' | 'medium' | 'large';
-  }
->(
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps & { variant?: TableProps['variant']; hoverable?: boolean; isEven?: boolean }>(
   (
     {
+      selected,
+      disabled,
       children,
-      align = 'left',
-      sortable = false,
-      sortDirection = null,
-      onSort,
       className,
-      _size = 'medium',
+      variant,
+      hoverable,
+      isEven,
       ...props
     },
     ref
   ) => {
-    const { getColor, getSpacing } = useDirectTheme();
-
-    // Helper function to access theme values with fallbacks
-    const getThemeVal = (path: string): string => {
-      // Use direct theme access
-      if (path.startsWith('colors.')) {
-        const colorPath = path.substring(7); // Remove 'colors.' prefix
-        return getColor(colorPath, getNestedValue(defaultTheme, path));
-      } else if (path.startsWith('spacing.')) {
-        const spacingKey = path.substring(8); // Remove 'spacing.' prefix
-        return getSpacing(spacingKey, getNestedValue(defaultTheme, path));
-      }
-
-      // Use default theme for other properties
-      return getNestedValue(defaultTheme, path);
-    };
-
-    // Helper to extract nested values from an object using a path string
-    function getNestedValue(obj: any, path: string): string {
-      const keys = path.split('.');
-      let current = obj;
-
-      for (const key of keys) {
-        if (current === undefined || current === null) return '';
-        current = current[key];
-      }
-
-      return current?.toString() || '';
-    }
-
-    const getPadding = (): string => {
-      switch (_size) {
-        case 'small':
-          return `${getThemeVal('spacing.2')} ${getThemeVal('spacing.3')}`;
-        case 'large':
-          return `${getThemeVal('spacing.4')} ${getThemeVal('spacing.6')}`;
-        default: // medium
-          return `${getThemeVal('spacing.3')} ${getThemeVal('spacing.4')}`;
-      }
-    };
-
-    const getSortIcon = () => {
-      if (!sortable) return null;
-
-      if (sortDirection === 'asc') {
-        return <span style={{ marginLeft: '4px' }}>▲</span>;
-      } else if (sortDirection === 'desc') {
-        return <span style={{ marginLeft: '4px' }}>▼</span>;
-      } else {
-        return <span style={{ marginLeft: '4px', opacity: 0.3 }}>↕</span>;
-      }
-    };
-
-    const styles: React.CSSProperties = {
-      padding: getPadding(),
-      textAlign: align,
-      borderBottom: `2px solid ${getThemeVal('colors.gray.300')}`,
-      fontWeight: 'bold',
-      cursor: sortable ? 'pointer' : 'default',
-      whiteSpace: 'nowrap',
-      userSelect: 'none',
-      color: getThemeVal('colors.gray.700'),
-      position: 'relative',
-    };
-
-    const handleClick = (e: React.MouseEvent<HTMLTableCellElement>) => {
-      if (sortable && onSort) {
-        onSort();
-      }
-      props.onClick?.(e);
-    };
+    const themeContext = useDirectTheme();
+    const themeStyles = createTableRowThemeStyles(themeContext, {
+      selected,
+      disabled,
+      isEven,
+      variant,
+    });
 
     return (
-      <th ref={ref} style={styles} className={className} onClick={handleClick} {...props}>
+      <StyledTableRow
+        ref={ref}
+        className={className}
+        $themeStyles={themeStyles}
+        $hoverable={hoverable}
+        $selected={selected}
+        $disabled={disabled}
+        $isEven={isEven}
+        $variant={variant}
+        {...props}
+      >
         {children}
-        {getSortIcon()}
-      </th>
+      </StyledTableRow>
     );
   }
 );
 
+/**
+ * TableCell component
+ */
+export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps & { variant?: TableProps['variant']; size?: TableProps['size'] }>(
+  ({ align, children, className, variant, size, ...props }, ref) => {
+    const themeContext = useDirectTheme();
+    const themeStyles = createTableCellThemeStyles(themeContext, {
+      variant,
+      size,
+      align,
+    });
+
+    return (
+      <StyledTableCell
+        ref={ref}
+        className={className}
+        $themeStyles={themeStyles}
+        $variant={variant}
+        {...props}
+      >
+        {children}
+      </StyledTableCell>
+    );
+  }
+);
+
+/**
+ * TableHeaderCell component
+ */
+export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps & { variant?: TableProps['variant']; size?: TableProps['size'] }>(
+  (
+    {
+      align,
+      sortable,
+      sortDirection,
+      onSort,
+      children,
+      className,
+      variant,
+      size,
+      ...props
+    },
+    ref
+  ) => {
+    const themeContext = useDirectTheme();
+    const themeStyles = createTableCellThemeStyles(themeContext, {
+      variant,
+      size,
+      isHeader: true,
+      align,
+    });
+
+    const renderSortIcon = () => {
+      if (!sortable) return null;
+
+      return (
+        <span style={{ marginLeft: '0.5rem', display: 'inline-flex', alignItems: 'center' }}>
+          {sortDirection === 'asc' ? '↑' : sortDirection === 'desc' ? '↓' : '↕'}
+        </span>
+      );
+    };
+
+    return (
+      <StyledTableHeaderCell
+        ref={ref}
+        className={className}
+        onClick={sortable ? onSort : undefined}
+        $themeStyles={themeStyles}
+        $sortable={sortable}
+        $variant={variant}
+        {...props}
+      >
+        {children}
+        {renderSortIcon()}
+      </StyledTableHeaderCell>
+    );
+  }
+);
+
+// Add display names
+Table.displayName = 'Table';
+TableHeader.displayName = 'TableHeader';
+TableBody.displayName = 'TableBody';
+TableRow.displayName = 'TableRow';
+TableCell.displayName = 'TableCell';
 TableHeaderCell.displayName = 'TableHeaderCell';
+
+export default Table;

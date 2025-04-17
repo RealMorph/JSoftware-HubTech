@@ -416,3 +416,27 @@ export const TreeGraph: React.FC<TreeGraphProps> = ({
     </GraphContainer>
   );
 };
+
+          const nodeWidthHalf = layout.nodeWidth / 2;
+          const nodeHeightHalf = layout.nodeHeight / 2;
+
+          return (
+            <g key={node.id} onClick={() => onNodeClick?.(node.id)}>
+              <TreeNodeRect
+                x={node.x - nodeWidthHalf}
+                y={node.y - nodeHeightHalf}
+                width={layout.nodeWidth}
+                height={layout.nodeHeight}
+                selected={node.id === selectedNodeId}
+                $themeStyles={themeStyles}
+              />
+              <NodeLabel x={node.x} y={node.y} $themeStyles={themeStyles}>
+                {node.label}
+              </NodeLabel>
+            </g>
+          );
+        })}
+      </Canvas>
+    </GraphContainer>
+  );
+};

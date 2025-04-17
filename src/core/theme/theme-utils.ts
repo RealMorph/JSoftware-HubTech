@@ -4,7 +4,24 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import has from 'lodash/has';
 import { DefaultTheme } from 'styled-components';
-import { isThemeConfig } from './theme-adapter';
+
+/**
+ * Type guard to check if an object matches the ThemeConfig interface
+ * Moved from theme-adapter-migration.ts to remove dependency
+ */
+export function isThemeConfig(obj: any): obj is ThemeConfig {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'colors' in obj &&
+    'typography' in obj &&
+    'spacing' in obj &&
+    'breakpoints' in obj &&
+    'borderRadius' in obj &&
+    'shadows' in obj &&
+    'transitions' in obj
+  );
+}
 
 /**
  * Centralized theme utility for accessing theme values with smart fallbacks.

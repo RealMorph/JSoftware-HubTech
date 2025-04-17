@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Table, TableColumn } from './Table';
-import { getThemeValue } from '../../core/theme/styled';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // Sample data type
 interface User {
@@ -103,26 +102,46 @@ const userColumns: TableColumn<User>[] = [
   },
 ];
 
-const DemoContainer = styled.div`
-  padding: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.6')};
-  background-color: ${props =>
-    getThemeValue(props.theme as ThemeConfig, 'colors.background.primary')};
+// Create styled components with the appropriate props
+interface ThemeStyles {
+  container: {
+    padding: string;
+    backgroundColor: string;
+  };
+  section: {
+    marginBottom: string;
+  };
+  title: {
+    fontSize: string;
+    fontWeight: number;
+    marginBottom: string;
+    color: string;
+  };
+  description: {
+    marginBottom: string;
+    color: string;
+  };
+}
+
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles['container'] }>`
+  padding: ${({ $themeStyles }) => $themeStyles.padding};
+  background-color: ${({ $themeStyles }) => $themeStyles.backgroundColor};
 `;
 
-const DemoSection = styled.section`
-  margin-bottom: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.8')};
+const DemoSection = styled.section<{ $themeStyles: ThemeStyles['section'] }>`
+  margin-bottom: ${({ $themeStyles }) => $themeStyles.marginBottom};
 `;
 
-const DemoTitle = styled.h2`
-  font-size: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.scale.xl')};
-  font-weight: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.weights.semibold')};
-  margin-bottom: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.4')};
-  color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.primary')};
+const DemoTitle = styled.h2<{ $themeStyles: ThemeStyles['title'] }>`
+  font-size: ${({ $themeStyles }) => $themeStyles.fontSize};
+  font-weight: ${({ $themeStyles }) => $themeStyles.fontWeight};
+  margin-bottom: ${({ $themeStyles }) => $themeStyles.marginBottom};
+  color: ${({ $themeStyles }) => $themeStyles.color};
 `;
 
-const DemoDescription = styled.p`
-  margin-bottom: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.4')};
-  color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')};
+const DemoDescription = styled.p<{ $themeStyles: ThemeStyles['description'] }>`
+  margin-bottom: ${({ $themeStyles }) => $themeStyles.marginBottom};
+  color: ${({ $themeStyles }) => $themeStyles.color};
 `;
 
 /**
@@ -130,6 +149,27 @@ const DemoDescription = styled.p`
  */
 export const TableDemo: React.FC = () => {
   const [selectedRow, setSelectedRow] = useState<User | null>(null);
+  const { getColor, getTypography, getSpacing } = useDirectTheme();
+  
+  const themeStyles: ThemeStyles = {
+    container: {
+      padding: getSpacing('6', '1.5rem'),
+      backgroundColor: getColor('background.primary', '#ffffff'),
+    },
+    section: {
+      marginBottom: getSpacing('8', '2rem'),
+    },
+    title: {
+      fontSize: getTypography('scale.xl', '1.5rem') as string,
+      fontWeight: getTypography('weights.semibold', 600) as number,
+      marginBottom: getSpacing('4', '1rem'),
+      color: getColor('text.primary', '#333333'),
+    },
+    description: {
+      marginBottom: getSpacing('4', '1rem'),
+      color: getColor('text.secondary', '#666666'),
+    },
+  };
 
   const handleRowClick = (row: User) => {
     setSelectedRow(row);
@@ -137,12 +177,40 @@ export const TableDemo: React.FC = () => {
   };
 
   return (
-    <DemoContainer>
-      <DemoTitle>Table Component</DemoTitle>
-      <DemoDescription>
-        The Table component provides a way to display data in a structured, tabular format. Below
-        are various configurations of the Table component.
-      </DemoDescription>
+    <DemoContainer $themeStyles={themeStyles.container}>
+      <h1>Table Component</h1>
+      
+      <DemoSection $themeStyles={themeStyles.section}>
+        <h2>Basic Table</h2>
+        <DemoDescription $themeStyles={themeStyles.description}>
+          A simple table with default styling.
+        </DemoDescription>
+        <Table<User> data={sampleUsers.slice(0, 3)} columns={userColumns} />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles.section}>
+        <h2>Bordered Table</h2>
+        <DemoDescription $themeStyles={themeStyles.description}>
+          A table with borders around all cells.
+        </DemoDescription>
+        <Table<User> data={sampleUsers.slice(0, 3)} columns={userColumns} bordered />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles.section}>
+        <h2>Large Table</h2>
+        <DemoDescription $themeStyles={themeStyles.description}>
+          A table with larger cell padding for better readability.
+        </DemoDescription>
+        <Table<User> data={sampleUsers.slice(0, 3)} columns={userColumns} size="large" />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles.section}>
+        <h2>Interactive Table</h2>
+        <DemoDescription $themeStyles={themeStyles.description}>
+          A table with hover effects and clickable rows.
+        </DemoDescription>
+        <Table<User> data={sampleUsers} columns={userColumns} hover onRowClick={handleRowClick} />
+      </DemoSection>
 
       {selectedRow && (
         <div
@@ -159,55 +227,25 @@ export const TableDemo: React.FC = () => {
         </div>
       )}
 
-      <DemoSection>
-        <DemoTitle>Basic Table</DemoTitle>
-        <DemoDescription>A simple table with default styling.</DemoDescription>
-        <Table<User> data={sampleUsers} columns={userColumns} />
-      </DemoSection>
-
-      <DemoSection>
-        <DemoTitle>Striped Table</DemoTitle>
-        <DemoDescription>
+      <DemoSection $themeStyles={themeStyles.section}>
+        <DemoTitle $themeStyles={themeStyles.title}>Striped Table</DemoTitle>
+        <DemoDescription $themeStyles={themeStyles.description}>
           A table with alternating row colors for better readability.
         </DemoDescription>
         <Table<User> data={sampleUsers} columns={userColumns} striped />
       </DemoSection>
 
-      <DemoSection>
-        <DemoTitle>Bordered Table</DemoTitle>
-        <DemoDescription>A table with borders around all cells.</DemoDescription>
-        <Table<User> data={sampleUsers} columns={userColumns} bordered />
-      </DemoSection>
-
-      <DemoSection>
-        <DemoTitle>Compact Table</DemoTitle>
-        <DemoDescription>
+      <DemoSection $themeStyles={themeStyles.section}>
+        <DemoTitle $themeStyles={themeStyles.title}>Compact Table</DemoTitle>
+        <DemoDescription $themeStyles={themeStyles.description}>
           A table with smaller cell padding for dense information display.
         </DemoDescription>
         <Table<User> data={sampleUsers} columns={userColumns} size="small" />
       </DemoSection>
 
-      <DemoSection>
-        <DemoTitle>Large Table</DemoTitle>
-        <DemoDescription>A table with larger cell padding for better readability.</DemoDescription>
-        <Table<User> data={sampleUsers} columns={userColumns} size="large" />
-      </DemoSection>
-
-      <DemoSection>
-        <DemoTitle>Interactive Table</DemoTitle>
-        <DemoDescription>A table with hover effects and clickable rows.</DemoDescription>
-        <Table<User>
-          data={sampleUsers}
-          columns={userColumns}
-          hover
-          onRowClick={handleRowClick}
-          caption="Click on a row to select a user"
-        />
-      </DemoSection>
-
-      <DemoSection>
-        <DemoTitle>Fully Featured Table</DemoTitle>
-        <DemoDescription>
+      <DemoSection $themeStyles={themeStyles.section}>
+        <DemoTitle $themeStyles={themeStyles.title}>Fully Featured Table</DemoTitle>
+        <DemoDescription $themeStyles={themeStyles.description}>
           A table combining multiple features: striped, bordered, hover effects, and clickable rows.
         </DemoDescription>
         <Table<User>

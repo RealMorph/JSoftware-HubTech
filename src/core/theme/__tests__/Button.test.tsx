@@ -15,10 +15,6 @@ jest.mock('../theme-system', () => ({
   applyTheme: jest.fn(),
 }));
 
-jest.mock('../theme-adapter', () => ({
-  adaptThemeForEmotion: jest.fn().mockReturnValue({}),
-}));
-
 // Create mock theme
 const mockTheme: ThemeConfig = {
   colors: {

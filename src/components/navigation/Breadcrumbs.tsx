@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Link, useLocation } from 'react-router-dom';
-import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { useDirectTheme, DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
+import { Theme as DirectTheme } from '../../core/theme/types';
 
 // Types
 export interface BreadcrumbItem {
@@ -40,105 +41,243 @@ export interface BreadcrumbsProps {
 
 // Define theme style interface
 interface ThemeStyles {
-  fontFamily: string;
-  fontSize: string;
-  textSecondary: string;
-  primaryMain: string;
-  primaryDark: string;
-  textDisabled: string;
-}
-
-// Function to create ThemeStyles from DirectThemeProvider
-function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
-  const { getColor, getTypography } = themeContext;
-
-  return {
-    fontFamily: getTypography('family.primary', 'system-ui') as string,
-    fontSize: getTypography('scale.sm', '0.875rem') as string,
-    textSecondary: getColor('text.secondary', '#666666'),
-    primaryMain: getColor('primary.main', '#0066cc'),
-    primaryDark: getColor('primary.dark', '#004c99'),
-    textDisabled: getColor('text.disabled', '#999999'),
+  colors: {
+    text: {
+      primary: string;
+      secondary: string;
+      disabled: string;
+    };
+    primary: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    icon: {
+      primary: string;
+      secondary: string;
+    };
+    separator: {
+      main: string;
+    };
+  };
+  typography: {
+    family: string;
+    size: {
+      small: string;
+      base: string;
+      large: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+      bold: number;
+    };
+    lineHeight: {
+      normal: number;
+    };
+  };
+  spacing: {
+    item: string;
+    icon: string;
+    container: {
+      vertical: string;
+      horizontal: string;
+    };
+    element: {
+      height: string;
+      padding: string;
+    };
+  };
+  borders: {
+    radius: {
+      small: string;
+      medium: string;
+    };
+    focus: {
+      width: string;
+      color: string;
+    };
+  };
+  animation: {
+    duration: {
+      fast: string;
+      normal: string;
+    };
+    easing: {
+      easeInOut: string;
+    };
+    hover: {
+      scale: string;
+    };
   };
 }
 
+// Function to create ThemeStyles from DirectThemeProvider
+const createThemeStyles = (theme: DirectThemeContextType): ThemeStyles => ({
+  colors: {
+    text: {
+      primary: theme.getColor('text.primary', '#333333'),
+      secondary: theme.getColor('text.secondary', '#666666'),
+      disabled: theme.getColor('text.disabled', '#999999'),
+    },
+    primary: {
+      main: theme.getColor('primary.main', '#1976d2'),
+      light: theme.getColor('primary.light', '#42a5f5'),
+      dark: theme.getColor('primary.dark', '#1565c0'),
+    },
+    icon: {
+      primary: theme.getColor('text.primary', '#333333'),
+      secondary: theme.getColor('text.secondary', '#666666'),
+    },
+    separator: {
+      main: theme.getColor('text.secondary', '#666666'),
+    },
+  },
+  typography: {
+    family: String(theme.getTypography('family.base', 'inherit')),
+    size: {
+      small: String(theme.getTypography('scale.sm', '12px')),
+      base: String(theme.getTypography('scale.base', '14px')),
+      large: String(theme.getTypography('scale.lg', '16px')),
+    },
+    weight: {
+      normal: Number(theme.getTypography('weights.normal', 400)),
+      medium: Number(theme.getTypography('weights.medium', 500)),
+      bold: Number(theme.getTypography('weights.bold', 700)),
+    },
+    lineHeight: {
+      normal: 1.5,
+    },
+  },
+  spacing: {
+    item: theme.getSpacing('2', '8px'),
+    icon: theme.getSpacing('1', '4px'),
+    container: {
+      vertical: theme.getSpacing('2', '8px'),
+      horizontal: theme.getSpacing('3', '12px'),
+    },
+    element: {
+      height: theme.getSpacing('8', '32px'),
+      padding: theme.getSpacing('2', '8px'),
+    },
+  },
+  borders: {
+    radius: {
+      small: theme.getBorderRadius('sm', '4px'),
+      medium: theme.getBorderRadius('md', '6px'),
+    },
+    focus: {
+      width: '2px',
+      color: theme.getColor('primary.main', '#1976d2') + '33',
+    },
+  },
+  animation: {
+    duration: {
+      fast: '150ms',
+      normal: '200ms',
+    },
+    easing: {
+      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+    hover: {
+      scale: '1.05',
+    },
+  },
+});
+
 // Styled components
 const BreadcrumbsContainer = styled.nav<{ $themeStyles: ThemeStyles }>`
-  display: flex;
-  align-items: center;
-  font-family: ${props => props.$themeStyles.fontFamily};
-  font-size: ${props => props.$themeStyles.fontSize};
-  color: ${props => props.$themeStyles.textSecondary};
-  margin: 8px 0;
+  padding: ${({ $themeStyles }) => `${$themeStyles.spacing.container.vertical} ${$themeStyles.spacing.container.horizontal}`};
+  font-family: ${({ $themeStyles }) => $themeStyles.typography.family};
 `;
 
 const BreadcrumbList = styled.ol`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 0;
-  margin: 0;
   list-style: none;
-`;
-
-const BreadcrumbItem = styled.li`
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
-const BreadcrumbLink = styled(Link)<{ active?: boolean; $themeStyles: ThemeStyles }>`
-  color: ${props =>
-    props.active ? props.$themeStyles.primaryMain : props.$themeStyles.textSecondary};
+const BreadcrumbItem = styled.li<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  align-items: center;
+  margin-right: ${({ $themeStyles }) => $themeStyles.spacing.item};
+`;
+
+const IconContainer = styled.span<{ $themeStyles: ThemeStyles }>`
+  display: inline-flex;
+  align-items: center;
+  margin-right: ${({ $themeStyles }) => $themeStyles.spacing.icon};
+  color: ${({ $themeStyles }) => $themeStyles.colors.icon.secondary};
+`;
+
+const BreadcrumbLink = styled(Link)<{ $themeStyles: ThemeStyles }>`
+  color: ${({ $themeStyles }) => $themeStyles.colors.text.primary};
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
+  font-weight: ${({ $themeStyles }) => $themeStyles.typography.weight.normal};
+  line-height: ${({ $themeStyles }) => $themeStyles.typography.lineHeight.normal};
   text-decoration: none;
-  font-weight: ${props => (props.active ? 'bold' : 'normal')};
-  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  height: ${({ $themeStyles }) => $themeStyles.spacing.element.height};
+  padding: 0 ${({ $themeStyles }) => $themeStyles.spacing.element.padding};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.small};
+  transition: all ${({ $themeStyles }) => $themeStyles.animation.duration.normal} ${({ $themeStyles }) => $themeStyles.animation.easing.easeInOut};
 
   &:hover {
-    color: ${props => props.$themeStyles.primaryDark};
-    text-decoration: ${props => (props.active ? 'none' : 'underline')};
+    color: ${({ $themeStyles }) => $themeStyles.colors.primary.light};
+    transform: scale(${({ $themeStyles }) => $themeStyles.animation.hover.scale});
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 ${({ $themeStyles }) => $themeStyles.borders.focus.width} ${({ $themeStyles }) => $themeStyles.borders.focus.color};
   }
 `;
 
-const BreadcrumbText = styled.span<{ active?: boolean; $themeStyles: ThemeStyles }>`
-  color: ${props =>
-    props.active ? props.$themeStyles.primaryMain : props.$themeStyles.textSecondary};
-  font-weight: ${props => (props.active ? 'bold' : 'normal')};
+const BreadcrumbText = styled.span<{ $themeStyles: ThemeStyles; active: boolean }>`
+  color: ${({ $themeStyles, active }) => active ? $themeStyles.colors.primary.main : $themeStyles.colors.text.primary};
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
+  font-weight: ${({ $themeStyles, active }) => active ? $themeStyles.typography.weight.medium : $themeStyles.typography.weight.normal};
+  line-height: ${({ $themeStyles }) => $themeStyles.typography.lineHeight.normal};
+  display: flex;
+  align-items: center;
+  height: ${({ $themeStyles }) => $themeStyles.spacing.element.height};
+  padding: 0 ${({ $themeStyles }) => $themeStyles.spacing.element.padding};
 `;
 
-const Separator = styled.div<{ $themeStyles: ThemeStyles }>`
-  margin: 0 8px;
-  color: ${props => props.$themeStyles.textDisabled};
+const Separator = styled.span<{ $themeStyles: ThemeStyles }>`
+  color: ${({ $themeStyles }) => $themeStyles.colors.separator.main};
+  margin: 0 ${({ $themeStyles }) => $themeStyles.spacing.item};
   user-select: none;
 `;
 
 const CollapseButton = styled.button<{ $themeStyles: ThemeStyles }>`
   background: none;
   border: none;
-  padding: 0 8px;
-  margin: 0 4px;
-  color: ${props => props.$themeStyles.primaryMain};
+  padding: 0 ${({ $themeStyles }) => $themeStyles.spacing.element.padding};
+  margin: 0 ${({ $themeStyles }) => $themeStyles.spacing.icon};
+  color: ${({ $themeStyles }) => $themeStyles.colors.primary.main};
   font-family: inherit;
-  font-size: inherit;
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
+  line-height: ${({ $themeStyles }) => $themeStyles.typography.lineHeight.normal};
   cursor: pointer;
   display: flex;
   align-items: center;
+  transition: all ${({ $themeStyles }) => $themeStyles.animation.duration.normal} ${({ $themeStyles }) => $themeStyles.animation.easing.easeInOut};
 
   &:hover {
+    color: ${({ $themeStyles }) => $themeStyles.colors.primary.light};
     text-decoration: underline;
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.3);
-    border-radius: 4px;
+    box-shadow: 0 0 0 ${({ $themeStyles }) => $themeStyles.borders.focus.width} ${({ $themeStyles }) => $themeStyles.borders.focus.color};
+    border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.small};
   }
-`;
-
-const IconContainer = styled.span`
-  display: inline-flex;
-  align-items: center;
-  margin-right: 4px;
-  font-size: 1.2em;
 `;
 
 /**
@@ -202,73 +341,19 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
 
   // Handle rendering of collapsed items
   const renderItems = () => {
-    if (!collapsed || maxItems >= items.length) {
-      return items.map((item, index) => (
-        <BreadcrumbItem key={item.path}>
-          {index > 0 && (
-            <Separator $themeStyles={themeStyles} aria-hidden="true">
-              {separator}
-            </Separator>
-          )}
-          {renderItem(item)}
-        </BreadcrumbItem>
-      ));
-    }
-
-    const itemsToRender: React.ReactElement[] = [];
-
-    // Add the initial items
-    items.slice(0, itemsBeforeCollapse).forEach((item, index) => {
-      itemsToRender.push(
-        <BreadcrumbItem key={item.path}>
-          {index > 0 && (
-            <Separator $themeStyles={themeStyles} aria-hidden="true">
-              {separator}
-            </Separator>
-          )}
-          {renderItem(item)}
-        </BreadcrumbItem>
-      );
-    });
-
-    // Add collapse indicator
-    if (items.length > itemsBeforeCollapse + itemsAfterCollapse) {
-      itemsToRender.push(
-        <BreadcrumbItem key="ellipsis">
-          <Separator $themeStyles={themeStyles} aria-hidden="true">
-            {separator}
-          </Separator>
-          <CollapseButton
-            $themeStyles={themeStyles}
-            onClick={() => setCollapsed(false)}
-            aria-label="Show all breadcrumbs"
-          >
-            ...
-          </CollapseButton>
-        </BreadcrumbItem>
-      );
-    }
-
-    // Add the final items
-    items.slice(items.length - itemsAfterCollapse).forEach(item => {
-      itemsToRender.push(
-        <BreadcrumbItem key={item.path}>
-          <Separator $themeStyles={themeStyles} aria-hidden="true">
-            {separator}
-          </Separator>
-          {renderItem(item)}
-        </BreadcrumbItem>
-      );
-    });
-
-    return itemsToRender;
+    return items.map((item, index) => (
+      <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
+        {index > 0 && <Separator $themeStyles={themeStyles}>/</Separator>}
+        {renderItem(item)}
+      </BreadcrumbItem>
+    ));
   };
 
   // Render individual item as link or text
   const renderItem = (item: BreadcrumbItem) => {
     const content = (
       <>
-        {item.icon && <IconContainer>{item.icon}</IconContainer>}
+        {item.icon && <IconContainer $themeStyles={themeStyles}>{item.icon}</IconContainer>}
         {item.label}
       </>
     );

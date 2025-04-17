@@ -1,6 +1,5 @@
 import { ThemeConfig } from './consolidated-types';
 import { validateTheme } from './theme-validator';
-import { adaptThemeForEmotion } from './theme-adapter';
 
 /**
  * Type guard to check if an object matches the ThemeConfig interface
@@ -157,25 +156,22 @@ export function createMockTheme(): ThemeConfig {
 }
 
 /**
- * Adapts a ThemeConfig object for use with EmotionThemeProvider in tests
- *
- * @param theme The theme config to adapt
- * @returns An emotion-compatible theme
+ * Prepares a ThemeConfig object for use with EmotionThemeProvider in tests
+ * Uses the DirectTheme pattern instead of adapters
+ * 
+ * @param theme The theme config to prepare
+ * @returns The validated theme ready for direct use
  */
-export function adaptTestThemeForEmotion(theme: ThemeConfig): any {
+export function prepareTestTheme(theme: ThemeConfig): ThemeConfig {
   // Validate first
-  const validTheme = validateTestTheme(theme);
-
-  // Then adapt
-  return adaptThemeForEmotion(validTheme);
+  return validateTestTheme(theme);
 }
 
 /**
- * Creates a valid emotion theme suitable for testing
+ * Creates a valid theme suitable for testing with the DirectTheme pattern
  *
- * @returns An emotion-compatible theme for testing
+ * @returns A theme ready for use with DirectThemeProvider
  */
-export function createMockEmotionTheme(): any {
-  const mockTheme = createMockTheme();
-  return adaptThemeForEmotion(mockTheme);
+export function createTestTheme(): ThemeConfig {
+  return createMockTheme();
 }

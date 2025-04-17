@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { css } from '@emotion/react';
 
 // Types
 export type ProgressType = 'linear' | 'circular';
@@ -14,26 +15,32 @@ interface ThemeStyles {
     primary: {
       100: string;
       500: string;
+      main: string;
     };
     secondary: {
       100: string;
       500: string;
+      main: string;
     };
     success: {
       100: string;
       500: string;
+      main: string;
     };
     error: {
       100: string;
       500: string;
+      main: string;
     };
     warning: {
       100: string;
       500: string;
+      main: string;
     };
     info: {
       100: string;
       500: string;
+      main: string;
     };
     gray: {
       100: string;
@@ -42,59 +49,189 @@ interface ThemeStyles {
     text: {
       primary: string;
       secondary: string;
+      disabled: string;
+    };
+    background: {
+      default: string;
+      paper: string;
+      disabled: string;
     };
   };
   typography: {
-    scale: {
+    family: string;
+    size: {
       xs: string;
       sm: string;
       base: string;
+      lg: string;
+      xl: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+      semibold: number;
+      bold: number;
+    };
+    lineHeight: {
+      none: number;
+      tight: number;
+      normal: number;
+      relaxed: number;
+    };
+  };
+  spacing: {
+    unit: string;
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  borders: {
+    width: {
+      thin: string;
+      normal: string;
+      thick: string;
+    };
+    radius: {
+      none: string;
+      small: string;
+      medium: string;
+      large: string;
+      full: string;
+    };
+    style: {
+      solid: string;
+      dashed: string;
+    };
+  };
+  animation: {
+    duration: {
+      fastest: string;
+      fast: string;
+      normal: string;
+      slow: string;
+      slowest: string;
+    };
+    easing: {
+      linear: string;
+      easeIn: string;
+      easeOut: string;
+      easeInOut: string;
     };
   };
 }
 
 // Function to create theme styles from theme context
-const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => {
   return {
     colors: {
       primary: {
-        100: themeContext.getColor('primary.100', '#e0e7ff'),
-        500: themeContext.getColor('primary.500', '#6366f1'),
+        100: theme.getColor('primary.100', '#e0e7ff'),
+        500: theme.getColor('primary.500', '#6366f1'),
+        main: theme.getColor('primary.main', '#4f46e5'),
       },
       secondary: {
-        100: themeContext.getColor('secondary.100', '#e0e7ff'),
-        500: themeContext.getColor('secondary.500', '#8b5cf6'),
+        100: theme.getColor('secondary.100', '#e0e7ff'),
+        500: theme.getColor('secondary.500', '#8b5cf6'),
+        main: theme.getColor('secondary.main', '#7c3aed'),
       },
       success: {
-        100: themeContext.getColor('success.100', '#dcfce7'),
-        500: themeContext.getColor('success.500', '#22c55e'),
+        100: theme.getColor('success.100', '#dcfce7'),
+        500: theme.getColor('success.500', '#22c55e'),
+        main: theme.getColor('success.main', '#16a34a'),
       },
       error: {
-        100: themeContext.getColor('error.100', '#fee2e2'),
-        500: themeContext.getColor('error.500', '#ef4444'),
+        100: theme.getColor('error.100', '#fee2e2'),
+        500: theme.getColor('error.500', '#ef4444'),
+        main: theme.getColor('error.main', '#dc2626'),
       },
       warning: {
-        100: themeContext.getColor('warning.100', '#fef3c7'),
-        500: themeContext.getColor('warning.500', '#f59e0b'),
+        100: theme.getColor('warning.100', '#fef3c7'),
+        500: theme.getColor('warning.500', '#f59e0b'),
+        main: theme.getColor('warning.main', '#d97706'),
       },
       info: {
-        100: themeContext.getColor('info.100', '#dbeafe'),
-        500: themeContext.getColor('info.500', '#3b82f6'),
+        100: theme.getColor('info.100', '#dbeafe'),
+        500: theme.getColor('info.500', '#3b82f6'),
+        main: theme.getColor('info.main', '#2563eb'),
       },
       gray: {
-        100: themeContext.getColor('gray.100', '#f3f4f6'),
-        500: themeContext.getColor('gray.500', '#6b7280'),
+        100: theme.getColor('gray.100', '#f3f4f6'),
+        500: theme.getColor('gray.500', '#6b7280'),
       },
       text: {
-        primary: themeContext.getColor('text.primary'),
-        secondary: themeContext.getColor('text.secondary'),
+        primary: theme.getColor('text.primary', '#111827'),
+        secondary: theme.getColor('text.secondary', '#4b5563'),
+        disabled: theme.getColor('text.disabled', '#9ca3af'),
+      },
+      background: {
+        default: theme.getColor('background.default', '#ffffff'),
+        paper: theme.getColor('background.paper', '#ffffff'),
+        disabled: theme.getColor('background.disabled', '#f3f4f6'),
       },
     },
     typography: {
-      scale: {
-        xs: String(themeContext.getTypography('scale.xs', '0.75rem')),
-        sm: String(themeContext.getTypography('scale.sm', '0.875rem')),
-        base: String(themeContext.getTypography('scale.base', '1rem')),
+      family: String(theme.getTypography('family.base', 'system-ui')),
+      size: {
+        xs: String(theme.getTypography('scale.xs', '0.75rem')),
+        sm: String(theme.getTypography('scale.sm', '0.875rem')),
+        base: String(theme.getTypography('scale.base', '1rem')),
+        lg: String(theme.getTypography('scale.lg', '1.125rem')),
+        xl: String(theme.getTypography('scale.xl', '1.25rem')),
+      },
+      weight: {
+        normal: Number(theme.getTypography('weights.normal', 400)),
+        medium: Number(theme.getTypography('weights.medium', 500)),
+        semibold: Number(theme.getTypography('weights.semibold', 600)),
+        bold: Number(theme.getTypography('weights.bold', 700)),
+      },
+      lineHeight: {
+        none: 1,
+        tight: 1.25,
+        normal: 1.5,
+        relaxed: 1.75,
+      },
+    },
+    spacing: {
+      unit: theme.getSpacing('1', '0.25rem'),
+      xs: theme.getSpacing('2', '0.5rem'),
+      sm: theme.getSpacing('3', '0.75rem'),
+      md: theme.getSpacing('4', '1rem'),
+      lg: theme.getSpacing('6', '1.5rem'),
+      xl: theme.getSpacing('8', '2rem'),
+    },
+    borders: {
+      width: {
+        thin: '1px',
+        normal: '2px',
+        thick: '3px',
+      },
+      radius: {
+        none: '0',
+        small: theme.getBorderRadius('sm', '0.25rem'),
+        medium: theme.getBorderRadius('md', '0.375rem'),
+        large: theme.getBorderRadius('lg', '0.5rem'),
+        full: '9999px',
+      },
+      style: {
+        solid: 'solid',
+        dashed: 'dashed',
+      },
+    },
+    animation: {
+      duration: {
+        fastest: '100ms',
+        fast: '150ms',
+        normal: '200ms',
+        slow: '300ms',
+        slowest: '400ms',
+      },
+      easing: {
+        linear: 'linear',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
     },
   };
@@ -184,227 +321,116 @@ const getCircularSize = (size: ProgressSize) => {
 };
 
 // Styled Components
-const ProgressContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-});
+const ProgressContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: ${props => props.$themeStyles.typography.family};
+`;
 
-const LinearProgressWrapper = styled.div<{ size: ProgressSize }>(({ size }) => ({
-  width: '100%',
-  position: 'relative',
-  overflow: 'hidden',
-  height: getLinearSize(size),
-  borderRadius: '999px',
-}));
-
-const LinearProgressBase = styled.div<{ color: ProgressColor; $themeStyles: ThemeStyles }>(
-  ({ color, $themeStyles }) => {
-    const getBackgroundColor = () => {
-      switch (color) {
-        case 'primary':
-          return $themeStyles.colors.primary[100];
-        case 'secondary':
-          return $themeStyles.colors.secondary[100];
-        case 'success':
-          return $themeStyles.colors.success[100];
-        case 'error':
-          return $themeStyles.colors.error[100];
-        case 'warning':
-          return $themeStyles.colors.warning[100];
-        case 'info':
-          return $themeStyles.colors.info[100];
-        default:
-          return $themeStyles.colors.gray[100];
-      }
-    };
-
-    return {
-      width: '100%',
-      height: '100%',
-      backgroundColor: getBackgroundColor(),
-    };
-  }
-);
+const LinearProgressWrapper = styled.div<{ size: ProgressSize; $themeStyles: ThemeStyles }>`
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  height: ${props => getLinearSize(props.size)};
+  border-radius: ${props => props.$themeStyles.borders.radius.full};
+  background-color: ${props => props.$themeStyles.colors.background.disabled};
+`;
 
 const LinearProgressBar = styled.div<{
   color: ProgressColor;
   value: number;
   variant: ProgressVariant;
   $themeStyles: ThemeStyles;
-}>(({ color, value, variant, $themeStyles }) => {
-  const getColor = () => {
-    switch (color) {
-      case 'primary':
-        return $themeStyles.colors.primary[500];
-      case 'secondary':
-        return $themeStyles.colors.secondary[500];
-      case 'success':
-        return $themeStyles.colors.success[500];
-      case 'error':
-        return $themeStyles.colors.error[500];
-      case 'warning':
-        return $themeStyles.colors.warning[500];
-      case 'info':
-        return $themeStyles.colors.info[500];
-      default:
-        return $themeStyles.colors.gray[500];
-    }
-  };
+}>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: ${props => props.$themeStyles.colors[props.color].main};
+  width: ${props => (props.variant === 'determinate' ? `${props.value}%` : '100%')};
+  transition: width ${props => props.$themeStyles.animation.duration.normal} ${props => props.$themeStyles.animation.easing.easeInOut};
 
-  const indeterminateAnimation = {
-    animation:
-      variant === 'indeterminate' ? 'indeterminate-animation 1.5s infinite linear' : 'none',
-    '@keyframes indeterminate-animation': {
-      '0%': {
-        transform: 'translateX(-100%)',
-        width: '50%',
-      },
-      '100%': {
-        transform: 'translateX(200%)',
-        width: '50%',
-      },
-    },
-  };
+  ${props =>
+    props.variant === 'indeterminate' &&
+    css`
+      animation: indeterminate 2s ease-in-out infinite;
+      @keyframes indeterminate {
+        0% {
+          left: -35%;
+          right: 100%;
+        }
+        60% {
+          left: 100%;
+          right: -90%;
+        }
+        100% {
+          left: 100%;
+          right: -90%;
+        }
+      }
+    `}
+`;
 
-  return {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    height: '100%',
-    backgroundColor: getColor(),
-    width: variant === 'determinate' ? `${value}%` : '100%',
-    transition: variant === 'determinate' ? 'width 0.4s ease-in-out' : 'none',
-    ...indeterminateAnimation,
-  };
-});
+const CircularProgressContainer = styled.div<{ size: ProgressSize; $themeStyles: ThemeStyles }>`
+  position: relative;
+  display: inline-flex;
+  font-family: ${props => props.$themeStyles.typography.family};
+`;
 
-const CircularProgressContainer = styled.div<{ size: ProgressSize }>(({ size }) => ({
-  position: 'relative',
-  display: 'inline-flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: getCircularSize(size),
-  height: getCircularSize(size),
-}));
-
-const CircularProgressSvg = styled.svg({
-  transform: 'rotate(-90deg)',
-});
+const CircularProgressSvg = styled.svg`
+  transform: rotate(-90deg);
+`;
 
 const CircularProgressBackground = styled.circle<{
   color: ProgressColor;
   $themeStyles: ThemeStyles;
-}>(({ color, $themeStyles }) => {
-  const getColor = () => {
-    switch (color) {
-      case 'primary':
-        return $themeStyles.colors.primary[100];
-      case 'secondary':
-        return $themeStyles.colors.secondary[100];
-      case 'success':
-        return $themeStyles.colors.success[100];
-      case 'error':
-        return $themeStyles.colors.error[100];
-      case 'warning':
-        return $themeStyles.colors.warning[100];
-      case 'info':
-        return $themeStyles.colors.info[100];
-      default:
-        return $themeStyles.colors.gray[100];
-    }
-  };
-
-  return {
-    fill: 'none',
-    stroke: getColor(),
-  };
-});
+}>`
+  fill: none;
+  stroke: ${props => props.$themeStyles.colors[props.color][100]};
+`;
 
 const CircularProgressCircle = styled.circle<{
   color: ProgressColor;
   variant: ProgressVariant;
   $themeStyles: ThemeStyles;
-}>(({ color, variant, $themeStyles }) => {
-  const getColor = () => {
-    switch (color) {
-      case 'primary':
-        return $themeStyles.colors.primary[500];
-      case 'secondary':
-        return $themeStyles.colors.secondary[500];
-      case 'success':
-        return $themeStyles.colors.success[500];
-      case 'error':
-        return $themeStyles.colors.error[500];
-      case 'warning':
-        return $themeStyles.colors.warning[500];
-      case 'info':
-        return $themeStyles.colors.info[500];
-      default:
-        return $themeStyles.colors.gray[500];
-    }
-  };
+}>`
+  fill: none;
+  stroke: ${props => props.$themeStyles.colors[props.color].main};
+  transition: stroke-dashoffset ${props => props.$themeStyles.animation.duration.normal} ${props => props.$themeStyles.animation.easing.easeInOut};
 
-  const indeterminateAnimation =
-    variant === 'indeterminate'
-      ? {
-          animation: 'circular-rotate 1.4s linear infinite',
-          '@keyframes circular-rotate': {
-            '0%': {
-              strokeDasharray: '1px, 200px',
-              strokeDashoffset: '0px',
-            },
-            '50%': {
-              strokeDasharray: '100px, 200px',
-              strokeDashoffset: '-15px',
-            },
-            '100%': {
-              strokeDasharray: '100px, 200px',
-              strokeDashoffset: '-125px',
-            },
-          },
+  ${props =>
+    props.variant === 'indeterminate' &&
+    css`
+      animation: circular-rotate 1.4s linear infinite;
+      @keyframes circular-rotate {
+        0% {
+          transform: rotate(0deg);
         }
-      : {};
-
-  return {
-    fill: 'none',
-    stroke: getColor(),
-    transition: variant === 'determinate' ? 'stroke-dashoffset 0.4s ease-in-out' : 'none',
-    ...indeterminateAnimation,
-  };
-});
-
-const Label = styled.div<{ $themeStyles: ThemeStyles }>(({ $themeStyles }) => ({
-  marginBottom: '0.5rem',
-  fontSize: $themeStyles.typography.scale.base,
-  color: $themeStyles.colors.text.primary,
-}));
-
-const PercentageText = styled.div<{ size: ProgressSize; $themeStyles: ThemeStyles }>(
-  ({ size, $themeStyles }) => {
-    const getFontSize = () => {
-      switch (size) {
-        case 'small':
-          return $themeStyles.typography.scale.xs;
-        case 'large':
-          return $themeStyles.typography.scale.base;
-        case 'medium':
-        default:
-          return $themeStyles.typography.scale.sm;
+        100% {
+          transform: rotate(360deg);
+        }
       }
-    };
+    `}
+`;
 
-    return {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      fontSize: getFontSize(),
-      fontWeight: 600,
-      color: $themeStyles.colors.text.primary,
-    };
-  }
-);
+const Label = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.xs};
+  font-size: ${props => props.$themeStyles.typography.size.base};
+  color: ${props => props.$themeStyles.colors.text.primary};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.normal};
+`;
+
+const PercentageText = styled.div<{ size: ProgressSize; $themeStyles: ThemeStyles }>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: ${props => props.$themeStyles.typography.size[props.size === 'small' ? 'xs' : props.size === 'large' ? 'base' : 'sm']};
+  font-weight: ${props => props.$themeStyles.typography.weight.semibold};
+  color: ${props => props.$themeStyles.colors.text.primary};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.none};
+`;
 
 /**
  * Linear Progress component
@@ -427,7 +453,7 @@ export const LinearProgress: React.FC<Omit<ProgressProps, 'type'>> = ({
   const clampedValue = Math.min(Math.max(value, 0), 100);
 
   return (
-    <ProgressContainer className={className} style={style}>
+    <ProgressContainer className={className} style={style} $themeStyles={themeStyles}>
       {label && <Label $themeStyles={themeStyles}>{label}</Label>}
       <LinearProgressWrapper
         size={size}
@@ -436,8 +462,8 @@ export const LinearProgress: React.FC<Omit<ProgressProps, 'type'>> = ({
         aria-valuemax={100}
         aria-valuenow={variant === 'determinate' ? clampedValue : undefined}
         aria-label={ariaLabel}
+        $themeStyles={themeStyles}
       >
-        <LinearProgressBase color={color} $themeStyles={themeStyles} />
         <LinearProgressBar
           color={color}
           value={clampedValue}
@@ -449,8 +475,9 @@ export const LinearProgress: React.FC<Omit<ProgressProps, 'type'>> = ({
         <div
           style={{
             textAlign: 'right',
-            marginTop: '0.25rem',
-            fontSize: themeStyles.typography.scale.sm,
+            marginTop: themeStyles.spacing.xs,
+            fontSize: themeStyles.typography.size.sm,
+            color: themeStyles.colors.text.primary,
           }}
         >
           {clampedValue}%
@@ -497,6 +524,7 @@ export const CircularProgress: React.FC<Omit<ProgressProps, 'type'>> = ({
       aria-valuemax={100}
       aria-valuenow={variant === 'determinate' ? clampedValue : undefined}
       aria-label={ariaLabel}
+      $themeStyles={themeStyles}
     >
       <CircularProgressSvg
         width={sizeValue}

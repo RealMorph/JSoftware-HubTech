@@ -755,3 +755,29 @@ export const HeatMap: React.FC<
   // For now, we'll just use the base map with heatmap mode enabled
   return <Map {...props} heatmap={true} />;
 };
+
+      )}
+    </MapContainer>
+  );
+};
+
+/**
+ * Choropleth Map - A map that colors regions based on data values
+ */
+export const ChoroplethMap: React.FC<Omit<MapProps, 'heatmap'>> = props => {
+  return <Map {...props} heatmap={true} />;
+};
+
+/**
+ * HeatMap - A specialized map for showing intensity of point data
+ */
+export const HeatMap: React.FC<
+  Omit<MapProps, 'heatmap'> & {
+    intensityRadius?: number;
+    blur?: number;
+  }
+> = ({ intensityRadius, blur, ...props }) => {
+  // In a real component, we'd implement an actual heatmap layer
+  // For now, we'll just use the base map with heatmap mode enabled
+  return <Map {...props} heatmap={true} />;
+};

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
 
 // Type definitions
 export type DateValue = Date | null;
@@ -291,8 +292,14 @@ const PopoverContainer = styled.div<{ visible: boolean }>`
 
 const CalendarContainer = styled.div`
   padding: 16px;
-  background: #ffffff;
-  background-color: #ffffff;
+  background: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
+  background-color: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
 `;
 
 const CalendarHeader = styled.div`
@@ -337,8 +344,14 @@ const WeekdaysRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin-bottom: 8px;
-  background: #ffffff;
-  background-color: #ffffff;
+  background: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
+  background-color: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
 `;
 
 const WeekdayCell = styled.div`
@@ -356,8 +369,14 @@ const DaysGrid = styled.div`
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 36px);
   gap: 2px;
-  background: #ffffff;
-  background-color: #ffffff;
+  background: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
+  background-color: ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('background.paper', '#ffffff');
+  }};
 `;
 
 const DayCell = styled.button<{
@@ -654,6 +673,66 @@ const Calendar: React.FC<CalendarProps> = ({
     </CalendarContainer>
   );
 };
+
+interface ThemeStyles {
+  colors: {
+    text: string;
+    background: string;
+    border: string;
+    primary: string;
+    error: string;
+  };
+  typography: {
+    scale: {
+      sm: string;
+      base: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+    };
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+  };
+  borderRadius: {
+    sm: string;
+    md: string;
+  };
+}
+
+const createThemeStyles = (theme: DirectThemeContextType) => ({
+  colors: {
+    text: theme.getColor('text.primary'),
+    background: theme.getColor('background'),
+    border: theme.getColor('border'),
+    primary: theme.getColor('primary'),
+    error: theme.getColor('error'),
+  },
+  typography: {
+    scale: {
+      sm: theme.getTypography('scale.sm') as string,
+      base: theme.getTypography('scale.base') as string,
+    },
+    weight: {
+      normal: theme.getTypography('weights.normal') as number,
+      medium: theme.getTypography('weights.medium') as number,
+    },
+  },
+  spacing: {
+    xs: theme.getSpacing('1'),
+    sm: theme.getSpacing('2'),
+    md: theme.getSpacing('4'),
+    lg: theme.getSpacing('6'),
+  },
+  borderRadius: {
+    sm: theme.getBorderRadius('sm'),
+    md: theme.getBorderRadius('md'),
+  },
+});
 
 // Main DatePicker component
 export const DatePicker: React.FC<DatePickerProps> = ({

@@ -292,7 +292,7 @@ export const CheckboxDemo: React.FC = () => {
             <SectionTitle $themeStyles={themeStyles}>Different Colors</SectionTitle>
             <CheckboxGroup $themeStyles={themeStyles}>
               <Checkbox
-                label="Primary color (default)"
+                label="Primary color"
                 color="primary"
                 checked={primaryChecked}
                 onChange={checked => setPrimaryChecked(checked)}

@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 import { ThemeConfig } from './consolidated-types';
-import { validateTheme, isValidTheme } from './theme-utils';
+import { validateTheme, isValidTheme } from './theme-validation';
 
 /**
  * Legacy theme formats may have various structures.

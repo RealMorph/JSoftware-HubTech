@@ -1,27 +1,216 @@
-import React, { useState } from 'react';
+import React, { useState, ElementType, useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { ThemeConfig } from '../../core/theme/theme-persistence';
 
-// Theme styles interface
-interface ThemeStyles {
-  background: string;
-  text: string;
-  border: string;
-  primary: string;
-  foreground: string;
+// Base styled component props interface
+interface StyledComponentProps {
+  $themeStyles: ThemeStyles;
 }
 
-// Theme styles creation function
-const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
-  background: themeContext.getColor('background'),
-  text: themeContext.getColor('text'),
-  border: themeContext.getColor('border'),
-  primary: themeContext.getColor('primary'),
-  foreground: themeContext.getColor('foreground'),
+// Theme styles interface
+interface ThemeStyles {
+  colors: {
+    primary: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    secondary: {
+      main: string;
+      light: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    background: {
+      paper: string;
+      default: string;
+    };
+    chart: {
+      axis: string;
+      grid: string;
+      tooltip: string;
+      bar: {
+        default: string;
+        hover: string;
+        active: string;
+      };
+      line: {
+        default: string;
+        hover: string;
+        active: string;
+      };
+      point: {
+        default: string;
+        hover: string;
+        active: string;
+      };
+      pie: {
+        default: string;
+        hover: string;
+        active: string;
+      };
+    };
+  };
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    fontWeight: {
+      regular: number;
+      medium: number;
+      bold: number;
+    };
+    lineHeight: {
+      small: number;
+      medium: number;
+      large: number;
+    };
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  borders: {
+    radius: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    width: {
+      thin: string;
+      medium: string;
+      thick: string;
+    };
+  };
+  shadows: {
+    tooltip: string;
+    legend: string;
+  };
+  animation: {
+    duration: {
+      short: string;
+      medium: string;
+      long: string;
+    };
+    easing: {
+      easeInOut: string;
+      easeOut: string;
+      easeIn: string;
+    };
+  };
+}
+
+// Theme styles creation function with proper type handling
+const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
+  colors: {
+    primary: {
+      main: theme.getColor('primary.main'),
+      light: theme.getColor('primary.light'),
+      dark: theme.getColor('primary.dark'),
+    },
+    secondary: {
+      main: theme.getColor('secondary.main'),
+      light: theme.getColor('secondary.light'),
+    },
+    text: {
+      primary: theme.getColor('text.primary'),
+      secondary: theme.getColor('text.secondary'),
+    },
+    background: {
+      paper: theme.getColor('background.paper'),
+      default: theme.getColor('background.default'),
+    },
+    chart: {
+      axis: theme.getColor('border'),
+      grid: theme.getColor('border.light'),
+      tooltip: theme.getColor('background.paper'),
+      bar: {
+        default: theme.getColor('primary.main'),
+        hover: theme.getColor('primary.light'),
+        active: theme.getColor('primary.dark'),
+      },
+      line: {
+        default: theme.getColor('primary.main'),
+        hover: theme.getColor('primary.light'),
+        active: theme.getColor('primary.dark'),
+      },
+      point: {
+        default: theme.getColor('primary.main'),
+        hover: theme.getColor('primary.light'),
+        active: theme.getColor('primary.dark'),
+      },
+      pie: {
+        default: theme.getColor('primary.main'),
+        hover: theme.getColor('primary.light'),
+        active: theme.getColor('primary.dark'),
+      },
+    },
+  },
+  typography: {
+    fontFamily: theme.getTypography('fontFamily') as string,
+    fontSize: {
+      small: theme.getTypography('fontSize.small').toString(),
+      medium: theme.getTypography('fontSize.medium').toString(),
+      large: theme.getTypography('fontSize.large').toString(),
+    },
+    fontWeight: {
+      regular: Number(theme.getTypography('fontWeight.regular')),
+      medium: Number(theme.getTypography('fontWeight.medium')),
+      bold: Number(theme.getTypography('fontWeight.bold')),
+    },
+    lineHeight: {
+      small: Number(theme.getTypography('lineHeight.small')),
+      medium: Number(theme.getTypography('lineHeight.medium')),
+      large: Number(theme.getTypography('lineHeight.large')),
+    },
+  },
+  spacing: {
+    xs: theme.getSpacing('4'),
+    sm: theme.getSpacing('8'),
+    md: theme.getSpacing('16'),
+    lg: theme.getSpacing('24'),
+    xl: theme.getSpacing('32'),
+  },
+  borders: {
+    radius: {
+      small: theme.getColor('border.radius.small', '4px'),
+      medium: theme.getColor('border.radius.medium', '8px'),
+      large: theme.getColor('border.radius.large', '12px'),
+    },
+    width: {
+      thin: theme.getColor('border.width.thin', '1px'),
+      medium: theme.getColor('border.width.medium', '2px'),
+      thick: theme.getColor('border.width.thick', '3px'),
+    },
+  },
+  shadows: {
+    tooltip: theme.getColor('shadow.medium', '0 2px 4px rgba(0,0,0,0.2)'),
+    legend: theme.getColor('shadow.small', '0 1px 2px rgba(0,0,0,0.1)'),
+  },
+  animation: {
+    duration: {
+      short: theme.getColor('animation.duration.short', '150ms'),
+      medium: theme.getColor('animation.duration.medium', '300ms'),
+      long: theme.getColor('animation.duration.long', '500ms'),
+    },
+    easing: {
+      easeInOut: theme.getColor('animation.easing.easeInOut', 'cubic-bezier(0.4, 0, 0.2, 1)'),
+      easeOut: theme.getColor('animation.easing.easeOut', 'cubic-bezier(0.0, 0, 0.2, 1)'),
+      easeIn: theme.getColor('animation.easing.easeIn', 'cubic-bezier(0.4, 0, 1, 1)'),
+    },
+  },
 });
 
-// Types
+// Types for chart data and props
 export interface DataPoint {
   id: string;
   label: string;
@@ -29,6 +218,7 @@ export interface DataPoint {
   color?: string;
 }
 
+// Extended chart props with responsive and accessibility features
 export interface ChartProps {
   data: DataPoint[];
   width?: string;
@@ -41,143 +231,342 @@ export interface ChartProps {
   onDataPointClick?: (pointId: string) => void;
   maxValue?: number;
   style?: React.CSSProperties;
+  // New responsive props
+  responsive?: boolean;
+  minHeight?: string;
+  aspectRatio?: number;
+  // New accessibility props
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  role?: string;
+  // New theme props
+  variant?: 'default' | 'filled' | 'outlined';
+  size?: 'small' | 'medium' | 'large';
+  // New interaction props
+  interactive?: boolean;
+  highlightOnHover?: boolean;
+  animateOnMount?: boolean;
 }
 
-// Styled components
-const ChartContainer = styled.div<{ width?: string; height?: string; $themeStyles: ThemeStyles }>`
+// Extended props for styled components
+interface ChartContainerProps extends StyledComponentProps {
+  width?: string;
+  height?: string;
+}
+
+interface ChartCanvasProps extends StyledComponentProps {
+  viewBox: string;
+}
+
+interface LegendItemProps extends StyledComponentProps {
+  onClick?: () => void;
+  style?: React.CSSProperties;
+}
+
+interface LegendColorProps extends StyledComponentProps {
+  color: string;
+}
+
+interface ActiveElementProps extends StyledComponentProps {
+  active?: boolean;
+}
+
+// Chart dimension constants
+const DEFAULT_CHART_WIDTH = 800;
+const DEFAULT_CHART_HEIGHT = 500;
+const DEFAULT_CHART_PADDING = {
+  top: 40,
+  right: 40,
+  bottom: 60,
+  left: 60,
+};
+
+// Responsive container component
+const ResponsiveContainer = styled.div<{ aspectRatio?: number }>`
+  width: 100%;
+  position: relative;
+  padding-bottom: ${props => props.aspectRatio ? `${100 / props.aspectRatio}%` : '75%'};
+
+  @media (max-width: 768px) {
+    padding-bottom: ${props => props.aspectRatio ? `${120 / props.aspectRatio}%` : '100%'};
+  }
+`;
+
+// Enhanced ChartContainer with responsive and variant support
+const ChartContainer = styled.div<ChartContainerProps & { 
+  $variant?: string; 
+  $size?: string;
+  $interactive?: boolean;
+  $animateOnMount?: boolean;
+}>`
   width: ${props => props.width || '100%'};
   height: ${props => props.height || '400px'};
   position: relative;
-  background-color: ${props => props.$themeStyles.background};
-  border-radius: 4px;
-  padding: 20px;
+  background-color: ${props => props.$themeStyles.colors.background.paper};
+  border-radius: ${props => props.$themeStyles.borders.radius.medium};
+  padding: ${props => props.$size === 'small' 
+    ? props.$themeStyles.spacing.sm 
+    : props.$size === 'large' 
+    ? props.$themeStyles.spacing.xl 
+    : props.$themeStyles.spacing.md};
   box-sizing: border-box;
   overflow: hidden;
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  box-shadow: ${props => props.$variant === 'outlined' 
+    ? 'none' 
+    : props.$themeStyles.shadows.tooltip};
+  border: ${props => props.$variant === 'outlined' 
+    ? `1px solid ${props.$themeStyles.colors.chart.axis}` 
+    : 'none'};
+  transition: all ${props => props.$themeStyles.animation.duration.medium} ${props => props.$themeStyles.animation.easing.easeInOut};
+  opacity: ${props => props.$animateOnMount ? 1 : 0};
+  transform: ${props => props.$animateOnMount ? 'translateY(0)' : 'translateY(20px)'};
+
+  ${props => props.$interactive && `
+    &:hover {
+      box-shadow: ${props.$themeStyles.shadows.legend};
+      transform: translateY(-2px);
+    }
+  `}
+
+  @media (max-width: 768px) {
+    padding: ${props => props.$themeStyles.spacing.sm};
+    height: ${props => props.height || '300px'};
+  }
+
+  @media (max-width: 480px) {
+    padding: ${props => props.$themeStyles.spacing.xs};
+    height: ${props => props.height || '250px'};
+  }
 `;
 
-const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: ${props => props.$themeStyles.text};
+// Enhanced Title with responsive typography
+const Title = styled.h3<StyledComponentProps & { $size?: string }>`
+  margin: 0 0 ${props => props.$themeStyles.spacing.sm} 0;
+  font-size: ${props => props.$size === 'small' 
+    ? props.$themeStyles.typography.fontSize.small 
+    : props.$size === 'large' 
+    ? props.$themeStyles.typography.fontSize.large 
+    : props.$themeStyles.typography.fontSize.medium};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
+  color: ${props => props.$themeStyles.colors.text.primary};
   text-align: center;
+  line-height: ${props => props.$themeStyles.typography.lineHeight.large};
+  transition: color ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeOut};
+
+  @media (max-width: 768px) {
+    font-size: ${props => props.$themeStyles.typography.fontSize.medium};
+    margin-bottom: ${props => props.$themeStyles.spacing.xs};
+  }
 `;
 
-const ChartCanvas = styled.svg`
+// Base styled components
+const ChartCanvas = styled.svg<ChartCanvasProps>`
   width: 100%;
-  height: calc(100% - 20px);
+  height: calc(100% - ${props => props.$themeStyles.spacing.lg});
+  overflow: visible;
+  transition: all ${props => props.$themeStyles.animation.duration.medium} ${props => props.$themeStyles.animation.easing.easeInOut};
 `;
 
-const BarRect = styled.rect<{ active?: boolean; $themeStyles: ThemeStyles }>`
+// Chart elements
+const BarRect = styled.rect<ActiveElementProps>`
   cursor: pointer;
-  transition: opacity 0.2s ease;
-  stroke-width: ${props => (props.active ? 2 : 1)};
-  stroke: ${props => (props.active ? props.$themeStyles.primary : props.$themeStyles.border)};
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  stroke-width: ${props => props.$themeStyles.borders.width[props.active ? 'medium' : 'thin']};
+  stroke: ${props => props.active ? props.$themeStyles.colors.chart.bar.active : props.$themeStyles.colors.chart.bar.default};
+  fill: ${props => props.active ? props.$themeStyles.colors.chart.bar.active : props.$themeStyles.colors.chart.bar.default};
+  transform-origin: bottom;
 
   &:hover {
-    opacity: 0.8;
+    fill: ${props => props.$themeStyles.colors.chart.bar.hover};
+    stroke: ${props => props.$themeStyles.colors.chart.bar.hover};
+    transform: scaleY(1.02);
+    filter: brightness(1.1);
+  }
+
+  &:active {
+    transform: scaleY(0.98);
   }
 `;
 
-const LinePoint = styled.circle<{ active?: boolean; $themeStyles: ThemeStyles }>`
+const LinePoint = styled.circle<ActiveElementProps>`
   cursor: pointer;
-  transition: all 0.2s ease;
-  stroke-width: ${props => (props.active ? 3 : 2)};
-  stroke: ${props => (props.active ? props.$themeStyles.primary : props.$themeStyles.border)};
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  stroke-width: ${props => props.$themeStyles.borders.width[props.active ? 'medium' : 'thin']};
+  stroke: ${props => props.active ? props.$themeStyles.colors.chart.point.active : props.$themeStyles.colors.chart.point.default};
+  fill: ${props => props.$themeStyles.colors.background.paper};
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
 
   &:hover {
-    r: ${props => parseInt(props.r?.toString() || '0') + 2};
+    stroke: ${props => props.$themeStyles.colors.chart.point.hover};
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  &:active {
+    transform: scale(0.9);
   }
 `;
 
-const LinePath = styled.path`
+const LinePath = styled.path<StyledComponentProps>`
   fill: none;
-  stroke-width: 2;
+  stroke: ${props => props.$themeStyles.colors.chart.line.default};
+  stroke-width: ${props => props.$themeStyles.borders.width.thin};
   stroke-linecap: round;
   stroke-linejoin: round;
-`;
-
-const PieSlice = styled.path<{ active?: boolean; $themeStyles: ThemeStyles }>`
-  cursor: pointer;
-  transition: all 0.2s ease;
-  stroke-width: ${props => (props.active ? 2 : 1)};
-  stroke: ${props => props.$themeStyles.background};
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 
   &:hover {
-    opacity: 0.8;
-    transform: translateX(5px) translateY(5px);
+    stroke: ${props => props.$themeStyles.colors.chart.line.hover};
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 `;
 
-const AxisLine = styled.line<{ $themeStyles: ThemeStyles }>`
-  stroke: ${props => props.$themeStyles.border};
-  stroke-width: 1;
+const PieSlice = styled.path<ActiveElementProps>`
+  cursor: pointer;
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  stroke-width: ${props => props.$themeStyles.borders.width[props.active ? 'medium' : 'thin']};
+  stroke: ${props => props.$themeStyles.colors.background.paper};
+  transform-origin: center;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+
+  &:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 `;
 
-const AxisLabel = styled.text<{ $themeStyles: ThemeStyles }>`
-  font-size: 12px;
-  fill: ${props => props.$themeStyles.text};
+// Axis and labels
+const AxisLine = styled.line<StyledComponentProps>`
+  stroke: ${props => props.$themeStyles.colors.chart.axis};
+  stroke-width: ${props => props.$themeStyles.borders.width.thin};
+  shape-rendering: crispEdges;
+  transition: stroke ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeOut};
+`;
+
+const AxisLabel = styled.text<StyledComponentProps>`
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.regular};
+  fill: ${props => props.$themeStyles.colors.text.secondary};
   text-anchor: middle;
+  transition: fill ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeOut};
+  user-select: none;
 `;
 
-const ValueLabel = styled.text<{ $themeStyles: ThemeStyles }>`
-  font-size: 12px;
-  fill: ${props => props.$themeStyles.text};
+const ValueLabel = styled.text<StyledComponentProps>`
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
+  fill: ${props => props.$themeStyles.colors.text.primary};
   text-anchor: middle;
   pointer-events: none;
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeOut};
+  user-select: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
 `;
 
-const Tooltip = styled.div<{ $themeStyles: ThemeStyles }>`
+// UI elements
+const Tooltip = styled.div<StyledComponentProps>`
   position: absolute;
-  background-color: ${props => props.$themeStyles.foreground};
-  color: ${props => props.$themeStyles.text};
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: ${props => props.$themeStyles.colors.chart.tooltip};
+  color: ${props => props.$themeStyles.colors.text.primary};
+  padding: ${props => props.$themeStyles.spacing.xs} ${props => props.$themeStyles.spacing.sm};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
+  box-shadow: ${props => props.$themeStyles.shadows.tooltip};
   pointer-events: none;
   z-index: 100;
   max-width: 200px;
   white-space: nowrap;
+  transform: translate(-50%, -100%);
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeOut};
+  opacity: 0.95;
+  backdrop-filter: blur(2px);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px 4px 0;
+    border-style: solid;
+    border-color: ${props => props.$themeStyles.colors.chart.tooltip} transparent transparent;
+  }
 `;
 
-const Legend = styled.div<{ $themeStyles: ThemeStyles }>`
+const Legend = styled.div<StyledComponentProps>`
   position: absolute;
-  bottom: 30px;
-  right: 30px;
-  background-color: ${props => props.$themeStyles.foreground};
-  padding: 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  bottom: ${props => props.$themeStyles.spacing.lg};
+  right: ${props => props.$themeStyles.spacing.lg};
+  background-color: ${props => props.$themeStyles.colors.background.paper};
+  padding: ${props => props.$themeStyles.spacing.sm};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+  box-shadow: ${props => props.$themeStyles.shadows.legend};
   z-index: 50;
+  transition: all ${props => props.$themeStyles.animation.duration.medium} ${props => props.$themeStyles.animation.easing.easeInOut};
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    box-shadow: ${props => props.$themeStyles.shadows.tooltip};
+    transform: translateY(-2px);
+  }
 `;
 
-const LegendItem = styled.div`
+const LegendItem = styled.div<LegendItemProps>`
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
-  font-size: 12px;
+  margin-bottom: ${props => props.$themeStyles.spacing.xs};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  color: ${props => props.$themeStyles.colors.text.secondary};
+  cursor: pointer;
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  padding: ${props => props.$themeStyles.spacing.xs};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: ${props => props.$themeStyles.colors.text.primary};
+    transform: translateX(2px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
-const LegendColor = styled.div<{ color: string }>`
+const LegendColor = styled.div<LegendColorProps>`
   width: 12px;
   height: 12px;
   background-color: ${props => props.color};
-  margin-right: 5px;
-  border-radius: 2px;
+  margin-right: ${props => props.$themeStyles.spacing.xs};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+  transition: transform ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  ${LegendItem}:hover & {
+    transform: scale(1.2);
+  }
 `;
 
 // Helper functions
-const getDefaultColors = (): string[] => [
-  '#3366CC',
-  '#DC3912',
-  '#FF9900',
-  '#109618',
-  '#990099',
-  '#0099C6',
-  '#DD4477',
-  '#66AA00',
-  '#B82E2E',
-  '#316395',
+const getDefaultColors = (theme: ReturnType<typeof useDirectTheme>): string[] => [
+  theme.getColor('primary.main'),
+  theme.getColor('secondary.main'),
+  theme.getColor('error.main'),
+  theme.getColor('warning.main'),
+  theme.getColor('success.main'),
+  theme.getColor('info.main'),
+  theme.getColor('primary.light'),
+  theme.getColor('secondary.light'),
+  theme.getColor('error.light'),
+  theme.getColor('warning.light'),
 ];
 
 /**
@@ -185,19 +574,32 @@ const getDefaultColors = (): string[] => [
  */
 export const BarChart: React.FC<ChartProps> = ({
   data,
-  width = '100%',
-  height = '400px',
+  width,
+  height,
   title,
   showLegend = true,
   showTooltips = true,
   showValues = true,
-  colorScale = getDefaultColors(),
+  colorScale = getDefaultColors(useDirectTheme()),
   onDataPointClick,
   maxValue,
   style,
+  // New props
+  responsive = true,
+  minHeight = '250px',
+  aspectRatio = 4/3,
+  ariaLabel,
+  ariaDescribedBy,
+  role = 'img',
+  variant = 'default',
+  size = 'medium',
+  interactive = true,
+  highlightOnHover = true,
+  animateOnMount = true,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [activePoint, setActivePoint] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [tooltip, setTooltip] = useState<{
     content: string;
     x: number;
@@ -211,48 +613,26 @@ export const BarChart: React.FC<ChartProps> = ({
   });
 
   const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
+  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
 
-  // Handle empty data
-  if (!data || data.length === 0) {
-    return (
-      <ChartContainer
-        width={width}
-        height={height}
-        ref={containerRef}
-        style={style}
-        $themeStyles={themeStyles}
-      >
-        <p>No data to display</p>
-      </ChartContainer>
-    );
-  }
+  // Mount animation
+  React.useEffect(() => {
+    if (animateOnMount) {
+      const timer = setTimeout(() => setMounted(true), 100);
+      return () => clearTimeout(timer);
+    }
+    setMounted(true);
+  }, [animateOnMount]);
 
-  // Sort data by value
-  const sortedData = [...data].sort((a, b) => a.value - b.value);
-
-  // Determine chart dimensions
-  const chartWidth = 800;
-  const chartHeight = 500;
-  const padding = { top: 40, right: 40, bottom: 60, left: 60 };
-  const innerWidth = chartWidth - padding.left - padding.right;
-  const innerHeight = chartHeight - padding.top - padding.bottom;
-
-  // Calculate scales
-  const barWidth = (innerWidth / data.length) * 0.8;
-  const barGap = (innerWidth / data.length) * 0.2;
-  const maxDataValue = maxValue || Math.max(...data.map(d => d.value));
-
-  // Handle click on a data point
-  const handlePointClick = (pointId: string) => {
+  // Handlers with proper types
+  const handlePointClick = useCallback((pointId: string) => {
     setActivePoint(activePoint === pointId ? null : pointId);
     if (onDataPointClick) {
       onDataPointClick(pointId);
     }
-  };
+  }, [activePoint, onDataPointClick]);
 
-  // Show tooltip
-  const handleMouseOver = (content: string, event: React.MouseEvent) => {
+  const handleMouseOver = useCallback((content: string, event: React.MouseEvent) => {
     if (showTooltips) {
       const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
@@ -264,26 +644,68 @@ export const BarChart: React.FC<ChartProps> = ({
         });
       }
     }
-  };
+  }, [showTooltips]);
 
-  // Hide tooltip
-  const handleMouseOut = () => {
+  const handleMouseOut = useCallback(() => {
     if (showTooltips) {
       setTooltip(prev => ({ ...prev, visible: false }));
     }
-  };
+  }, [showTooltips]);
 
-  return (
+  // Empty state handling
+  if (!data || data.length === 0) {
+    return (
+      <ChartContainer
+        width={width}
+        height={height}
+        ref={containerRef}
+        style={style}
+        $themeStyles={themeStyles}
+        $variant={variant}
+        $size={size}
+        $interactive={interactive}
+        $animateOnMount={mounted}
+        role="presentation"
+      >
+        <Title $themeStyles={themeStyles} $size={size}>No data to display</Title>
+      </ChartContainer>
+    );
+  }
+
+  // Chart dimensions and calculations
+  const chartWidth = DEFAULT_CHART_WIDTH;
+  const chartHeight = DEFAULT_CHART_HEIGHT;
+  const padding = DEFAULT_CHART_PADDING;
+  const innerWidth = chartWidth - padding.left - padding.right;
+  const innerHeight = chartHeight - padding.top - padding.bottom;
+
+  // Calculate scales
+  const barWidth = (innerWidth / data.length) * 0.8;
+  const barGap = (innerWidth / data.length) * 0.2;
+  const maxDataValue = maxValue || Math.max(...data.map(d => d.value));
+
+  const chartContent = (
     <ChartContainer
       width={width}
       height={height}
       ref={containerRef}
       style={style}
       $themeStyles={themeStyles}
+      $variant={variant}
+      $size={size}
+      $interactive={interactive}
+      $animateOnMount={mounted}
+      role={role}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
     >
-      {title && <Title $themeStyles={themeStyles}>{title}</Title>}
+      {title && <Title $themeStyles={themeStyles} $size={size}>{title}</Title>}
 
-      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
+      <ChartCanvas 
+        viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
+        $themeStyles={themeStyles}
+        aria-hidden="true"
+      >
         {/* Y-axis */}
         <AxisLine
           x1={padding.left}
@@ -381,7 +803,7 @@ export const BarChart: React.FC<ChartProps> = ({
         </g>
       </ChartCanvas>
 
-      {/* Tooltip */}
+      {/* Enhanced tooltip with ARIA live region */}
       {tooltip.visible && (
         <Tooltip
           style={{
@@ -389,21 +811,39 @@ export const BarChart: React.FC<ChartProps> = ({
             top: tooltip.y + 10,
           }}
           $themeStyles={themeStyles}
+          role="tooltip"
+          aria-live="polite"
         >
           {tooltip.content}
         </Tooltip>
       )}
 
-      {/* Legend */}
+      {/* Enhanced legend with keyboard navigation */}
       {showLegend && (
-        <Legend $themeStyles={themeStyles}>
+        <Legend 
+          $themeStyles={themeStyles}
+          role="list"
+          aria-label="Chart legend"
+        >
           {data.map((point, i) => (
             <LegendItem
               key={`legend-${i}`}
               onClick={() => handlePointClick(point.id)}
               style={{ cursor: 'pointer' }}
+              $themeStyles={themeStyles}
+              role="listitem"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handlePointClick(point.id);
+                }
+              }}
             >
-              <LegendColor color={point.color || colorScale[i % colorScale.length]} />
+              <LegendColor 
+                color={point.color || colorScale[i % colorScale.length]} 
+                $themeStyles={themeStyles}
+                aria-hidden="true"
+              />
               <span>{point.label}</span>
             </LegendItem>
           ))}
@@ -411,6 +851,12 @@ export const BarChart: React.FC<ChartProps> = ({
       )}
     </ChartContainer>
   );
+
+  return responsive ? (
+    <ResponsiveContainer aspectRatio={aspectRatio} style={{ minHeight }}>
+      {chartContent}
+    </ResponsiveContainer>
+  ) : chartContent;
 };
 
 /**
@@ -424,13 +870,26 @@ export const LineChart: React.FC<ChartProps> = ({
   showLegend = true,
   showTooltips = true,
   showValues = false,
-  colorScale = getDefaultColors(),
+  colorScale = getDefaultColors(useDirectTheme()),
   onDataPointClick,
   maxValue,
   style,
+  // New props
+  responsive = true,
+  minHeight = '250px',
+  aspectRatio = 4/3,
+  ariaLabel,
+  ariaDescribedBy,
+  role = 'img',
+  variant = 'default',
+  size = 'medium',
+  interactive = true,
+  highlightOnHover = true,
+  animateOnMount = true,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [activePoint, setActivePoint] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [tooltip, setTooltip] = useState<{
     content: string;
     x: number;
@@ -444,7 +903,16 @@ export const LineChart: React.FC<ChartProps> = ({
   });
 
   const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
+  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
+
+  // Mount animation
+  React.useEffect(() => {
+    if (animateOnMount) {
+      const timer = setTimeout(() => setMounted(true), 100);
+      return () => clearTimeout(timer);
+    }
+    setMounted(true);
+  }, [animateOnMount]);
 
   // Handle empty data
   if (!data || data.length === 0) {
@@ -455,8 +923,13 @@ export const LineChart: React.FC<ChartProps> = ({
         ref={containerRef}
         style={style}
         $themeStyles={themeStyles}
+        $variant={variant}
+        $size={size}
+        $interactive={interactive}
+        $animateOnMount={mounted}
+        role="presentation"
       >
-        <p>No data to display</p>
+        <Title $themeStyles={themeStyles} $size={size}>No data to display</Title>
       </ChartContainer>
     );
   }
@@ -512,17 +985,24 @@ export const LineChart: React.FC<ChartProps> = ({
     return `M ${points.join(' L ')}`;
   };
 
-  return (
+  const chartContent = (
     <ChartContainer
       width={width}
       height={height}
       ref={containerRef}
       style={style}
       $themeStyles={themeStyles}
+      $variant={variant}
+      $size={size}
+      $interactive={interactive}
+      $animateOnMount={mounted}
+      role={role}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
     >
-      {title && <Title $themeStyles={themeStyles}>{title}</Title>}
+      {title && <Title $themeStyles={themeStyles} $size={size}>{title}</Title>}
 
-      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
+      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`} $themeStyles={themeStyles}>
         {/* Y-axis */}
         <AxisLine
           x1={padding.left}
@@ -592,7 +1072,7 @@ export const LineChart: React.FC<ChartProps> = ({
         })}
 
         {/* Line */}
-        <LinePath d={generateLinePath()} stroke={colorScale[0]} />
+        <LinePath d={generateLinePath()} stroke={colorScale[0]} $themeStyles={themeStyles} />
 
         {/* Data points */}
         {data.map((point, i) => {
@@ -625,7 +1105,7 @@ export const LineChart: React.FC<ChartProps> = ({
         })}
       </ChartCanvas>
 
-      {/* Tooltip */}
+      {/* Enhanced tooltip with ARIA live region */}
       {tooltip.visible && (
         <Tooltip
           style={{
@@ -633,21 +1113,39 @@ export const LineChart: React.FC<ChartProps> = ({
             top: tooltip.y + 10,
           }}
           $themeStyles={themeStyles}
+          role="tooltip"
+          aria-live="polite"
         >
           {tooltip.content}
         </Tooltip>
       )}
 
-      {/* Legend */}
+      {/* Enhanced legend with keyboard navigation */}
       {showLegend && (
-        <Legend $themeStyles={themeStyles}>
+        <Legend 
+          $themeStyles={themeStyles}
+          role="list"
+          aria-label="Chart legend"
+        >
           {data.map((point, i) => (
             <LegendItem
               key={`legend-${i}`}
               onClick={() => handlePointClick(point.id)}
               style={{ cursor: 'pointer' }}
+              $themeStyles={themeStyles}
+              role="listitem"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handlePointClick(point.id);
+                }
+              }}
             >
-              <LegendColor color={point.color || colorScale[i % colorScale.length]} />
+              <LegendColor 
+                color={point.color || colorScale[i % colorScale.length]} 
+                $themeStyles={themeStyles}
+                aria-hidden="true"
+              />
               <span>{point.label}</span>
             </LegendItem>
           ))}
@@ -655,6 +1153,12 @@ export const LineChart: React.FC<ChartProps> = ({
       )}
     </ChartContainer>
   );
+
+  return responsive ? (
+    <ResponsiveContainer aspectRatio={aspectRatio} style={{ minHeight }}>
+      {chartContent}
+    </ResponsiveContainer>
+  ) : chartContent;
 };
 
 /**
@@ -668,12 +1172,25 @@ export const PieChart: React.FC<ChartProps> = ({
   showLegend = true,
   showTooltips = true,
   showValues = true,
-  colorScale = getDefaultColors(),
+  colorScale = getDefaultColors(useDirectTheme()),
   onDataPointClick,
   style,
+  // New props
+  responsive = true,
+  minHeight = '250px',
+  aspectRatio = 4/3,
+  ariaLabel,
+  ariaDescribedBy,
+  role = 'img',
+  variant = 'default',
+  size = 'medium',
+  interactive = true,
+  highlightOnHover = true,
+  animateOnMount = true,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [activeSlice, setActiveSlice] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [tooltip, setTooltip] = useState<{
     content: string;
     x: number;
@@ -687,7 +1204,16 @@ export const PieChart: React.FC<ChartProps> = ({
   });
 
   const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
+  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
+
+  // Mount animation
+  React.useEffect(() => {
+    if (animateOnMount) {
+      const timer = setTimeout(() => setMounted(true), 100);
+      return () => clearTimeout(timer);
+    }
+    setMounted(true);
+  }, [animateOnMount]);
 
   // Handle empty data
   if (!data || data.length === 0) {
@@ -698,8 +1224,13 @@ export const PieChart: React.FC<ChartProps> = ({
         ref={containerRef}
         style={style}
         $themeStyles={themeStyles}
+        $variant={variant}
+        $size={size}
+        $interactive={interactive}
+        $animateOnMount={mounted}
+        role="presentation"
       >
-        <p>No data to display</p>
+        <Title $themeStyles={themeStyles} $size={size}>No data to display</Title>
       </ChartContainer>
     );
   }
@@ -812,17 +1343,24 @@ export const PieChart: React.FC<ChartProps> = ({
 
   const slices = generatePieSlices();
 
-  return (
+  const chartContent = (
     <ChartContainer
       width={width}
       height={height}
       ref={containerRef}
       style={style}
       $themeStyles={themeStyles}
+      $variant={variant}
+      $size={size}
+      $interactive={interactive}
+      $animateOnMount={mounted}
+      role={role}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
     >
-      {title && <Title $themeStyles={themeStyles}>{title}</Title>}
+      {title && <Title $themeStyles={themeStyles} $size={size}>{title}</Title>}
 
-      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
+      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`} $themeStyles={themeStyles}>
         {/* Pie slices */}
         {slices.map((slice, i) => (
           <g key={`slice-${i}`} transform={slice.transform}>
@@ -841,14 +1379,14 @@ export const PieChart: React.FC<ChartProps> = ({
               $themeStyles={themeStyles}
             />
 
-            {/* Value label inside slice if large enough */}
+            {/* Value labels */}
             {showValues && slice.percentage > 5 && (
               <ValueLabel x={slice.labelX} y={slice.labelY} $themeStyles={themeStyles}>
                 {slice.percentage.toFixed(0)}%
               </ValueLabel>
             )}
 
-            {/* Percentage label outside for smaller slices */}
+            {/* Percentage labels */}
             {showValues && slice.percentage <= 5 && (
               <g>
                 <line
@@ -868,7 +1406,7 @@ export const PieChart: React.FC<ChartProps> = ({
         ))}
       </ChartCanvas>
 
-      {/* Tooltip */}
+      {/* Enhanced tooltip with ARIA live region */}
       {tooltip.visible && (
         <Tooltip
           style={{
@@ -876,21 +1414,39 @@ export const PieChart: React.FC<ChartProps> = ({
             top: tooltip.y + 10,
           }}
           $themeStyles={themeStyles}
+          role="tooltip"
+          aria-live="polite"
         >
           {tooltip.content}
         </Tooltip>
       )}
 
-      {/* Legend */}
+      {/* Enhanced legend with keyboard navigation */}
       {showLegend && (
-        <Legend $themeStyles={themeStyles}>
+        <Legend 
+          $themeStyles={themeStyles}
+          role="list"
+          aria-label="Chart legend"
+        >
           {data.map((point, i) => (
             <LegendItem
               key={`legend-${i}`}
               onClick={() => handleSliceClick(point.id)}
               style={{ cursor: 'pointer' }}
+              $themeStyles={themeStyles}
+              role="listitem"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleSliceClick(point.id);
+                }
+              }}
             >
-              <LegendColor color={point.color || colorScale[i % colorScale.length]} />
+              <LegendColor 
+                color={point.color || colorScale[i % colorScale.length]} 
+                $themeStyles={themeStyles}
+                aria-hidden="true"
+              />
               <span>
                 {point.label} ({((point.value / total) * 100).toFixed(1)}%)
               </span>
@@ -900,6 +1456,12 @@ export const PieChart: React.FC<ChartProps> = ({
       )}
     </ChartContainer>
   );
+
+  return responsive ? (
+    <ResponsiveContainer aspectRatio={aspectRatio} style={{ minHeight }}>
+      {chartContent}
+    </ResponsiveContainer>
+  ) : chartContent;
 };
 
 /**
@@ -907,16 +1469,24 @@ export const PieChart: React.FC<ChartProps> = ({
  */
 export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = props => {
   const { innerRadius = 0.6, ...otherProps } = props;
+  const themeContext = useDirectTheme();
+  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
 
-  // This implementation leverages the PieChart with a white circle in the center
   return (
     <ChartContainer
       width={props.width}
       height={props.height}
       ref={React.useRef<HTMLDivElement>(null)}
       style={props.style}
+      $themeStyles={themeStyles}
+      $variant="outlined"
+      $size="medium"
+      $interactive={true}
+      $animateOnMount={true}
     >
-      {props.title && <Title>{props.title}</Title>}
+      {props.title && <Title $themeStyles={themeStyles} $size="medium">
+        {props.title}
+      </Title>}
 
       <PieChart {...otherProps} />
 
@@ -938,7 +1508,7 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = props
           cy="50"
           r={innerRadius * 50}
           fill="none"
-          stroke={props.themeStyles?.background}
+          stroke={themeStyles.colors.background.paper}
           strokeWidth="40"
         />
       </svg>

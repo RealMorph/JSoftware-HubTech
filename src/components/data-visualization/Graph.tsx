@@ -4,27 +4,179 @@ import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // Define theme style interface
 interface ThemeStyles {
-  backgroundColor: string;
-  textColor: string;
-  textSecondaryColor: string;
-  foregroundColor: string;
-  primaryColor: string;
-  borderColor: string;
-  shadowColor: string;
+  colors: {
+    primary: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    secondary: {
+      main: string;
+      light: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    background: {
+      paper: string;
+      default: string;
+    };
+    node: {
+      default: string;
+      hover: string;
+      active: string;
+      text: string;
+    };
+    edge: {
+      default: string;
+      hover: string;
+      active: string;
+      text: string;
+    };
+  };
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    fontWeight: {
+      regular: number;
+      medium: number;
+      bold: number;
+    };
+    lineHeight: {
+      small: number;
+      medium: number;
+      large: number;
+    };
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  borders: {
+    radius: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    width: {
+      thin: string;
+      medium: string;
+      thick: string;
+    };
+  };
+  shadows: {
+    node: string;
+    tooltip: string;
+  };
+  animation: {
+    duration: {
+      short: string;
+      medium: string;
+      long: string;
+    };
+    easing: {
+      easeInOut: string;
+      easeOut: string;
+      easeIn: string;
+    };
+  };
 }
 
 // Function to create ThemeStyles from DirectThemeProvider
-function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
-  const { getColor, getShadow } = themeContext;
-
+function createThemeStyles(theme: any): ThemeStyles {
   return {
-    backgroundColor: getColor('background', '#ffffff'),
-    textColor: getColor('text.primary', '#333333'),
-    textSecondaryColor: getColor('text.secondary', '#666666'),
-    foregroundColor: getColor('foreground', '#ffffff'),
-    primaryColor: getColor('primary', '#3366CC'),
-    borderColor: getColor('border', '#e0e0e0'),
-    shadowColor: getShadow('sm', '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'),
+    colors: {
+      primary: {
+        main: theme.colors.primary.main,
+        light: theme.colors.primary.light,
+        dark: theme.colors.primary.dark,
+      },
+      secondary: {
+        main: theme.colors.secondary.main,
+        light: theme.colors.secondary.light,
+      },
+      text: {
+        primary: theme.colors.text.primary,
+        secondary: theme.colors.text.secondary,
+      },
+      background: {
+        paper: theme.colors.background.paper,
+        default: theme.colors.background.default,
+      },
+      node: {
+        default: theme.colors.primary.main,
+        hover: theme.colors.primary.light,
+        active: theme.colors.primary.dark,
+        text: theme.colors.text.primary,
+      },
+      edge: {
+        default: theme.colors.secondary.main,
+        hover: theme.colors.secondary.light,
+        active: theme.colors.primary.main,
+        text: theme.colors.text.secondary,
+      },
+    },
+    typography: {
+      fontFamily: theme.typography.fontFamily,
+      fontSize: {
+        small: theme.typography.fontSize.small,
+        medium: theme.typography.fontSize.medium,
+        large: theme.typography.fontSize.large,
+      },
+      fontWeight: {
+        regular: theme.typography.fontWeight.regular,
+        medium: theme.typography.fontWeight.medium,
+        bold: theme.typography.fontWeight.bold,
+      },
+      lineHeight: {
+        small: theme.typography.lineHeight.small,
+        medium: theme.typography.lineHeight.medium,
+        large: theme.typography.lineHeight.large,
+      },
+    },
+    spacing: {
+      xs: theme.spacing.xs,
+      sm: theme.spacing.sm,
+      md: theme.spacing.md,
+      lg: theme.spacing.lg,
+      xl: theme.spacing.xl,
+    },
+    borders: {
+      radius: {
+        small: theme.borders.radius.small,
+        medium: theme.borders.radius.medium,
+        large: theme.borders.radius.large,
+      },
+      width: {
+        thin: theme.borders.width.thin,
+        medium: theme.borders.width.medium,
+        thick: theme.borders.width.thick,
+      },
+    },
+    shadows: {
+      node: theme.shadows.medium,
+      tooltip: theme.shadows.large,
+    },
+    animation: {
+      duration: {
+        short: theme.animation.duration.short,
+        medium: theme.animation.duration.medium,
+        long: theme.animation.duration.long,
+      },
+      easing: {
+        easeInOut: theme.animation.easing.easeInOut,
+        easeOut: theme.animation.easing.easeOut,
+        easeIn: theme.animation.easing.easeIn,
+      },
+    },
   };
 }
 
@@ -77,113 +229,103 @@ export interface GraphProps {
 }
 
 // Styled components
-const GraphContainer = styled.div<{ width?: string; height?: string; $themeStyles: ThemeStyles }>`
-  width: ${props => props.width || '100%'};
-  height: ${props => props.height || '500px'};
+const GraphContainer = styled.div<{ width: number; height: number; $themeStyles: ThemeStyles }>`
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
   position: relative;
-  background-color: ${props => props.$themeStyles.backgroundColor};
-  border-radius: 4px;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
+  background: ${props => props.$themeStyles.colors.background.paper};
+  border-radius: ${props => props.$themeStyles.borders.radius.medium};
+  padding: ${props => props.$themeStyles.spacing.md};
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
 `;
 
 const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: ${props => props.$themeStyles.textColor};
-  text-align: center;
+  color: ${props => props.$themeStyles.colors.text.primary};
+  font-size: ${props => props.$themeStyles.typography.fontSize.large};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
+  margin-bottom: ${props => props.$themeStyles.spacing.sm};
 `;
 
 const GraphCanvas = styled.svg`
+  display: block;
   width: 100%;
-  height: calc(100% - 20px);
-  user-select: none;
+  height: 100%;
 `;
 
-const Edge = styled.line<{ active?: boolean; weight?: number; $themeStyles: ThemeStyles }>`
-  stroke-width: ${props => (props.weight ? Math.min(Math.max(props.weight, 1), 5) : 1)};
-  stroke-opacity: 0.8;
-  transition: all 0.2s ease;
+const Edge = styled.line<{ active: boolean; weight: number; $themeStyles: ThemeStyles }>`
+  stroke: ${props => props.active ? props.$themeStyles.colors.edge.active : props.$themeStyles.colors.edge.default};
+  stroke-width: ${props => props.weight * parseFloat(props.$themeStyles.borders.width.thin)};
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
-    stroke-opacity: 1;
-    stroke-width: ${props => {
-      const width = props.weight ? Math.min(Math.max(props.weight, 1), 5) : 1;
-      return width + 1;
-    }};
-    cursor: pointer;
+    stroke: ${props => props.$themeStyles.colors.edge.hover};
   }
 `;
 
-const EdgePath = styled.path<{ active?: boolean; weight?: number; $themeStyles: ThemeStyles }>`
-  stroke-width: ${props => (props.weight ? Math.min(Math.max(props.weight, 1), 5) : 1)};
-  stroke-opacity: 0.8;
+const EdgePath = styled.path<{ active: boolean; weight: number; $themeStyles: ThemeStyles }>`
+  stroke: ${props => props.active ? props.$themeStyles.colors.edge.active : props.$themeStyles.colors.edge.default};
+  stroke-width: ${props => props.weight * parseFloat(props.$themeStyles.borders.width.thin)};
   fill: none;
-  transition: all 0.2s ease;
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
-    stroke-opacity: 1;
-    stroke-width: ${props => {
-      const width = props.weight ? Math.min(Math.max(props.weight, 1), 5) : 1;
-      return width + 1;
-    }};
-    cursor: pointer;
+    stroke: ${props => props.$themeStyles.colors.edge.hover};
   }
 `;
 
-const Node = styled.circle<{ active?: boolean; $themeStyles: ThemeStyles }>`
-  stroke-width: ${props => (props.active ? 3 : 1)};
-  stroke: ${props =>
-    props.active ? props.$themeStyles.primaryColor : props.$themeStyles.borderColor};
-  transition: all 0.2s ease;
+const Node = styled.circle<{ active: boolean; $themeStyles: ThemeStyles }>`
+  fill: ${props => props.active ? props.$themeStyles.colors.node.active : props.$themeStyles.colors.node.default};
+  stroke: ${props => props.$themeStyles.colors.background.paper};
+  stroke-width: ${props => props.$themeStyles.borders.width.thin};
+  cursor: pointer;
+  filter: drop-shadow(${props => props.$themeStyles.shadows.node});
+  transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
-    stroke-width: 3;
-    cursor: pointer;
+    fill: ${props => props.$themeStyles.colors.node.hover};
+    transform: scale(1.1);
   }
 `;
 
 const NodeLabel = styled.text<{ $themeStyles: ThemeStyles }>`
-  font-size: 12px;
-  fill: ${props => props.$themeStyles.textColor};
-  text-anchor: middle;
-  dominant-baseline: middle;
+  fill: ${props => props.$themeStyles.colors.node.text};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
   pointer-events: none;
   user-select: none;
 `;
 
 const EdgeLabel = styled.text<{ $themeStyles: ThemeStyles }>`
-  font-size: 10px;
-  fill: ${props => props.$themeStyles.textColor};
-  text-anchor: middle;
-  dominant-baseline: middle;
+  fill: ${props => props.$themeStyles.colors.edge.text};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.regular};
   pointer-events: none;
   user-select: none;
 `;
 
-const Tooltip = styled.div<{ $themeStyles: ThemeStyles }>`
+const Tooltip = styled.div<{ x: number; y: number; $themeStyles: ThemeStyles }>`
   position: absolute;
-  background-color: ${props => props.$themeStyles.foregroundColor};
-  color: ${props => props.$themeStyles.textColor};
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  box-shadow: ${props => props.$themeStyles.shadowColor};
+  left: ${props => props.x}px;
+  top: ${props => props.y}px;
+  transform: translate(-50%, -100%);
+  background: ${props => props.$themeStyles.colors.background.paper};
+  color: ${props => props.$themeStyles.colors.text.primary};
+  padding: ${props => props.$themeStyles.spacing.xs} ${props => props.$themeStyles.spacing.sm};
+  border-radius: ${props => props.$themeStyles.borders.radius.small};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
+  box-shadow: ${props => props.$themeStyles.shadows.tooltip};
   pointer-events: none;
-  z-index: 100;
-  max-width: 200px;
-  white-space: normal;
+  z-index: 1000;
 `;
 
 const Legend = styled.div<{ $themeStyles: ThemeStyles }>`
   position: absolute;
   top: 30px;
   right: 30px;
-  background-color: ${props => props.$themeStyles.foregroundColor};
+  background-color: ${props => props.$themeStyles.colors.background.paper};
   padding: 10px;
   border-radius: 4px;
-  box-shadow: ${props => props.$themeStyles.shadowColor};
+  box-shadow: ${props => props.$themeStyles.shadows.tooltip};
   z-index: 50;
 `;
 
@@ -192,7 +334,7 @@ const LegendItem = styled.div<{ $themeStyles: ThemeStyles }>`
   align-items: center;
   margin-bottom: 5px;
   font-size: 12px;
-  color: ${props => props.$themeStyles.textColor};
+  color: ${props => props.$themeStyles.colors.text.primary};
 `;
 
 const LegendColor = styled.div<{ color: string }>`
@@ -555,8 +697,8 @@ export const Graph: React.FC<GraphProps> = ({
   if (!data || !data.nodes || !data.nodes.length) {
     return (
       <GraphContainer
-        width={width}
-        height={height}
+        width={dimensions.width}
+        height={dimensions.height}
         ref={containerRef}
         style={style}
         $themeStyles={themeStyles}
@@ -643,12 +785,12 @@ export const Graph: React.FC<GraphProps> = ({
   };
 
   return (
-    <GraphContainer width={width} height={height} style={style} $themeStyles={themeStyles}>
+    <GraphContainer width={dimensions.width} height={dimensions.height} style={style} $themeStyles={themeStyles}>
       {title && <Title $themeStyles={themeStyles}>{title}</Title>}
 
       <GraphCanvas
         ref={svgRef}
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Render edges */}
@@ -751,10 +893,8 @@ export const Graph: React.FC<GraphProps> = ({
 
       {tooltip.visible && (
         <Tooltip
-          style={{
-            left: tooltip.x + 10,
-            top: tooltip.y - 10,
-          }}
+          x={tooltip.x}
+          y={tooltip.y}
           $themeStyles={themeStyles}
         >
           {tooltip.content}

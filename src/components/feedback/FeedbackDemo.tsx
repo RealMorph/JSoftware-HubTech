@@ -51,3 +51,34 @@ export const FeedbackDemo: React.FC = () => {
 };
 
 export default FeedbackDemo;
+
+    backgroundColor: getColor('background', '#ffffff'),
+    borderColor: getColor('border', '#e0e0e0'),
+    spacing: {
+      md: getSpacing('4', '1rem'),
+      lg: getSpacing('6', '1.5rem'),
+    },
+  };
+}
+
+const Container = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.$themeStyles.spacing.md};
+  padding: ${props => props.$themeStyles.spacing.lg};
+`;
+
+export const FeedbackDemo: React.FC = () => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  return (
+    <Container $themeStyles={themeStyles}>
+      <ToastDemo />
+      <ProgressDemo />
+      <ModalDemo />
+    </Container>
+  );
+};
+
+export default FeedbackDemo;

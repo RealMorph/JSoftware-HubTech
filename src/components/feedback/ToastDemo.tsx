@@ -120,3 +120,26 @@ export const ToastDemo: React.FC = () => {
     </Container>
   );
 };
+
+          onClose={() => setShowSuccess(false)}
+        />
+      )}
+
+      {showError && (
+        <Toast
+          type="error"
+          message="An error occurred. Please try again."
+          onClose={() => setShowError(false)}
+        />
+      )}
+
+      {showInfo && (
+        <Toast
+          type="info"
+          message="This is an informational message."
+          onClose={() => setShowInfo(false)}
+        />
+      )}
+    </Container>
+  );
+};

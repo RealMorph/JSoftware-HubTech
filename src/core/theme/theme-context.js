@@ -156,3 +156,46 @@ export function useTheme() {
   }
   return context;
 }
+
+      setIsLoading(false);
+    }
+  };
+  const deleteTheme = async id => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const success = await themeService.deleteTheme(id);
+      if (success) {
+        await refreshThemes();
+      }
+      return success;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to delete theme'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    refreshThemes();
+  }, []);
+  const value = {
+    currentTheme,
+    availableThemes,
+    isLoading,
+    error,
+    switchTheme,
+    refreshThemes,
+    createTheme,
+    updateTheme,
+    deleteTheme,
+  };
+  return _jsx(ThemeContext.Provider, { value: value, children: children });
+}
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}

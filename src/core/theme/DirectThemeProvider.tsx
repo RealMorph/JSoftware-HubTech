@@ -12,6 +12,7 @@ import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
 import { ThemeService, useThemeService, inMemoryThemeService } from './theme-context';
 import { ThemeServiceProvider } from './ThemeServiceProvider';
+import { spacingScale } from './spacing';
 
 // Context types
 export interface DirectThemeContextType {
@@ -25,7 +26,7 @@ export interface DirectThemeContextType {
   // Direct theme utility functions
   getColor: (path: string, fallback?: string) => string;
   getTypography: (path: string, fallback?: string | number) => string | number;
-  getSpacing: (key: string, fallback?: string) => string;
+  getSpacing: (key: keyof typeof spacingScale, fallback?: string) => string;
   getBorderRadius: (key: string, fallback?: string) => string;
   getShadow: (key: string, fallback?: string) => string;
   getTransition: (key: string, fallback?: string) => string;
@@ -249,12 +250,8 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       return getNestedProperty(theme.typography, path, fallback || '1rem');
     };
 
-    const getSpacing = (key: string, fallback?: string): string => {
-      // Type-safe check if the key exists in spacing config
-      if (hasKey(theme.spacing, key)) {
-        return theme.spacing[key];
-      }
-      return fallback || '0';
+    const getSpacing = (key: keyof typeof spacingScale, fallback?: string): string => {
+      return spacingScale[key] || fallback || '0px';
     };
 
     const getBorderRadius = (key: string, fallback?: string): string => {

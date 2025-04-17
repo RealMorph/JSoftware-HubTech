@@ -242,3 +242,65 @@ export const ListItem: React.FC<ListItemProps> = ({
 
 // Attach ListItem as a static property of List
 List.Item = ListItem;
+
+  ordered = false,
+  fullWidth = false,
+  className,
+}) => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  const listProps = {
+    bordered,
+    markerType,
+    spacing,
+    fullWidth,
+    className,
+    $themeStyles: themeStyles,
+  };
+
+  return ordered ? (
+    <OrderedListContainer {...listProps}>{children}</OrderedListContainer>
+  ) : (
+    <ListContainer {...listProps}>{children}</ListContainer>
+  );
+};
+
+/**
+ * ListItem component for displaying individual items within a List
+ */
+export const ListItem: React.FC<ListItemProps> = ({
+  children,
+  icon,
+  fullWidth = false,
+  secondaryText,
+  clickable = false,
+  onClick,
+  className,
+  spacing,
+  bordered,
+}) => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  return (
+    <StyledListItem
+      fullWidth={fullWidth}
+      clickable={clickable || !!onClick}
+      onClick={onClick}
+      className={className}
+      spacing={spacing}
+      bordered={bordered}
+      $themeStyles={themeStyles}
+    >
+      {icon && <IconWrapper $themeStyles={themeStyles}>{icon}</IconWrapper>}
+      <ListItemContent>
+        {children}
+        {secondaryText && <SecondaryText $themeStyles={themeStyles}>{secondaryText}</SecondaryText>}
+      </ListItemContent>
+    </StyledListItem>
+  );
+};
+
+// Attach ListItem as a static property of List
+List.Item = ListItem;

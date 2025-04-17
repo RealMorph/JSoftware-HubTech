@@ -57,35 +57,85 @@ export interface MenuProps {
 
 // Theme styles interface
 interface ThemeStyles {
-  backgroundColor: string;
-  textPrimaryColor: string;
-  textDisabledColor: string;
-  primaryMainColor: string;
-  primaryDarkColor: string;
-  borderLightColor: string;
-  fontFamily: string;
+  colors: {
+    background: string;
+    textPrimary: string;
+    textDisabled: string;
+    primary: string;
+    primaryDark: string;
+    border: string;
+    hover: string;
+    active: string;
+  };
+  typography: {
+    fontFamily: string;
+    sizes: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+  };
+  spacing: {
+    small: {
+      x: string;
+      y: string;
+    };
+    medium: {
+      x: string;
+      y: string;
+    };
+    large: {
+      x: string;
+      y: string;
+    };
+  };
   borderRadius: string;
-  shadowMd: string;
-  gray100: string;
-  gray200: string;
+  shadows: {
+    dropdown: string;
+  };
 }
 
 // Function to create theme styles
 function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
-  const { getColor, getTypography, getBorderRadius, getShadow } = themeContext;
+  const { getColor, getTypography, getBorderRadius, getShadow, getSpacing } = themeContext;
 
   return {
-    backgroundColor: getColor('background.paper', '#ffffff'),
-    textPrimaryColor: getColor('text.primary', '#333333'),
-    textDisabledColor: getColor('text.disabled', '#999999'),
-    primaryMainColor: getColor('primary.main', '#1976d2'),
-    primaryDarkColor: getColor('primary.dark', '#115293'),
-    borderLightColor: getColor('border.light', '#e0e0e0'),
-    fontFamily: getTypography('family.primary', 'system-ui') as string,
+    colors: {
+      background: getColor('background.paper', '#ffffff'),
+      textPrimary: getColor('text.primary', '#333333'),
+      textDisabled: getColor('text.disabled', '#999999'),
+      primary: getColor('primary.main', '#1976d2'),
+      primaryDark: getColor('primary.dark', '#115293'),
+      border: getColor('border.light', '#e0e0e0'),
+      hover: getColor('action.hover', '#f5f5f5'),
+      active: getColor('action.active', '#eeeeee'),
+    },
+    typography: {
+      fontFamily: getTypography('family.primary', 'system-ui') as string,
+      sizes: {
+        small: getTypography('size.small', '13px') as string,
+        medium: getTypography('size.medium', '14px') as string,
+        large: getTypography('size.large', '16px') as string,
+      },
+    },
+    spacing: {
+      small: {
+        x: getSpacing('2', '10px'),
+        y: getSpacing('1.5', '6px'),
+      },
+      medium: {
+        x: getSpacing('4', '16px'),
+        y: getSpacing('2', '8px'),
+      },
+      large: {
+        x: getSpacing('5', '20px'),
+        y: getSpacing('3', '12px'),
+      },
+    },
     borderRadius: getBorderRadius('md', '4px'),
-    shadowMd: getShadow('md', '0 4px 6px rgba(0, 0, 0, 0.1)'),
-    gray100: getColor('gray.100', '#f5f5f5'),
-    gray200: getColor('gray.200', '#eeeeee'),
+    shadows: {
+      dropdown: getShadow('md', '0 4px 6px rgba(0, 0, 0, 0.1)'),
+    },
   };
 }
 
@@ -97,12 +147,12 @@ const MenuContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: ${props => (props.variant === 'horizontal' ? 'row' : 'column')};
-  background-color: ${props => props.$themeStyles.backgroundColor};
+  background-color: ${props => props.$themeStyles.colors.background};
   border-radius: ${props => props.$themeStyles.borderRadius};
-  box-shadow: ${props => (props.variant === 'dropdown' ? props.$themeStyles.shadowMd : 'none')};
+  box-shadow: ${props => (props.variant === 'dropdown' ? props.$themeStyles.shadows.dropdown : 'none')};
   border: ${props =>
-    props.variant === 'dropdown' ? `1px solid ${props.$themeStyles.borderLightColor}` : 'none'};
-  font-family: ${props => props.$themeStyles.fontFamily};
+    props.variant === 'dropdown' ? `1px solid ${props.$themeStyles.colors.border}` : 'none'};
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
   overflow: hidden;
   width: ${props =>
     props.width ||
@@ -119,12 +169,12 @@ interface MenuListProps {
 const MenuList = styled.ul<MenuListProps>`
   list-style: none;
   margin: 0;
-  padding: ${props => (props.variant === 'dropdown' ? '4px 0' : '0')};
+  padding: ${props => (props.variant === 'dropdown' ? props.$themeStyles.spacing.small.y : '0')};
   display: flex;
   flex-direction: ${props => (props.variant === 'horizontal' ? 'row' : 'column')};
   width: 100%;
   border: ${props =>
-    props.bordered ? `1px solid ${props.$themeStyles.borderLightColor}` : 'none'};
+    props.bordered ? `1px solid ${props.$themeStyles.colors.border}` : 'none'};
   border-radius: ${props => (props.bordered ? props.$themeStyles.borderRadius : '0')};
 
   & > li:not(:last-child) {
@@ -132,14 +182,14 @@ const MenuList = styled.ul<MenuListProps>`
       props.dividers &&
       props.variant !== 'horizontal' &&
       `
-      border-bottom: 1px solid ${props.$themeStyles.borderLightColor};
+      border-bottom: 1px solid ${props.$themeStyles.colors.border};
     `}
 
     ${props =>
       props.dividers &&
       props.variant === 'horizontal' &&
       `
-      border-right: 1px solid ${props.$themeStyles.borderLightColor};
+      border-right: 1px solid ${props.$themeStyles.colors.border};
     `}
   }
 `;
@@ -153,7 +203,7 @@ interface MenuItemProps {
   variant: 'vertical' | 'horizontal' | 'dropdown';
   compact?: boolean;
   href?: string;
-  $themeStyles?: ThemeStyles;
+  $themeStyles: ThemeStyles;
 }
 
 const StyledMenuItem = styled.li<MenuItemProps>`
@@ -168,39 +218,28 @@ const MenuItemContent = styled.div<MenuItemProps>`
   display: flex;
   align-items: center;
   padding: ${props => {
+    const spacing = props.$themeStyles.spacing[props.size || 'medium'];
     if (props.compact) {
-      return props.variant === 'horizontal' ? '6px 10px' : '6px 12px';
+      return props.variant === 'horizontal'
+        ? `${props.$themeStyles.spacing.small.y} ${props.$themeStyles.spacing.small.x}`
+        : `${props.$themeStyles.spacing.small.y} ${props.$themeStyles.spacing.medium.x}`;
     }
-    switch (props.size) {
-      case 'small':
-        return props.variant === 'horizontal' ? '6px 10px' : '6px 12px';
-      case 'large':
-        return props.variant === 'horizontal' ? '12px 20px' : '12px 16px';
-      default:
-        return props.variant === 'horizontal' ? '8px 16px' : '8px 12px';
-    }
+    return props.variant === 'horizontal'
+      ? `${spacing.y} ${spacing.x}`
+      : `${spacing.y} ${props.$themeStyles.spacing.medium.x}`;
   }};
   cursor: ${props => (props.disabled ? 'default' : 'pointer')};
   color: ${props => {
     if (props.disabled) {
-      return props.$themeStyles?.textDisabledColor;
+      return props.$themeStyles.colors.textDisabled;
     }
     if (props.selected) {
-      return props.$themeStyles?.primaryMainColor;
+      return props.$themeStyles.colors.primary;
     }
-    return props.$themeStyles?.textPrimaryColor;
+    return props.$themeStyles.colors.textPrimary;
   }};
-  background-color: ${props => (props.selected ? props.$themeStyles?.gray100 : 'transparent')};
-  font-size: ${props => {
-    switch (props.size) {
-      case 'small':
-        return '13px';
-      case 'large':
-        return '16px';
-      default:
-        return '14px';
-    }
-  }};
+  background-color: ${props => (props.selected ? props.$themeStyles.colors.hover : 'transparent')};
+  font-size: ${props => props.$themeStyles.typography.sizes[props.size || 'medium']};
   text-decoration: none;
   white-space: nowrap;
   transition:
@@ -210,11 +249,10 @@ const MenuItemContent = styled.div<MenuItemProps>`
   &:hover {
     ${props =>
       !props.disabled &&
-      props.$themeStyles &&
       `
-      background-color: ${props.$themeStyles.gray100};
+      background-color: ${props.$themeStyles.colors.hover};
       color: ${
-        props.selected ? props.$themeStyles.primaryDarkColor : props.$themeStyles.textPrimaryColor
+        props.selected ? props.$themeStyles.colors.primaryDark : props.$themeStyles.colors.textPrimary
       };
     `}
   }
@@ -222,18 +260,17 @@ const MenuItemContent = styled.div<MenuItemProps>`
   &:active {
     ${props =>
       !props.disabled &&
-      props.$themeStyles &&
       `
-      background-color: ${props.$themeStyles.gray200};
+      background-color: ${props.$themeStyles.colors.active};
     `}
   }
 `;
 
-const MenuItemIconWrapper = styled.span<{ isDisabled?: boolean }>`
+const MenuItemIconWrapper = styled.span<{ isDisabled?: boolean; $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
-  margin-right: 8px;
-  font-size: 18px;
+  margin-right: ${props => props.$themeStyles.spacing.medium.x};
+  font-size: ${props => props.$themeStyles.typography.sizes.large};
   opacity: ${props => (props.isDisabled ? 0.5 : 1)};
 `;
 
@@ -241,9 +278,9 @@ const MenuItemLabel = styled.span`
   flex-grow: 1;
 `;
 
-const SubMenuIndicator = styled.span`
-  margin-left: 8px;
-  font-size: 12px;
+const SubMenuIndicator = styled.span<{ $themeStyles: ThemeStyles }>`
+  margin-left: ${props => props.$themeStyles.spacing.medium.x};
+  font-size: ${props => props.$themeStyles.typography.sizes.small};
   display: flex;
   align-items: center;
 `;
@@ -252,10 +289,10 @@ const SubMenuList = styled(MenuList)<MenuListProps & { isOpen?: boolean; positio
   display: ${props => (props.isOpen ? 'block' : 'none')};
   position: absolute;
   z-index: 1000;
-  background-color: ${props => props.$themeStyles.backgroundColor};
+  background-color: ${props => props.$themeStyles.colors.background};
   min-width: 160px;
-  box-shadow: ${props => props.$themeStyles.shadowMd};
-  border: 1px solid ${props => props.$themeStyles.borderLightColor};
+  box-shadow: ${props => props.$themeStyles.shadows.dropdown};
+  border: 1px solid ${props => props.$themeStyles.colors.border};
   border-radius: ${props => props.$themeStyles.borderRadius};
   padding: 4px 0;
 
@@ -386,11 +423,15 @@ export const Menu: React.FC<MenuProps> = ({
         return (
           <MenuItemContent as="a" href={item.href} {...commonProps}>
             {showIcons && item.icon && (
-              <MenuItemIconWrapper isDisabled={item.disabled}>{item.icon}</MenuItemIconWrapper>
+              <MenuItemIconWrapper isDisabled={item.disabled} $themeStyles={themeStyles}>
+                {item.icon}
+              </MenuItemIconWrapper>
             )}
             <MenuItemLabel>{item.label}</MenuItemLabel>
             {hasSubmenu && (
-              <SubMenuIndicator>{variant === 'vertical' ? '›' : '▾'}</SubMenuIndicator>
+              <SubMenuIndicator $themeStyles={themeStyles}>
+                {variant === 'vertical' ? '›' : '▾'}
+              </SubMenuIndicator>
             )}
           </MenuItemContent>
         );
@@ -399,10 +440,16 @@ export const Menu: React.FC<MenuProps> = ({
       return (
         <MenuItemContent as="div" onClick={handleClick} {...commonProps}>
           {showIcons && item.icon && (
-            <MenuItemIconWrapper isDisabled={item.disabled}>{item.icon}</MenuItemIconWrapper>
+            <MenuItemIconWrapper isDisabled={item.disabled} $themeStyles={themeStyles}>
+              {item.icon}
+            </MenuItemIconWrapper>
           )}
           <MenuItemLabel>{item.label}</MenuItemLabel>
-          {hasSubmenu && <SubMenuIndicator>{variant === 'vertical' ? '›' : '▾'}</SubMenuIndicator>}
+          {hasSubmenu && (
+            <SubMenuIndicator $themeStyles={themeStyles}>
+              {variant === 'vertical' ? '›' : '▾'}
+            </SubMenuIndicator>
+          )}
         </MenuItemContent>
       );
     };

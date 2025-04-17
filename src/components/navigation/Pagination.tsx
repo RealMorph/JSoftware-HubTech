@@ -36,35 +36,185 @@ export interface PaginationProps {
 
 // Theme styles interface
 interface ThemeStyles {
-  fontFamily: string;
-  primaryColor: string;
-  primaryContrastText: string;
-  primaryLightColor: string;
-  textPrimaryColor: string;
-  textDisabledColor: string;
-  borderColor: string;
-  borderDarkColor: string;
-  borderLightColor: string;
-  backgroundColor: string;
-  grayColor: string;
+  colors: {
+    primary: {
+      main: string;
+      light: string;
+      dark: string;
+      contrastText: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+      disabled: string;
+    };
+    background: {
+      paper: string;
+      default: string;
+      hover: string;
+    };
+    border: {
+      main: string;
+      light: string;
+      dark: string;
+    };
+    focus: {
+      ring: string;
+    };
+  };
+  typography: {
+    family: string;
+    size: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    weight: {
+      normal: number;
+      medium: number;
+      bold: number;
+    };
+    lineHeight: {
+      normal: number;
+    };
+  };
+  spacing: {
+    button: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    padding: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    gap: string;
+  };
+  borders: {
+    width: {
+      thin: string;
+      normal: string;
+    };
+    radius: {
+      none: string;
+      small: string;
+      medium: string;
+      full: string;
+    };
+    style: {
+      solid: string;
+    };
+  };
+  animation: {
+    duration: {
+      short: string;
+      normal: string;
+    };
+    easing: {
+      easeInOut: string;
+    };
+  };
+  states: {
+    opacity: {
+      disabled: number;
+    };
+    hover: {
+      opacity: number;
+    };
+  };
 }
 
 // Function to create theme styles from DirectTheme
 function createThemeStyles(theme: ReturnType<typeof useDirectTheme>): ThemeStyles {
-  const { getColor, getTypography } = theme;
-
   return {
-    fontFamily: getTypography('family.primary', 'system-ui') as string,
-    primaryColor: getColor('primary.main', '#1976d2'),
-    primaryContrastText: getColor('primary.contrastText', '#ffffff'),
-    primaryLightColor: getColor('primary.light', '#4791db'),
-    textPrimaryColor: getColor('text.primary', '#333333'),
-    textDisabledColor: getColor('text.disabled', '#999999'),
-    borderColor: getColor('border.main', '#e0e0e0'),
-    borderDarkColor: getColor('border.dark', '#cccccc'),
-    borderLightColor: getColor('border.light', '#f0f0f0'),
-    backgroundColor: getColor('background.paper', '#ffffff'),
-    grayColor: getColor('gray.100', '#f5f5f5'),
+    colors: {
+      primary: {
+        main: theme.getColor('primary.main', '#1976d2'),
+        light: theme.getColor('primary.light', '#4791db'),
+        dark: theme.getColor('primary.dark', '#115293'),
+        contrastText: theme.getColor('primary.contrastText', '#ffffff'),
+      },
+      text: {
+        primary: theme.getColor('text.primary', '#333333'),
+        secondary: theme.getColor('text.secondary', '#666666'),
+        disabled: theme.getColor('text.disabled', '#999999'),
+      },
+      background: {
+        paper: theme.getColor('background.paper', '#ffffff'),
+        default: theme.getColor('background.default', '#f5f5f5'),
+        hover: theme.getColor('background.hover', '#f0f0f0'),
+      },
+      border: {
+        main: theme.getColor('border.main', '#e0e0e0'),
+        light: theme.getColor('border.light', '#f0f0f0'),
+        dark: theme.getColor('border.dark', '#cccccc'),
+      },
+      focus: {
+        ring: theme.getColor('primary.main', '#1976d2') + '33',
+      },
+    },
+    typography: {
+      family: String(theme.getTypography('family.base', 'system-ui')),
+      size: {
+        small: String(theme.getTypography('scale.sm', '12px')),
+        medium: String(theme.getTypography('scale.base', '14px')),
+        large: String(theme.getTypography('scale.lg', '16px')),
+      },
+      weight: {
+        normal: Number(theme.getTypography('weights.normal', 400)),
+        medium: Number(theme.getTypography('weights.medium', 500)),
+        bold: Number(theme.getTypography('weights.bold', 700)),
+      },
+      lineHeight: {
+        normal: 1.5,
+      },
+    },
+    spacing: {
+      button: {
+        small: theme.getSpacing('7', '28px'),
+        medium: theme.getSpacing('9', '36px'),
+        large: theme.getSpacing('10', '40px'),
+      },
+      padding: {
+        small: theme.getSpacing('1', '4px'),
+        medium: theme.getSpacing('2', '8px'),
+        large: theme.getSpacing('3', '12px'),
+      },
+      gap: theme.getSpacing('1', '4px'),
+    },
+    borders: {
+      width: {
+        thin: '1px',
+        normal: '2px',
+      },
+      radius: {
+        none: '0',
+        small: theme.getBorderRadius('sm', '4px'),
+        medium: theme.getBorderRadius('md', '6px'),
+        full: '50%',
+      },
+      style: {
+        solid: 'solid',
+      },
+    },
+    animation: {
+      duration: {
+        short: '150ms',
+        normal: '200ms',
+      },
+      easing: {
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+    },
+    states: {
+      opacity: {
+        disabled: 0.5,
+      },
+      hover: {
+        opacity: 0.8,
+      },
+    },
   };
 }
 
@@ -73,15 +223,15 @@ const PaginationContainer = styled.nav<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: ${props => props.$themeStyles.fontFamily};
+  font-family: ${props => props.$themeStyles.typography.family};
 `;
 
-const PaginationList = styled.ul`
+const PaginationList = styled.ul<{ $themeStyles: ThemeStyles }>`
   display: flex;
   list-style: none;
   padding: 0;
   margin: 0;
-  gap: 4px;
+  gap: ${props => props.$themeStyles.spacing.gap};
 `;
 
 const PageItem = styled.li`
@@ -101,94 +251,58 @@ const PageButton = styled.button<PageButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: ${props => {
-    switch (props.size) {
-      case 'small':
-        return '28px';
-      case 'large':
-        return '40px';
-      default:
-        return '36px';
-    }
-  }};
-  height: ${props => {
-    switch (props.size) {
-      case 'small':
-        return '28px';
-      case 'large':
-        return '40px';
-      default:
-        return '36px';
-    }
-  }};
-  padding: 0 ${props => (props.size === 'small' ? '4px' : '8px')};
-  border: 1px solid;
-  border-color: ${props => {
-    if (props.variant === 'active') {
-      return props.$themeStyles.primaryColor;
-    }
-    return props.$themeStyles.borderColor;
-  }};
+  min-width: ${props => props.$themeStyles.spacing.button[props.size || 'medium']};
+  height: ${props => props.$themeStyles.spacing.button[props.size || 'medium']};
+  padding: 0 ${props => props.$themeStyles.spacing.padding[props.size || 'medium']};
+  border: ${props => props.$themeStyles.borders.width.thin} ${props => props.$themeStyles.borders.style.solid};
+  border-color: ${props =>
+    props.variant === 'active'
+      ? props.$themeStyles.colors.primary.main
+      : props.$themeStyles.colors.border.main};
   background-color: ${props => {
-    if (props.variant === 'active') {
-      return props.$themeStyles.primaryColor;
-    } else if (props.variant === 'ellipsis') {
-      return 'transparent';
-    }
-    return props.$themeStyles.backgroundColor;
+    if (props.variant === 'active') return props.$themeStyles.colors.primary.main;
+    if (props.variant === 'ellipsis') return 'transparent';
+    return props.$themeStyles.colors.background.paper;
   }};
   color: ${props => {
-    if (props.variant === 'active') {
-      return props.$themeStyles.primaryContrastText;
-    } else if (props.disabled) {
-      return props.$themeStyles.textDisabledColor;
-    }
-    return props.$themeStyles.textPrimaryColor;
+    if (props.variant === 'active') return props.$themeStyles.colors.primary.contrastText;
+    if (props.disabled) return props.$themeStyles.colors.text.disabled;
+    return props.$themeStyles.colors.text.primary;
   }};
-  font-size: ${props => {
-    switch (props.size) {
-      case 'small':
-        return '12px';
-      case 'large':
-        return '16px';
-      default:
-        return '14px';
-    }
-  }};
-  font-weight: ${props => (props.variant === 'active' ? 'bold' : 'normal')};
-  cursor: ${props => (props.disabled || props.variant === 'ellipsis' ? 'default' : 'pointer')};
+  font-size: ${props => props.$themeStyles.typography.size[props.size || 'medium']};
+  font-weight: ${props => props.$themeStyles.typography.weight.normal};
+  line-height: ${props => props.$themeStyles.typography.lineHeight.normal};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+  transition: all ${props => props.$themeStyles.animation.duration.normal} ${props => props.$themeStyles.animation.easing.easeInOut};
   border-radius: ${props => {
     switch (props.shape) {
-      case 'square':
-        return '0';
       case 'circular':
-        return '50%';
+        return props.$themeStyles.borders.radius.full;
+      case 'square':
+        return props.$themeStyles.borders.radius.none;
       default:
-        return '4px';
+        return props.$themeStyles.borders.radius.small;
     }
   }};
-  transition: all 0.2s ease;
 
-  &:hover {
-    ${props =>
-      !props.disabled &&
-      props.variant !== 'ellipsis' &&
-      props.variant !== 'active' &&
-      `
-      background-color: ${props.$themeStyles.grayColor};
-      border-color: ${props.$themeStyles.borderDarkColor};
-    `}
+  &:hover:not(:disabled) {
+    background-color: ${props =>
+      props.variant === 'active'
+        ? props.$themeStyles.colors.primary.light
+        : props.$themeStyles.colors.background.hover};
+    border-color: ${props =>
+      props.variant === 'active'
+        ? props.$themeStyles.colors.primary.light
+        : props.$themeStyles.colors.border.dark};
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px ${props => props.$themeStyles.primaryLightColor};
+    box-shadow: 0 0 0 2px ${props => props.$themeStyles.colors.focus.ring};
   }
 
   &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: ${props => props.$themeStyles.borderLightColor};
+    opacity: ${props => props.$themeStyles.states.opacity.disabled};
   }
 `;
 
@@ -268,7 +382,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <PaginationContainer className={className} $themeStyles={themeStyles}>
-      <PaginationList>
+      <PaginationList $themeStyles={themeStyles}>
         {/* First page button */}
         {showFirstLast && (
           <PageItem>

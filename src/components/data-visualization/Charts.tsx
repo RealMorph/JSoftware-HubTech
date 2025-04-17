@@ -157,30 +157,30 @@ export const BarChart: React.FC<ChartProps> = ({
   // Define callback functions outside of conditionals
   const handleBarClick = useCallback(
     (pointId: string) => {
-      if (onDataPointClick) {
-        onDataPointClick(pointId);
-      }
+    if (onDataPointClick) {
+      onDataPointClick(pointId);
+    }
     },
     [onDataPointClick]
   );
-
+  
   const handleBarMouseEnter = useCallback(
     (event: React.MouseEvent, bar: { label: string; value: number; x: number; y: number }) => {
-      if (showTooltips) {
+    if (showTooltips) {
         const rect = chartRef.current?.getBoundingClientRect();
-        if (rect) {
-          setTooltip({
+      if (rect) {
+        setTooltip({
             show: true,
             x: bar.x,
             y: bar.y,
             text: `${bar.label}: ${bar.value}`,
-          });
-        }
+        });
       }
+    }
     },
     [showTooltips]
   );
-
+  
   const handleBarMouseLeave = useCallback(() => {
     if (showTooltips) {
       setTooltip(prev => ({ ...prev, show: false }));
@@ -220,9 +220,9 @@ export const BarChart: React.FC<ChartProps> = ({
   };
 
   return (
-    <ChartContainer
-      width={width}
-      height={height}
+    <ChartContainer 
+      width={width} 
+      height={height} 
       $themeStyles={themeStyles}
       style={style}
       ref={chartRef}
@@ -230,7 +230,7 @@ export const BarChart: React.FC<ChartProps> = ({
       {title && <Title $themeStyles={themeStyles}>{title}</Title>}
       <svg width="100%" height="100%" overflow="visible">
         {/* X and Y Axis */}
-        <line
+          <line 
           x1={MARGIN.left}
           y1={MARGIN.top + innerHeight}
           x2={MARGIN.left + innerWidth}
@@ -244,9 +244,9 @@ export const BarChart: React.FC<ChartProps> = ({
           x2={MARGIN.left}
           y2={MARGIN.top + innerHeight}
           stroke={themeStyles.axisColor}
-          strokeWidth="1"
-        />
-
+            strokeWidth="1"
+          />
+          
         {/* X Axis Labels */}
         {data.map((d, i) => (
           <text
@@ -278,31 +278,31 @@ export const BarChart: React.FC<ChartProps> = ({
               >
                 {value.toFixed(0)}
               </text>
-              <line
+          <line 
                 x1={MARGIN.left}
                 y1={y}
                 x2={MARGIN.left + innerWidth}
                 y2={y}
                 stroke={themeStyles.gridColor}
-                strokeWidth="1"
+            strokeWidth="1"
                 strokeDasharray="5,5"
-              />
+          />
             </React.Fragment>
           );
         })}
-
-        {/* Bars */}
+          
+          {/* Bars */}
         {data.map((d, i) => {
           const barHeight = innerHeight - (yScale(d.value) - MARGIN.top);
           const x = xScale(i) - barWidth / 2;
           const y = yScale(d.value);
-          return (
+            return (
             <g key={`bar-${i}`}>
-              <rect
-                x={x}
-                y={y}
-                width={barWidth}
-                height={barHeight}
+                <rect
+                  x={x}
+                  y={y}
+                  width={barWidth}
+                  height={barHeight}
                 fill={d.color || colors[i % colors.length]}
                 stroke={themeStyles.backgroundColor}
                 strokeWidth="1"
@@ -319,22 +319,22 @@ export const BarChart: React.FC<ChartProps> = ({
                 }
                 onMouseLeave={handleBarMouseLeave}
               />
-              {showValues && (
-                <text
+                {showValues && (
+                  <text
                   x={xScale(i)}
                   y={y - 10}
                   fontSize={themeStyles.labelFontSize}
                   fill={themeStyles.textColor}
-                  textAnchor="middle"
-                >
+                    textAnchor="middle"
+                  >
                   {d.value}
-                </text>
-              )}
-            </g>
-          );
-        })}
+                  </text>
+                )}
+              </g>
+            );
+          })}
       </svg>
-
+      
       {/* Tooltip */}
       {tooltip.show && (
         <Tooltip
@@ -347,7 +347,7 @@ export const BarChart: React.FC<ChartProps> = ({
           {tooltip.text}
         </Tooltip>
       )}
-
+      
       {/* Legend */}
       {showLegend && (
         <Legend>
@@ -397,26 +397,26 @@ export const LineChart: React.FC<ChartProps> = ({
   // Define all callback functions outside conditionals to adhere to React Hooks rules
   const handlePointClick = useCallback(
     (pointId: string) => {
-      if (onDataPointClick) {
-        onDataPointClick(pointId);
-      }
+    if (onDataPointClick) {
+      onDataPointClick(pointId);
+    }
     },
     [onDataPointClick]
   );
-
+  
   const handlePointMouseEnter = useCallback(
     (event: React.MouseEvent, point: { label: string; value: number; x: number; y: number }) => {
-      if (showTooltips) {
+    if (showTooltips) {
         const rect = chartRef.current?.getBoundingClientRect();
-        if (rect) {
-          setTooltip({
+      if (rect) {
+        setTooltip({
             show: true,
             x: point.x,
             y: point.y,
             text: `${point.label}: ${point.value}`,
-          });
-        }
+        });
       }
+    }
     },
     [showTooltips]
   );
@@ -472,9 +472,9 @@ export const LineChart: React.FC<ChartProps> = ({
     .join(' ');
 
   return (
-    <ChartContainer
-      width={width}
-      height={height}
+    <ChartContainer 
+      width={width} 
+      height={height} 
       $themeStyles={themeStyles}
       style={style}
       ref={chartRef}
@@ -482,23 +482,23 @@ export const LineChart: React.FC<ChartProps> = ({
       {title && <Title $themeStyles={themeStyles}>{title}</Title>}
       <svg width="100%" height="100%" overflow="visible">
         {/* X and Y Axis */}
-        <line
+          <line 
           x1={MARGIN.left}
           y1={MARGIN.top + innerHeight}
           x2={MARGIN.left + innerWidth}
           y2={MARGIN.top + innerHeight}
           stroke={themeStyles.axisColor}
-          strokeWidth="1"
-        />
-        <line
+            strokeWidth="1"
+          />
+          <line 
           x1={MARGIN.left}
           y1={MARGIN.top}
           x2={MARGIN.left}
           y2={MARGIN.top + innerHeight}
           stroke={themeStyles.axisColor}
-          strokeWidth="1"
-        />
-
+            strokeWidth="1"
+          />
+          
         {/* X Axis Labels */}
         {data.map((d, i) => (
           <text
@@ -530,13 +530,13 @@ export const LineChart: React.FC<ChartProps> = ({
               >
                 {value.toFixed(0)}
               </text>
-              <line
+            <line
                 x1={MARGIN.left}
                 y1={y}
                 x2={MARGIN.left + innerWidth}
                 y2={y}
                 stroke={themeStyles.gridColor}
-                strokeWidth="1"
+              strokeWidth="1"
                 strokeDasharray="5,5"
               />
             </React.Fragment>
@@ -549,7 +549,7 @@ export const LineChart: React.FC<ChartProps> = ({
         {/* Data Points */}
         {points.map((point, i) => (
           <g key={`point-${i}`}>
-            <circle
+                <circle
               cx={point.x}
               cy={point.y}
               r={6}
@@ -557,25 +557,25 @@ export const LineChart: React.FC<ChartProps> = ({
               stroke={themeStyles.backgroundColor}
               strokeWidth="2"
               cursor="pointer"
-              onClick={() => handlePointClick(point.id)}
+                  onClick={() => handlePointClick(point.id)}
               onMouseEnter={e => handlePointMouseEnter(e, point)}
               onMouseLeave={handlePointMouseLeave}
-            />
-            {showValues && (
-              <text
+                />
+                {showValues && (
+                  <text
                 x={point.x}
                 y={point.y - 10}
                 fontSize={themeStyles.labelFontSize}
                 fill={themeStyles.textColor}
-                textAnchor="middle"
-              >
-                {point.value}
-              </text>
-            )}
-          </g>
-        ))}
+                    textAnchor="middle"
+                  >
+                    {point.value}
+                  </text>
+                )}
+            </g>
+          ))}
       </svg>
-
+      
       {/* Tooltip */}
       {tooltip.show && (
         <Tooltip
@@ -588,7 +588,7 @@ export const LineChart: React.FC<ChartProps> = ({
           {tooltip.text}
         </Tooltip>
       )}
-
+      
       {/* Legend */}
       {showLegend && (
         <Legend>
@@ -688,7 +688,7 @@ export const PieChart: React.FC<ChartProps> = ({
   const radius = Math.min(chartWidth, chartHeight) / 2.5;
   const centerX = chartWidth / 2;
   const centerY = chartHeight / 2;
-
+  
   // Calculate pie slices
   let startAngle = 0;
   const slices = data.map((item, index) => {
@@ -825,26 +825,26 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
   // Define all callback functions outside conditionals to adhere to React Hooks rules
   const handleSliceClick = useCallback(
     (pointId: string) => {
-      if (onDataPointClick) {
-        onDataPointClick(pointId);
-      }
+    if (onDataPointClick) {
+      onDataPointClick(pointId);
+    }
     },
     [onDataPointClick]
   );
-
+  
   const handleSliceMouseEnter = useCallback(
     (event: React.MouseEvent, slice: { label: string; value: number; percentage: number }) => {
-      if (showTooltips) {
+    if (showTooltips) {
         const rect = chartRef.current?.getBoundingClientRect();
-        if (rect) {
-          setTooltip({
+      if (rect) {
+        setTooltip({
             show: true,
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
             text: `${slice.label}: ${slice.value} (${(slice.percentage * 100).toFixed(1)}%)`,
-          });
-        }
+        });
       }
+    }
     },
     [showTooltips]
   );
@@ -884,9 +884,9 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
   let startAngle = 0;
   const slices = data.map((item, index) => {
     const percentage = item.value / total;
-    const angle = percentage * 2 * Math.PI;
-    const endAngle = startAngle + angle;
-
+      const angle = percentage * 2 * Math.PI;
+      const endAngle = startAngle + angle;
+      
     const x1 = centerX + outerRadius * Math.cos(startAngle);
     const y1 = centerY + outerRadius * Math.sin(startAngle);
     const x2 = centerX + outerRadius * Math.cos(endAngle);
@@ -900,39 +900,39 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
     const largeArcFlag = angle > Math.PI ? 1 : 0;
 
     // Path for donut slice (outer arc + inner arc + close)
-    const path = [
+      const path = [
       `M ${x1} ${y1}`,
       `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
       `L ${innerX2} ${innerY2}`,
       `A ${donutInnerRadius} ${donutInnerRadius} 0 ${largeArcFlag} 0 ${innerX1} ${innerY1}`,
       'Z',
-    ].join(' ');
-
+      ].join(' ');
+      
     const midAngle = startAngle + angle / 2;
     const labelRadius = (outerRadius + donutInnerRadius) / 2;
     const labelX = centerX + labelRadius * Math.cos(midAngle);
     const labelY = centerY + labelRadius * Math.sin(midAngle);
 
     const slice = {
-      path,
+        path,
       color: item.color || colors[index % colors.length],
       percentage,
       label: item.label,
       value: item.value,
       midAngle,
-      labelX,
-      labelY,
+        labelX,
+        labelY,
       id: item.id,
     };
-
-    startAngle = endAngle;
+      
+      startAngle = endAngle;
     return slice;
-  });
+    });
 
   return (
-    <ChartContainer
-      width={width}
-      height={height}
+    <ChartContainer 
+      width={width} 
+      height={height} 
       $themeStyles={themeStyles}
       style={style}
       ref={chartRef}
@@ -941,14 +941,14 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
       <svg width="100%" height="100%" viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         {/* Donut Slices */}
         {slices.map((slice, index) => (
-          <path
+            <path
             key={`slice-${index}`}
-            d={slice.path}
-            fill={slice.color}
+              d={slice.path}
+              fill={slice.color}
             stroke={themeStyles.backgroundColor}
             strokeWidth="1"
             cursor="pointer"
-            onClick={() => handleSliceClick(slice.id)}
+              onClick={() => handleSliceClick(slice.id)}
             onMouseEnter={e =>
               handleSliceMouseEnter(e, {
                 label: slice.label,
@@ -970,7 +970,7 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
           strokeWidth="1"
         />
 
-        <text
+              <text
           x={centerX}
           y={centerY - 10}
           textAnchor="middle"
@@ -999,20 +999,20 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
               slice.percentage > 0.05 && (
                 <text
                   key={`label-${index}`}
-                  x={slice.labelX}
-                  y={slice.labelY}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
+                x={slice.labelX}
+                y={slice.labelY}
+                textAnchor="middle"
+                dominantBaseline="middle"
                   fill={themeStyles.textColor}
                   fontSize={themeStyles.labelFontSize}
-                  fontWeight="bold"
-                >
+                fontWeight="bold"
+              >
                   {(slice.percentage * 100).toFixed(0)}%
-                </text>
+              </text>
               )
-          )}
+            )}
       </svg>
-
+      
       {/* Tooltip */}
       {tooltip.show && (
         <Tooltip
@@ -1025,7 +1025,7 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = ({
           {tooltip.text}
         </Tooltip>
       )}
-
+      
       {/* Legend */}
       {showLegend && (
         <Legend>
@@ -1104,7 +1104,7 @@ export const AreaChart: React.FC<ChartProps> = ({
   }, []);
 
   if (!data || data.length === 0) {
-    return (
+  return (
       <ChartContainer width={width} height={height} $themeStyles={themeStyles} style={style}>
         {title && <Title $themeStyles={themeStyles}>{title}</Title>}
         <NoDataMessage $themeStyles={themeStyles}>No data to display</NoDataMessage>

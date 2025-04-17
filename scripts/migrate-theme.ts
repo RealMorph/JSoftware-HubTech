@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { migrateFromLegacyTheme, createMigrationReport } from '../src/core/theme/theme-migration';
-import { validateTheme } from '../src/core/theme/theme-utils';
+import { validateTheme } from '../src/core/theme/theme-validation';
 import { execSync } from 'child_process';
 
 // Parse command line arguments

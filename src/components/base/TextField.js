@@ -217,3 +217,62 @@ export const TextField = forwardRef(
   }
 );
 TextField.displayName = 'TextField';
+
+      fontSize: themeStyles.typographyScaleXs,
+    };
+    
+    const handleChange = e => {
+      onChange?.(e.target.value, e);
+    };
+    
+    const handleFocus = e => {
+      setFocused(true);
+      props.onFocus?.(e);
+    };
+    
+    const handleBlur = e => {
+      setFocused(false);
+      props.onBlur?.(e);
+    };
+    
+    return _jsxs('div', {
+      style: rootStyles,
+      className: className,
+      children: [
+        label &&
+          _jsxs('label', {
+            id: labelId,
+            htmlFor: id,
+            style: labelStyles,
+            children: [
+              label,
+              required &&
+                _jsx('span', { style: { color: themeStyles.errorColor }, children: ' *' }),
+            ],
+          }),
+        _jsxs('div', {
+          style: inputContainerStyles,
+          children: [
+            startAdornment && _jsx('div', { style: adornmentStyles, children: startAdornment }),
+            _jsx('input', {
+              ...props,
+              id: id,
+              ref: ref,
+              'aria-invalid': error,
+              'aria-describedby': helperText ? helperId : undefined,
+              onChange: handleChange,
+              onFocus: handleFocus,
+              onBlur: handleBlur,
+              style: inputStyles,
+              disabled: disabled,
+              required: required,
+            }),
+            endAdornment && _jsx('div', { style: adornmentStyles, children: endAdornment }),
+          ],
+        }),
+        helperText && _jsx('div', { id: helperId, style: helperTextStyles, children: helperText }),
+      ],
+    });
+  }
+);
+TextField.displayName = 'TextField';

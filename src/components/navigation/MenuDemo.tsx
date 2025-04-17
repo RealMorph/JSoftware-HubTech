@@ -498,3 +498,109 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 };
 
 export default MenuDemo;
+
+        </Row>
+
+        <Row $themeStyles={themeStyles}>
+          <Column $themeStyles={themeStyles}>
+            <ExampleTitle $themeStyles={themeStyles}>Without Icons</ExampleTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<Menu
+  items={verticalMenuItems}
+  variant="vertical"
+  showIcons={false}
+/>`}</CodeBlock>
+
+            <Menu items={verticalMenuItems} variant="vertical" showIcons={false} bordered={true} />
+          </Column>
+
+          <Column $themeStyles={themeStyles}>
+            <ExampleTitle $themeStyles={themeStyles}>Large Size</ExampleTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<Menu
+  items={horizontalMenuItems}
+  variant="horizontal"
+  size="large"
+/>`}</CodeBlock>
+
+            <Menu items={horizontalMenuItems} variant="horizontal" size="large" bordered={true} />
+          </Column>
+        </Row>
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles}>
+        <Title $themeStyles={themeStyles}>Dropdown Menu</Title>
+        <Description $themeStyles={themeStyles}>Menu displayed as a dropdown on click.</Description>
+
+        <DropdownContainer $themeStyles={themeStyles}>
+          <DropdownButton
+            $themeStyles={themeStyles}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            User Menu
+            <span style={{ fontSize: '10px', marginLeft: '4px' }}>▼</span>
+          </DropdownButton>
+
+          {isDropdownOpen && (
+            <div style={{ position: 'absolute', zIndex: 100, marginTop: '4px' }}>
+              <Menu
+                items={dropdownMenuItems}
+                variant="dropdown"
+                showIcons={true}
+                closeOnClick={true}
+                onOpenChange={isOpen => setIsDropdownOpen(isOpen)}
+              />
+            </div>
+          )}
+        </DropdownContainer>
+
+        <CodeBlock $themeStyles={themeStyles}>{`// State for dropdown
+const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+// Toggle dropdown
+<button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+  User Menu
+</button>
+
+// Show menu when open
+{isDropdownOpen && (
+  <Menu
+    items={dropdownMenuItems}
+    variant="dropdown"
+    showIcons={true}
+    closeOnClick={true}
+  />
+)}`}</CodeBlock>
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles}>
+        <Title $themeStyles={themeStyles}>Nested Menus</Title>
+        <Description $themeStyles={themeStyles}>
+          Hierarchical menu structure with submenu items.
+        </Description>
+
+        <Menu items={nestedMenuItems} variant="horizontal" bordered={true} />
+
+        <CodeBlock $themeStyles={themeStyles}>{`const nestedMenuItems = [
+  { id: 'file', label: 'File', subItems: [
+    { id: 'new', label: 'New', subItems: [
+      { id: 'document', label: 'Document' },
+      { id: 'spreadsheet', label: 'Spreadsheet' },
+      ...
+    ]},
+    { id: 'open', label: 'Open' },
+    ...
+  ]},
+  { id: 'edit', label: 'Edit', subItems: [...] },
+  ...
+];
+
+<Menu
+  items={nestedMenuItems}
+  variant="horizontal"
+  bordered={true}
+/>`}</CodeBlock>
+      </DemoSection>
+    </DemoContainer>
+  );
+};
+
+export default MenuDemo;

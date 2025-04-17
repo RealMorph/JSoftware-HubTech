@@ -8,14 +8,44 @@ import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 // Define ThemeStyles interface to structure all theme-related properties
 interface ThemeStyles {
   descriptionColor: string;
-  descriptionFontSize: string;
+  descriptionFontSize: string | number;
+  typography: {
+    fontSize: {
+      base: string;
+      sm: string;
+    };
+    fontWeight: {
+      normal: string | number;
+      medium: string | number;
+    };
+    lineHeight: {
+      normal: string | number;
+    };
+  };
 }
 
-// Function to create theme styles from DirectTheme context
-const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
-  descriptionColor: themeContext.getColor('gray.600'),
-  descriptionFontSize: String(themeContext.getTypography('scale.sm')), // Convert any non-string values to string
-});
+// Create theme styles function
+const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+  const { getColor, getTypography } = theme;
+  
+  return {
+    descriptionColor: getColor('text.secondary', '#666666'),
+    descriptionFontSize: getTypography('fontSize.sm', '0.875rem'),
+    typography: {
+      fontSize: {
+        base: getTypography('fontSize.base', '1rem') as string,
+        sm: getTypography('fontSize.sm', '0.875rem') as string,
+      },
+      fontWeight: {
+        normal: getTypography('fontWeight.normal', 400),
+        medium: getTypography('fontWeight.medium', 500),
+      },
+      lineHeight: {
+        normal: getTypography('lineHeight.normal', 1.5),
+      },
+    },
+  };
+};
 
 export type FieldConfig = {
   /** Field name */

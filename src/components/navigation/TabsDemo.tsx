@@ -108,3 +108,42 @@ export const TabsDemo: React.FC = () => {
 };
 
 export default TabsDemo;
+
+    id: 'tab3',
+    label: 'Analytics',
+    content: <div>Analytics dashboard with charts and metrics.</div>,
+  },
+];
+
+export const TabsDemo: React.FC = () => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  return (
+    <DemoContainer $themeStyles={themeStyles}>
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Default Tabs</DemoTitle>
+        <Tabs tabs={tabs} />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Pill Tabs</DemoTitle>
+        <Tabs tabs={tabs} variant="pills" />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Underline Tabs</DemoTitle>
+        <Tabs tabs={tabs} variant="underline" />
+      </DemoSection>
+
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Tab Sizes</DemoTitle>
+        <Tabs tabs={tabs} size="small" />
+        <Tabs tabs={tabs} size="medium" />
+        <Tabs tabs={tabs} size="large" />
+      </DemoSection>
+    </DemoContainer>
+  );
+};
+
+export default TabsDemo;

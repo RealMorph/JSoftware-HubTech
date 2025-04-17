@@ -332,3 +332,20 @@ const columns: Column<User>[] = [
 };
 
 export default DataGridDemo;
+
+  data={users}
+  columns={columns}
+  enableSorting={true}
+  enableFiltering={true}
+  striped={true}
+  onRowClick={handleRowClick}
+/>
+`}
+          </CodeBlock>
+        </CardContent>
+      </FeatureCard>
+    </DemoContainer>
+  );
+};
+
+export default DataGridDemo;

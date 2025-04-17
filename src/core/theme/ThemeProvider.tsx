@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
-import { Global, css } from '@emotion/react';
+import { Global, css, Theme } from '@emotion/react';
 import { ThemeConfig } from './consolidated-types';
-import { adaptThemeForEmotion } from './theme-adapter';
 import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
 import { useThemeService } from './theme-context';
@@ -174,8 +173,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, initialT
     setCurrentTheme(newTheme);
   };
 
-  // Convert our theme to emotion-compatible format
-  const emotionTheme = adaptThemeForEmotion(currentTheme);
+  // Directly use ThemeConfig with Emotion - no adaptation needed
+  const emotionTheme = currentTheme as unknown as Theme;
 
   return (
     <ThemeContext.Provider

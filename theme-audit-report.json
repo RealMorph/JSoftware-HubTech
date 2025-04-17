@@ -1,0 +1,202 @@
+{
+  "deprecatedUtilUsage": [
+    {
+      "file": "src\\components\\data-display\\Table.tsx",
+      "pattern": "getThemeValue",
+      "occurrences": 21
+    },
+    {
+      "file": "src\\components\\data-display\\TableDemo.tsx",
+      "pattern": "getThemeValue",
+      "occurrences": 10
+    },
+    {
+      "file": "src\\core\\theme\\components\\Button.js",
+      "pattern": "themed",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\components\\Button.js",
+      "pattern": "mixins",
+      "occurrences": 4
+    },
+    {
+      "file": "src\\core\\theme\\components\\ButtonDemo.js",
+      "pattern": "themed",
+      "occurrences": 3
+    },
+    {
+      "file": "src\\core\\theme\\components\\ButtonDemo.js",
+      "pattern": "mixins",
+      "occurrences": 6
+    },
+    {
+      "file": "src\\core\\theme\\components\\ButtonDemo.tsx",
+      "pattern": "mixins",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\styled.js",
+      "pattern": "getThemeValue",
+      "occurrences": 12
+    },
+    {
+      "file": "src\\core\\theme\\styled.js",
+      "pattern": "themed",
+      "occurrences": 10
+    },
+    {
+      "file": "src\\core\\theme\\styled.js",
+      "pattern": "mixins",
+      "occurrences": 6
+    },
+    {
+      "file": "src\\core\\theme\\styled.ts",
+      "pattern": "getThemeValue",
+      "occurrences": 12
+    },
+    {
+      "file": "src\\core\\theme\\styled.ts",
+      "pattern": "themed",
+      "occurrences": 11
+    },
+    {
+      "file": "src\\core\\theme\\styled.ts",
+      "pattern": "mixins",
+      "occurrences": 13
+    },
+    {
+      "file": "src\\core\\theme\\test-theme-validator.ts",
+      "pattern": "adaptThemeForEmotion",
+      "occurrences": 3
+    },
+    {
+      "file": "src\\core\\theme\\test-utils.tsx",
+      "pattern": "themed",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "getThemeValue",
+      "occurrences": 5
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "getThemeColor",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "getThemeSpacing",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "adaptThemeForEmotion",
+      "occurrences": 3
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "adaptEmotionTheme",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-adapter.ts",
+      "pattern": "withThemeAdapter",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-benchmark.ts",
+      "pattern": "themed",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeValue",
+      "occurrences": 3
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "createThemeValueGetter",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeColor",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeSpacing",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeFontSize",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeShadow",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeBorderRadius",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeTransitionDuration",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\theme-utils.ts",
+      "pattern": "getThemeTransition",
+      "occurrences": 1
+    },
+    {
+      "file": "src\\core\\theme\\ThemeProvider.tsx",
+      "pattern": "adaptThemeForEmotion",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\UnifiedThemeProvider.tsx",
+      "pattern": "getThemeColor",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\UnifiedThemeProvider.tsx",
+      "pattern": "getThemeSpacing",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\UnifiedThemeProvider.tsx",
+      "pattern": "adaptThemeForEmotion",
+      "occurrences": 2
+    },
+    {
+      "file": "src\\core\\theme\\UnifiedThemeProvider.tsx",
+      "pattern": "adaptEmotionTheme",
+      "occurrences": 1
+    }
+  ],
+  "deprecatedImports": [
+    {
+      "file": "src\\components\\data-display\\Table.tsx",
+      "importPattern": "core/theme/styled"
+    },
+    {
+      "file": "src\\components\\data-display\\TableDemo.tsx",
+      "importPattern": "core/theme/styled"
+    }
+  ],
+  "summary": {
+    "filesScanned": 200,
+    "filesWithDeprecatedUtils": 14,
+    "totalDeprecatedUsages": 157,
+    "componentStats": {
+      "Other": 14
+    }
+  }
+}

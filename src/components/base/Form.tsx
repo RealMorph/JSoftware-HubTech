@@ -11,6 +11,72 @@ import React, {
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import styled from '@emotion/styled';
 
+// Theme styles interface
+interface FormThemeStyles {
+  root: {
+    gap: string;
+    padding: string;
+    background: string;
+    border: string;
+    borderRadius: string;
+    boxShadow?: string;
+  };
+  field: {
+    spacing: {
+      gap: string;
+      marginBottom: string;
+    };
+    typography: {
+      fontSize: string;
+      fontWeight: string | number;
+      lineHeight: string | number;
+    };
+    colors: {
+      text: string;
+      placeholder: string;
+      border: string;
+      borderFocus: string;
+      background: string;
+      error: string;
+    };
+  };
+}
+
+// Create theme styles function
+const createFormThemeStyles = (theme: ReturnType<typeof useDirectTheme>): FormThemeStyles => {
+  const { getSpacing, getColor, getBorderRadius, getTypography, getShadow } = theme;
+  
+  return {
+    root: {
+      gap: getSpacing('4'),
+      padding: getSpacing('4'),
+      background: getColor('background.paper'),
+      border: `1px solid ${getColor('border.default')}`,
+      borderRadius: getBorderRadius('md'),
+      boxShadow: getShadow('sm'),
+    },
+    field: {
+      spacing: {
+        gap: getSpacing('2'),
+        marginBottom: getSpacing('3'),
+      },
+      typography: {
+        fontSize: getTypography('fontSize.base', '1rem') as string,
+        fontWeight: getTypography('fontWeight.normal', 400),
+        lineHeight: getTypography('lineHeight.normal', 1.5),
+      },
+      colors: {
+        text: getColor('text.primary'),
+        placeholder: getColor('text.secondary'),
+        border: getColor('border.default'),
+        borderFocus: getColor('primary.main'),
+        background: getColor('background.default'),
+        error: getColor('error.main'),
+      },
+    },
+  };
+};
+
 export interface FormValidationError {
   field: string;
   message: string;
@@ -51,11 +117,16 @@ export const useForm = (): FormContextType => {
 };
 
 // Styled components
-const FormContainer = styled.form<{ $themeStyles?: any }>`
+const FormContainer = styled.form<{ $themeStyles: FormThemeStyles['root'] }>`
   display: flex;
   flex-direction: column;
-  gap: ${props => props.$themeStyles?.spacing || '1.25rem'};
+  gap: ${props => props.$themeStyles.gap};
   width: 100%;
+  padding: ${props => props.$themeStyles.padding};
+  background: ${props => props.$themeStyles.background};
+  border: ${props => props.$themeStyles.border};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  ${props => props.$themeStyles.boxShadow && `box-shadow: ${props.$themeStyles.boxShadow};`}
 `;
 
 /**
@@ -93,7 +164,8 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
     },
     ref
   ) => {
-    const { getSpacing } = useDirectTheme();
+    const theme = useDirectTheme();
+    const themeStyles = createFormThemeStyles(theme);
     const id = providedId || `form-${Math.random().toString(36).substring(2, 11)}`;
 
     const [values, setValues] = useState<FormValues>(defaultValues);
@@ -257,11 +329,6 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
       [onSubmit, validateForm, values, fieldRules, onValidationError]
     );
 
-    // Theme styles for the Form
-    const themeStyles = {
-      spacing: getSpacing('md', '1.25rem'),
-    };
-
     // Memoize context value
     const contextValue: FormContextType = {
       values,
@@ -276,13 +343,25 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
     };
 
     return (
-      <FormContext.Provider value={contextValue}>
+      <FormContext.Provider
+        value={{
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          registerField,
+          validateField,
+          setFieldValue,
+          setFieldTouched,
+        }}
+      >
         <FormContainer
-          id={id}
           ref={ref}
+          id={id}
           className={className}
-          $themeStyles={themeStyles}
           onSubmit={handleSubmit}
+          $themeStyles={themeStyles.root}
           {...props}
         >
           {typeof children === 'function' ? children(contextValue) : children}

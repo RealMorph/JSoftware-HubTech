@@ -16,24 +16,123 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Whether the card should have hover effects */
   interactive?: boolean;
   /** Children elements */
-  children: React.ReactNode;
+  children?: React.ReactNode;
   /** Custom class name */
   className?: string;
 }
 
-// Styled components for Card parts
-const StyledCardHeader = styled.div<{ $customStyles?: React.CSSProperties }>`
-  padding: ${props => props.$customStyles?.padding};
-  border-bottom: ${props => props.$customStyles?.borderBottom};
+interface ThemeStyles {
+  padding: string;
+  backgroundColor: string;
+  borderRadius: string;
+  boxShadow: string;
+  border: string;
+  mediumElevation: string;
+}
+
+const createThemeStyles = (
+  themeContext: ReturnType<typeof useDirectTheme>,
+  props: CardProps
+): ThemeStyles => {
+  const getPaddingValue = (): string => {
+    switch (props.padding) {
+      case 'none':
+        return '0';
+      case 'small':
+        return themeContext.getSpacing('4', '1rem');
+      case 'large':
+        return themeContext.getSpacing('8', '2rem');
+      default:
+        return themeContext.getSpacing('6', '1.5rem'); // medium (default)
+    }
+  };
+
+  const getBackgroundColor = (): string => {
+    if (props.bgColor) {
+      return themeContext.getColor(props.bgColor, props.bgColor);
+    }
+    return themeContext.getColor('background', '#ffffff');
+  };
+
+  const getBorderColor = (): string => {
+    if (props.borderColor) {
+      return themeContext.getColor(props.borderColor, props.borderColor);
+    }
+    return themeContext.getColor('gray.200', '#e5e7eb');
+  };
+
+  const getElevation = (): string => {
+    if (props.variant === 'flat' || props.variant === 'outlined') return 'none';
+    return themeContext.getShadow('sm', '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)');
+  };
+
+  const getMediumElevation = (): string => {
+    return themeContext.getShadow(
+      'md',
+      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+    );
+  };
+
+  return {
+    padding: getPaddingValue(),
+    backgroundColor: getBackgroundColor(),
+    borderRadius: themeContext.getBorderRadius('md', '0.375rem'),
+    boxShadow: getElevation(),
+    border: props.variant === 'outlined' ? `1px solid ${getBorderColor()}` : 'none',
+    mediumElevation: getMediumElevation(),
+  };
+};
+
+const StyledCard = styled.div<{
+  $themeStyles: ThemeStyles;
+  $fullWidth?: boolean;
+  $interactive?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: ${props => (props.$fullWidth ? '100%' : 'auto')};
+  padding: ${props => props.$themeStyles.padding};
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  box-shadow: ${props => props.$themeStyles.boxShadow};
+  border: ${props => props.$themeStyles.border};
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  cursor: ${props => (props.$interactive ? 'pointer' : 'default')};
+  overflow: hidden;
+
+  ${props =>
+    props.$interactive &&
+    `
+    &:hover {
+      box-shadow: ${props.$themeStyles.mediumElevation};
+      transform: translateY(-2px);
+    }
+
+    &:not(:hover) {
+      transform: translateY(0);
+    }
+  `}
+`;
+
+const StyledCardHeader = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.padding};
+  border-bottom: 1px solid ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('gray.100', '#f3f4f6');
+  }};
 `;
 
 const StyledCardContent = styled.div`
   flex: 1;
 `;
 
-const StyledCardFooter = styled.div<{ $customStyles?: React.CSSProperties }>`
-  padding: ${props => props.$customStyles?.padding};
-  border-top: ${props => props.$customStyles?.borderTop};
+const StyledCardFooter = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.padding};
+  border-top: 1px solid ${() => {
+    const theme = useDirectTheme();
+    return theme.getColor('gray.100', '#f3f4f6');
+  }};
 `;
 
 /**
@@ -54,93 +153,25 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     },
     ref
   ) => {
-    // Use DirectThemeProvider hook
-    const { getColor, getSpacing, getBorderRadius, getShadow } = useDirectTheme();
-
-    const getPaddingValue = (): string => {
-      switch (padding) {
-        case 'none':
-          return '0';
-        case 'small':
-          return getSpacing('4', '1rem');
-        case 'large':
-          return getSpacing('8', '2rem');
-        default:
-          return getSpacing('6', '1.5rem'); // medium (default)
-      }
-    };
-
-    const getBackgroundColor = (): string => {
-      if (bgColor) {
-        // Try to get color from theme first, fallback to raw value
-        return getColor(bgColor, bgColor);
-      }
-      return getColor('background', '#ffffff');
-    };
-
-    const getBorderColor = (): string => {
-      if (borderColor) {
-        // Try to get color from theme first, fallback to raw value
-        return getColor(borderColor, borderColor);
-      }
-      return getColor('gray.200', '#e5e7eb');
-    };
-
-    const getElevation = (): string => {
-      if (variant === 'flat' || variant === 'outlined') return 'none';
-      return getShadow('sm', '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)');
-    };
-
-    const getMediumElevation = (): string => {
-      return getShadow(
-        'md',
-        '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-      );
-    };
-
-    const styles: React.CSSProperties = {
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-      width: fullWidth ? '100%' : 'auto',
-      padding: getPaddingValue(),
-      backgroundColor: getBackgroundColor(),
-      borderRadius: getBorderRadius('md', '0.375rem'),
-      boxShadow: getElevation(),
-      border: variant === 'outlined' ? `1px solid ${getBorderColor()}` : 'none',
-      transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out',
-      cursor: interactive ? 'pointer' : 'default',
-      overflow: 'hidden',
-    };
-
-    // Add hover effects for interactive cards
-    const handleMouseOver = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (interactive && e.currentTarget) {
-        e.currentTarget.style.boxShadow = getMediumElevation();
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }
-      props.onMouseOver?.(e);
-    };
-
-    const handleMouseOut = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (interactive && e.currentTarget) {
-        e.currentTarget.style.boxShadow = getElevation();
-        e.currentTarget.style.transform = 'translateY(0)';
-      }
-      props.onMouseOut?.(e);
-    };
+    const themeContext = useDirectTheme();
+    const themeStyles = createThemeStyles(themeContext, {
+      variant,
+      padding,
+      bgColor,
+      borderColor,
+    });
 
     return (
-      <div
+      <StyledCard
         ref={ref}
-        style={styles}
+        $themeStyles={themeStyles}
+        $fullWidth={fullWidth}
+        $interactive={interactive}
         className={className}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
         {...props}
       >
         {children}
-      </div>
+      </StyledCard>
     );
   }
 );
@@ -149,19 +180,13 @@ Card.displayName = 'Card';
 
 export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
-  style,
   ...props
 }) => {
-  const { getSpacing, getColor } = useDirectTheme();
-
-  const customStyles: React.CSSProperties = {
-    padding: getSpacing('4', '1rem'),
-    borderBottom: `1px solid ${getColor('gray.100', '#f3f4f6')}`,
-    ...style,
-  };
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext, { padding: 'medium' });
 
   return (
-    <StyledCardHeader $customStyles={customStyles} style={style} {...props}>
+    <StyledCardHeader $themeStyles={themeStyles} {...props}>
       {children}
     </StyledCardHeader>
   );
@@ -169,31 +194,20 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 
 export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
-  style,
   ...props
 }) => {
-  return (
-    <StyledCardContent style={style} {...props}>
-      {children}
-    </StyledCardContent>
-  );
+  return <StyledCardContent {...props}>{children}</StyledCardContent>;
 };
 
 export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
-  style,
   ...props
 }) => {
-  const { getSpacing, getColor } = useDirectTheme();
-
-  const customStyles: React.CSSProperties = {
-    padding: getSpacing('4', '1rem'),
-    borderTop: `1px solid ${getColor('gray.100', '#f3f4f6')}`,
-    ...style,
-  };
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext, { padding: 'medium' });
 
   return (
-    <StyledCardFooter $customStyles={customStyles} style={style} {...props}>
+    <StyledCardFooter $themeStyles={themeStyles} {...props}>
       {children}
     </StyledCardFooter>
   );

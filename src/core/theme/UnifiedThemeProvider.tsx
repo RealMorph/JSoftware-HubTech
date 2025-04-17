@@ -1,19 +1,88 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
-import { Global, css } from '@emotion/react';
+import { Global, css, Theme } from '@emotion/react';
 import { ThemeConfig } from './consolidated-types';
-import {
-  adaptThemeForEmotion,
-  adaptEmotionTheme,
-  isThemeConfig,
-  getThemeColor,
-  getThemeTypography,
-  getThemeSpacing,
-} from './theme-adapter';
 import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
 import { ThemeService, useThemeService, inMemoryThemeService } from './theme-context';
 import { ThemeServiceProvider } from './ThemeServiceProvider';
+
+/**
+ * Type guard to check if an object matches the ThemeConfig interface
+ */
+function isThemeConfig(obj: any): obj is ThemeConfig {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'colors' in obj &&
+    'typography' in obj &&
+    'spacing' in obj &&
+    'breakpoints' in obj &&
+    'borderRadius' in obj &&
+    'shadows' in obj &&
+    'transitions' in obj
+  );
+}
+
+/**
+ * Gets a color from a theme object by path
+ */
+function getThemeColor(
+  theme: ThemeConfig,
+  path: string,
+  fallback: string = '#000000'
+): string {
+  const colorPath = path.startsWith('colors.') ? path : `colors.${path}`;
+  try {
+    const parts = colorPath.split('.');
+    let value: any = theme;
+    for (const part of parts) {
+      value = value[part];
+      if (value === undefined) return fallback;
+    }
+    return typeof value === 'string' ? value : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+/**
+ * Gets a typography value from a theme object by path
+ */
+function getThemeTypography(
+  theme: ThemeConfig,
+  path: string,
+  fallback?: string | number
+): string | number {
+  const typographyPath = path.startsWith('typography.') ? path : `typography.${path}`;
+  try {
+    const parts = typographyPath.split('.');
+    let value: any = theme;
+    for (const part of parts) {
+      value = value[part];
+      if (value === undefined) return fallback || '';
+    }
+    return value;
+  } catch (e) {
+    return fallback || '';
+  }
+}
+
+/**
+ * Gets a spacing value from a theme object by key
+ */
+function getThemeSpacing(
+  theme: ThemeConfig,
+  key: string,
+  fallback: string = '0'
+): string {
+  try {
+    const spacing = theme.spacing[key as keyof typeof theme.spacing];
+    return spacing || fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
 
 // Context types
 export interface UnifiedThemeContextType {
@@ -190,8 +259,8 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({
 
     const [isDarkMode, setIsDarkMode] = useState(false);
 
-    // Create emotion-compatible theme
-    const emotionTheme = adaptThemeForEmotion(currentTheme);
+    // Create emotion-compatible theme - direct conversion without adapter
+    const emotionTheme = currentTheme as unknown as Theme;
 
     // Apply theme to the document
     useEffect(() => {

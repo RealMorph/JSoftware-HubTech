@@ -2,7 +2,7 @@
  * Custom ESLint rule to detect usage of deprecated theme utility functions.
  */
 
-export default {
+module.exports = {
   meta: {
     type: 'suggestion',
     docs: {

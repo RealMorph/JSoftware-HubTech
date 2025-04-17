@@ -3,33 +3,31 @@ import styled from '@emotion/styled';
 import { FileUpload } from './FileUpload';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-// Define a theme styles interface for consistent theming
+// Define theme styles interface for consistent theming
 interface ThemeStyles {
   colors: {
     background: string;
-    backgroundSecondary: string;
     text: string;
-    textSecondary: string;
     border: string;
+    secondary: string;
     info: string;
   };
   spacing: {
-    container: string;
+    page: string;
     section: string;
-    subsection: string;
     item: string;
-    gap: string;
+    inner: string;
   };
   typography: {
     title: {
       fontSize: string;
       fontWeight: string;
     };
-    sectionTitle: {
+    heading: {
       fontSize: string;
       fontWeight: string;
     };
-    exampleTitle: {
+    subheading: {
       fontSize: string;
       fontWeight: string;
     };
@@ -37,136 +35,138 @@ interface ThemeStyles {
       fontSize: string;
     };
   };
-  borderRadius: {
-    sm: string;
-    md: string;
+  borderRadius: string;
+  shadows: {
+    card: string;
   };
 }
 
-// Theme-based styled components
 const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: ${props => props.$themeStyles.spacing.container};
+  padding: ${props => props.$themeStyles.spacing.page};
+  color: ${props => props.$themeStyles.colors.text};
+  background-color: ${props => props.$themeStyles.colors.background};
 `;
 
 const Title = styled.h1<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.section};
   font-size: ${props => props.$themeStyles.typography.title.fontSize};
   font-weight: ${props => props.$themeStyles.typography.title.fontWeight};
-  color: ${props => props.$themeStyles.colors.text};
 `;
 
-const Section = styled.section<{ $themeStyles: ThemeStyles }>`
+const Description = styled.p<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.section};
+  line-height: 1.5;
+`;
+
+const Section = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
+  border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
+  padding-bottom: ${props => props.$themeStyles.spacing.section};
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 const SectionTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.item};
-  font-size: ${props => props.$themeStyles.typography.sectionTitle.fontSize};
-  font-weight: ${props => props.$themeStyles.typography.sectionTitle.fontWeight};
-  color: ${props => props.$themeStyles.colors.text};
-`;
-
-const Description = styled.p<{ $themeStyles: ThemeStyles }>`
-  margin-bottom: ${props => props.$themeStyles.spacing.subsection};
-  color: ${props => props.$themeStyles.colors.textSecondary};
+  font-size: ${props => props.$themeStyles.typography.heading.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.heading.fontWeight};
 `;
 
 const ExampleContainer = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing.subsection};
+  margin-bottom: ${props => props.$themeStyles.spacing.item};
+  padding: ${props => props.$themeStyles.spacing.inner};
   border: 1px solid ${props => props.$themeStyles.colors.border};
-  border-radius: ${props => props.$themeStyles.borderRadius.md};
-  margin-bottom: ${props => props.$themeStyles.spacing.subsection};
-  background-color: ${props => props.$themeStyles.colors.background};
+  border-radius: ${props => props.$themeStyles.borderRadius};
 `;
 
 const ExampleTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.item};
-  font-size: ${props => props.$themeStyles.typography.exampleTitle.fontSize};
-  font-weight: ${props => props.$themeStyles.typography.exampleTitle.fontWeight};
-  color: ${props => props.$themeStyles.colors.text};
-`;
-
-const Note = styled.div<{ $themeStyles: ThemeStyles }>`
-  margin-top: ${props => props.$themeStyles.spacing.item};
-  padding: ${props => props.$themeStyles.spacing.item};
-  background-color: ${props => props.$themeStyles.colors.info};
-  border-radius: ${props => props.$themeStyles.borderRadius.sm};
-  font-style: italic;
-  color: ${props => props.$themeStyles.colors.text};
+  font-size: ${props => props.$themeStyles.typography.subheading.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.subheading.fontWeight};
 `;
 
 const RowContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
-  gap: ${props => props.$themeStyles.spacing.gap};
-  margin-bottom: ${props => props.$themeStyles.spacing.subsection};
   flex-wrap: wrap;
+  gap: ${props => props.$themeStyles.spacing.inner};
 
-  @media (max-width: 768px) {
-    flex-direction: column;
+  ${ExampleContainer} {
+    flex: 1;
+    min-width: 300px;
   }
 `;
 
+const ResultDisplay = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin: ${props => props.$themeStyles.spacing.item} 0;
+  padding: ${props => props.$themeStyles.spacing.inner};
+  background-color: ${props => props.$themeStyles.colors.secondary};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  font-size: 0.9rem;
+`;
+
 const CodeBlock = styled.pre<{ $themeStyles: ThemeStyles }>`
-  background-color: ${props => props.$themeStyles.colors.backgroundSecondary};
-  padding: ${props => props.$themeStyles.spacing.item};
-  border-radius: ${props => props.$themeStyles.borderRadius.sm};
+  margin-top: ${props => props.$themeStyles.spacing.item};
+  padding: ${props => props.$themeStyles.spacing.inner};
+  background-color: #f5f5f5;
+  border-radius: ${props => props.$themeStyles.borderRadius};
   overflow-x: auto;
   font-family: monospace;
-  margin-top: ${props => props.$themeStyles.spacing.item};
   font-size: ${props => props.$themeStyles.typography.code.fontSize};
 `;
 
-const ResultDisplay = styled.div<{ $themeStyles: ThemeStyles }>`
-  margin-top: ${props => props.$themeStyles.spacing.item};
-  padding: ${props => props.$themeStyles.spacing.item};
-  background-color: ${props => props.$themeStyles.colors.backgroundSecondary};
-  border-radius: ${props => props.$themeStyles.borderRadius.sm};
+const Note = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.inner};
+  background-color: ${props => props.$themeStyles.colors.info};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  margin-top: ${props => props.$themeStyles.spacing.section};
   font-style: italic;
-  color: ${props => props.$themeStyles.colors.textSecondary};
 `;
 
 // Create theme styles based on DirectThemeProvider
 function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
-  const { getColor, getTypography, getSpacing, getBorderRadius } = themeContext;
+  const { getColor, getSpacing, getTypography, getBorderRadius, getShadow } = themeContext;
 
   return {
     colors: {
-      background: getColor('background.primary', '#ffffff'),
-      backgroundSecondary: getColor('background.secondary', '#f5f5f5'),
-      text: getColor('text.primary', '#000000'),
-      textSecondary: getColor('text.secondary', '#666666'),
-      border: getColor('border.primary', '#e0e0e0'),
-      info: getColor('info.100', '#e3f2fd'),
+      background: getColor('background', '#ffffff'),
+      text: getColor('text.primary', '#333333'),
+      border: getColor('border', '#e0e0e0'),
+      secondary: getColor('background.secondary', '#f5f7fa'),
+      info: getColor('info.light', '#e3f2fd'),
     },
     spacing: {
-      container: getSpacing('6', '2rem'),
-      section: getSpacing('8', '3rem'),
-      subsection: getSpacing('4', '1.5rem'),
-      item: getSpacing('3', '1rem'),
-      gap: getSpacing('4', '1.5rem'),
+      page: getSpacing('8', '2rem'),
+      section: getSpacing('6', '1.5rem'),
+      item: getSpacing('4', '1rem'),
+      inner: getSpacing('3', '0.75rem'),
     },
     typography: {
       title: {
-        fontSize: getTypography('fontSize.xl', '2rem') as string,
+        fontSize: getTypography('fontSize.2xl', '1.5rem') as string,
         fontWeight: getTypography('fontWeight.bold', '700') as string,
       },
-      sectionTitle: {
-        fontSize: getTypography('fontSize.lg', '1.5rem') as string,
+      heading: {
+        fontSize: getTypography('fontSize.xl', '1.25rem') as string,
         fontWeight: getTypography('fontWeight.semibold', '600') as string,
       },
-      exampleTitle: {
-        fontSize: getTypography('fontSize.md', '1.25rem') as string,
+      subheading: {
+        fontSize: getTypography('fontSize.lg', '1.125rem') as string,
         fontWeight: getTypography('fontWeight.medium', '500') as string,
       },
       code: {
         fontSize: getTypography('fontSize.sm', '0.875rem') as string,
       },
     },
-    borderRadius: {
-      sm: getBorderRadius('sm', '0.125rem'),
-      md: getBorderRadius('md', '0.375rem'),
+    borderRadius: getBorderRadius('md', '0.375rem'),
+    shadows: {
+      card: getShadow(
+        'md',
+        '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+      ),
     },
   };
 }
@@ -368,11 +368,11 @@ export const FileUploadDemo: React.FC = () => {
           <FileUpload
             label="Upload with Custom Validation"
             validator={file => {
-              // Example: Only allow files with names longer than 5 characters
+              // Example: Check if filename is longer than 5 characters
               if (file.name.length <= 5) {
                 return {
                   valid: false,
-                  message: `File name "${file.name}" is too short (must be > 5 characters)`,
+                  message: 'Filename must be longer than 5 characters',
                 };
               }
               return { valid: true };
@@ -385,9 +385,12 @@ export const FileUploadDemo: React.FC = () => {
           <CodeBlock $themeStyles={themeStyles}>{`<FileUpload
   label="Upload with Custom Validation"
   validator={(file) => {
-    // Only allow files with names longer than 5 characters
+    // Example: Check if filename is longer than 5 characters
     if (file.name.length <= 5) {
-      return { valid: false, message: \`File name "\${file.name}" is too short (must be > 5 characters)\` };
+      return {
+        valid: false,
+        message: "Filename must be longer than 5 characters"
+      };
     }
     return { valid: true };
   }}
@@ -401,7 +404,7 @@ export const FileUploadDemo: React.FC = () => {
       <Section $themeStyles={themeStyles}>
         <SectionTitle $themeStyles={themeStyles}>Variants</SectionTitle>
         <Description $themeStyles={themeStyles}>
-          The FileUpload component comes in different variants: default, inline, and card.
+          The FileUpload component supports different visual variants to match your UI needs.
         </Description>
 
         <RowContainer $themeStyles={themeStyles}>
