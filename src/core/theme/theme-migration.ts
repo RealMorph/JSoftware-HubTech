@@ -20,7 +20,7 @@ const defaultValues = {
     xl: '0.75rem',
     '2xl': '1rem',
     '3xl': '1.5rem',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
@@ -29,7 +29,7 @@ const defaultValues = {
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
   transitions: {
     default: 'all 0.2s ease',
@@ -37,8 +37,8 @@ const defaultValues = {
     fast: 'all 0.1s ease',
     easeIn: 'all 0.2s ease-in',
     easeOut: 'all 0.2s ease-out',
-    easeInOut: 'all 0.2s ease-in-out'
-  }
+    easeInOut: 'all 0.2s ease-in-out',
+  },
 };
 
 /**
@@ -58,12 +58,12 @@ const requiredColorScales = [
   'success',
   'info',
   'background',
-  'text'
+  'text',
 ];
 
 /**
  * Convert a legacy theme object to a valid ThemeConfig
- * 
+ *
  * @param legacyTheme The legacy theme object to migrate
  * @param options Optional migration options
  * @returns A valid ThemeConfig object
@@ -81,14 +81,14 @@ export function migrateFromLegacyTheme(
     generateMissingColors = true,
     addDefaultShadows = true,
     addDefaultTransitions = true,
-    addDefaultBorderRadius = true
+    addDefaultBorderRadius = true,
   } = options;
 
   // Start with a minimal valid theme structure
   const baseTheme: Partial<ThemeConfig> = {
     id: legacyTheme.id || `migrated-theme-${Date.now()}`,
     name: legacyTheme.name || 'Migrated Theme',
-    description: legacyTheme.description || 'Automatically migrated from legacy theme format'
+    description: legacyTheme.description || 'Automatically migrated from legacy theme format',
   };
 
   // Migrate colors
@@ -124,7 +124,7 @@ export function migrateFromLegacyTheme(
     // Extract any other properties that might be directly available
     borderRadius: legacyTheme.borderRadius,
     shadows: legacyTheme.shadows,
-    transitions: legacyTheme.transitions
+    transitions: legacyTheme.transitions,
   }) as ThemeConfig;
 
   // Validate the migrated theme
@@ -190,7 +190,7 @@ function migrateColorScale(
     default: 500,
     dark: 700,
     darker: 800,
-    darkest: 900
+    darkest: 900,
   };
 
   // First, map any named keys
@@ -224,11 +224,11 @@ function migrateColorScale(
  */
 function expandColorToScale(color: string): Record<number, string> {
   const scale: Record<number, string> = {};
-  
+
   for (const value of standardColorScaleValues) {
     scale[value] = generateColorVariant(color, value);
   }
-  
+
   return scale;
 }
 
@@ -256,9 +256,9 @@ function generatePlaceholderColorScale(scaleName: string): Record<number, string
     success: '#4caf50',
     info: '#2196f3',
     background: '#ffffff',
-    text: '#212121'
+    text: '#212121',
   };
-  
+
   return expandColorToScale(defaultColors[scaleName] || '#cccccc');
 }
 
@@ -270,7 +270,7 @@ function migrateTypography(legacyTypography: Record<string, any>): ThemeConfig['
   const baseTypography: Partial<ThemeConfig['typography']> = {
     fontFamily: {
       heading: '"Roboto", "Helvetica Neue", sans-serif',
-      body: '"Open Sans", "Helvetica", sans-serif'
+      body: '"Open Sans", "Helvetica", sans-serif',
     },
     fontSize: {
       xs: '0.75rem',
@@ -285,7 +285,7 @@ function migrateTypography(legacyTypography: Record<string, any>): ThemeConfig['
       '6xl': '3.75rem',
       '7xl': '4.5rem',
       '8xl': '6rem',
-      '9xl': '8rem'
+      '9xl': '8rem',
     },
     fontWeight: {
       hairline: 100,
@@ -296,7 +296,7 @@ function migrateTypography(legacyTypography: Record<string, any>): ThemeConfig['
       semibold: 600,
       bold: 700,
       extrabold: 800,
-      black: 900
+      black: 900,
     },
     lineHeight: {
       none: '1',
@@ -304,7 +304,7 @@ function migrateTypography(legacyTypography: Record<string, any>): ThemeConfig['
       snug: '1.375',
       normal: '1.5',
       relaxed: '1.625',
-      loose: '2'
+      loose: '2',
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -312,8 +312,8 @@ function migrateTypography(legacyTypography: Record<string, any>): ThemeConfig['
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em'
-    }
+      widest: '0.1em',
+    },
   };
 
   // Merge any existing typography properties
@@ -371,7 +371,7 @@ function migrateSpacing(legacySpacing: Record<string, any>): ThemeConfig['spacin
     '40': '10rem',
     '48': '12rem',
     '56': '14rem',
-    '64': '16rem'
+    '64': '16rem',
   };
 
   return { ...standardSpacing, ...spacingObj } as ThemeConfig['spacing'];
@@ -379,14 +379,14 @@ function migrateSpacing(legacySpacing: Record<string, any>): ThemeConfig['spacin
 
 /**
  * Apply automatic fixes to a theme based on validation errors
- * 
+ *
  * @param theme The theme to fix
  * @param validationErrors Array of validation error messages
  * @returns The fixed theme
  */
 export function autoFixTheme(theme: Partial<ThemeConfig>, validationErrors: string[]): ThemeConfig {
   let fixedTheme = { ...theme } as ThemeConfig;
-  
+
   for (const error of validationErrors) {
     if (error.includes('Missing required property:')) {
       const property = error.split('Missing required property:')[1].trim();
@@ -396,7 +396,7 @@ export function autoFixTheme(theme: Partial<ThemeConfig>, validationErrors: stri
     }
     // Add more error types and fixes as needed
   }
-  
+
   return fixedTheme;
 }
 
@@ -405,7 +405,7 @@ export function autoFixTheme(theme: Partial<ThemeConfig>, validationErrors: stri
  */
 function applyFixForMissingProperty(theme: ThemeConfig, property: string): ThemeConfig {
   const fixedTheme = { ...theme };
-  
+
   switch (property) {
     case 'id':
       fixedTheme.id = `theme-${Date.now()}`;
@@ -420,14 +420,14 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
         success: generatePlaceholderColorScale('success'),
         info: generatePlaceholderColorScale('info'),
         background: { default: '#ffffff', paper: '#f5f5f5' },
-        text: { primary: '#212121', secondary: '#757575' }
+        text: { primary: '#212121', secondary: '#757575' },
       };
       break;
     case 'typography':
       fixedTheme.typography = {
         fontFamily: {
           heading: '"Roboto", "Helvetica Neue", sans-serif',
-          body: '"Open Sans", "Helvetica", sans-serif'
+          body: '"Open Sans", "Helvetica", sans-serif',
         },
         fontSize: {
           xs: '0.75rem',
@@ -442,7 +442,7 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
           '6xl': '3.75rem',
           '7xl': '4.5rem',
           '8xl': '6rem',
-          '9xl': '8rem'
+          '9xl': '8rem',
         },
         fontWeight: {
           hairline: 100,
@@ -453,7 +453,7 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
           semibold: 600,
           bold: 700,
           extrabold: 800,
-          black: 900
+          black: 900,
         },
         lineHeight: {
           none: '1',
@@ -461,7 +461,7 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
           snug: '1.375',
           normal: '1.5',
           relaxed: '1.625',
-          loose: '2'
+          loose: '2',
         },
         letterSpacing: {
           tighter: '-0.05em',
@@ -469,8 +469,8 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
           normal: '0',
           wide: '0.025em',
           wider: '0.05em',
-          widest: '0.1em'
-        }
+          widest: '0.1em',
+        },
       };
       break;
     case 'spacing':
@@ -493,7 +493,7 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
         '40': '10rem',
         '48': '12rem',
         '56': '14rem',
-        '64': '16rem'
+        '64': '16rem',
       };
       break;
     case 'borderRadius':
@@ -509,7 +509,7 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
       // Unknown property, can't fix automatically
       console.warn(`Can't automatically fix unknown property: ${property}`);
   }
-  
+
   return fixedTheme;
 }
 
@@ -519,37 +519,37 @@ function applyFixForMissingProperty(theme: ThemeConfig, property: string): Theme
 function applyFixForColorScale(theme: ThemeConfig, error: string): ThemeConfig {
   const fixedTheme = { ...theme };
   const colorScaleMatch = error.match(/Color scale (\w+) is missing/);
-  
+
   if (colorScaleMatch && colorScaleMatch[1]) {
     const scaleName = colorScaleMatch[1];
-    
+
     if (!fixedTheme.colors) {
       fixedTheme.colors = {} as ThemeConfig['colors'];
     }
-    
+
     fixedTheme.colors[scaleName] = generatePlaceholderColorScale(scaleName);
   }
-  
+
   const scaleValueMatch = error.match(/missing required value: (\d+)/);
   if (scaleValueMatch && scaleValueMatch[1]) {
     const missingValue = parseInt(scaleValueMatch[1], 10);
     const scaleNameMatch = error.match(/Color scale (\w+)/);
-    
+
     if (scaleNameMatch && scaleNameMatch[1] && fixedTheme.colors) {
       const scaleName = scaleNameMatch[1];
       const scale = fixedTheme.colors[scaleName];
-      
+
       if (scale) {
         // Find a base color to derive the missing value from
         const baseColor = scale[500] || Object.values(scale)[0];
-        
+
         if (baseColor) {
           scale[missingValue] = generateColorVariant(baseColor, missingValue);
         }
       }
     }
   }
-  
+
   return fixedTheme;
 }
 
@@ -567,29 +567,32 @@ export function createMigrationReport(
 } {
   const addedProperties: string[] = [];
   const modifiedProperties: string[] = [];
-  
+
   // Check for added top-level properties
   for (const key of Object.keys(migratedTheme)) {
     if (!(key in originalTheme)) {
       addedProperties.push(key);
     }
   }
-  
+
   // Check for modified properties (simplified check)
   for (const key of Object.keys(originalTheme)) {
-    if (key in migratedTheme && JSON.stringify(originalTheme[key]) !== JSON.stringify(migratedTheme[key])) {
+    if (
+      key in migratedTheme &&
+      JSON.stringify(originalTheme[key]) !== JSON.stringify(migratedTheme[key])
+    ) {
       modifiedProperties.push(key);
     }
   }
-  
+
   // Get validation errors for both themes
   const originalValidationErrors = validateTheme(originalTheme as ThemeConfig);
   const migratedValidationErrors = validateTheme(migratedTheme);
-  
+
   return {
     addedProperties,
     modifiedProperties,
     originalValidationErrors,
-    migratedValidationErrors
+    migratedValidationErrors,
   };
-} 
+}

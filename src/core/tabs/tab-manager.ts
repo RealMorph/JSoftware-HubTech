@@ -16,7 +16,7 @@ export interface TabManager {
   getActiveTab(): Promise<Tab | null>;
   reorderTabs(newOrder: string[]): Promise<void>;
   moveTab(id: string, newIndex: number): Promise<void>;
-  
+
   // Tab group methods
   createGroup(group: Omit<TabGroup, 'id' | 'order'>): Promise<TabGroup>;
   removeGroup(id: string, keepTabs?: boolean): Promise<void>;
@@ -27,22 +27,31 @@ export interface TabManager {
   reorderGroups(newOrder: string[]): Promise<void>;
   moveGroup(id: string, newIndex: number): Promise<void>;
   toggleGroupCollapse(id: string): Promise<void>;
-  
+
   // Messaging
   getMessagingManager(): TabMessagingManager;
   sendTabMessage(tabId: string, type: string, payload: any, targetId?: string): Promise<void>;
-  subscribeToTabMessages(tabId: string, callback: (message: any) => void, messageType?: MessageType): string;
+  subscribeToTabMessages(
+    tabId: string,
+    callback: (message: any) => void,
+    messageType?: MessageType
+  ): string;
   unsubscribeFromTabMessages(subscriptionId: string): void;
-  
+
   // State sharing
   getTabState(tabId: string): any;
   updateTabState(tabId: string, state: any, broadcast?: boolean): Promise<void>;
-  
+
   // Tab dependencies
-  addTabDependency(dependentId: string, providerId: string, type: string, metadata?: any): Promise<void>;
+  addTabDependency(
+    dependentId: string,
+    providerId: string,
+    type: string,
+    metadata?: any
+  ): Promise<void>;
   removeTabDependency(dependentId: string, providerId: string): Promise<void>;
-  getTabDependencies(tabId: string): Array<{providerId: string; type: string; metadata?: any}>;
-  getTabDependents(tabId: string): Array<{dependentId: string; type: string; metadata?: any}>;
+  getTabDependencies(tabId: string): Array<{ providerId: string; type: string; metadata?: any }>;
+  getTabDependents(tabId: string): Array<{ dependentId: string; type: string; metadata?: any }>;
 }
 
 export class DefaultTabManager implements TabManager {
@@ -243,7 +252,7 @@ export class DefaultTabManager implements TabManager {
       ...group,
       id: generateUUID(),
       order: this._groups.length,
-      isCollapsed: group.isCollapsed || false
+      isCollapsed: group.isCollapsed || false,
     };
 
     this._groups.push(newGroup);
@@ -390,64 +399,78 @@ export class DefaultTabManager implements TabManager {
   getMessagingManager(): TabMessagingManager {
     return this.messagingManager;
   }
-  
-  async sendTabMessage(tabId: string, type: string, payload: any, targetId?: string): Promise<void> {
+
+  async sendTabMessage(
+    tabId: string,
+    type: string,
+    payload: any,
+    targetId?: string
+  ): Promise<void> {
     await this.messagingManager.sendMessage({
       type: type as MessageType,
       senderId: tabId,
       targetId,
-      payload
+      payload,
     });
   }
-  
-  subscribeToTabMessages(tabId: string, callback: (message: any) => void, messageType?: MessageType): string {
+
+  subscribeToTabMessages(
+    tabId: string,
+    callback: (message: any) => void,
+    messageType?: MessageType
+  ): string {
     return this.messagingManager.subscribe({
       tabId,
       messageType,
-      callback
+      callback,
     });
   }
-  
+
   unsubscribeFromTabMessages(subscriptionId: string): void {
     this.messagingManager.unsubscribe(subscriptionId);
   }
-  
+
   // State sharing methods
   getTabState(tabId: string): any {
     return this.messagingManager.getTabState(tabId);
   }
-  
+
   async updateTabState(tabId: string, state: any, broadcast: boolean = true): Promise<void> {
     await this.messagingManager.updateTabState(tabId, state, broadcast);
   }
-  
+
   // Tab dependency methods
-  async addTabDependency(dependentId: string, providerId: string, type: string, metadata?: any): Promise<void> {
+  async addTabDependency(
+    dependentId: string,
+    providerId: string,
+    type: string,
+    metadata?: any
+  ): Promise<void> {
     await this.messagingManager.addDependency({
       dependentId,
       providerId,
       type,
-      metadata
+      metadata,
     });
   }
-  
+
   async removeTabDependency(dependentId: string, providerId: string): Promise<void> {
     await this.messagingManager.removeDependency(dependentId, providerId);
   }
-  
-  getTabDependencies(tabId: string): Array<{providerId: string; type: string; metadata?: any}> {
+
+  getTabDependencies(tabId: string): Array<{ providerId: string; type: string; metadata?: any }> {
     return this.messagingManager.getDependencies(tabId).map(dep => ({
       providerId: dep.providerId,
       type: dep.type,
-      metadata: dep.metadata
+      metadata: dep.metadata,
     }));
   }
-  
-  getTabDependents(tabId: string): Array<{dependentId: string; type: string; metadata?: any}> {
+
+  getTabDependents(tabId: string): Array<{ dependentId: string; type: string; metadata?: any }> {
     return this.messagingManager.getDependents(tabId).map(dep => ({
       dependentId: dep.dependentId,
       type: dep.type,
-      metadata: dep.metadata
+      metadata: dep.metadata,
     }));
   }
 }

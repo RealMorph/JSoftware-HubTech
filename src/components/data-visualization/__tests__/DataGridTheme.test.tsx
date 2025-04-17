@@ -10,7 +10,7 @@ const mockTheme: ThemeConfig = {
   colors: {
     primary: '#1976d2',
     secondary: '#dc004e',
-    tertiary: '#f9a825', 
+    tertiary: '#f9a825',
     success: '#4caf50',
     warning: '#ff9800',
     error: '#f44336',
@@ -154,68 +154,41 @@ const testColumns: Column<TestItem>[] = [
 
 // Custom render function with theme
 const renderWithTheme = (ui: React.ReactElement, theme = mockTheme) => {
-  return render(
-    <DirectThemeProvider initialTheme={theme}>
-      {ui}
-    </DirectThemeProvider>
-  );
+  return render(<DirectThemeProvider initialTheme={theme}>{ui}</DirectThemeProvider>);
 };
 
 describe('DataGrid Theming', () => {
   it('applies loading overlay when loading prop is true', () => {
-    renderWithTheme(
-      <DataGrid 
-        data={testData} 
-        columns={testColumns} 
-        loading={true}
-      />
-    );
-    
+    renderWithTheme(<DataGrid data={testData} columns={testColumns} loading={true} />);
+
     expect(screen.getByTestId('loading-overlay')).toBeInTheDocument();
   });
 
   it('displays data correctly', () => {
-    renderWithTheme(
-      <DataGrid 
-        data={testData} 
-        columns={testColumns}
-      />
-    );
-    
+    renderWithTheme(<DataGrid data={testData} columns={testColumns} />);
+
     // Check if header and data are rendered
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Email')).toBeInTheDocument();
-    
+
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('jane@example.com')).toBeInTheDocument();
   });
 
   it('shows custom no data message when data is empty', () => {
-    const customMessage = "Custom no data message";
-    renderWithTheme(
-      <DataGrid 
-        data={[]} 
-        columns={testColumns}
-        noDataMessage={customMessage}
-      />
-    );
-    
+    const customMessage = 'Custom no data message';
+    renderWithTheme(<DataGrid data={[]} columns={testColumns} noDataMessage={customMessage} />);
+
     expect(screen.getByText(customMessage)).toBeInTheDocument();
   });
 
   it('renders pagination correctly', () => {
-    renderWithTheme(
-      <DataGrid 
-        data={testData} 
-        columns={testColumns}
-        defaultPageSize={1}
-      />
-    );
-    
+    renderWithTheme(<DataGrid data={testData} columns={testColumns} defaultPageSize={1} />);
+
     // Check pagination elements
     expect(screen.getByText('Rows per page:')).toBeInTheDocument();
     expect(screen.getByText('1-1 of 2')).toBeInTheDocument();
     expect(screen.getByText('Next')).toBeInTheDocument();
   });
-}); 
+});

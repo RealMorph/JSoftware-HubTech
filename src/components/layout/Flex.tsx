@@ -8,9 +8,21 @@ type FlexProps = {
   className?: string;
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
-  justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+  justifyContent?:
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
   alignItems?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
-  alignContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'stretch';
+  alignContent?:
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'space-between'
+    | 'space-around'
+    | 'stretch';
   gap?: string | number;
   fullWidth?: boolean;
   fullHeight?: boolean;
@@ -43,7 +55,7 @@ export const Flex = ({
   fullWidth,
   fullHeight,
   inline,
-  testId
+  testId,
 }: FlexProps) => {
   const theme = useDirectTheme();
 
@@ -81,7 +93,7 @@ export const FlexItem = ({
   basis,
   alignSelf,
   order,
-  testId
+  testId,
 }: FlexItemProps) => {
   return (
     <StyledFlexItem
@@ -100,16 +112,18 @@ export const FlexItem = ({
 };
 
 // === Styled Components ===
-const StyledFlex = styled.div<Omit<FlexProps, 'testId' | 'children' | 'className'> & { gap: string }>`
-  display: ${({ inline }) => inline ? 'inline-flex' : 'flex'};
+const StyledFlex = styled.div<
+  Omit<FlexProps, 'testId' | 'children' | 'className'> & { gap: string }
+>`
+  display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
   flex-direction: ${({ direction }) => direction || 'row'};
   flex-wrap: ${({ wrap }) => wrap || 'nowrap'};
   justify-content: ${({ justifyContent }) => justifyContent || 'flex-start'};
   align-items: ${({ alignItems }) => alignItems || 'stretch'};
   align-content: ${({ alignContent }) => alignContent || undefined};
   gap: ${({ gap }) => gap};
-  width: ${({ fullWidth }) => fullWidth ? '100%' : undefined};
-  height: ${({ fullHeight }) => fullHeight ? '100%' : undefined};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : undefined)};
+  height: ${({ fullHeight }) => (fullHeight ? '100%' : undefined)};
 `;
 
 const StyledFlexItem = styled.div<Omit<FlexItemProps, 'testId' | 'children' | 'className'>>`
@@ -119,4 +133,4 @@ const StyledFlexItem = styled.div<Omit<FlexItemProps, 'testId' | 'children' | 'c
   flex-basis: ${({ basis }) => basis || undefined};
   align-self: ${({ alignSelf }) => alignSelf || undefined};
   order: ${({ order }) => order || undefined};
-`; 
+`;

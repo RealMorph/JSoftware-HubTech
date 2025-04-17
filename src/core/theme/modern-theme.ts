@@ -10,7 +10,7 @@ export const modernTheme: ThemeConfig = {
   id: 'modern-theme',
   name: 'Modern Theme',
   description: 'A modern, SaaS-inspired theme with enhanced visual elements',
-  
+
   // Use the required color structure with color scales
   colors: {
     primary: '#0073ea', // Monday.com blue
@@ -29,12 +29,14 @@ export const modernTheme: ThemeConfig = {
     white: '#ffffff',
     surface: '#f6f7fb',
   },
-  
+
   typography: {
     fontFamily: {
       base: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      monospace: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      heading:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      monospace:
+        'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     },
     fontSize: {
       xs: '0.75rem',
@@ -69,7 +71,7 @@ export const modernTheme: ThemeConfig = {
       widest: '0.1em',
     },
   },
-  
+
   spacing: {
     xs: '0.25rem',
     sm: '0.5rem',
@@ -80,7 +82,7 @@ export const modernTheme: ThemeConfig = {
     '3xl': '3rem',
     '4xl': '4rem',
   },
-  
+
   breakpoints: {
     xs: '0px',
     sm: '640px',
@@ -89,7 +91,7 @@ export const modernTheme: ThemeConfig = {
     xl: '1280px',
     '2xl': '1536px',
   },
-  
+
   borderRadius: {
     none: '0',
     sm: '4px',
@@ -100,7 +102,7 @@ export const modernTheme: ThemeConfig = {
     '2xl': '20px',
     full: '9999px',
   },
-  
+
   shadows: {
     none: 'none',
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -109,9 +111,9 @@ export const modernTheme: ThemeConfig = {
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
-  
+
   transitions: {
     duration: {
       fast: '150ms',
@@ -125,10 +127,10 @@ export const modernTheme: ThemeConfig = {
       linear: 'linear',
     },
   },
-  
+
   isDefault: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
 
-export default modernTheme; 
+export default modernTheme;

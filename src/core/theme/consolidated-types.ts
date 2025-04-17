@@ -45,11 +45,13 @@ export interface ThemeColors {
   warning: string;
   error: string;
   info: string;
-  text: string | { 
-    primary: string; 
-    secondary: string; 
-    disabled: string; 
-  };
+  text:
+    | string
+    | {
+        primary: string;
+        secondary: string;
+        disabled: string;
+      };
   background: string;
   border: string;
   white: string;
@@ -184,4 +186,4 @@ export interface ThemeState {
 export interface ThemeManager {
   currentTheme: ThemeState;
   setTheme: (theme: ThemeState) => void;
-} 
+}

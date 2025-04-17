@@ -59,12 +59,12 @@ const StatusFilter: React.FC<FilterProps> = ({ value, onChange }) => {
   return (
     <Select
       value={value || ''}
-      onChange={(value) => onChange(value)}
+      onChange={value => onChange(value)}
       options={[
         { value: '', label: 'All' },
         { value: 'active', label: 'Active' },
         { value: 'inactive', label: 'Inactive' },
-        { value: 'pending', label: 'Pending' }
+        { value: 'pending', label: 'Pending' },
       ]}
     />
   );
@@ -88,18 +88,20 @@ const StatusCell = (value: string) => {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px'
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+      }}
+    >
       <span
         style={{
           width: '10px',
           height: '10px',
           borderRadius: '50%',
           backgroundColor: color,
-          display: 'inline-block'
+          display: 'inline-block',
         }}
       />
       <span style={{ textTransform: 'capitalize' }}>{value}</span>
@@ -114,9 +116,13 @@ const generateUsers = (count: number): User[] => {
   const users: User[] = [];
 
   for (let i = 1; i <= count; i++) {
-    const registeredDate = new Date(Date.now() - Math.floor(Math.random() * 1000 * 3600 * 24 * 365));
-    const lastLogin = new Date(registeredDate.getTime() + Math.floor(Math.random() * (Date.now() - registeredDate.getTime())));
-    
+    const registeredDate = new Date(
+      Date.now() - Math.floor(Math.random() * 1000 * 3600 * 24 * 365)
+    );
+    const lastLogin = new Date(
+      registeredDate.getTime() + Math.floor(Math.random() * (Date.now() - registeredDate.getTime()))
+    );
+
     users.push({
       id: i,
       name: `User ${i}`,
@@ -124,7 +130,7 @@ const generateUsers = (count: number): User[] => {
       role: roles[Math.floor(Math.random() * roles.length)],
       status: statuses[Math.floor(Math.random() * statuses.length)],
       lastLogin: lastLogin.toISOString().split('T')[0],
-      registeredDate: registeredDate.toISOString().split('T')[0]
+      registeredDate: registeredDate.toISOString().split('T')[0],
     });
   }
 
@@ -136,7 +142,8 @@ const DataGridDemo: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dense, setDense] = useState<boolean>(false);
   const [striped, setStriped] = useState<boolean>(true);
-  
+  const [selectedRow, setSelectedRow] = useState<User | null>(null);
+
   // Simulate loading data
   useEffect(() => {
     setLoading(true);
@@ -144,10 +151,10 @@ const DataGridDemo: React.FC = () => {
       setUsers(generateUsers(50));
       setLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Define columns
   const columns: Column<User>[] = [
     {
@@ -155,28 +162,28 @@ const DataGridDemo: React.FC = () => {
       header: 'ID',
       accessor: 'id',
       width: '80px',
-      sortable: true
+      sortable: true,
     },
     {
       id: 'name',
       header: 'Name',
       accessor: 'name',
       sortable: true,
-      filterable: true
+      filterable: true,
     },
     {
       id: 'email',
       header: 'Email',
       accessor: 'email',
       sortable: true,
-      filterable: true
+      filterable: true,
     },
     {
       id: 'role',
       header: 'Role',
       accessor: 'role',
       sortable: true,
-      filterable: true
+      filterable: true,
     },
     {
       id: 'status',
@@ -185,64 +192,74 @@ const DataGridDemo: React.FC = () => {
       sortable: true,
       filterable: true,
       renderCell: StatusCell,
-      filterComponent: StatusFilter
+      filterComponent: StatusFilter,
     },
     {
       id: 'lastLogin',
       header: 'Last Login',
       accessor: 'lastLogin',
-      sortable: true
+      sortable: true,
     },
     {
       id: 'registeredDate',
       header: 'Registered Date',
       accessor: 'registeredDate',
-      sortable: true
+      sortable: true,
     },
     {
       id: 'actions',
       header: 'Actions',
       accessor: 'id',
       renderCell: (_, row) => (
-        <Button 
-          size="sm" 
+        <Button
+          size="sm"
           variant="secondary"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
-            alert(`View user ${row.name}`);
+            window.alert(`View user ${row.name}`);
           }}
         >
           View
         </Button>
-      )
-    }
+      ),
+    },
   ];
-  
+
   const handleRowClick = (row: User) => {
-    console.log('Row clicked:', row);
+    setSelectedRow(row);
   };
-  
+
   return (
     <DemoContainer>
       <DemoTitle>Data Grid Component</DemoTitle>
-      
+
       <DemoSection>
         <Controls>
-          <Button 
-            onClick={() => setDense(!dense)}
-            variant={dense ? 'primary' : 'secondary'}
-          >
+          <Button onClick={() => setDense(!dense)} variant={dense ? 'primary' : 'secondary'}>
             {dense ? 'Dense Mode' : 'Normal Mode'}
           </Button>
-          
-          <Button 
-            onClick={() => setStriped(!striped)}
-            variant={striped ? 'primary' : 'secondary'}
-          >
+
+          <Button onClick={() => setStriped(!striped)} variant={striped ? 'primary' : 'secondary'}>
             {striped ? 'Striped Rows' : 'Single Color'}
           </Button>
         </Controls>
-        
+
+        {selectedRow && (
+          <div
+            style={{
+              marginBottom: '1rem',
+              padding: '0.5rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+            }}
+          >
+            <h4>Selected Row:</h4>
+            <p>
+              Name: {selectedRow.name} | Email: {selectedRow.email} | Status: {selectedRow.status}
+            </p>
+          </div>
+        )}
+
         <DataGrid
           data={users}
           columns={columns}
@@ -256,7 +273,7 @@ const DataGridDemo: React.FC = () => {
           height="600px"
         />
       </DemoSection>
-      
+
       <FeatureCard>
         <CardHeader>DataGrid Features</CardHeader>
         <CardContent>
@@ -269,10 +286,10 @@ const DataGridDemo: React.FC = () => {
             <li>Configurable styling (striped rows, dense mode)</li>
             <li>Loading state with spinner</li>
           </ul>
-          
+
           <DemoTitle>Example Usage</DemoTitle>
           <CodeBlock>
-{`import DataGrid, { Column } from './DataGrid';
+            {`import DataGrid, { Column } from './DataGrid';
 
 // Define columns
 const columns: Column<User>[] = [
@@ -314,4 +331,4 @@ const columns: Column<User>[] = [
   );
 };
 
-export default DataGridDemo; 
+export default DataGridDemo;

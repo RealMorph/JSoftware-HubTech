@@ -126,20 +126,20 @@ export class CSSVariablesManager {
 /**
  * Generates CSS variables from a theme config and applies them to the document root
  * This makes theme values accessible via CSS variables throughout the application
- * 
+ *
  * @param theme The theme configuration
  */
 export function generateCssVariables(theme: ThemeConfig): void {
   if (!theme) return;
-  
+
   const root = document.documentElement;
-  
+
   // Colors
   if (theme.colors) {
     // Primary colors
     root.style.setProperty('--color-primary', theme.colors.primary);
     root.style.setProperty('--color-secondary', theme.colors.secondary);
-    
+
     // Background colors
     if (typeof theme.colors.background === 'string') {
       root.style.setProperty('--color-background', theme.colors.background);
@@ -149,7 +149,7 @@ export function generateCssVariables(theme: ThemeConfig): void {
       if (bg.secondary) root.style.setProperty('--color-background-secondary', bg.secondary);
       if (bg.tertiary) root.style.setProperty('--color-background-tertiary', bg.tertiary);
     }
-    
+
     // Text colors
     if (typeof theme.colors.text === 'string') {
       root.style.setProperty('--color-text', theme.colors.text);
@@ -160,14 +160,14 @@ export function generateCssVariables(theme: ThemeConfig): void {
       if (text.secondary) root.style.setProperty('--color-text-secondary', text.secondary);
       if (text.disabled) root.style.setProperty('--color-text-disabled', text.disabled);
     }
-    
+
     // State colors
     if (theme.colors.success) root.style.setProperty('--color-success', theme.colors.success);
     if (theme.colors.warning) root.style.setProperty('--color-warning', theme.colors.warning);
     if (theme.colors.error) root.style.setProperty('--color-error', theme.colors.error);
     if (theme.colors.info) root.style.setProperty('--color-info', theme.colors.info);
   }
-  
+
   // Typography
   if (theme.typography) {
     // Font families
@@ -177,28 +177,28 @@ export function generateCssVariables(theme: ThemeConfig): void {
       root.style.setProperty('--font-family-heading', fontFamily.heading);
       root.style.setProperty('--font-family-monospace', fontFamily.monospace);
     }
-    
+
     // Font sizes
     if (theme.typography.fontSize) {
       Object.entries(theme.typography.fontSize).forEach(([key, value]) => {
         root.style.setProperty(`--font-size-${key}`, value);
       });
     }
-    
+
     // Font weights
     if (theme.typography.fontWeight) {
       Object.entries(theme.typography.fontWeight).forEach(([key, value]) => {
         root.style.setProperty(`--font-weight-${key}`, value);
       });
     }
-    
+
     // Line heights
     if (theme.typography.lineHeight) {
       Object.entries(theme.typography.lineHeight).forEach(([key, value]) => {
         root.style.setProperty(`--line-height-${key}`, value);
       });
     }
-    
+
     // Letter spacing
     if (theme.typography.letterSpacing) {
       Object.entries(theme.typography.letterSpacing).forEach(([key, value]) => {
@@ -206,28 +206,28 @@ export function generateCssVariables(theme: ThemeConfig): void {
       });
     }
   }
-  
+
   // Spacing
   if (theme.spacing) {
     Object.entries(theme.spacing).forEach(([key, value]) => {
       root.style.setProperty(`--spacing-${key}`, value);
     });
   }
-  
+
   // Border radius
   if (theme.borderRadius) {
     Object.entries(theme.borderRadius).forEach(([key, value]) => {
       root.style.setProperty(`--border-radius-${key}`, value);
     });
   }
-  
+
   // Shadows
   if (theme.shadows) {
     Object.entries(theme.shadows).forEach(([key, value]) => {
       root.style.setProperty(`--shadow-${key}`, value);
     });
   }
-  
+
   // Transitions
   if (theme.transitions) {
     if (theme.transitions.duration) {
@@ -235,7 +235,7 @@ export function generateCssVariables(theme: ThemeConfig): void {
         root.style.setProperty(`--transition-duration-${key}`, value);
       });
     }
-    
+
     if (theme.transitions.timing) {
       Object.entries(theme.transitions.timing).forEach(([key, value]) => {
         root.style.setProperty(`--transition-timing-${key}`, value);
@@ -249,10 +249,10 @@ export function generateCssVariables(theme: ThemeConfig): void {
  */
 export class CssVariablesCache {
   private currentThemeId: string | null = null;
-  
+
   /**
    * Updates CSS variables if the theme has changed
-   * 
+   *
    * @param theme The theme configuration
    * @returns boolean indicating whether variables were updated
    */
@@ -260,7 +260,7 @@ export class CssVariablesCache {
     if (this.currentThemeId === theme.id) {
       return false; // Theme hasn't changed, no need to update
     }
-    
+
     generateCssVariables(theme);
     this.currentThemeId = theme.id || null;
     return true;

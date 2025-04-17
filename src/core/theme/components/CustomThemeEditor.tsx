@@ -126,7 +126,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
   const [themeName, setThemeName] = useState(currentTheme?.name || '');
   const [themeDescription, setThemeDescription] = useState(currentTheme?.description || '');
   const [isDarkTheme, setIsDarkTheme] = useState(currentTheme?.isDark || false);
-  
+
   // Initialize with a complete ThemeVisualConfig that matches our updated interfaces
   const [themeData, setThemeData] = useState<ThemeVisualConfig>({
     colors: currentTheme?.colors || {
@@ -243,7 +243,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
       setThemeName(currentTheme.name || '');
       setThemeDescription(currentTheme.description || '');
       setIsDarkTheme(currentTheme.isDark || false);
-      
+
       // Create a copy of the current theme's visual properties
       setThemeData({
         colors: { ...currentTheme.colors },
@@ -273,7 +273,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
     setThemeData(prev => {
       // Create a safe copy of the parent property if it exists
       const parentObj = prev.colors[parent as keyof typeof prev.colors] || {};
-      
+
       return {
         ...prev,
         colors: {
@@ -302,12 +302,11 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
   };
 
   // Custom handler function for TextField onChange
-  const handleTextFieldChange = (
-    section: keyof TypographyConfig,
-    key: string
-  ) => (value: string, event: ChangeEvent<HTMLInputElement>) => {
-    handleTypographyChange(section, key, value);
-  };
+  const handleTextFieldChange =
+    (section: keyof TypographyConfig, key: string) =>
+    (value: string, event: ChangeEvent<HTMLInputElement>) => {
+      handleTypographyChange(section, key, value);
+    };
 
   // Fix this handler to correctly determine the section of typography being edited
   const renderTypographyEditor = (typographySection: keyof TypographyConfig) => {
@@ -321,7 +320,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
 
     // Get the correct section data
     const sectionData = themeData.typography[typographySection];
-    
+
     return (
       <Section>
         <SectionTitle theme={themeData as any}>{sectionToLabel[typographySection]}</SectionTitle>
@@ -329,7 +328,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
           {Object.entries(sectionData).map(([key, value]) => (
             <ColorItem key={`typography-${typographySection}-${key}`}>
               <PreviewTitle theme={themeData as any}>{key}</PreviewTitle>
-              <TextField 
+              <TextField
                 value={value.toString()}
                 onChange={(value: string) => handleTypographyChange(typographySection, key, value)}
                 fullWidth
@@ -344,12 +343,12 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!themeName) {
       alert('Theme name is required');
       return;
     }
-    
+
     try {
       if (currentTheme?.id) {
         // For existing theme, we use the update function with partial theme data
@@ -363,7 +362,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
           transitions: themeData.transitions as any,
           breakpoints: themeData.breakpoints as any,
         });
-        
+
         // When passing to onSave, merge with current theme for complete data
         onSave({
           ...currentTheme,
@@ -390,7 +389,7 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
           transitions: themeData.transitions as any,
           breakpoints: themeData.breakpoints as any,
         };
-        
+
         const createdTheme = await createTheme(newThemeConfig);
         if (createdTheme) {
           // The API returns a complete theme with ID and dates
@@ -434,16 +433,16 @@ export const CustomThemeEditor: React.FC<CustomThemeEditorProps> = ({
             fullWidth
           />
         </Section>
-        
+
         {/* Render typography editors */}
         {renderTypographyEditor('scale')}
         {renderTypographyEditor('weights')}
         {renderTypographyEditor('lineHeights')}
         {renderTypographyEditor('letterSpacing')}
         {renderTypographyEditor('family')}
-        
+
         {renderPreview()}
-        
+
         <ButtonGroup>
           <Button variant="primary" type="submit">
             Save Theme

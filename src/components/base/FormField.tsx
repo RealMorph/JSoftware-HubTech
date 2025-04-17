@@ -1,9 +1,7 @@
 import React, { useEffect, forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 import { useForm, ValidationRule } from './Form';
-import { useTheme } from '../../core/theme/ThemeProvider';
-import { getThemeValue } from '../../core/theme/styled';
-import { asTheme } from '../../core/theme/theme-utils';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { TextField } from './TextField';
 import { Checkbox } from './Checkbox';
 import { Radio } from './Radio';
@@ -19,55 +17,52 @@ const FieldContainer = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const Label = styled.label<{ required?: boolean }>`
+const Label = styled.label<{ required?: boolean; $themeStyles: any }>`
   margin-bottom: 0.25rem;
-  font-size: ${({ theme }) => getThemeValue(asTheme(theme), 'typography.scale.sm')};
-  font-weight: ${({ theme }) => getThemeValue(asTheme(theme), 'typography.weight.medium')};
-  color: ${({ theme }) => getThemeValue(asTheme(theme), 'colors.text.primary')};
-  
-  ${({ required, theme }) => required && `
+  font-size: ${props => props.$themeStyles.fontSize};
+  font-weight: ${props => props.$themeStyles.fontWeight};
+  color: ${props => props.$themeStyles.textColor};
+
+  ${props =>
+    props.required &&
+    `
     &::after {
       content: '*';
-      color: ${getThemeValue(asTheme(theme), 'colors.error')};
+      color: ${props.$themeStyles.errorColor};
       margin-left: 0.25rem;
     }
   `}
 `;
 
-const InputStyled = styled.input<{ hasError?: boolean }>`
+const InputStyled = styled.input<{ hasError?: boolean; $themeStyles: any }>`
   padding: 0.75rem;
-  border-radius: ${({ theme }) => getThemeValue(asTheme(theme), 'borderRadius.sm')};
-  border: 1px solid ${({ hasError, theme }) => 
-    hasError 
-      ? getThemeValue(asTheme(theme), 'colors.error') 
-      : getThemeValue(asTheme(theme), 'colors.border')
-  };
-  font-size: ${({ theme }) => getThemeValue(asTheme(theme), 'typography.scale.base')};
-  transition: border-color 0.2s ease;
-  
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  border: 1px solid
+    ${props => (props.hasError ? props.$themeStyles.errorColor : props.$themeStyles.borderColor)};
+  font-size: ${props => props.$themeStyles.inputFontSize};
+  transition: ${props => props.$themeStyles.transition};
+
   &:focus {
     outline: none;
-    border-color: ${({ hasError, theme }) => 
-      hasError 
-        ? getThemeValue(asTheme(theme), 'colors.error') 
-        : getThemeValue(asTheme(theme), 'colors.primary')
-    };
-    box-shadow: 0 0 0 2px ${({ hasError, theme }) => 
-      hasError 
-        ? `${getThemeValue(asTheme(theme), 'colors.error')}30` 
-        : `${getThemeValue(asTheme(theme), 'colors.primary')}30`
-    };
+    border-color: ${props =>
+      props.hasError ? props.$themeStyles.errorColor : props.$themeStyles.primaryColor};
+    box-shadow: 0 0 0 2px
+      ${props =>
+        props.hasError
+          ? `${props.$themeStyles.errorColor}30`
+          : `${props.$themeStyles.primaryColor}30`};
   }
 `;
 
-const ErrorMessage = styled.span`
-  color: ${({ theme }) => getThemeValue(asTheme(theme), 'colors.error')};
-  font-size: ${({ theme }) => getThemeValue(asTheme(theme), 'typography.scale.xs')};
+const ErrorMessage = styled.span<{ $themeStyles: any }>`
+  color: ${props => props.$themeStyles.errorColor};
+  font-size: ${props => props.$themeStyles.errorFontSize};
   margin-top: 0.25rem;
   min-height: 1.2em;
 `;
 
-export interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur'> {
+export interface FormFieldProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur'> {
   /** Field name (must be unique in the form) */
   name: string;
   /** Field label */
@@ -82,7 +77,8 @@ export interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
 
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
   ({ name, label, required, validationRules = [], className, ...props }, ref) => {
-    const { currentTheme } = useTheme();
+    const { getColor, getTypography, getBorderRadius, getTransition } = useDirectTheme();
+
     const { values, errors, touched, handleChange, handleBlur, registerField } = useForm();
     const uniqueId = React.useId();
     const fieldId = `${uniqueId}-${name}`;
@@ -90,20 +86,20 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     useEffect(() => {
       // Create validation rules array
       const rules: ValidationRule[] = [];
-      
+
       // Add required validation if needed
       if (required) {
         rules.push({
-          validator: (value) => Boolean(value),
-          message: `${label || name} is required`
+          validator: value => Boolean(value),
+          message: `${label || name} is required`,
         });
       }
-      
+
       // Add custom validation rules
       if (validationRules.length > 0) {
         rules.push(...validationRules);
       }
-      
+
       // Register this field with the form
       registerField(name, rules);
     }, [name, label, required, validationRules, registerField]);
@@ -119,10 +115,24 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     const error = touched[name] ? errors[name] : null;
     const hasError = Boolean(error);
 
+    // Theme styles for the FormField
+    const themeStyles = {
+      fontSize: getTypography('scale.sm', '0.875rem'),
+      fontWeight: getTypography('weight.medium', 500),
+      textColor: getColor('text.primary', '#000000'),
+      errorColor: getColor('error', '#d32f2f'),
+      inputFontSize: getTypography('scale.base', '1rem'),
+      borderRadius: getBorderRadius('sm', '0.25rem'),
+      borderColor: getColor('border', '#e0e0e0'),
+      primaryColor: getColor('primary', '#1976d2'),
+      transition: getTransition('base', 'border-color 0.2s ease'),
+      errorFontSize: getTypography('scale.xs', '0.75rem'),
+    };
+
     return (
       <FieldContainer className={className}>
         {label && (
-          <Label htmlFor={fieldId} required={required}>
+          <Label htmlFor={fieldId} required={required} $themeStyles={themeStyles}>
             {label}
           </Label>
         )}
@@ -136,9 +146,10 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           hasError={hasError}
           aria-invalid={hasError}
           aria-describedby={hasError ? `${fieldId}-error` : undefined}
+          $themeStyles={themeStyles}
           {...props}
         />
-        <ErrorMessage id={`${fieldId}-error`}>
+        <ErrorMessage id={`${fieldId}-error`} $themeStyles={themeStyles}>
           {error}
         </ErrorMessage>
       </FieldContainer>
@@ -148,4 +159,4 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
 
 FormField.displayName = 'FormField';
 
-export default FormField; 
+export default FormField;

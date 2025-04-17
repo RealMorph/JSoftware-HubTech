@@ -11,27 +11,29 @@ declare module '@emotion/react' {
     isDark?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
-    colors: typeof colors & typeof semanticColors & typeof stateColors & {
-      // Add any missing properties that might be accessed in components
-      background?: {
-        primary: string;
-        secondary: string;
-        tertiary: string;
+    colors: typeof colors &
+      typeof semanticColors &
+      typeof stateColors & {
+        // Add any missing properties that might be accessed in components
+        background?: {
+          primary: string;
+          secondary: string;
+          tertiary: string;
+        };
+        text?: {
+          primary: string;
+          secondary: string;
+          disabled: string;
+        };
+        border?: {
+          primary: string;
+          secondary: string;
+        };
+        primary?: string;
+        secondary?: string;
+        success?: string;
+        warning?: string;
+        error?: string;
       };
-      text?: {
-        primary: string;
-        secondary: string;
-        disabled: string;
-      };
-      border?: {
-        primary: string;
-        secondary: string;
-      };
-      primary?: string;
-      secondary?: string;
-      success?: string;
-      warning?: string;
-      error?: string;
-    };
   }
-} 
+}

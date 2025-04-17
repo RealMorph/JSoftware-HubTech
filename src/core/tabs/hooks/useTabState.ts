@@ -4,19 +4,20 @@ import { MessageType } from '../tab-messaging';
 
 /**
  * Hook for managing tab state and dependencies
- * 
+ *
  * @param tabManager The tab manager instance
  * @param tabId The ID of the current tab
  * @returns An object with state utilities
  */
-export function useTabState<T = any>(
-  tabManager: TabManager,
-  tabId: string
-) {
+export function useTabState<T = any>(tabManager: TabManager, tabId: string) {
   const [state, setState] = useState<T | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [dependencies, setDependencies] = useState<Array<{providerId: string; type: string; metadata?: any}>>([]);
-  const [dependents, setDependents] = useState<Array<{dependentId: string; type: string; metadata?: any}>>([]);
+  const [dependencies, setDependencies] = useState<
+    Array<{ providerId: string; type: string; metadata?: any }>
+  >([]);
+  const [dependents, setDependents] = useState<
+    Array<{ dependentId: string; type: string; metadata?: any }>
+  >([]);
 
   // Load initial state
   useEffect(() => {
@@ -39,7 +40,7 @@ export function useTabState<T = any>(
     // Subscribe to state updates
     const subscriptionId = tabManager.subscribeToTabMessages(
       tabId,
-      (message) => {
+      message => {
         if (
           message.type === MessageType.STATE_UPDATE ||
           message.type === MessageType.DEPENDENCY_UPDATE
@@ -113,6 +114,6 @@ export function useTabState<T = any>(
     dependencies,
     dependents,
     addDependency,
-    removeDependency
+    removeDependency,
   };
-} 
+}

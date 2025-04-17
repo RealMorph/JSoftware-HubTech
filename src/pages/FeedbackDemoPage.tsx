@@ -9,4 +9,4 @@ const FeedbackDemoPage: React.FC = () => {
   );
 };
 
-export default FeedbackDemoPage; 
+export default FeedbackDemoPage;

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Link, useLocation } from 'react-router-dom';
-import { getThemeValue } from '../../core/theme/styled';
-import { useTheme } from '../../core/theme/ThemeProvider';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // Types
 export interface BreadcrumbItem {
@@ -40,13 +38,37 @@ export interface BreadcrumbsProps {
   className?: string;
 }
 
+// Define theme style interface
+interface ThemeStyles {
+  fontFamily: string;
+  fontSize: string;
+  textSecondary: string;
+  primaryMain: string;
+  primaryDark: string;
+  textDisabled: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography } = themeContext;
+
+  return {
+    fontFamily: getTypography('family.primary', 'system-ui') as string,
+    fontSize: getTypography('scale.sm', '0.875rem') as string,
+    textSecondary: getColor('text.secondary', '#666666'),
+    primaryMain: getColor('primary.main', '#0066cc'),
+    primaryDark: getColor('primary.dark', '#004c99'),
+    textDisabled: getColor('text.disabled', '#999999'),
+  };
+}
+
 // Styled components
-const BreadcrumbsContainer = styled.nav`
+const BreadcrumbsContainer = styled.nav<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
-  font-family: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.family.primary')};
-  font-size: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.scale.sm')};
-  color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')};
+  font-family: ${props => props.$themeStyles.fontFamily};
+  font-size: ${props => props.$themeStyles.fontSize};
+  color: ${props => props.$themeStyles.textSecondary};
   margin: 8px 0;
 `;
 
@@ -64,51 +86,47 @@ const BreadcrumbItem = styled.li`
   align-items: center;
 `;
 
-const BreadcrumbLink = styled(Link)<{ active?: boolean }>`
-  color: ${props => props.active
-    ? getThemeValue(props.theme as ThemeConfig, 'colors.primary.main')
-    : getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')
-  };
+const BreadcrumbLink = styled(Link)<{ active?: boolean; $themeStyles: ThemeStyles }>`
+  color: ${props =>
+    props.active ? props.$themeStyles.primaryMain : props.$themeStyles.textSecondary};
   text-decoration: none;
-  font-weight: ${props => props.active ? 'bold' : 'normal'};
+  font-weight: ${props => (props.active ? 'bold' : 'normal')};
   transition: color 0.2s ease;
-  
+
   &:hover {
-    color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.primary.dark')};
-    text-decoration: ${props => props.active ? 'none' : 'underline'};
+    color: ${props => props.$themeStyles.primaryDark};
+    text-decoration: ${props => (props.active ? 'none' : 'underline')};
   }
 `;
 
-const BreadcrumbText = styled.span<{ active?: boolean }>`
-  color: ${props => props.active
-    ? getThemeValue(props.theme as ThemeConfig, 'colors.primary.main')
-    : getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')
-  };
-  font-weight: ${props => props.active ? 'bold' : 'normal'};
+const BreadcrumbText = styled.span<{ active?: boolean; $themeStyles: ThemeStyles }>`
+  color: ${props =>
+    props.active ? props.$themeStyles.primaryMain : props.$themeStyles.textSecondary};
+  font-weight: ${props => (props.active ? 'bold' : 'normal')};
 `;
 
-const Separator = styled.div`
+const Separator = styled.div<{ $themeStyles: ThemeStyles }>`
   margin: 0 8px;
-  color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.disabled')};
+  color: ${props => props.$themeStyles.textDisabled};
   user-select: none;
 `;
 
-const CollapseButton = styled.button`
+const CollapseButton = styled.button<{ $themeStyles: ThemeStyles }>`
   background: none;
   border: none;
   padding: 0 8px;
   margin: 0 4px;
-  color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.primary.main')};
+  color: ${props => props.$themeStyles.primaryMain};
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
   display: flex;
   align-items: center;
-  
+
   &:hover {
     text-decoration: underline;
   }
-  
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.3);
@@ -138,81 +156,90 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   pathMap = {},
   className,
 }) => {
-  const { currentTheme } = useTheme();
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState<BreadcrumbItem[]>([]);
-  
+
   // Generate breadcrumbs from the current route
   useEffect(() => {
     if (!autoGenerate || propItems) {
       setItems(propItems || []);
       return;
     }
-    
-    const pathSegments = location.pathname.split('/')
-      .filter(segment => segment !== '');
-      
+
+    const pathSegments = location.pathname.split('/').filter(segment => segment !== '');
+
     const generatedItems: BreadcrumbItem[] = [
-      { label: homeLabel, path: homePath, active: pathSegments.length === 0 }
+      { label: homeLabel, path: homePath, active: pathSegments.length === 0 },
     ];
-    
+
     let currentPath = '';
-    
+
     pathSegments.forEach((segment, index) => {
       currentPath += `/${segment}`;
       const isLast = index === pathSegments.length - 1;
-      
+
       // Use custom label from pathMap if available, otherwise format the segment
-      const label = pathMap[segment] || 
-        segment
-          .replace(/-/g, ' ')
-          .replace(/\b\w/g, char => char.toUpperCase());
-      
+      const label =
+        pathMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+
       generatedItems.push({
         label,
         path: currentPath,
         active: isLast,
       });
     });
-    
+
     setItems(generatedItems);
   }, [autoGenerate, propItems, location.pathname, homeLabel, homePath, pathMap]);
-  
+
   // Check if we need to collapse items
   useEffect(() => {
     setCollapsed(items.length > maxItems);
   }, [items, maxItems]);
-  
+
   // Handle rendering of collapsed items
   const renderItems = () => {
     if (!collapsed || maxItems >= items.length) {
       return items.map((item, index) => (
         <BreadcrumbItem key={item.path}>
-          {index > 0 && <Separator aria-hidden="true">{separator}</Separator>}
+          {index > 0 && (
+            <Separator $themeStyles={themeStyles} aria-hidden="true">
+              {separator}
+            </Separator>
+          )}
           {renderItem(item)}
         </BreadcrumbItem>
       ));
     }
-    
+
     const itemsToRender: React.ReactElement[] = [];
-    
+
     // Add the initial items
     items.slice(0, itemsBeforeCollapse).forEach((item, index) => {
       itemsToRender.push(
         <BreadcrumbItem key={item.path}>
-          {index > 0 && <Separator aria-hidden="true">{separator}</Separator>}
+          {index > 0 && (
+            <Separator $themeStyles={themeStyles} aria-hidden="true">
+              {separator}
+            </Separator>
+          )}
           {renderItem(item)}
         </BreadcrumbItem>
       );
     });
-    
+
     // Add collapse indicator
     if (items.length > itemsBeforeCollapse + itemsAfterCollapse) {
       itemsToRender.push(
         <BreadcrumbItem key="ellipsis">
-          <Separator aria-hidden="true">{separator}</Separator>
+          <Separator $themeStyles={themeStyles} aria-hidden="true">
+            {separator}
+          </Separator>
           <CollapseButton
+            $themeStyles={themeStyles}
             onClick={() => setCollapsed(false)}
             aria-label="Show all breadcrumbs"
           >
@@ -221,20 +248,22 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         </BreadcrumbItem>
       );
     }
-    
+
     // Add the final items
-    items.slice(items.length - itemsAfterCollapse).forEach((item) => {
+    items.slice(items.length - itemsAfterCollapse).forEach(item => {
       itemsToRender.push(
         <BreadcrumbItem key={item.path}>
-          <Separator aria-hidden="true">{separator}</Separator>
+          <Separator $themeStyles={themeStyles} aria-hidden="true">
+            {separator}
+          </Separator>
           {renderItem(item)}
         </BreadcrumbItem>
       );
     });
-    
+
     return itemsToRender;
   };
-  
+
   // Render individual item as link or text
   const renderItem = (item: BreadcrumbItem) => {
     const content = (
@@ -243,23 +272,31 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         {item.label}
       </>
     );
-    
+
     if (item.active) {
-      return <BreadcrumbText active={true}>{content}</BreadcrumbText>;
+      return (
+        <BreadcrumbText $themeStyles={themeStyles} active={true}>
+          {content}
+        </BreadcrumbText>
+      );
     }
-    
+
     return (
-      <BreadcrumbLink to={item.path} aria-current={item.active ? 'page' : undefined}>
+      <BreadcrumbLink
+        $themeStyles={themeStyles}
+        to={item.path}
+        aria-current={item.active ? 'page' : undefined}
+      >
         {content}
       </BreadcrumbLink>
     );
   };
-  
+
   return (
-    <BreadcrumbsContainer className={className} aria-label="Breadcrumb">
-      <BreadcrumbList>
-        {renderItems()}
-      </BreadcrumbList>
+    <BreadcrumbsContainer $themeStyles={themeStyles} className={className} aria-label="Breadcrumb">
+      <BreadcrumbList>{renderItems()}</BreadcrumbList>
     </BreadcrumbsContainer>
   );
-}; 
+};
+
+export default Breadcrumbs;

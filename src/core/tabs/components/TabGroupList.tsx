@@ -64,24 +64,24 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
   const [{ isDragging }, drag] = useDrag({
     type: 'GROUP',
     item: () => ({ id: group.id, index }),
-    collect: (monitor) => ({
+    collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
   const [, drop] = useDrop({
     accept: 'GROUP',
-    hover: (item: { id: string, index: number }, monitor) => {
+    hover: (item: { id: string; index: number }, monitor) => {
       if (!ref.current) return;
       const dragIndex = item.index;
       const hoverIndex = index;
-      
+
       if (dragIndex === hoverIndex) {
         return;
       }
-      
+
       moveGroup(dragIndex, hoverIndex);
-      
+
       // Update the item's index to reflect its new position
       item.index = hoverIndex;
     },
@@ -90,7 +90,7 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
   // Also accept tabs being dropped into the group
   const [, dropTab] = useDrop({
     accept: 'TAB',
-    drop: (item: { id: string, index: number }) => {
+    drop: (item: { id: string; index: number }) => {
       const tab = tabs.find(t => t.id === item.id);
       if (tab) {
         onTabAddToGroup(tab.id, group.id);
@@ -119,15 +119,15 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
     >
       <div className="tab-group-header" ref={dropTabRef}>
         <div className="tab-group-indicator" style={{ backgroundColor: group.color || '#666' }} />
-        
+
         {isEditing ? (
           <div className="tab-group-title-edit">
             <input
               type="text"
               value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
+              onChange={e => setNewTitle(e.target.value)}
               onBlur={handleRename}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Enter') handleRename();
                 if (e.key === 'Escape') {
                   setNewTitle(group.title);
@@ -142,7 +142,7 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
             {group.title} <span className="tab-group-count">({groupTabs.length})</span>
           </div>
         )}
-        
+
         <div className="tab-group-actions">
           <button
             className="tab-group-action"
@@ -160,23 +160,21 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
           </button>
         </div>
       </div>
-      
+
       {!group.isCollapsed && (
         <div className="tab-group-content">
           {groupTabs.length > 0 ? (
             groupTabs.map((tab, tabIndex) => (
-              <div 
+              <div
                 key={tab.id}
                 className={`tab ${tab.id === activeTab?.id ? 'active' : ''}`}
                 onClick={() => onTabClick(tab)}
               >
-                <span className="tab-title">
-                  {tab.title}
-                </span>
+                <span className="tab-title">{tab.title}</span>
                 <div className="tab-actions">
                   <button
                     className="tab-action"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onTabRemoveFromGroup(tab.id);
                     }}
@@ -186,7 +184,7 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
                   </button>
                   <button
                     className="tab-close"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onTabClose(tab);
                     }}
@@ -198,9 +196,7 @@ const DraggableGroup: React.FC<DraggableGroupProps> = ({
               </div>
             ))
           ) : (
-            <div className="tab-group-empty">
-              Drop tabs here
-            </div>
+            <div className="tab-group-empty">Drop tabs here</div>
           )}
         </div>
       )}
@@ -269,18 +265,18 @@ export const TabGroupList: React.FC<TabGroupListProps> = ({
             moveGroup={moveGroup}
           />
         ))}
-        
+
         {isCreatingGroup ? (
           <div className="tab-group-create">
             <input
               type="text"
               placeholder="New Group Name"
               value={newGroupTitle}
-              onChange={(e) => setNewGroupTitle(e.target.value)}
+              onChange={e => setNewGroupTitle(e.target.value)}
               onBlur={() => {
                 handleCreateGroup();
               }}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Enter') handleCreateGroup();
                 if (e.key === 'Escape') {
                   setNewGroupTitle('');
@@ -291,14 +287,11 @@ export const TabGroupList: React.FC<TabGroupListProps> = ({
             />
           </div>
         ) : (
-          <button 
-            className="tab-group-add"
-            onClick={() => setIsCreatingGroup(true)}
-          >
+          <button className="tab-group-add" onClick={() => setIsCreatingGroup(true)}>
             + Add Group
           </button>
         )}
       </div>
     </DndProvider>
   );
-}; 
+};

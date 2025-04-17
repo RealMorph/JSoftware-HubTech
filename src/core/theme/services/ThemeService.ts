@@ -1,4 +1,12 @@
-import { Theme, ThemeConfig, ThemeColors, TypographyConfig, SpacingConfig, BorderRadiusConfig, ShadowConfig } from '../types';
+import {
+  Theme,
+  ThemeConfig,
+  ThemeColors,
+  TypographyConfig,
+  SpacingConfig,
+  BorderRadiusConfig,
+  ShadowConfig,
+} from '../types';
 import { ThemeDatabase } from '../interfaces/ThemeDatabase';
 
 export class ThemeService {
@@ -48,7 +56,7 @@ export class ThemeService {
         secondary: '#F3F4F6',
         tertiary: '#E5E7EB',
         paper: '#FFFFFF',
-        default: '#F9FAFB'
+        default: '#F9FAFB',
       },
       textColors: {
         primary: '#1F2937',
@@ -111,7 +119,7 @@ export class ThemeService {
         primary: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         secondary: 'Georgia, serif',
         monospace: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-      }
+      },
     };
 
     const defaultSpacing: SpacingConfig = {

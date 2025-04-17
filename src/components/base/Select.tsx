@@ -76,8 +76,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const hasAdornments = Boolean(startAdornment || endAdornment);
 
     // Helper function to access theme values
-    const getThemeVal = (path: string): string =>
-      theme.getTypography(path) as string || '';
+    const getThemeVal = (path: string): string => (theme.getTypography(path) as string) || '';
 
     // Calculate sizes based on component size
     const getSpacing = (multiplier = 1) => {
@@ -146,7 +145,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       border: 'none',
       backgroundColor: 'transparent',
       outline: 'none',
-      color: disabled ? theme.getColor('text.disabled', '#999999') : theme.getColor('text.primary', '#333333'),
+      color: disabled
+        ? theme.getColor('text.disabled', '#999999')
+        : theme.getColor('text.primary', '#333333'),
       padding: `0 ${getSpacing(0.5)}`,
       height: '100%',
       width: '100%',
@@ -173,12 +174,16 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      color: disabled ? theme.getColor('text.disabled', '#999999') : theme.getColor('text.secondary', '#666666'),
+      color: disabled
+        ? theme.getColor('text.disabled', '#999999')
+        : theme.getColor('text.secondary', '#666666'),
     } as React.CSSProperties;
 
     const helperTextStyles = {
       marginTop: getSpacing(0.25),
-      color: error ? theme.getColor('error', '#f44336') : theme.getColor('text.secondary', '#666666'),
+      color: error
+        ? theme.getColor('error', '#f44336')
+        : theme.getColor('text.secondary', '#666666'),
       fontSize: theme.getTypography('fontSize.xs', '0.75rem'),
     } as React.CSSProperties;
 
@@ -245,17 +250,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 {placeholder}
               </option>
             )}
-            {options.map((option) => (
+            {options.map(option => (
               <option key={option.value} value={option.value} disabled={option.disabled}>
                 {option.label}
               </option>
             ))}
           </select>
-          {endAdornment ? (
-            <div style={adornmentStyles}>{endAdornment}</div>
-          ) : (
-            renderDropdownIcon()
-          )}
+          {endAdornment ? <div style={adornmentStyles}>{endAdornment}</div> : renderDropdownIcon()}
         </div>
         {helperText && (
           <div id={helperId} style={helperTextStyles}>
@@ -267,4 +268,4 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   }
 );
 
-export default Select; 
+export default Select;

@@ -37,13 +37,13 @@ const DraggableTab: React.FC<DraggableTabProps> = ({
 
   const [{ isDragging }, drag] = useDrag({
     type: 'TAB',
-    item: () => ({ 
+    item: () => ({
       type: 'TAB',
       id: tab.id,
       index,
-      groupId: tab.groupId
+      groupId: tab.groupId,
     }),
-    collect: (monitor) => ({
+    collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
   });
@@ -54,32 +54,34 @@ const DraggableTab: React.FC<DraggableTabProps> = ({
       if (!ref.current) return;
       const dragIndex = item.index;
       const hoverIndex = index;
-      
+
       if (dragIndex === hoverIndex) {
         return;
       }
-      
+
       moveTab(dragIndex, hoverIndex);
-      
+
       // Update the item's index to reflect its new position
       item.index = hoverIndex;
     },
     drop: (item: { index: number }) => {
       const dragIndex = item.index;
       const hoverIndex = index;
-      
+
       if (dragIndex === hoverIndex) {
         // When dropping on the same position, maintain the original order
         onTabReorder([...tabs]);
       }
-    }
+    },
   });
 
   drag(drop(ref));
 
   // Add a visual indicator if the tab belongs to a group
   const groupIndicator = tab.groupId ? (
-    <span className="tab-group-badge" title="Part of a group">•</span>
+    <span className="tab-group-badge" title="Part of a group">
+      •
+    </span>
   ) : null;
 
   return (
@@ -100,7 +102,7 @@ const DraggableTab: React.FC<DraggableTabProps> = ({
       </span>
       <button
         className="tab-close"
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           onTabClose(tab);
         }}

@@ -20,10 +20,8 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({ chil
     <ThemeProvider themeService={themeService}>
       {/* Connect old theme provider to new one */}
       <EmotionThemeProvider theme={defaultTheme as any}>
-        <OldThemeProvider themeService={themeService}>
-          {children}
-        </OldThemeProvider>
+        <OldThemeProvider themeService={themeService}>{children}</OldThemeProvider>
       </EmotionThemeProvider>
     </ThemeProvider>
   );
-}; 
+};

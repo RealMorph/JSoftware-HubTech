@@ -50,14 +50,7 @@ const StyledListContent = styled.div`
  */
 export const List = forwardRef<HTMLUListElement, ListProps>(
   (
-    {
-      variant = 'default',
-      size = 'medium',
-      interactive = false,
-      children,
-      className,
-      ...props
-    },
+    { variant = 'default', size = 'medium', interactive = false, children, className, ...props },
     ref
   ) => {
     // Use DirectThemeProvider hook
@@ -90,7 +83,7 @@ export const List = forwardRef<HTMLUListElement, ListProps>(
     };
 
     // Clone children to add context properties
-    const enhancedChildren = React.Children.map(children, (child) => {
+    const enhancedChildren = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, {
           _size: size,
@@ -114,11 +107,14 @@ List.displayName = 'List';
 /**
  * ListItem component - Individual item within a List component
  */
-export const ListItem = forwardRef<HTMLLIElement, ListItemProps & { 
-  _size?: 'small' | 'medium' | 'large';
-  _variant?: 'default' | 'bordered' | 'divided';
-  _interactive?: boolean;
-}>(
+export const ListItem = forwardRef<
+  HTMLLIElement,
+  ListItemProps & {
+    _size?: 'small' | 'medium' | 'large';
+    _variant?: 'default' | 'bordered' | 'divided';
+    _interactive?: boolean;
+  }
+>(
   (
     {
       selected = false,
@@ -182,7 +178,7 @@ export const ListItem = forwardRef<HTMLLIElement, ListItemProps & {
     // Add hover styles for interactive items
     const handleMouseOver = (e: React.MouseEvent<HTMLLIElement>) => {
       if (_interactive && !disabled && e.currentTarget) {
-        e.currentTarget.style.backgroundColor = selected 
+        e.currentTarget.style.backgroundColor = selected
           ? getColor('primary.100', '#dbeafe')
           : getColor('gray.50', '#f9fafb');
       }
@@ -215,4 +211,4 @@ export const ListItem = forwardRef<HTMLLIElement, ListItemProps & {
   }
 );
 
-ListItem.displayName = 'ListItem'; 
+ListItem.displayName = 'ListItem';

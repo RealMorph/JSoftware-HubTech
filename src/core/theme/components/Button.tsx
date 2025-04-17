@@ -20,27 +20,27 @@ const StyledButton = styled.button<ButtonProps>(
     const fontSizeKey = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md';
     // Map sizes to spacing keys
     const paddingKey = size === 'sm' ? 'sm' : size === 'lg' ? 'xl' : 'md';
-    
+
     // Get theme properties using direct access with fallbacks
     const primaryColor = theme.colors?.primary || '#1976d2';
     const primaryColorLight = theme.colors?.primary?.['100'] || '#bbdefb';
     const primaryColorDark = theme.colors?.primary?.['600'] || '#0d47a1';
     const grayColor = theme.colors?.gray?.['200'] || '#eeeeee';
     const grayColorDark = theme.colors?.gray?.['300'] || '#e0e0e0';
-    
+
     // Get border radius
     const borderRadius = theme.borderRadius?.base || '4px';
-    
+
     // Get font size and other typography values
     const fontSize = theme.typography?.fontSize?.[fontSizeKey] || '1rem';
     const fontWeight = theme.typography?.fontWeight?.medium || 500;
-    
+
     // Get spacing/padding
     const padding = theme.spacing?.[paddingKey] || '1rem';
-    
+
     // Get transition
     const transition = theme.transitions?.duration?.normal || '300ms';
-    
+
     return {
       display: 'inline-flex',
       alignItems: 'center',
@@ -49,11 +49,7 @@ const StyledButton = styled.button<ButtonProps>(
       padding,
       color: variant === 'outline' ? primaryColor : 'white',
       backgroundColor:
-        variant === 'primary'
-          ? primaryColor
-          : variant === 'secondary'
-            ? grayColor
-            : 'transparent',
+        variant === 'primary' ? primaryColor : variant === 'secondary' ? grayColor : 'transparent',
       border: variant === 'outline' ? `1px solid ${primaryColor}` : 'none',
       borderRadius,
       fontWeight,
@@ -94,9 +90,11 @@ const Spinner = styled.span`
   border-top-color: white;
   animation: spin 1s ease-in-out infinite;
   margin-right: 0.5rem;
-  
+
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 

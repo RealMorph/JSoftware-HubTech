@@ -24,17 +24,17 @@ const NavigationDemoPage: React.FC = () => {
   return (
     <PageContainer>
       <SectionTitle>Navigation Components</SectionTitle>
-      
+
       <SectionContainer>
         <h2>Breadcrumbs</h2>
         <BreadcrumbsDemo />
       </SectionContainer>
-      
+
       <SectionContainer>
         <h2>Pagination</h2>
         <PaginationDemo />
       </SectionContainer>
-      
+
       <SectionContainer>
         <h2>Menu</h2>
         <MenuDemo />
@@ -43,4 +43,4 @@ const NavigationDemoPage: React.FC = () => {
   );
 };
 
-export default NavigationDemoPage; 
+export default NavigationDemoPage;

@@ -10,4 +10,4 @@ const TabsDemoPage: React.FC = () => {
   );
 };
 
-export default TabsDemoPage; 
+export default TabsDemoPage;

@@ -17,7 +17,7 @@ export class TabStorage {
     try {
       const stored = this.storage.getItem(this.STORAGE_KEY);
       if (!stored) return [];
-      
+
       // Check if the stored data is the new format with tabs and groups
       try {
         const parsedData = JSON.parse(stored) as StoredTabData;
@@ -28,7 +28,7 @@ export class TabStorage {
         // If parsing as StoredTabData fails, try parsing as the old format (just tabs)
         return JSON.parse(stored) as Tab[];
       }
-      
+
       return [];
     } catch (error) {
       console.error('Error loading tabs:', error);
@@ -40,7 +40,7 @@ export class TabStorage {
     try {
       const storedTabs = this.storage.getItem(this.STORAGE_KEY);
       if (!storedTabs) return [];
-      
+
       // First try to get groups from the new combined format
       try {
         const parsedData = JSON.parse(storedTabs) as StoredTabData;
@@ -54,7 +54,7 @@ export class TabStorage {
           return JSON.parse(storedGroups);
         }
       }
-      
+
       return [];
     } catch (error) {
       console.error('Error loading tab groups:', error);

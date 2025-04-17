@@ -39,7 +39,7 @@ export interface TabManager {
   subscribe: (callback: (state: TabState) => void) => () => void;
   getDependencies: (id: string) => TabConfig[];
   reorderTabs: (newOrder: string[]) => void;
-  
+
   // New methods for tab groups
   createGroup: (title: string, tabs?: string[]) => string; // Returns new group ID
   deleteGroup: (groupId: string, keepTabs?: boolean) => void;

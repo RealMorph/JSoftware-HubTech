@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { TimePicker, TimeValue } from './TimePicker';
-import { Card, CardHeader, CardContent } from './Card';
 
 // Styled components for the demo
 const DemoContainer = styled.div`
@@ -60,60 +59,62 @@ const ResultDisplay = styled.div`
 const TimePickerDemo: React.FC = () => {
   // State for basic time picker
   const [basicTime, setBasicTime] = useState<TimeValue>(null);
-  
+
   // State for 12-hour format
   const [time12h, setTime12h] = useState<TimeValue>(null);
-  
+
   // State for 24-hour format
   const [time24h, setTime24h] = useState<TimeValue>(null);
-  
+
   // State for time with minutes step
   const [timeMinuteStep, setTimeMinuteStep] = useState<TimeValue>(null);
-  
+
   // State for time with seconds
   const [timeWithSeconds, setTimeWithSeconds] = useState<TimeValue>(null);
-  
+
   // State for time with min/max constraints
   const [constrainedTime, setConstrainedTime] = useState<TimeValue>(null);
-  
+
   // State for required time
   const [requiredTime, setRequiredTime] = useState<TimeValue>(null);
-  
+
   // State for disabled time picker
   const [disabledTime, setDisabledTime] = useState<TimeValue>(null);
-  
+
   // Create min/max times for example
   const createTimeFromHMS = (hours: number, minutes: number, seconds: number = 0): Date => {
     const date = new Date();
     date.setHours(hours, minutes, seconds, 0);
     return date;
   };
-  
+
   const minTime = createTimeFromHMS(9, 0); // 9:00 AM
   const maxTime = createTimeFromHMS(17, 0); // 5:00 PM
-  
+
   // Function to format time for display
   const formatTimeForDisplay = (time: TimeValue): string => {
     if (!time) return 'None';
-    
+
     const hours = time.getHours();
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
-    
+
     const period = hours >= 12 ? 'PM' : 'AM';
     const hours12 = hours % 12 || 12;
-    
+
     const hoursStr = hours12.toString().padStart(2, '0');
     const minutesStr = minutes.toString().padStart(2, '0');
     const secondsStr = seconds.toString().padStart(2, '0');
-    
+
     return `${hoursStr}:${minutesStr}:${secondsStr} ${period} (${hours.toString().padStart(2, '0')}:${minutesStr}:${secondsStr})`;
   };
 
   return (
     <DemoContainer>
       <h1>TimePicker Component Demo</h1>
-      <p>This demo showcases the various configurations and capabilities of the TimePicker component.</p>
+      <p>
+        This demo showcases the various configurations and capabilities of the TimePicker component.
+      </p>
 
       <DemoSection>
         <DemoTitle>Basic Usage</DemoTitle>
@@ -134,9 +135,7 @@ const TimePickerDemo: React.FC = () => {
               placeholder="HH:MM"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(basicTime)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(basicTime)}</ResultDisplay>
           </DemoCard>
 
           <DemoCard>
@@ -159,9 +158,7 @@ const TimePickerDemo: React.FC = () => {
               format="hh:mm a"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(time12h)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(time12h)}</ResultDisplay>
           </DemoCard>
 
           <DemoCard>
@@ -184,9 +181,7 @@ const TimePickerDemo: React.FC = () => {
               format="HH:mm"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(time24h)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(time24h)}</ResultDisplay>
           </DemoCard>
         </DemoGrid>
       </DemoSection>
@@ -212,9 +207,7 @@ const TimePickerDemo: React.FC = () => {
               helperText="Time with 15-minute intervals"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(timeMinuteStep)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(timeMinuteStep)}</ResultDisplay>
           </DemoCard>
 
           <DemoCard>
@@ -237,9 +230,7 @@ const TimePickerDemo: React.FC = () => {
               helperText="Time with seconds selection"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(timeWithSeconds)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(timeWithSeconds)}</ResultDisplay>
           </DemoCard>
 
           <DemoCard>
@@ -262,9 +253,7 @@ const TimePickerDemo: React.FC = () => {
               helperText="Select a time between 9AM and 5PM"
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(constrainedTime)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(constrainedTime)}</ResultDisplay>
           </DemoCard>
         </DemoGrid>
       </DemoSection>
@@ -289,12 +278,10 @@ const TimePickerDemo: React.FC = () => {
               onChange={setRequiredTime}
               required
               error={!requiredTime}
-              errorMessage={!requiredTime ? "Time is required" : undefined}
+              errorMessage={!requiredTime ? 'Time is required' : undefined}
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(requiredTime)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(requiredTime)}</ResultDisplay>
           </DemoCard>
 
           <DemoCard>
@@ -313,9 +300,7 @@ const TimePickerDemo: React.FC = () => {
               disabled
             />
 
-            <ResultDisplay>
-              Selected time: {formatTimeForDisplay(disabledTime)}
-            </ResultDisplay>
+            <ResultDisplay>Selected time: {formatTimeForDisplay(disabledTime)}</ResultDisplay>
           </DemoCard>
         </DemoGrid>
       </DemoSection>
@@ -323,4 +308,4 @@ const TimePickerDemo: React.FC = () => {
   );
 };
 
-export { TimePickerDemo }; 
+export { TimePickerDemo };

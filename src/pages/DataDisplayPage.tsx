@@ -9,4 +9,4 @@ export const DataDisplayPage: React.FC = () => {
   );
 };
 
-export default DataDisplayPage; 
+export default DataDisplayPage;

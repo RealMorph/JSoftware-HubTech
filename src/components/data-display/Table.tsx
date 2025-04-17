@@ -39,9 +39,9 @@ export interface TableProps<T> {
 
 const StyledTable = styled.table<Omit<TableProps<any>, 'data' | 'columns'>>`
   border-collapse: collapse;
-  width: ${(props) => (props.fullWidth ? '100%' : 'auto')};
-  font-family: ${(props) => getThemeValue(props.theme as ThemeConfig, 'typography.family.primary')};
-  font-size: ${(props) => {
+  width: ${props => (props.fullWidth ? '100%' : 'auto')};
+  font-family: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.family.primary')};
+  font-size: ${props => {
     const theme = props.theme as ThemeConfig;
     switch (props.size) {
       case 'small':
@@ -52,11 +52,14 @@ const StyledTable = styled.table<Omit<TableProps<any>, 'data' | 'columns'>>`
         return getThemeValue(theme, 'typography.scale.base');
     }
   }};
-  border: ${(props) =>
-    props.bordered ? `1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.primary')}` : 'none'};
+  border: ${props =>
+    props.bordered
+      ? `1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.primary')}`
+      : 'none'};
 
-  th, td {
-    padding: ${(props) => {
+  th,
+  td {
+    padding: ${props => {
       const theme = props.theme as ThemeConfig;
       switch (props.size) {
         case 'small':
@@ -68,20 +71,23 @@ const StyledTable = styled.table<Omit<TableProps<any>, 'data' | 'columns'>>`
       }
     }};
     text-align: left;
-    border-bottom: 1px solid ${(props) => getThemeValue(props.theme as ThemeConfig, 'colors.border.primary')};
-    ${(props) =>
+    border-bottom: 1px solid
+      ${props => getThemeValue(props.theme as ThemeConfig, 'colors.border.primary')};
+    ${props =>
       props.bordered &&
       `border: 1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.primary')};`}
   }
 
   th {
-    background-color: ${(props) => getThemeValue(props.theme as ThemeConfig, 'colors.background.secondary')};
-    font-weight: ${(props) => getThemeValue(props.theme as ThemeConfig, 'typography.weights.semibold')};
-    color: ${(props) => getThemeValue(props.theme as ThemeConfig, 'colors.text.primary')};
+    background-color: ${props =>
+      getThemeValue(props.theme as ThemeConfig, 'colors.background.secondary')};
+    font-weight: ${props =>
+      getThemeValue(props.theme as ThemeConfig, 'typography.weights.semibold')};
+    color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.primary')};
   }
 
   tr:nth-of-type(even) {
-    background-color: ${(props) =>
+    background-color: ${props =>
       props.striped
         ? getThemeValue(props.theme as ThemeConfig, 'colors.background.tertiary')
         : 'transparent'};
@@ -90,7 +96,7 @@ const StyledTable = styled.table<Omit<TableProps<any>, 'data' | 'columns'>>`
   tr {
     transition: background-color 0.2s ease;
 
-    ${(props) =>
+    ${props =>
       props.hover &&
       `
       &:hover {
@@ -102,8 +108,8 @@ const StyledTable = styled.table<Omit<TableProps<any>, 'data' | 'columns'>>`
 
   caption {
     caption-side: top;
-    margin-bottom: ${(props) => getThemeValue(props.theme as ThemeConfig, 'spacing.3')};
-    color: ${(props) => getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')};
+    margin-bottom: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.3')};
+    color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.text.secondary')};
     font-style: italic;
     text-align: left;
   }
@@ -137,8 +143,11 @@ export function Table<T>({
       {caption && <caption>{caption}</caption>}
       <thead>
         <tr>
-          {columns.map((column) => (
-            <th key={column.key.toString()} style={column.width ? { width: column.width } : undefined}>
+          {columns.map(column => (
+            <th
+              key={column.key.toString()}
+              style={column.width ? { width: column.width } : undefined}
+            >
               {column.header}
             </th>
           ))}
@@ -147,13 +156,13 @@ export function Table<T>({
       <tbody>
         {data.map((row, rowIndex) => (
           <tr key={rowIndex} onClick={onRowClick ? () => onRowClick(row, rowIndex) : undefined}>
-            {columns.map((column) => (
+            {columns.map(column => (
               <td key={`${rowIndex}-${column.key.toString()}`}>
                 {column.render
                   ? column.render(row[column.key], row, rowIndex)
                   : row[column.key] !== undefined
-                  ? String(row[column.key])
-                  : ''}
+                    ? String(row[column.key])
+                    : ''}
               </td>
             ))}
           </tr>
@@ -161,4 +170,4 @@ export function Table<T>({
       </tbody>
     </StyledTable>
   );
-} 
+}

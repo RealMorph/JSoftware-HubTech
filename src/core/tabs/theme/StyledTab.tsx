@@ -24,20 +24,20 @@ interface TabContainerProps {
 export const StyledTabContainer = styled.div<TabContainerProps>`
   display: flex;
   overflow-x: auto;
-  background-color: ${props => props.variant === 'pill' ? '#EBF2FA' : '#f5f5f5'};
-  border-bottom: ${props => props.variant === 'underlined' ? 'none' : '1px solid #e0e0e0'};
+  background-color: ${props => (props.variant === 'pill' ? '#EBF2FA' : '#f5f5f5')};
+  border-bottom: ${props => (props.variant === 'underlined' ? 'none' : '1px solid #e0e0e0')};
   padding: ${props => props.spacing || '0.5rem'};
-  border-radius: ${props => props.variant === 'pill' ? '8px' : '0'};
+  border-radius: ${props => (props.variant === 'pill' ? '8px' : '0')};
   scrollbar-width: thin;
-  
+
   &::-webkit-scrollbar {
     height: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
@@ -61,7 +61,7 @@ export const StyledTab = styled.div<StyledTabProps>`
   align-items: center;
   justify-content: center;
   position: relative;
-  
+
   // Base styles
   height: ${props => props.styles?.height || '36px'};
   min-width: ${props => props.styles?.minWidth || '120px'};
@@ -71,13 +71,13 @@ export const StyledTab = styled.div<StyledTabProps>`
   font-weight: ${props => props.styles?.fontWeight || 400};
   text-transform: ${props => props.styles?.textTransform || 'none'};
   box-shadow: ${props => props.styles?.shadow || 'none'};
-  opacity: ${props => props.disabled ? 0.5 : props.styles?.opacity || 1};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  opacity: ${props => (props.disabled ? 0.5 : props.styles?.opacity || 1)};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+
   // Tab shape variants
   border-radius: ${props => {
     if (props.tabShape === 'pill') return '9999px';
@@ -87,9 +87,11 @@ export const StyledTab = styled.div<StyledTabProps>`
   }};
   border: 1px solid rgba(0, 0, 0, 0.08);
   margin: 4px;
-  
+
   // Pill specific styles for both active and inactive states
-  ${props => props.tabShape === 'pill' && `
+  ${props =>
+    props.tabShape === 'pill' &&
+    `
     padding: 0 16px;
     background-color: ${props.active ? '#0052CC' : '#F0F5FA'};
     color: ${props.active ? '#FFFFFF' : '#2C3E50'};
@@ -97,31 +99,45 @@ export const StyledTab = styled.div<StyledTabProps>`
     font-weight: ${props.active ? '600' : '400'};
     box-shadow: ${props.active ? '0 2px 4px rgba(0, 82, 204, 0.2)' : 'none'};
     
-    ${!props.active ? `
+    ${
+      !props.active
+        ? `
       &:hover {
         background-color: #D2DFE9;
         border-color: #4C9AFF;
         color: #1A365D;
       }
-    ` : ''}
+    `
+        : ''
+    }
   `}
-  
+
   // Active state styles  
-  ${props => props.active && `
+  ${props =>
+    props.active &&
+    `
     background-color: ${props.theme?.currentTheme?.colors?.gray?.[50] || '#fff'};
     font-weight: 600;
     box-shadow: ${props.styles?.shadow || '0 2px 4px rgba(0, 0, 0, 0.1)'};
     border: 1px solid rgba(0, 0, 0, 0.15);
     
-    ${props.tabShape === 'underlined' ? `
+    ${
+      props.tabShape === 'underlined'
+        ? `
       border-bottom: 2px solid #0052CC;
-    ` : ''}
+    `
+        : ''
+    }
     
-    ${props.tabShape === 'pill' ? `
+    ${
+      props.tabShape === 'pill'
+        ? `
       background-color: #0052CC;
       color: #FFFFFF;
       border: 1px solid #0047B3;
-    ` : ''}
+    `
+        : ''
+    }
   `}
   
   // Separator styles
@@ -161,7 +177,7 @@ export const StyledTab = styled.div<StyledTabProps>`
   
   // Transitions for animations
   transition: background-color 0.2s, box-shadow 0.2s, opacity 0.2s, color 0.2s;
-  
+
   &:hover:not(:disabled) {
     background-color: ${props => {
       if (props.active) {
@@ -173,13 +189,13 @@ export const StyledTab = styled.div<StyledTabProps>`
       return 'rgba(0, 0, 0, 0.05)';
     }};
   }
-  
+
   .tab-icon {
     margin-right: 6px;
     width: ${props => props.styles?.iconSize || '16px'};
     height: ${props => props.styles?.iconSize || '16px'};
   }
-  
+
   .tab-close {
     margin-left: 6px;
     width: ${props => props.styles?.closeButtonSize || '14px'};
@@ -193,7 +209,7 @@ export const StyledTab = styled.div<StyledTabProps>`
     padding: 0;
     color: rgba(0, 0, 0, 0.5);
     font-size: ${props => props.styles?.closeButtonSize || '14px'};
-    
+
     &:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
@@ -226,16 +242,16 @@ export const Tab: React.FC<TabProps> = ({
   onClick,
   tabShape = 'rounded',
   separatorStyle = 'none',
-  customStyles = {}
+  customStyles = {},
 }) => {
   const tabTheme = useTabTheme();
   const tabStyles = {
     ...getTabStyles(active ? 'active' : 'default'),
-    ...customStyles
+    ...customStyles,
   };
-  
+
   return (
-    <StyledTab 
+    <StyledTab
       active={active}
       disabled={disabled}
       styles={tabStyles}
@@ -250,9 +266,9 @@ export const Tab: React.FC<TabProps> = ({
       {icon && <span className="tab-icon">{icon}</span>}
       <span className="tab-label">{label}</span>
       {onClose && (
-        <button 
-          className="tab-close" 
-          onClick={(e) => {
+        <button
+          className="tab-close"
+          onClick={e => {
             e.stopPropagation();
             if (!disabled && onClose) onClose();
           }}
@@ -272,24 +288,24 @@ export const TabsDemo: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState('tab1');
   const [activeTheme, setActiveTheme] = React.useState('blue');
   const tabTheme = useTabTheme();
-  
+
   // Color themes for demo
   const themes = {
     blue: {
       active: '#0052CC',
       hover: '#0047B3',
-      inactive: '#E9EFF6'
+      inactive: '#E9EFF6',
     },
     green: {
       active: '#00875A',
       hover: '#006644',
-      inactive: '#E3FCEF'
+      inactive: '#E3FCEF',
     },
     purple: {
       active: '#6554C0',
       hover: '#5243AA',
-      inactive: '#EAE6FF'
-    }
+      inactive: '#EAE6FF',
+    },
   };
 
   const currentColors = themes[activeTheme as keyof typeof themes];
@@ -298,51 +314,57 @@ export const TabsDemo: React.FC = () => {
   const getTabStyle = (isActive: boolean) => ({
     backgroundColor: isActive ? currentColors.active : currentColors.inactive,
     color: isActive ? '#FFFFFF' : '#2C3E50',
-    borderColor: isActive ? currentColors.hover : '#C7D4E2'
+    borderColor: isActive ? currentColors.hover : '#C7D4E2',
   });
-  
+
   return (
     <div>
       <div style={{ marginBottom: '16px' }}>
-        <button onClick={() => setActiveTheme('blue')} style={{ marginRight: '8px' }}>Blue Theme</button>
-        <button onClick={() => setActiveTheme('green')} style={{ marginRight: '8px' }}>Green Theme</button>
+        <button onClick={() => setActiveTheme('blue')} style={{ marginRight: '8px' }}>
+          Blue Theme
+        </button>
+        <button onClick={() => setActiveTheme('green')} style={{ marginRight: '8px' }}>
+          Green Theme
+        </button>
         <button onClick={() => setActiveTheme('purple')}>Purple Theme</button>
       </div>
 
       <h3>Standard Tabs</h3>
       <StyledTabContainer>
-        <Tab 
-          id="tab1" 
-          label="Dashboard" 
-          active={activeTab === 'tab1'} 
+        <Tab
+          id="tab1"
+          label="Dashboard"
+          active={activeTab === 'tab1'}
           onClick={() => setActiveTab('tab1')}
           onClose={() => console.log('Close tab 1')}
         />
-        <Tab 
-          id="tab2" 
-          label="Reports" 
-          active={activeTab === 'tab2'} 
+        <Tab
+          id="tab2"
+          label="Reports"
+          active={activeTab === 'tab2'}
           onClick={() => setActiveTab('tab2')}
           onClose={() => console.log('Close tab 2')}
         />
-        <Tab 
-          id="tab3" 
-          label="Settings" 
-          active={activeTab === 'tab3'} 
+        <Tab
+          id="tab3"
+          label="Settings"
+          active={activeTab === 'tab3'}
           onClick={() => setActiveTab('tab3')}
           onClose={() => console.log('Close tab 3')}
         />
-        <Tab 
-          id="tab4" 
-          label="Disabled Tab" 
-          disabled={true}
-        />
+        <Tab id="tab4" label="Disabled Tab" disabled={true} />
       </StyledTabContainer>
-      
-      <h3>Pill Style Tabs with {activeTheme.charAt(0).toUpperCase() + activeTheme.slice(1)} Theme</h3>
-      <StyledTabContainer variant="pill" spacing="8px" style={{ backgroundColor: `${currentColors.inactive}40` }}>
-        <div 
-          id="pill1" 
+
+      <h3>
+        Pill Style Tabs with {activeTheme.charAt(0).toUpperCase() + activeTheme.slice(1)} Theme
+      </h3>
+      <StyledTabContainer
+        variant="pill"
+        spacing="8px"
+        style={{ backgroundColor: `${currentColors.inactive}40` }}
+      >
+        <div
+          id="pill1"
           style={{
             ...getTabStyle(activeTab === 'pill1'),
             padding: '0 16px',
@@ -352,14 +374,14 @@ export const TabsDemo: React.FC = () => {
             borderRadius: '9999px',
             margin: '0 4px',
             cursor: 'pointer',
-            border: `1px solid ${activeTab === 'pill1' ? currentColors.hover : '#C7D4E2'}`
+            border: `1px solid ${activeTab === 'pill1' ? currentColors.hover : '#C7D4E2'}`,
           }}
           onClick={() => setActiveTab('pill1')}
         >
           Home
         </div>
-        <div 
-          id="pill2" 
+        <div
+          id="pill2"
           style={{
             ...getTabStyle(activeTab === 'pill2'),
             padding: '0 16px',
@@ -369,14 +391,14 @@ export const TabsDemo: React.FC = () => {
             borderRadius: '9999px',
             margin: '0 4px',
             cursor: 'pointer',
-            border: `1px solid ${activeTab === 'pill2' ? currentColors.hover : '#C7D4E2'}`
+            border: `1px solid ${activeTab === 'pill2' ? currentColors.hover : '#C7D4E2'}`,
           }}
           onClick={() => setActiveTab('pill2')}
         >
           Analytics
         </div>
-        <div 
-          id="pill3" 
+        <div
+          id="pill3"
           style={{
             ...getTabStyle(activeTab === 'pill3'),
             padding: '0 16px',
@@ -386,72 +408,81 @@ export const TabsDemo: React.FC = () => {
             borderRadius: '9999px',
             margin: '0 4px',
             cursor: 'pointer',
-            border: `1px solid ${activeTab === 'pill3' ? currentColors.hover : '#C7D4E2'}`
+            border: `1px solid ${activeTab === 'pill3' ? currentColors.hover : '#C7D4E2'}`,
           }}
           onClick={() => setActiveTab('pill3')}
         >
           Projects
         </div>
       </StyledTabContainer>
-      
+
       <h3>Underlined Tabs</h3>
       <StyledTabContainer variant="underlined">
-        <div 
+        <div
           style={{
             padding: '8px 16px',
             cursor: 'pointer',
-            borderBottom: activeTab === 'underlined1' ? `2px solid ${currentColors.active}` : '2px solid transparent'
+            borderBottom:
+              activeTab === 'underlined1'
+                ? `2px solid ${currentColors.active}`
+                : '2px solid transparent',
           }}
           onClick={() => setActiveTab('underlined1')}
         >
           Overview
         </div>
-        <div 
+        <div
           style={{
             padding: '8px 16px',
             cursor: 'pointer',
-            borderBottom: activeTab === 'underlined2' ? `2px solid ${currentColors.active}` : '2px solid transparent'
+            borderBottom:
+              activeTab === 'underlined2'
+                ? `2px solid ${currentColors.active}`
+                : '2px solid transparent',
           }}
           onClick={() => setActiveTab('underlined2')}
         >
           Activity
         </div>
-        <div 
+        <div
           style={{
             padding: '8px 16px',
             cursor: 'pointer',
-            borderBottom: activeTab === 'underlined3' ? `2px solid ${currentColors.active}` : '2px solid transparent'
+            borderBottom:
+              activeTab === 'underlined3'
+                ? `2px solid ${currentColors.active}`
+                : '2px solid transparent',
           }}
           onClick={() => setActiveTab('underlined3')}
         >
           Timeline
         </div>
       </StyledTabContainer>
-      
+
       <h3>Tabs with Separators</h3>
       <StyledTabContainer>
-        <Tab 
-          id="sep1" 
-          label="Files" 
-          active={activeTab === 'sep1'} 
+        <Tab
+          id="sep1"
+          label="Files"
+          active={activeTab === 'sep1'}
           onClick={() => setActiveTab('sep1')}
           separatorStyle="line"
         />
-        <Tab 
-          id="sep2" 
-          label="Documents" 
-          active={activeTab === 'sep2'} 
+        <Tab
+          id="sep2"
+          label="Documents"
+          active={activeTab === 'sep2'}
           onClick={() => setActiveTab('sep2')}
           separatorStyle="line"
         />
-        <Tab 
-          id="sep3" 
-          label="Media" 
-          active={activeTab === 'sep3'} 
+        <Tab
+          id="sep3"
+          label="Media"
+          active={activeTab === 'sep3'}
           onClick={() => setActiveTab('sep3')}
           separatorStyle="line"
         />
       </StyledTabContainer>
     </div>
   );
-}; 
+};

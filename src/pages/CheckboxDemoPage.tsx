@@ -9,4 +9,4 @@ export const CheckboxDemoPage: React.FC = () => {
   );
 };
 
-export default CheckboxDemoPage; 
+export default CheckboxDemoPage;

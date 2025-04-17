@@ -1,9 +1,9 @@
 // Export all component categories
 import { Button, TextField } from './base';
-import { 
-  Card as BaseCard, 
-  CardHeader as BaseCardHeader, 
-  CardContent as BaseCardContent, 
+import {
+  Card as BaseCard,
+  CardHeader as BaseCardHeader,
+  CardContent as BaseCardContent,
   CardFooter as BaseCardFooter,
   List as BaseList,
   ListItem as BaseListItem,
@@ -12,7 +12,7 @@ import {
   TableBody as BaseTableBody,
   TableRow as BaseTableRow,
   TableCell as BaseTableCell,
-  TableHeaderCell as BaseTableHeaderCell
+  TableHeaderCell as BaseTableHeaderCell,
 } from './base';
 
 import {
@@ -22,7 +22,7 @@ import {
   ListDemo as DataDisplayListDemo,
   ListItem as DataDisplayListItem,
   Table as DataDisplayTable,
-  TableDemo as DataDisplayTableDemo
+  TableDemo as DataDisplayTableDemo,
 } from './data-display';
 
 // Re-export base components
@@ -41,7 +41,7 @@ export {
   BaseTableBody,
   BaseTableRow,
   BaseTableCell,
-  BaseTableHeaderCell
+  BaseTableHeaderCell,
 };
 
 // Re-export renamed data-display components
@@ -52,7 +52,7 @@ export {
   DataDisplayListDemo,
   DataDisplayListItem,
   DataDisplayTable,
-  DataDisplayTableDemo
+  DataDisplayTableDemo,
 };
 
 // Base Components
@@ -89,4 +89,4 @@ export * from './base/FileUploadDemo';
 export * from './layout';
 
 // Feedback components
-export * from './feedback'; 
+export * from './feedback';

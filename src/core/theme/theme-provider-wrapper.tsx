@@ -11,15 +11,11 @@ const SafeThemeContext = createContext<any>(null);
  */
 export const SafeThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentTheme } = useTheme();
-  
+
   // Convert the theme to any type to avoid type compatibility issues
   const safeTheme = currentTheme as any;
-  
-  return (
-    <SafeThemeContext.Provider value={safeTheme}>
-      {children}
-    </SafeThemeContext.Provider>
-  );
+
+  return <SafeThemeContext.Provider value={safeTheme}>{children}</SafeThemeContext.Provider>;
 };
 
 /**
@@ -27,11 +23,11 @@ export const SafeThemeProvider: React.FC<{ children: ReactNode }> = ({ children 
  */
 export const useSafeTheme = () => {
   const safeTheme = useContext(SafeThemeContext);
-  
+
   if (!safeTheme) {
     throw new Error('useSafeTheme must be used within a SafeThemeProvider');
   }
-  
+
   return safeTheme;
 };
 
@@ -40,14 +36,14 @@ export const useSafeTheme = () => {
  */
 export function getThemeProperty(theme: any, path: string, defaultValue: any = '') {
   if (!theme) return defaultValue;
-  
+
   const parts = path.split('.');
   let value: any = theme;
-  
+
   for (const part of parts) {
     if (value === undefined || value === null) return defaultValue;
     value = value[part];
   }
-  
+
   return value !== undefined && value !== null ? value : defaultValue;
-} 
+}

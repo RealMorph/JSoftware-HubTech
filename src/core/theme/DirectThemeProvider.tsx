@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 import { Global, css } from '@emotion/react';
-import { ThemeConfig, SpacingConfig, BorderRadiusConfig, ShadowConfig, TransitionConfig } from './consolidated-types';
+import {
+  ThemeConfig,
+  SpacingConfig,
+  BorderRadiusConfig,
+  ShadowConfig,
+  TransitionConfig,
+} from './consolidated-types';
 import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
 import { ThemeService, useThemeService, inMemoryThemeService } from './theme-context';
@@ -11,11 +17,11 @@ import { ThemeServiceProvider } from './ThemeServiceProvider';
 export interface DirectThemeContextType {
   // Theme access
   theme: ThemeConfig;
-  
+
   // Theme management
   setTheme: (theme: ThemeConfig) => void;
   toggleDarkMode: () => void;
-  
+
   // Direct theme utility functions
   getColor: (path: string, fallback?: string) => string;
   getTypography: (path: string, fallback?: string | number) => string | number;
@@ -46,7 +52,8 @@ const globalStyles = css`
     /* CSS variables will be injected here by theme system */
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     font-family: var(--font-family-base, system-ui, -apple-system, sans-serif);
@@ -56,7 +63,9 @@ const globalStyles = css`
     background-color: var(--color-background, #fff);
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -75,7 +84,12 @@ const globalStyles = css`
   }
 
   /* Typography baseline */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-family-heading, system-ui, -apple-system, sans-serif);
     margin-top: 0;
     margin-bottom: var(--spacing-md, 1rem);
@@ -113,18 +127,23 @@ const globalStyles = css`
   }
 
   /* Forms */
-  button, input, select, textarea {
+  button,
+  input,
+  select,
+  textarea {
     font-family: inherit;
     font-size: 100%;
     line-height: 1.15;
     margin: 0;
   }
 
-  button, input {
+  button,
+  input {
     overflow: visible;
   }
 
-  button, select {
+  button,
+  select {
     text-transform: none;
   }
 `;
@@ -133,14 +152,14 @@ const globalStyles = css`
 function getNestedProperty(obj: any, path: string, fallback: any = undefined): any {
   const parts = path.split('.');
   let current = obj;
-  
+
   for (const part of parts) {
     if (current === undefined || current === null) {
       return fallback;
     }
     current = current[part];
   }
-  
+
   return current === undefined ? fallback : current;
 }
 
@@ -174,7 +193,7 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
     initialTheme,
   }) => {
     const themeService = useThemeService();
-    
+
     // Initialize theme state
     const [theme, setTheme] = useState<ThemeConfig>(() => {
       if (initialTheme) {
@@ -182,9 +201,9 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return themeService.getDefaultTheme();
     });
-    
+
     const [isDarkMode, setIsDarkMode] = useState(false);
-    
+
     // Apply theme to the document
     useEffect(() => {
       if (theme) {
@@ -192,39 +211,44 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
         generateCssVariables(theme);
       }
     }, [theme]);
-    
+
     // Theme toggling function
     const toggleDarkMode = () => {
       setIsDarkMode(!isDarkMode);
-      
+
       // Get dark/light theme based on current mode
       const newTheme = !isDarkMode
         ? themeService.getDarkTheme() || theme
         : themeService.getLightTheme() || theme;
-      
+
       setTheme(newTheme);
     };
-    
+
     // Direct theme property access functions
     const getColor = (path: string, fallback?: string): string => {
       // Handle special case for text color object
       if (path.startsWith('text.')) {
         const textKey = path.split('.')[1];
-        const textColors = typeof theme.colors.text === 'string' 
-          ? { primary: theme.colors.text, secondary: theme.colors.text, disabled: theme.colors.text }
-          : theme.colors.text;
-        
+        const textColors =
+          typeof theme.colors.text === 'string'
+            ? {
+                primary: theme.colors.text,
+                secondary: theme.colors.text,
+                disabled: theme.colors.text,
+              }
+            : theme.colors.text;
+
         return (textColors as any)[textKey] || fallback || '#000000';
       }
-      
+
       // Standard color property access
       return getNestedProperty(theme.colors, path, fallback || '#000000');
     };
-    
+
     const getTypography = (path: string, fallback?: string | number): string | number => {
       return getNestedProperty(theme.typography, path, fallback || '1rem');
     };
-    
+
     const getSpacing = (key: string, fallback?: string): string => {
       // Type-safe check if the key exists in spacing config
       if (hasKey(theme.spacing, key)) {
@@ -232,7 +256,7 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return fallback || '0';
     };
-    
+
     const getBorderRadius = (key: string, fallback?: string): string => {
       // Type-safe check if the key exists in border radius config
       if (hasKey(theme.borderRadius, key)) {
@@ -240,7 +264,7 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return fallback || '0';
     };
-    
+
     const getShadow = (key: string, fallback?: string): string => {
       // Type-safe check if the key exists in shadows config
       if (hasKey(theme.shadows, key)) {
@@ -248,7 +272,7 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return fallback || 'none';
     };
-    
+
     const getTransition = (key: string, fallback?: string): string => {
       const transitionKeys = key.split('.');
       if (transitionKeys.length === 1) {
@@ -261,7 +285,7 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return getNestedProperty(theme.transitions, key, fallback || '0ms');
     };
-    
+
     // Create context value
     const contextValue: DirectThemeContextType = {
       theme,
@@ -272,26 +296,22 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       getSpacing,
       getBorderRadius,
       getShadow,
-      getTransition
+      getTransition,
     };
-    
+
     return (
       <DirectThemeContext.Provider value={contextValue}>
         <Global styles={globalStyles} />
         {/* Cast theme as any to satisfy Emotion's theme provider */}
-        <EmotionThemeProvider theme={theme as any}>
-          {children}
-        </EmotionThemeProvider>
+        <EmotionThemeProvider theme={theme as any}>{children}</EmotionThemeProvider>
       </DirectThemeContext.Provider>
     );
   };
-  
+
   // If themeService is provided, wrap with ThemeServiceProvider
   return (
     <ThemeServiceProvider themeService={themeService}>
-      <DirectThemeProviderInner initialTheme={initialTheme}>
-        {children}
-      </DirectThemeProviderInner>
+      <DirectThemeProviderInner initialTheme={initialTheme}>{children}</DirectThemeProviderInner>
     </ThemeServiceProvider>
   );
 };
@@ -300,4 +320,4 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
  * Legacy compatibility layer for existing components
  * that expect the old ThemeProvider interface
  */
-export const ThemeProvider = DirectThemeProvider; 
+export const ThemeProvider = DirectThemeProvider;

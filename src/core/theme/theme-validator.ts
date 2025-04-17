@@ -19,7 +19,15 @@ export function validateTheme(theme: unknown): string[] {
   const themeObj = theme as Partial<ThemeConfig>;
 
   // Validate required top-level properties
-  const requiredProps = ['colors', 'typography', 'spacing', 'breakpoints', 'borderRadius', 'shadows', 'transitions'];
+  const requiredProps = [
+    'colors',
+    'typography',
+    'spacing',
+    'breakpoints',
+    'borderRadius',
+    'shadows',
+    'transitions',
+  ];
   requiredProps.forEach(prop => {
     if (!themeObj[prop as keyof ThemeConfig]) {
       errors.push(`Missing required property: ${prop}`);
@@ -29,11 +37,19 @@ export function validateTheme(theme: unknown): string[] {
   // Validate colors
   if (themeObj.colors) {
     const requiredColors = [
-      'primary', 'secondary', 'success', 'warning', 
-      'error', 'info', 'text', 'background', 
-      'border', 'white', 'surface'
+      'primary',
+      'secondary',
+      'success',
+      'warning',
+      'error',
+      'info',
+      'text',
+      'background',
+      'border',
+      'white',
+      'surface',
     ];
-    
+
     requiredColors.forEach(color => {
       if (!(color in themeObj.colors!)) {
         errors.push(`Missing required color: ${color}`);
@@ -162,4 +178,4 @@ export function ensureValidTheme(theme: unknown): ThemeConfig {
     throw new Error(`Invalid theme: ${errors.join(', ')}`);
   }
   return theme as ThemeConfig;
-} 
+}

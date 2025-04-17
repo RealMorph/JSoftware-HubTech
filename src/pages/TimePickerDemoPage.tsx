@@ -9,4 +9,4 @@ const TimePickerDemoPage: React.FC = () => {
   );
 };
 
-export default TimePickerDemoPage; 
+export default TimePickerDemoPage;

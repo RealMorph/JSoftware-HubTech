@@ -46,8 +46,18 @@ export interface DatePickerProps {
 // Date utility functions
 const DAYS_IN_WEEK = 7;
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -61,10 +71,7 @@ const isSameDay = (date1: Date | null, date2: Date | null): boolean => {
 };
 
 const isSameMonth = (date1: Date, date2: Date): boolean => {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth()
-  );
+  return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth();
 };
 
 const isDateInRange = (date: Date, startDate: Date | null, endDate: Date | null): boolean => {
@@ -83,29 +90,29 @@ const isDateDisabled = (
   // Check min/max constraints
   if (minDate && date < minDate) return true;
   if (maxDate && date > maxDate) return true;
-  
+
   // Check explicitly disabled dates
   if (disabledDates && disabledDates.some(disabledDate => isSameDay(date, disabledDate))) {
     return true;
   }
-  
+
   // Check custom disable function
   if (shouldDisableDate && shouldDisableDate(date)) {
     return true;
   }
-  
+
   return false;
 };
 
 const getDateFromFormat = (dateStr: string, format: string): Date | null => {
   if (!dateStr) return null;
-  
+
   try {
     // Simple implementation for common formats
     // In a production app, use a library like date-fns
     const now = new Date();
     const parts = dateStr.split(/[/.-]/);
-    
+
     if (format.startsWith('MM')) {
       const month = parseInt(parts[0], 10) - 1;
       const day = parseInt(parts[1], 10);
@@ -122,7 +129,7 @@ const getDateFromFormat = (dateStr: string, format: string): Date | null => {
       const day = parseInt(parts[2], 10);
       return new Date(year, month, day);
     }
-    
+
     // Default fallback
     return new Date(dateStr);
   } catch (e) {
@@ -132,20 +139,20 @@ const getDateFromFormat = (dateStr: string, format: string): Date | null => {
 
 const formatDate = (date: Date | null, format?: string): string => {
   if (!date) return '';
-  
+
   // Simple implementation - in a production app, use a library like date-fns
   if (format) {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-    
+
     return format
       .replace('dd', day)
       .replace('MM', month)
       .replace('yyyy', year.toString())
       .replace('yy', year.toString().slice(-2));
   }
-  
+
   // Default format
   return date.toLocaleDateString();
 };
@@ -184,21 +191,22 @@ const InputContainer = styled.div<{ hasError?: boolean; disabled?: boolean }>`
   width: 100%;
   height: 40px;
   padding: 0 12px;
-  border: 1px solid ${props => {
-    const theme = useDirectTheme();
-    if (props.disabled) return theme.getColor('text.disabled', '#999999');
-    if (props.hasError) return theme.getColor('error', '#f44336');
-    return theme.getColor('border', '#e0e0e0');
-  }};
+  border: 1px solid
+    ${props => {
+      const theme = useDirectTheme();
+      if (props.disabled) return theme.getColor('text.disabled', '#999999');
+      if (props.hasError) return theme.getColor('error', '#f44336');
+      return theme.getColor('border', '#e0e0e0');
+    }};
   border-radius: 4px;
   background-color: ${props => {
     const theme = useDirectTheme();
-    return props.disabled 
+    return props.disabled
       ? theme.getColor('background', '#f5f5f5')
       : theme.getColor('white', '#ffffff');
   }};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+
   &:hover {
     border-color: ${props => {
       const theme = useDirectTheme();
@@ -216,20 +224,20 @@ const Input = styled.input`
   background-color: transparent;
   color: ${props => {
     const theme = useDirectTheme();
-    return props.disabled 
+    return props.disabled
       ? theme.getColor('text.disabled', '#999999')
       : theme.getColor('text.primary', '#333333');
   }};
   font-size: 14px;
   cursor: inherit;
-  
+
   &::placeholder {
     color: ${() => {
       const theme = useDirectTheme();
       return theme.getColor('text.secondary', '#666666');
     }};
   }
-  
+
   &:disabled {
     cursor: not-allowed;
   }
@@ -251,7 +259,7 @@ const HelperText = styled.div<{ hasError?: boolean }>`
   margin-top: 4px;
   color: ${props => {
     const theme = useDirectTheme();
-    return props.hasError 
+    return props.hasError
       ? theme.getColor('error', '#f44336')
       : theme.getColor('text.secondary', '#666666');
   }};
@@ -263,18 +271,19 @@ const PopoverContainer = styled.div<{ visible: boolean }>`
   left: 0;
   z-index: 9999;
   width: 100%;
-  background: #FFFFFF;
-  background-color: #FFFFFF;
+  background: #ffffff;
+  background-color: #ffffff;
   border-radius: 4px;
   box-shadow: ${() => {
     const theme = useDirectTheme();
     return theme.getShadow('lg', '0 6px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)');
   }};
   display: ${props => (props.visible ? 'block' : 'none')};
-  border: 1px solid ${() => {
-    const theme = useDirectTheme();
-    return theme.getColor('border', '#e0e0e0');
-  }};
+  border: 1px solid
+    ${() => {
+      const theme = useDirectTheme();
+      return theme.getColor('border', '#e0e0e0');
+    }};
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   overflow: hidden;
@@ -282,8 +291,8 @@ const PopoverContainer = styled.div<{ visible: boolean }>`
 
 const CalendarContainer = styled.div`
   padding: 16px;
-  background: #FFFFFF;
-  background-color: #FFFFFF;
+  background: #ffffff;
+  background-color: #ffffff;
 `;
 
 const CalendarHeader = styled.div`
@@ -307,14 +316,14 @@ const NavigationButton = styled.button`
   background-color: transparent;
   border-radius: 4px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: ${() => {
       const theme = useDirectTheme();
       return theme.getColor('background.hover', '#f5f5f5');
     }};
   }
-  
+
   &:focus {
     outline: none;
     background-color: ${() => {
@@ -328,8 +337,8 @@ const WeekdaysRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin-bottom: 8px;
-  background: #FFFFFF;
-  background-color: #FFFFFF;
+  background: #ffffff;
+  background-color: #ffffff;
 `;
 
 const WeekdayCell = styled.div`
@@ -347,8 +356,8 @@ const DaysGrid = styled.div`
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 36px);
   gap: 2px;
-  background: #FFFFFF;
-  background-color: #FFFFFF;
+  background: #ffffff;
+  background-color: #ffffff;
 `;
 
 const DayCell = styled.button<{
@@ -395,7 +404,7 @@ const DayCell = styled.button<{
   font-weight: ${props => (props.isToday ? '600' : '400')};
   cursor: ${props => (props.isDisabled ? 'not-allowed' : 'pointer')};
   position: relative;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -406,7 +415,7 @@ const DayCell = styled.button<{
     display: ${props => (props.isToday && !props.isSelected ? 'block' : 'none')};
     background-color: currentColor;
   }
-  
+
   &:hover {
     background-color: ${props => {
       const theme = useDirectTheme();
@@ -415,7 +424,7 @@ const DayCell = styled.button<{
       return theme.getColor('background.hover', '#f5f5f5');
     }};
   }
-  
+
   &:focus {
     outline: none;
     box-shadow: ${props => {
@@ -453,29 +462,29 @@ const Calendar: React.FC<CalendarProps> = ({
   const generateDays = (currentMonth: Date) => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    
+
     // First day of the month
     const firstDay = new Date(year, month, 1);
     const firstDayOfWeek = firstDay.getDay();
-    
+
     // Last day of the month
     const lastDay = new Date(year, month + 1, 0);
     const lastDate = lastDay.getDate();
-    
+
     // Array to hold all days to display
     const days: { date: Date; isOutsideMonth: boolean }[] = [];
-    
+
     // Add days from previous month to fill the first row
     const prevMonth = new Date(year, month, 0);
     const prevMonthLastDate = prevMonth.getDate();
-    
+
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
       days.push({
         date: new Date(year, month - 1, prevMonthLastDate - i),
         isOutsideMonth: true,
       });
     }
-    
+
     // Add days of the current month
     for (let i = 1; i <= lastDate; i++) {
       days.push({
@@ -483,7 +492,7 @@ const Calendar: React.FC<CalendarProps> = ({
         isOutsideMonth: false,
       });
     }
-    
+
     // Add days from next month to complete the grid (6 rows * 7 days = 42 cells)
     const daysNeeded = 42 - days.length;
     for (let i = 1; i <= daysNeeded; i++) {
@@ -492,28 +501,28 @@ const Calendar: React.FC<CalendarProps> = ({
         isOutsideMonth: true,
       });
     }
-    
+
     return days;
   };
-  
+
   const days = generateDays(month);
-  
+
   const handlePrevMonth = () => {
     const prevMonth = new Date(month);
     prevMonth.setMonth(prevMonth.getMonth() - 1);
     onMonthChange(prevMonth);
   };
-  
+
   const handleNextMonth = () => {
     const nextMonth = new Date(month);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     onMonthChange(nextMonth);
   };
-  
+
   const handleDayClick = (day: Date) => {
     const isDisabled = isDateDisabled(day, minDate, maxDate, disabledDates, shouldDisableDate);
     if (isDisabled) return;
-    
+
     // Handle different selection modes
     if (mode === 'single') {
       onChange(day);
@@ -534,7 +543,7 @@ const Calendar: React.FC<CalendarProps> = ({
     } else if (mode === 'multiple') {
       const currentValues = value as DateValue[];
       const existingIndex = currentValues.findIndex(d => d && isSameDay(d, day));
-      
+
       if (existingIndex >= 0) {
         // Remove date if already selected
         const newValues = [...currentValues];
@@ -546,7 +555,7 @@ const Calendar: React.FC<CalendarProps> = ({
       }
     }
   };
-  
+
   const isDateSelected = (day: Date): boolean => {
     if (mode === 'single') {
       return isSameDay(day, value as DateValue);
@@ -559,30 +568,32 @@ const Calendar: React.FC<CalendarProps> = ({
     }
     return false;
   };
-  
+
   const isDateInCurrentRange = (day: Date): boolean => {
     if (mode !== 'range') return false;
     const range = value as DateRangeValue;
     if (!range[0] || !range[1]) return false;
-    return isDateInRange(day, range[0], range[1]) && 
-           !isSameDay(day, range[0]) && 
-           !isSameDay(day, range[1]);
+    return (
+      isDateInRange(day, range[0], range[1]) &&
+      !isSameDay(day, range[0]) &&
+      !isSameDay(day, range[1])
+    );
   };
-  
+
   const isRangeStart = (day: Date): boolean => {
     if (mode !== 'range') return false;
     const range = value as DateRangeValue;
     return !!range[0] && isSameDay(day, range[0]) && !!range[1];
   };
-  
+
   const isRangeEnd = (day: Date): boolean => {
     if (mode !== 'range') return false;
     const range = value as DateRangeValue;
     return !!range[1] && isSameDay(day, range[1]);
   };
-  
+
   const today = new Date();
-  
+
   return (
     <CalendarContainer>
       <CalendarHeader>
@@ -596,13 +607,13 @@ const Calendar: React.FC<CalendarProps> = ({
           &gt;
         </NavigationButton>
       </CalendarHeader>
-      
+
       <WeekdaysRow>
         {DAY_NAMES.map(day => (
           <WeekdayCell key={day}>{day}</WeekdayCell>
         ))}
       </WeekdaysRow>
-      
+
       <DaysGrid>
         {days.map(({ date, isOutsideMonth }, index) => {
           const isSelected = isDateSelected(date);
@@ -617,7 +628,7 @@ const Calendar: React.FC<CalendarProps> = ({
           );
           const isRangeStartDate = isRangeStart(date);
           const isRangeEndDate = isRangeEnd(date);
-          
+
           return (
             <DayCell
               key={index}
@@ -667,32 +678,36 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const theme = useDirectTheme();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Initialize value based on mode
-  const [internalValue, setInternalValue] = useState<DateValue | DateValue[] | DateRangeValue>(() => {
-    if (value !== undefined) return value;
-    if (mode === 'single') return null;
-    if (mode === 'range') return [null, null];
-    return [];
-  });
-  
+  const [internalValue, setInternalValue] = useState<DateValue | DateValue[] | DateRangeValue>(
+    () => {
+      if (value !== undefined) return value;
+      if (mode === 'single') return null;
+      if (mode === 'range') return [null, null];
+      return [];
+    }
+  );
+
   // Calendar state
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (initialMonth) return initialMonth;
     if (mode === 'single' && value) return value as Date;
-    if (mode === 'range' && (value as DateRangeValue)?.[0]) return (value as DateRangeValue)[0] as Date;
-    if (mode === 'multiple' && (value as DateValue[])?.length) return (value as DateValue[])[0] as Date;
+    if (mode === 'range' && (value as DateRangeValue)?.[0])
+      return (value as DateRangeValue)[0] as Date;
+    if (mode === 'multiple' && (value as DateValue[])?.length)
+      return (value as DateValue[])[0] as Date;
     return new Date();
   });
-  
+
   // Update internal value when controlled value changes
   useEffect(() => {
     if (value !== undefined) {
       setInternalValue(value);
     }
   }, [value]);
-  
+
   // Format displayed value in the input field
   const getDisplayValue = (): string => {
     if (mode === 'single') {
@@ -713,11 +728,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
     return '';
   };
-  
+
   // Handle input change (typing dates)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    
+
     if (mode === 'single') {
       const parsedDate = getDateFromFormat(input, format);
       setInternalValue(parsedDate);
@@ -727,20 +742,20 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
     // For range and multiple modes, we'll rely on the calendar selection
   };
-  
+
   // Handle calendar change
   const handleCalendarChange = (newValue: DateValue | DateValue[] | DateRangeValue) => {
     setInternalValue(newValue);
-    
+
     if (onChange) {
       onChange(newValue);
     }
-    
+
     // Close the calendar for single selection once a date is picked
     if (mode === 'single') {
       setIsOpen(false);
     }
-    
+
     // Close the calendar for range selection once both dates are picked
     if (mode === 'range') {
       const range = newValue as DateRangeValue;
@@ -749,35 +764,32 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       }
     }
   };
-  
+
   // Toggle calendar visibility
   const handleInputClick = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
     }
   };
-  
+
   // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
+
   // Determine if there's an error to display
   const hasError = Boolean(error || errorMessage);
   const displayedError = typeof error === 'string' ? error : errorMessage;
-  
+
   return (
     <DatePickerContainer ref={containerRef} className={className}>
       {label && (
@@ -786,12 +798,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           {required && <RequiredIndicator>*</RequiredIndicator>}
         </Label>
       )}
-      
-      <InputContainer 
-        hasError={hasError}
-        disabled={disabled}
-        onClick={handleInputClick}
-      >
+
+      <InputContainer hasError={hasError} disabled={disabled} onClick={handleInputClick}>
         <Input
           ref={inputRef}
           type="text"
@@ -806,13 +814,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           📅
         </CalendarIcon>
       </InputContainer>
-      
-      {(hasError && displayedError) ? (
+
+      {hasError && displayedError ? (
         <HelperText hasError={true}>{displayedError}</HelperText>
       ) : helperText ? (
         <HelperText>{helperText}</HelperText>
       ) : null}
-      
+
       <PopoverContainer visible={isOpen}>
         <Calendar
           month={currentMonth}
@@ -828,4 +836,4 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       </PopoverContainer>
     </DatePickerContainer>
   );
-}; 
+};

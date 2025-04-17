@@ -1,60 +1,169 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { DatePicker, DateValue, DateRangeValue } from './DatePicker';
-import { Card, CardHeader, CardContent } from './Card';
 
-// Styled components for the demo
-const DemoContainer = styled.div`
-  padding: 24px;
+// Define a theme styles interface for consistent theming
+interface ThemeStyles {
+  colors: {
+    background: string;
+    text: string;
+    textSecondary: string;
+    border: string;
+    codeBackground: string;
+    resultBackground: string;
+    cardBorder: string;
+    cardShadow: string;
+  };
+  spacing: {
+    page: string;
+    section: string;
+    component: string;
+    card: string;
+    item: string;
+  };
+  typography: {
+    title: {
+      fontSize: string;
+      fontWeight: string;
+    };
+    heading: {
+      fontSize: string;
+      fontWeight: string;
+    };
+    subheading: {
+      fontSize: string;
+      fontWeight: string;
+    };
+    code: {
+      fontSize: string;
+    };
+  };
+  borderRadius: string;
+}
+
+// Theme-based styled components
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.page};
   max-width: 1200px;
   margin: 0 auto;
+  color: ${props => props.$themeStyles.colors.text};
 `;
 
-const DemoSection = styled.div`
-  margin-bottom: 32px;
+const DemoSection = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
 `;
 
-const DemoTitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+const DemoTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.title.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.title.fontWeight};
+  margin-bottom: ${props => props.$themeStyles.spacing.item};
+  border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
+  padding-bottom: ${props => props.$themeStyles.spacing.item};
+  color: ${props => props.$themeStyles.colors.text};
 `;
 
-const DemoGrid = styled.div`
+const DemoGrid = styled.div<{ $themeStyles: ThemeStyles }>`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
+  gap: ${props => props.$themeStyles.spacing.component};
   width: 100%;
 `;
 
-const DemoCard = styled.div`
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+const DemoCard = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: ${props => props.$themeStyles.spacing.card};
+  border: 1px solid ${props => props.$themeStyles.colors.cardBorder};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  box-shadow: ${props => props.$themeStyles.colors.cardShadow};
   width: 100%;
   box-sizing: border-box;
 `;
 
-const CodeBlock = styled.pre`
-  background-color: #f5f5f5;
-  padding: 12px;
-  border-radius: 4px;
-  font-size: 13px;
+const CodeBlock = styled.pre<{ $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$themeStyles.colors.codeBackground};
+  padding: ${props => props.$themeStyles.spacing.item};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  font-size: ${props => props.$themeStyles.typography.code.fontSize};
   overflow: auto;
-  margin: 12px 0;
+  margin: ${props => props.$themeStyles.spacing.item} 0;
 `;
 
-const ResultDisplay = styled.div`
-  margin-top: 16px;
-  padding: 12px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  border: 1px dashed #ddd;
+const ResultDisplay = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacing.item};
+  padding: ${props => props.$themeStyles.spacing.item};
+  background-color: ${props => props.$themeStyles.colors.resultBackground};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  border: 1px dashed ${props => props.$themeStyles.colors.border};
+  color: ${props => props.$themeStyles.colors.text};
 `;
+
+const PageTitle = styled.h1<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.heading.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.heading.fontWeight};
+  margin-bottom: ${props => props.$themeStyles.spacing.item};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const PageDescription = styled.p<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
+  color: ${props => props.$themeStyles.colors.textSecondary};
+`;
+
+const CardTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.subheading.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.subheading.fontWeight};
+  margin-bottom: ${props => props.$themeStyles.spacing.item};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+// Create theme styles based on DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getSpacing, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    colors: {
+      background: getColor('background', '#ffffff'),
+      text: getColor('text.primary', '#333333'),
+      textSecondary: getColor('text.secondary', '#666666'),
+      border: getColor('border', '#eeeeee'),
+      codeBackground: getColor('gray.50', '#f5f5f5'),
+      resultBackground: getColor('gray.50', '#f9f9f9'),
+      cardBorder: getColor('border', '#eeeeee'),
+      cardShadow: getShadow('sm', '0 2px 4px rgba(0, 0, 0, 0.05)'),
+    },
+    spacing: {
+      page: getSpacing('6', '24px'),
+      section: getSpacing('8', '32px'),
+      component: getSpacing('6', '24px'),
+      card: getSpacing('4', '16px'),
+      item: getSpacing('3', '12px'),
+    },
+    typography: {
+      title: {
+        fontSize: getTypography('fontSize.lg', '20px') as string,
+        fontWeight: getTypography('fontWeight.semibold', '600') as string,
+      },
+      heading: {
+        fontSize: getTypography('fontSize.xl', '24px') as string,
+        fontWeight: getTypography('fontWeight.bold', '700') as string,
+      },
+      subheading: {
+        fontSize: getTypography('fontSize.md', '16px') as string,
+        fontWeight: getTypography('fontWeight.semibold', '600') as string,
+      },
+      code: {
+        fontSize: getTypography('fontSize.sm', '13px') as string,
+      },
+    },
+    borderRadius: getBorderRadius('md', '8px'),
+  };
+}
 
 const DatePickerDemo: React.FC = () => {
+  // Initialize theme context and styles
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
   // Single date picker state
   const [singleDate, setSingleDate] = useState<DateValue>(null);
   const [formattedDate, setFormattedDate] = useState<DateValue>(null);
@@ -122,7 +231,7 @@ const DatePickerDemo: React.FC = () => {
   const today = new Date();
   const minDate = new Date(today);
   minDate.setDate(today.getDate() - 7);
-  
+
   const maxDate = new Date(today);
   maxDate.setDate(today.getDate() + 30);
 
@@ -138,16 +247,18 @@ const DatePickerDemo: React.FC = () => {
   };
 
   return (
-    <DemoContainer>
-      <h1>DatePicker Component Demo</h1>
-      <p>This demo showcases the various configurations and capabilities of the DatePicker component.</p>
+    <DemoContainer $themeStyles={themeStyles}>
+      <PageTitle $themeStyles={themeStyles}>DatePicker Component Demo</PageTitle>
+      <PageDescription $themeStyles={themeStyles}>
+        This demo showcases the various configurations and capabilities of the DatePicker component.
+      </PageDescription>
 
-      <DemoSection>
-        <DemoTitle>Basic Usage</DemoTitle>
-        <DemoGrid>
-          <DemoCard>
-            <h3>Single Date Selection</h3>
-            <CodeBlock>{`<DatePicker
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Basic Usage</DemoTitle>
+        <DemoGrid $themeStyles={themeStyles}>
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Single Date Selection</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Select a date"
   value={singleDate}
   onChange={handleSingleDateChange}
@@ -161,14 +272,14 @@ const DatePickerDemo: React.FC = () => {
               placeholder="MM/DD/YYYY"
             />
 
-            <ResultDisplay>
+            <ResultDisplay $themeStyles={themeStyles}>
               Selected date: {singleDate ? singleDate.toLocaleDateString() : 'None'}
             </ResultDisplay>
           </DemoCard>
 
-          <DemoCard>
-            <h3>Date Range Selection</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Date Range Selection</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Select a date range"
   mode="range"
   value={dateRange}
@@ -182,15 +293,16 @@ const DatePickerDemo: React.FC = () => {
               onChange={handleDateRangeChange}
             />
 
-            <ResultDisplay>
-              Start date: {dateRange[0] ? dateRange[0].toLocaleDateString() : 'None'}<br />
+            <ResultDisplay $themeStyles={themeStyles}>
+              Start date: {dateRange[0] ? dateRange[0].toLocaleDateString() : 'None'}
+              <br />
               End date: {dateRange[1] ? dateRange[1].toLocaleDateString() : 'None'}
             </ResultDisplay>
           </DemoCard>
 
-          <DemoCard>
-            <h3>Multiple Date Selection</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Multiple Date Selection</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Select multiple dates"
   mode="multiple"
   value={multipleDates}
@@ -204,21 +316,22 @@ const DatePickerDemo: React.FC = () => {
               onChange={handleMultipleDatesChange}
             />
 
-            <ResultDisplay>
-              Selected dates: {multipleDates.length > 0 
-                ? multipleDates.map(date => date?.toLocaleDateString()).join(', ') 
+            <ResultDisplay $themeStyles={themeStyles}>
+              Selected dates:{' '}
+              {multipleDates.length > 0
+                ? multipleDates.map(date => date?.toLocaleDateString()).join(', ')
                 : 'None'}
             </ResultDisplay>
           </DemoCard>
         </DemoGrid>
       </DemoSection>
 
-      <DemoSection>
-        <DemoTitle>Advanced Configuration</DemoTitle>
-        <DemoGrid>
-          <DemoCard>
-            <h3>Custom Date Format</h3>
-            <CodeBlock>{`<DatePicker
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Advanced Configuration</DemoTitle>
+        <DemoGrid $themeStyles={themeStyles}>
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Custom Date Format</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Custom format (yyyy-MM-dd)"
   value={formattedDate}
   onChange={handleFormattedDateChange}
@@ -232,14 +345,14 @@ const DatePickerDemo: React.FC = () => {
               format="yyyy-MM-dd"
             />
 
-            <ResultDisplay>
+            <ResultDisplay $themeStyles={themeStyles}>
               Selected date: {formattedDate ? formattedDate.toLocaleDateString() : 'None'}
             </ResultDisplay>
           </DemoCard>
 
-          <DemoCard>
-            <h3>Min/Max Date Constraints</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Min/Max Date Constraints</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Date within constraints"
   value={constrainedDate}
   onChange={handleConstrainedDateChange}
@@ -257,14 +370,14 @@ const DatePickerDemo: React.FC = () => {
               helperText="Select a date between the last 7 days and next 30 days"
             />
 
-            <ResultDisplay>
+            <ResultDisplay $themeStyles={themeStyles}>
               Selected date: {constrainedDate ? constrainedDate.toLocaleDateString() : 'None'}
             </ResultDisplay>
           </DemoCard>
 
-          <DemoCard>
-            <h3>Disable Weekends</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Disable Weekends</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Select a workday"
   value={workweekRange}
   onChange={handleWorkweekRangeChange}
@@ -282,19 +395,20 @@ const DatePickerDemo: React.FC = () => {
               helperText="Only weekdays can be selected"
             />
 
-            <ResultDisplay>
-              Workweek: {workweekRange[0] ? workweekRange[0].toLocaleDateString() : 'None'} to {workweekRange[1] ? workweekRange[1].toLocaleDateString() : 'None'}
+            <ResultDisplay $themeStyles={themeStyles}>
+              Workweek: {workweekRange[0] ? workweekRange[0].toLocaleDateString() : 'None'} to{' '}
+              {workweekRange[1] ? workweekRange[1].toLocaleDateString() : 'None'}
             </ResultDisplay>
           </DemoCard>
         </DemoGrid>
       </DemoSection>
 
-      <DemoSection>
-        <DemoTitle>Form Integration</DemoTitle>
-        <DemoGrid>
-          <DemoCard>
-            <h3>Required Field</h3>
-            <CodeBlock>{`<DatePicker
+      <DemoSection $themeStyles={themeStyles}>
+        <DemoTitle $themeStyles={themeStyles}>Form Integration</DemoTitle>
+        <DemoGrid $themeStyles={themeStyles}>
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Required Field</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Required date"
   value={requiredDate}
   onChange={handleRequiredDateChange}
@@ -309,13 +423,13 @@ const DatePickerDemo: React.FC = () => {
               onChange={handleRequiredDateChange}
               required
               error={!requiredDate}
-              errorMessage={!requiredDate ? "Date is required" : undefined}
+              errorMessage={!requiredDate ? 'Date is required' : undefined}
             />
           </DemoCard>
 
-          <DemoCard>
-            <h3>Disabled Field</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>Disabled Field</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Disabled date picker"
   value={disabledDate}
   onChange={handleDisabledDateChange}
@@ -330,9 +444,9 @@ const DatePickerDemo: React.FC = () => {
             />
           </DemoCard>
 
-          <DemoCard>
-            <h3>With Future Date Validation</h3>
-            <CodeBlock>{`<DatePicker
+          <DemoCard $themeStyles={themeStyles}>
+            <CardTitle $themeStyles={themeStyles}>With Future Date Validation</CardTitle>
+            <CodeBlock $themeStyles={themeStyles}>{`<DatePicker
   label="Future date only"
   value={disabledDate}
   onChange={handleDisabledDateChange}
@@ -354,4 +468,4 @@ const DatePickerDemo: React.FC = () => {
   );
 };
 
-export { DatePickerDemo }; 
+export { DatePickerDemo };

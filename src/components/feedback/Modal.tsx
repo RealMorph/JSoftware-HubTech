@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { keyframes, css } from '@emotion/react';
-import { Theme } from '@emotion/react';
-import { getThemeValue } from '../../core/theme/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { FocusTrap } from '../utils/FocusTrap';
 
 // Types for modal props
@@ -10,77 +9,149 @@ export type ModalSize = 'small' | 'medium' | 'large' | 'full';
 export type ModalPosition = 'center' | 'top' | 'right' | 'bottom' | 'left';
 export type ModalAnimation = 'fade' | 'slide' | 'scale' | 'none';
 
+// Theme styles interface
+interface ThemeStyles {
+  colors: {
+    background: {
+      default: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    border: {
+      primary: string;
+    };
+  };
+  borders: {
+    radius: {
+      medium: string;
+    };
+  };
+  spacing: {
+    2: string;
+    3: string;
+    4: string;
+    5: string;
+  };
+  typography: {
+    scale: {
+      xl: string;
+    };
+    weights: {
+      semibold: string;
+    };
+  };
+}
+
+// Function to create theme styles from theme context
+const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+  return {
+    colors: {
+      background: {
+        default: themeContext.getColor('background.default', '#ffffff'),
+      },
+      text: {
+        primary: themeContext.getColor('text.primary', '#374151'),
+        secondary: themeContext.getColor('text.secondary', '#6b7280'),
+      },
+      border: {
+        primary: themeContext.getColor('border.primary', '#e5e7eb'),
+      },
+    },
+    borders: {
+      radius: {
+        medium: themeContext.getBorderRadius('medium', '4px'),
+      },
+    },
+    spacing: {
+      2: themeContext.getSpacing('2', '0.5rem'),
+      3: themeContext.getSpacing('3', '0.75rem'),
+      4: themeContext.getSpacing('4', '1rem'),
+      5: themeContext.getSpacing('5', '1.25rem'),
+    },
+    typography: {
+      scale: {
+        xl: String(themeContext.getTypography('scale.xl', '1.25rem')),
+      },
+      weights: {
+        semibold: String(themeContext.getTypography('weights.semibold', '600')),
+      },
+    },
+  };
+};
+
 export interface ModalProps {
   /**
    * Whether the modal is visible
    */
   isOpen: boolean;
-  
+
   /**
    * Function to call when the modal should close
    */
   onClose: () => void;
-  
+
   /**
    * Title of the modal
    */
   title?: React.ReactNode;
-  
+
   /**
    * Content of the modal
    */
   children: React.ReactNode;
-  
+
   /**
    * Footer content, typically action buttons
    */
   footer?: React.ReactNode;
-  
+
   /**
    * Size of the modal
    * @default 'medium'
    */
   size?: ModalSize;
-  
+
   /**
    * Position of the modal
    * @default 'center'
    */
   position?: ModalPosition;
-  
+
   /**
    * Animation style for the modal
    * @default 'fade'
    */
   animation?: ModalAnimation;
-  
+
   /**
    * Whether to close the modal when clicking the backdrop
    * @default true
    */
   closeOnBackdropClick?: boolean;
-  
+
   /**
    * Whether to close the modal when pressing the Escape key
    * @default true
    */
   closeOnEsc?: boolean;
-  
+
   /**
    * Additional class name for the modal
    */
   className?: string;
-  
+
   /**
    * ID for the modal (used for accessibility)
    */
   id?: string;
-  
+
   /**
    * ARIA label for the modal (used for accessibility when title is not provided)
    */
   ariaLabel?: string;
-  
+
   /**
    * ARIA description for the modal (used for accessibility)
    */
@@ -90,11 +161,16 @@ export interface ModalProps {
 // Utility for size-based widths
 const getModalWidth = (size: ModalSize): string => {
   switch (size) {
-    case 'small': return '400px';
-    case 'medium': return '600px';
-    case 'large': return '800px';
-    case 'full': return '95%';
-    default: return '600px';
+    case 'small':
+      return '400px';
+    case 'medium':
+      return '600px';
+    case 'large':
+      return '800px';
+    case 'full':
+      return '95%';
+    default:
+      return '600px';
   }
 };
 
@@ -129,14 +205,6 @@ const scaleOut = keyframes`
   to { transform: scale(0.9); opacity: 0; }
 `;
 
-// Helper for theme values
-const themeValue = (path: string, defaultValue?: string) => {
-  return (props: { theme: Theme }) => {
-    const value = getThemeValue(props.theme, path);
-    return value || defaultValue || '';
-  };
-};
-
 // Styled components
 interface ModalOverlayProps {
   isOpen: boolean;
@@ -154,7 +222,14 @@ const ModalOverlay = styled.div<ModalOverlayProps>`
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: ${props => props.isClosing ? css`${fadeOut} 0.2s ease-in-out` : css`${fadeIn} 0.2s ease-in-out`};
+  animation: ${props =>
+    props.isClosing
+      ? css`
+          ${fadeOut} 0.2s ease-in-out
+        `
+      : css`
+          ${fadeIn} 0.2s ease-in-out
+        `};
 `;
 
 interface ModalContainerProps {
@@ -162,11 +237,12 @@ interface ModalContainerProps {
   position: ModalPosition;
   animation: ModalAnimation;
   isClosing: boolean;
+  $themeStyles: ThemeStyles;
 }
 
 const ModalContainer = styled.div<ModalContainerProps>`
-  background-color: ${themeValue('colors.background.default', '#ffffff')};
-  border-radius: ${themeValue('borders.radius.medium', '4px')};
+  background-color: ${props => props.$themeStyles.colors.background.default};
+  border-radius: ${props => props.$themeStyles.borders.radius.medium};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: ${props => getModalWidth(props.size)};
   max-width: 95%;
@@ -175,7 +251,7 @@ const ModalContainer = styled.div<ModalContainerProps>`
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  
+
   ${props => {
     // Position styling
     switch (props.position) {
@@ -191,82 +267,84 @@ const ModalContainer = styled.div<ModalContainerProps>`
         return '';
     }
   }}
-  
+
   ${props => {
     // Animation styling
     if (props.animation === 'none') return '';
-    
+
     const getAnimation = () => {
       switch (props.animation) {
-        case 'fade':
-          return props.isClosing ? fadeOut : fadeIn;
         case 'slide':
           return props.isClosing ? slideOut : slideIn;
         case 'scale':
           return props.isClosing ? scaleOut : scaleIn;
+        case 'fade':
         default:
-          return fadeIn;
+          return props.isClosing ? fadeOut : fadeIn;
       }
     };
-    
-    return css`animation: ${getAnimation()} 0.2s ease-in-out;`;
+
+    return css`
+      animation: ${getAnimation()} 0.3s ease-in-out;
+    `;
   }}
 `;
 
-const ModalHeader = styled.div`
+const ModalHeader = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  border-bottom: 1px solid ${themeValue('colors.border.light', '#e0e0e0')};
+  padding: ${props => props.$themeStyles.spacing[4]};
+  border-bottom: 1px solid ${props => props.$themeStyles.colors.border.primary};
 `;
 
-const ModalTitle = styled.h2`
+const ModalTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
   margin: 0;
-  font-size: ${themeValue('typography.scale.lg', '18px')};
-  font-weight: ${themeValue('typography.weights.medium', '500')};
-  color: ${themeValue('colors.text.primary', '#333333')};
+  font-size: ${props => props.$themeStyles.typography.scale.xl};
+  font-weight: ${props => props.$themeStyles.typography.weights.semibold};
+  color: ${props => props.$themeStyles.colors.text.primary};
 `;
 
 const CloseButton = styled.button`
-  background: none;
+  background: transparent;
   border: none;
+  font-size: 1.5rem;
   cursor: pointer;
-  padding: 8px;
+  padding: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${themeValue('colors.text.secondary', '#666666')};
-  transition: color 0.2s;
-  
+  line-height: 1;
+
   &:hover {
-    color: ${themeValue('colors.text.primary', '#333333')};
+    opacity: 0.7;
   }
-  
+
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px ${themeValue('colors.primary.main', '#0066cc')};
-    border-radius: 4px;
+    opacity: 0.7;
   }
 `;
 
-const ModalBody = styled.div`
-  padding: 24px;
-  overflow-y: auto;
+const ModalBody = styled.div<{ $themeStyles: ThemeStyles }>`
   flex: 1;
-  color: ${themeValue('colors.text.primary', '#333333')};
+  padding: ${props => props.$themeStyles.spacing[4]};
+  overflow-y: auto;
 `;
 
-const ModalFooter = styled.div`
-  padding: 16px 24px;
+const ModalFooter = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  border-top: 1px solid ${themeValue('colors.border.light', '#e0e0e0')};
+  padding: ${props => props.$themeStyles.spacing[3]} ${props => props.$themeStyles.spacing[4]};
+  border-top: 1px solid ${props => props.$themeStyles.colors.border.primary};
+
+  & > * + * {
+    margin-left: ${props => props.$themeStyles.spacing[2]};
+  }
 `;
 
 /**
- * Modal/Dialog component for displaying content in an overlay with various sizes, positions, and animations.
+ * Modal component for displaying content in an overlay
  */
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -285,74 +363,55 @@ export const Modal: React.FC<ModalProps> = ({
   ariaDescription,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
-  const [isVisible, setIsVisible] = useState(isOpen);
   const modalRef = useRef<HTMLDivElement>(null);
-  
-  // Handle modal closing with animation
+  const [isInDom, setIsInDom] = useState(isOpen);
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  // Handle closing animation
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
       setIsClosing(false);
-      setIsVisible(false);
       onClose();
+      setIsInDom(false);
     }, 200); // Match animation duration
   }, [onClose]);
-  
-  // Handle backdrop click
-  const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (closeOnBackdropClick && e.target === e.currentTarget) {
-      handleClose();
-    }
-  }, [closeOnBackdropClick, handleClose]);
-  
-  // Handle Escape key press
+
+  // Handle escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (closeOnEsc && e.key === 'Escape' && isVisible) {
+      if (closeOnEsc && e.key === 'Escape' && isOpen) {
         handleClose();
       }
     };
-    
-    if (isVisible) {
+
+    if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
+      setIsInDom(true);
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = ''; // Restore scrolling
     }
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = ''; // Ensure scrolling is restored
     };
-  }, [closeOnEsc, isVisible, handleClose]);
-  
-  // Handle body scroll locking
-  useEffect(() => {
-    if (isOpen) {
-      setIsVisible(true);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+  }, [isOpen, closeOnEsc, handleClose]);
+
+  // Handle backdrop click
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (closeOnBackdropClick && e.target === e.currentTarget) {
+      handleClose();
     }
-    
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-  
-  // If the modal is not visible at all, don't render anything
-  if (!isOpen && !isVisible) {
-    return null;
-  }
-  
+  };
+
+  if (!isInDom) return null;
+
   return (
-    <ModalOverlay 
-      isOpen={isVisible} 
-      isClosing={isClosing}
-      onClick={handleBackdropClick}
-      aria-modal="true"
-      role="dialog"
-      aria-labelledby={title ? `modal-title-${id}` : undefined}
-      aria-describedby={ariaDescription ? `modal-desc-${id}` : undefined}
-      aria-label={!title ? ariaLabel : undefined}
-    >
-      <FocusTrap active={isVisible}>
+    <ModalOverlay isOpen={isOpen} isClosing={isClosing} onClick={handleBackdropClick}>
+      <FocusTrap active={isOpen}>
         <ModalContainer
           ref={modalRef}
           size={size}
@@ -361,34 +420,38 @@ export const Modal: React.FC<ModalProps> = ({
           isClosing={isClosing}
           className={className}
           id={id}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? `modal-title-${id}` : undefined}
+          aria-label={!title ? ariaLabel : undefined}
+          aria-describedby={ariaDescription ? `modal-desc-${id}` : undefined}
+          $themeStyles={themeStyles}
         >
           {title && (
-            <ModalHeader>
-              <ModalTitle id={id ? `modal-title-${id}` : undefined}>
+            <ModalHeader $themeStyles={themeStyles}>
+              <ModalTitle id={`modal-title-${id}`} $themeStyles={themeStyles}>
                 {title}
               </ModalTitle>
-              <CloseButton 
-                onClick={handleClose}
-                aria-label="Close modal"
-              >
-                ✕
+              <CloseButton aria-label="Close modal" onClick={handleClose}>
+                ×
               </CloseButton>
             </ModalHeader>
           )}
-          
-          <ModalBody id={ariaDescription ? `modal-desc-${id}` : undefined}>
+
+          <ModalBody $themeStyles={themeStyles}>
+            {ariaDescription && (
+              <div id={`modal-desc-${id}`} className="sr-only">
+                {ariaDescription}
+              </div>
+            )}
             {children}
           </ModalBody>
-          
-          {footer && (
-            <ModalFooter>
-              {footer}
-            </ModalFooter>
-          )}
+
+          {footer && <ModalFooter $themeStyles={themeStyles}>{footer}</ModalFooter>}
         </ModalContainer>
       </FocusTrap>
     </ModalOverlay>
   );
 };
 
-export default Modal; 
+export default Modal;

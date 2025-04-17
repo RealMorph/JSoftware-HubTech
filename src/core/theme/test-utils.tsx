@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { ThemeProvider } from './ThemeProvider';
+import { DirectThemeProvider } from './DirectThemeProvider';
 import { ThemeConfig } from './consolidated-types';
 import merge from 'lodash/merge';
 import { createMockTheme, validateTestTheme } from './test-theme-validator';
@@ -27,25 +28,25 @@ export function renderWithTheme(
   options: RenderWithThemeOptions = {}
 ): RenderResult & { theme: ThemeConfig } {
   const { theme: customTheme, ...renderOptions } = options;
-  
+
   // Create a base mock theme
   const mockTheme = createMockTheme();
-  
+
   // Merge with any custom theme props
   const mergedTheme = customTheme
     ? validateTestTheme(merge({}, mockTheme, customTheme))
     : mockTheme;
-  
-  // Create a wrapper with the theme provider
+
+  // Create a wrapper with both theme providers to ensure compatibility with all components
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <ThemeProvider initialTheme={mergedTheme}>
-      {children}
+      <DirectThemeProvider initialTheme={mergedTheme}>{children}</DirectThemeProvider>
     </ThemeProvider>
   );
-  
+
   // Render with the wrapper
   const result = render(ui, { wrapper: Wrapper, ...renderOptions });
-  
+
   // Return the result with the theme
   return {
     ...result,
@@ -56,7 +57,7 @@ export function renderWithTheme(
 /**
  * Creates a test ThemeProvider component with a specific theme
  * Useful for testing theme-dependent components
- * 
+ *
  * @param customTheme Optional partial theme to override defaults
  * @returns A themed provider component to wrap test components
  */
@@ -65,16 +66,16 @@ export function createTestThemeProvider(customTheme?: Partial<ThemeConfig>): Rea
 }> {
   // Create a base mock theme
   const mockTheme = createMockTheme();
-  
+
   // Merge with any custom theme props
   const mergedTheme = customTheme
     ? validateTestTheme(merge({}, mockTheme, customTheme))
     : mockTheme;
-  
-  // Return a themed provider component
+
+  // Return a themed provider component that uses both theme providers
   return ({ children }) => (
     <ThemeProvider initialTheme={mergedTheme}>
-      {children}
+      <DirectThemeProvider initialTheme={mergedTheme}>{children}</DirectThemeProvider>
     </ThemeProvider>
   );
-} 
+}

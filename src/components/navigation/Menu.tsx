@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { getThemeValue } from '../../core/theme/styled';
-import { useTheme } from '../../core/theme/ThemeProvider';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // Types
 export interface MenuItem {
@@ -57,45 +55,91 @@ export interface MenuProps {
   closeOnClick?: boolean;
 }
 
+// Theme styles interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textPrimaryColor: string;
+  textDisabledColor: string;
+  primaryMainColor: string;
+  primaryDarkColor: string;
+  borderLightColor: string;
+  fontFamily: string;
+  borderRadius: string;
+  shadowMd: string;
+  gray100: string;
+  gray200: string;
+}
+
+// Function to create theme styles
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    backgroundColor: getColor('background.paper', '#ffffff'),
+    textPrimaryColor: getColor('text.primary', '#333333'),
+    textDisabledColor: getColor('text.disabled', '#999999'),
+    primaryMainColor: getColor('primary.main', '#1976d2'),
+    primaryDarkColor: getColor('primary.dark', '#115293'),
+    borderLightColor: getColor('border.light', '#e0e0e0'),
+    fontFamily: getTypography('family.primary', 'system-ui') as string,
+    borderRadius: getBorderRadius('md', '4px'),
+    shadowMd: getShadow('md', '0 4px 6px rgba(0, 0, 0, 0.1)'),
+    gray100: getColor('gray.100', '#f5f5f5'),
+    gray200: getColor('gray.200', '#eeeeee'),
+  };
+}
+
 // Styled components
 const MenuContainer = styled.div<{
   variant: 'vertical' | 'horizontal' | 'dropdown';
   width?: string;
+  $themeStyles: ThemeStyles;
 }>`
   display: flex;
-  flex-direction: ${props => props.variant === 'horizontal' ? 'row' : 'column'};
-  background-color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.background.paper')};
-  border-radius: ${props => getThemeValue(props.theme as ThemeConfig, 'borderRadius.md')};
-  box-shadow: ${props => props.variant === 'dropdown' ? getThemeValue(props.theme as ThemeConfig, 'shadows.md') : 'none'};
-  border: ${props => props.variant === 'dropdown' ? `1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.light')}` : 'none'};
-  font-family: ${props => getThemeValue(props.theme as ThemeConfig, 'typography.family.primary')};
+  flex-direction: ${props => (props.variant === 'horizontal' ? 'row' : 'column')};
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  box-shadow: ${props => (props.variant === 'dropdown' ? props.$themeStyles.shadowMd : 'none')};
+  border: ${props =>
+    props.variant === 'dropdown' ? `1px solid ${props.$themeStyles.borderLightColor}` : 'none'};
+  font-family: ${props => props.$themeStyles.fontFamily};
   overflow: hidden;
-  width: ${props => props.width || (props.variant === 'vertical' || props.variant === 'dropdown' ? '220px' : 'auto')};
+  width: ${props =>
+    props.width ||
+    (props.variant === 'vertical' || props.variant === 'dropdown' ? '220px' : 'auto')};
 `;
 
 interface MenuListProps {
   variant: 'vertical' | 'horizontal' | 'dropdown';
   bordered?: boolean;
   dividers?: boolean;
+  $themeStyles: ThemeStyles;
 }
 
 const MenuList = styled.ul<MenuListProps>`
   list-style: none;
   margin: 0;
-  padding: ${props => props.variant === 'dropdown' ? '4px 0' : '0'};
+  padding: ${props => (props.variant === 'dropdown' ? '4px 0' : '0')};
   display: flex;
-  flex-direction: ${props => props.variant === 'horizontal' ? 'row' : 'column'};
+  flex-direction: ${props => (props.variant === 'horizontal' ? 'row' : 'column')};
   width: 100%;
-  border: ${props => props.bordered ? `1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.light')}` : 'none'};
-  border-radius: ${props => props.bordered ? getThemeValue(props.theme as ThemeConfig, 'borderRadius.md') : '0'};
-  
+  border: ${props =>
+    props.bordered ? `1px solid ${props.$themeStyles.borderLightColor}` : 'none'};
+  border-radius: ${props => (props.bordered ? props.$themeStyles.borderRadius : '0')};
+
   & > li:not(:last-child) {
-    ${props => props.dividers && props.variant !== 'horizontal' && `
-      border-bottom: 1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.light')};
+    ${props =>
+      props.dividers &&
+      props.variant !== 'horizontal' &&
+      `
+      border-bottom: 1px solid ${props.$themeStyles.borderLightColor};
     `}
-    
-    ${props => props.dividers && props.variant === 'horizontal' && `
-      border-right: 1px solid ${getThemeValue(props.theme as ThemeConfig, 'colors.border.light')};
+
+    ${props =>
+      props.dividers &&
+      props.variant === 'horizontal' &&
+      `
+      border-right: 1px solid ${props.$themeStyles.borderLightColor};
     `}
   }
 `;
@@ -109,11 +153,12 @@ interface MenuItemProps {
   variant: 'vertical' | 'horizontal' | 'dropdown';
   compact?: boolean;
   href?: string;
+  $themeStyles?: ThemeStyles;
 }
 
 const StyledMenuItem = styled.li<MenuItemProps>`
   position: relative;
-  
+
   &:hover > ul {
     display: block;
   }
@@ -127,45 +172,59 @@ const MenuItemContent = styled.div<MenuItemProps>`
       return props.variant === 'horizontal' ? '6px 10px' : '6px 12px';
     }
     switch (props.size) {
-      case 'small': return props.variant === 'horizontal' ? '6px 10px' : '6px 12px';
-      case 'large': return props.variant === 'horizontal' ? '12px 20px' : '12px 16px';
-      default: return props.variant === 'horizontal' ? '8px 16px' : '8px 12px';
+      case 'small':
+        return props.variant === 'horizontal' ? '6px 10px' : '6px 12px';
+      case 'large':
+        return props.variant === 'horizontal' ? '12px 20px' : '12px 16px';
+      default:
+        return props.variant === 'horizontal' ? '8px 16px' : '8px 12px';
     }
   }};
-  cursor: ${props => props.disabled ? 'default' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'default' : 'pointer')};
   color: ${props => {
     if (props.disabled) {
-      return getThemeValue(props.theme as ThemeConfig, 'colors.text.disabled');
+      return props.$themeStyles?.textDisabledColor;
     }
     if (props.selected) {
-      return getThemeValue(props.theme as ThemeConfig, 'colors.primary.main');
+      return props.$themeStyles?.primaryMainColor;
     }
-    return getThemeValue(props.theme as ThemeConfig, 'colors.text.primary');
+    return props.$themeStyles?.textPrimaryColor;
   }};
-  background-color: ${props => props.selected ? getThemeValue(props.theme as ThemeConfig, 'colors.gray.100') : 'transparent'};
+  background-color: ${props => (props.selected ? props.$themeStyles?.gray100 : 'transparent')};
   font-size: ${props => {
     switch (props.size) {
-      case 'small': return '13px';
-      case 'large': return '16px';
-      default: return '14px';
+      case 'small':
+        return '13px';
+      case 'large':
+        return '16px';
+      default:
+        return '14px';
     }
   }};
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.2s, color 0.2s;
-  
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+
   &:hover {
-    ${props => !props.disabled && `
-      background-color: ${getThemeValue(props.theme as ThemeConfig, 'colors.gray.100')};
-      color: ${props.selected 
-        ? getThemeValue(props.theme as ThemeConfig, 'colors.primary.dark')
-        : getThemeValue(props.theme as ThemeConfig, 'colors.text.primary')};
+    ${props =>
+      !props.disabled &&
+      props.$themeStyles &&
+      `
+      background-color: ${props.$themeStyles.gray100};
+      color: ${
+        props.selected ? props.$themeStyles.primaryDarkColor : props.$themeStyles.textPrimaryColor
+      };
     `}
   }
-  
+
   &:active {
-    ${props => !props.disabled && `
-      background-color: ${getThemeValue(props.theme as ThemeConfig, 'colors.gray.200')};
+    ${props =>
+      !props.disabled &&
+      props.$themeStyles &&
+      `
+      background-color: ${props.$themeStyles.gray200};
     `}
   }
 `;
@@ -175,7 +234,7 @@ const MenuItemIconWrapper = styled.span<{ isDisabled?: boolean }>`
   align-items: center;
   margin-right: 8px;
   font-size: 18px;
-  opacity: ${props => props.isDisabled ? 0.5 : 1};
+  opacity: ${props => (props.isDisabled ? 0.5 : 1)};
 `;
 
 const MenuItemLabel = styled.span`
@@ -190,45 +249,57 @@ const SubMenuIndicator = styled.span`
 `;
 
 const SubMenuList = styled(MenuList)<MenuListProps & { isOpen?: boolean; position?: string }>`
-  display: ${props => props.isOpen ? 'block' : 'none'};
+  display: ${props => (props.isOpen ? 'block' : 'none')};
   position: absolute;
   z-index: 1000;
-  background-color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.background.paper')};
+  background-color: ${props => props.$themeStyles.backgroundColor};
   min-width: 160px;
-  box-shadow: ${props => getThemeValue(props.theme as ThemeConfig, 'shadows.md')};
-  border: 1px solid ${props => getThemeValue(props.theme as ThemeConfig, 'colors.border.light')};
-  border-radius: ${props => getThemeValue(props.theme as ThemeConfig, 'borderRadius.md')};
+  box-shadow: ${props => props.$themeStyles.shadowMd};
+  border: 1px solid ${props => props.$themeStyles.borderLightColor};
+  border-radius: ${props => props.$themeStyles.borderRadius};
   padding: 4px 0;
-  
+
   /* Top/bottom positioning based on position prop */
-  ${props => props.position?.startsWith('bottom') && `
+  ${props =>
+    props.position?.startsWith('bottom') &&
+    `
     top: 100%;
     margin-top: 4px;
   `}
-  
-  ${props => props.position?.startsWith('top') && `
+
+  ${props =>
+    props.position?.startsWith('top') &&
+    `
     bottom: 100%;
     margin-bottom: 4px;
   `}
   
   /* Left/right positioning based on position prop */
-  ${props => (props.position === 'bottom-start' || props.position === 'top-start') && `
+  ${props =>
+    (props.position === 'bottom-start' || props.position === 'top-start') &&
+    `
     left: 0;
   `}
   
-  ${props => (props.position === 'bottom-end' || props.position === 'top-end') && `
+  ${props =>
+    (props.position === 'bottom-end' || props.position === 'top-end') &&
+    `
     right: 0;
   `}
   
   /* For submenu of vertical menu items */
-  ${props => props.variant === 'vertical' && `
+  ${props =>
+    props.variant === 'vertical' &&
+    `
     top: 0;
     left: 100%;
     margin-left: 1px;
   `}
   
   /* For submenu of horizontal menu items */
-  ${props => props.variant === 'horizontal' && `
+  ${props =>
+    props.variant === 'horizontal' &&
+    `
     top: 100%;
     left: 0;
     margin-top: 0;
@@ -252,36 +323,37 @@ export const Menu: React.FC<MenuProps> = ({
   width,
   closeOnClick = true,
 }) => {
-  const { currentTheme } = useTheme();
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
   const menuRef = useRef<HTMLDivElement>(null);
-  
+
   // Close dropdown menu when clicking outside (for dropdown variant)
   useEffect(() => {
     if (variant !== 'dropdown' || isOpen === undefined) return;
-    
+
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         onOpenChange?.(false);
       }
     };
-    
+
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onOpenChange, variant]);
-  
+
   // Recursive function to render menu items
   const renderMenuItem = (item: MenuItem, isSubmenu = false) => {
     const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
     const hasSubmenu = !!(item.subItems && item.subItems.length > 0);
-    
+
     const handleClick = () => {
       if (item.disabled) return;
-      
+
       if (hasSubmenu) {
         setIsSubMenuOpen(!isSubMenuOpen);
       } else {
@@ -291,12 +363,12 @@ export const Menu: React.FC<MenuProps> = ({
         }
       }
     };
-    
+
     // If a custom renderer is provided, use it
     if (renderItem) {
       return renderItem(item);
     }
-    
+
     // Determine what type of element to render
     const renderMenuItemContent = () => {
       const commonProps = {
@@ -306,50 +378,37 @@ export const Menu: React.FC<MenuProps> = ({
         hasSubmenu: hasSubmenu,
         size: size,
         variant: variant,
-        compact: compact
+        compact: compact,
+        $themeStyles: themeStyles,
       };
 
       if (item.href && !item.disabled) {
         return (
           <MenuItemContent as="a" href={item.href} {...commonProps}>
             {showIcons && item.icon && (
-              <MenuItemIconWrapper isDisabled={item.disabled}>
-                {item.icon}
-              </MenuItemIconWrapper>
+              <MenuItemIconWrapper isDisabled={item.disabled}>{item.icon}</MenuItemIconWrapper>
             )}
             <MenuItemLabel>{item.label}</MenuItemLabel>
             {hasSubmenu && (
-              <SubMenuIndicator>
-                {variant === 'vertical' ? '›' : '▾'}
-              </SubMenuIndicator>
+              <SubMenuIndicator>{variant === 'vertical' ? '›' : '▾'}</SubMenuIndicator>
             )}
           </MenuItemContent>
         );
       }
-      
+
       return (
-        <MenuItemContent 
-          as="div" 
-          onClick={handleClick} 
-          {...commonProps}
-        >
+        <MenuItemContent as="div" onClick={handleClick} {...commonProps}>
           {showIcons && item.icon && (
-            <MenuItemIconWrapper isDisabled={item.disabled}>
-              {item.icon}
-            </MenuItemIconWrapper>
+            <MenuItemIconWrapper isDisabled={item.disabled}>{item.icon}</MenuItemIconWrapper>
           )}
           <MenuItemLabel>{item.label}</MenuItemLabel>
-          {hasSubmenu && (
-            <SubMenuIndicator>
-              {variant === 'vertical' ? '›' : '▾'}
-            </SubMenuIndicator>
-          )}
+          {hasSubmenu && <SubMenuIndicator>{variant === 'vertical' ? '›' : '▾'}</SubMenuIndicator>}
         </MenuItemContent>
       );
     };
-    
+
     return (
-      <StyledMenuItem 
+      <StyledMenuItem
         key={item.id}
         selected={item.selected}
         disabled={item.disabled}
@@ -358,11 +417,12 @@ export const Menu: React.FC<MenuProps> = ({
         size={size}
         variant={variant}
         compact={compact}
+        $themeStyles={themeStyles}
         onMouseEnter={() => variant !== 'dropdown' && hasSubmenu && setIsSubMenuOpen(true)}
         onMouseLeave={() => variant !== 'dropdown' && hasSubmenu && setIsSubMenuOpen(false)}
       >
         {renderMenuItemContent()}
-        
+
         {hasSubmenu && (
           <SubMenuList
             variant={variant}
@@ -370,6 +430,7 @@ export const Menu: React.FC<MenuProps> = ({
             dividers={dividers}
             isOpen={isSubMenuOpen}
             position={isSubmenu ? undefined : dropdownPosition}
+            $themeStyles={themeStyles}
           >
             {item.subItems!.map(subItem => renderMenuItem(subItem, true))}
           </SubMenuList>
@@ -377,21 +438,23 @@ export const Menu: React.FC<MenuProps> = ({
       </StyledMenuItem>
     );
   };
-  
+
   return (
-    <MenuContainer 
-      variant={variant} 
-      className={className} 
+    <MenuContainer
+      variant={variant}
+      className={className}
       ref={menuRef}
       width={width}
+      $themeStyles={themeStyles}
     >
-      <MenuList 
-        variant={variant} 
-        bordered={bordered} 
+      <MenuList
+        variant={variant}
+        bordered={bordered}
         dividers={dividers}
+        $themeStyles={themeStyles}
       >
         {items.map(item => renderMenuItem(item))}
       </MenuList>
     </MenuContainer>
   );
-}; 
+};

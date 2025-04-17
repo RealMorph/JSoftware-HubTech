@@ -1,6 +1,49 @@
 import { jsx as _jsx } from 'react/jsx-runtime';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { applyTheme } from './theme-system';
+import { modernTheme } from './modern-theme';
+
+// Define ThemeService interface and implementations directly in this file
+// to avoid circular dependencies
+export class ThemeService {
+  // This is just a placeholder - the actual implementation is in theme-context.ts
+  getDefaultTheme() { return {}; }
+  getDarkTheme() { return null; }
+  getLightTheme() { return null; }
+}
+
+// Simple InMemoryThemeService implementation
+class InMemoryThemeService extends ThemeService {
+  constructor(defaultTheme = modernTheme) {
+    super();
+    this.defaultTheme = defaultTheme;
+    this.lightTheme = defaultTheme;
+    this.darkTheme = null;
+  }
+  
+  getDefaultTheme() {
+    return this.defaultTheme;
+  }
+  
+  getDarkTheme() {
+    return this.darkTheme;
+  }
+  
+  getLightTheme() {
+    return this.lightTheme;
+  }
+  
+  setDefaultTheme(theme) {
+    this.defaultTheme = theme;
+  }
+}
+
+// Create and export the context and service
+export const inMemoryThemeService = new InMemoryThemeService();
+export const ThemeServiceContext = createContext(inMemoryThemeService);
+export const useThemeService = () => useContext(ThemeServiceContext);
+
+// Original theme context for backward compatibility
 const ThemeContext = createContext(null);
 export function ThemeProvider({ children, themeService }) {
   const [currentTheme, setCurrentTheme] = useState(null);

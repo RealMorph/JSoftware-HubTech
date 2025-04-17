@@ -18,7 +18,7 @@ export const defaultTheme: ThemeConfig = {
     text: {
       primary: '#000000',
       secondary: '#3C3C43',
-      disabled: '#999999'
+      disabled: '#999999',
     },
     background: '#FFFFFF',
     border: '#C7C7CC',
@@ -28,8 +28,9 @@ export const defaultTheme: ThemeConfig = {
   typography: {
     fontFamily: {
       base: 'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
-      heading: 'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
-      monospace: 'SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace'
+      heading:
+        'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
+      monospace: 'SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
     },
     fontSize: {
       xs: '0.75rem',

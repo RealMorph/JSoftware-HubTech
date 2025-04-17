@@ -59,10 +59,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
     const getPaddingValue = (): string => {
       switch (padding) {
-        case 'none': return '0';
-        case 'small': return getSpacing('4', '1rem');
-        case 'large': return getSpacing('8', '2rem');
-        default: return getSpacing('6', '1.5rem'); // medium (default)
+        case 'none':
+          return '0';
+        case 'small':
+          return getSpacing('4', '1rem');
+        case 'large':
+          return getSpacing('8', '2rem');
+        default:
+          return getSpacing('6', '1.5rem'); // medium (default)
       }
     };
 
@@ -88,7 +92,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     };
 
     const getMediumElevation = (): string => {
-      return getShadow('md', '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)');
+      return getShadow(
+        'md',
+        '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+      );
     };
 
     const styles: React.CSSProperties = {
@@ -146,7 +153,7 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => {
   const { getSpacing, getColor } = useDirectTheme();
-  
+
   const customStyles: React.CSSProperties = {
     padding: getSpacing('4', '1rem'),
     borderBottom: `1px solid ${getColor('gray.100', '#f3f4f6')}`,
@@ -178,7 +185,7 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => {
   const { getSpacing, getColor } = useDirectTheme();
-  
+
   const customStyles: React.CSSProperties = {
     padding: getSpacing('4', '1rem'),
     borderTop: `1px solid ${getColor('gray.100', '#f3f4f6')}`,
@@ -190,4 +197,4 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
       {children}
     </StyledCardFooter>
   );
-}; 
+};

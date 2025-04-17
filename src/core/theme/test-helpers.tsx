@@ -13,7 +13,7 @@ export interface RenderWithThemeOptions extends Omit<RenderOptions, 'wrapper'> {
 
 /**
  * Renders a component with ThemeProvider for testing
- * 
+ *
  * @param ui - The React component to render
  * @param options - Optional render options including a partial theme to merge with mockTheme
  * @returns The render result with additional theme utilities
@@ -23,13 +23,11 @@ export function renderWithTheme(
   { theme, ...options }: RenderWithThemeOptions = {}
 ): RenderResult & { theme: ThemeConfig } {
   const mergedTheme = theme ? merge({}, mockTheme, theme) : mockTheme;
-  
+
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <ThemeProvider theme={mergedTheme}>
-      {children}
-    </ThemeProvider>
+    <ThemeProvider theme={mergedTheme}>{children}</ThemeProvider>
   );
-  
+
   return {
     ...render(ui, { wrapper: Wrapper, ...options }),
     theme: mergedTheme,
@@ -83,13 +81,13 @@ export function testThemePropertyApplication(
 ) {
   // Create theme with test value
   const testTheme = createThemeWithValue(themePath, expectedValue);
-  
+
   // Render with test theme
   const { container } = renderWithTheme(<Component {...props} />, { theme: testTheme });
-  
+
   // Find element (either by selector or first child)
   const element = selector ? container.querySelector(selector) : container.firstChild;
-  
+
   // If element found, check its style
   if (element instanceof HTMLElement) {
     expectElementStyleToMatchTheme(element, cssProperty, expectedValue);
@@ -105,12 +103,14 @@ export function testThemePropertyApplication(
 export function createThemeVariationTests(
   Component: React.ComponentType<any>,
   props: any,
-  themeVariations: Array<{path: string, value: any}>
+  themeVariations: Array<{ path: string; value: any }>
 ) {
   themeVariations.forEach(({ path, value }) => {
     const testTheme = createThemeWithValue(path, value);
     const { container } = renderWithTheme(<Component {...props} />, { theme: testTheme });
-    expect(container).toMatchSnapshot(`${Component.displayName || 'Component'} with ${path}=${value}`);
+    expect(container).toMatchSnapshot(
+      `${Component.displayName || 'Component'} with ${path}=${value}`
+    );
   });
 }
 
@@ -125,22 +125,20 @@ export function verifyThemeRequirements(
   const missingPaths = requiredPaths.filter(path => get(theme, path) === undefined);
   return {
     valid: missingPaths.length === 0,
-    missingPaths
+    missingPaths,
   };
 }
 
 /**
  * Creates a test provider component with the specified theme
- * 
+ *
  * @param theme - Optional partial theme to merge with mockTheme
  * @returns A ThemeProvider component with the specified theme
  */
 export function createTestThemeProvider(theme?: Partial<ThemeConfig>) {
   const mergedTheme = theme ? merge({}, mockTheme, theme) : mockTheme;
-  
+
   return ({ children }: { children: React.ReactNode }) => (
-    <ThemeProvider theme={mergedTheme}>
-      {children}
-    </ThemeProvider>
+    <ThemeProvider theme={mergedTheme}>{children}</ThemeProvider>
   );
-} 
+}

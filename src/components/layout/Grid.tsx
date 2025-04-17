@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // === Types ===
 type GridProps = {
@@ -12,8 +11,22 @@ type GridProps = {
   autoFlow?: 'row' | 'column' | 'dense' | 'row dense' | 'column dense';
   alignItems?: 'start' | 'end' | 'center' | 'stretch';
   justifyItems?: 'start' | 'end' | 'center' | 'stretch';
-  alignContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-between' | 'space-around' | 'space-evenly';
-  justifyContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-between' | 'space-around' | 'space-evenly';
+  alignContent?:
+    | 'start'
+    | 'end'
+    | 'center'
+    | 'stretch'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
+  justifyContent?:
+    | 'start'
+    | 'end'
+    | 'center'
+    | 'stretch'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
   fullWidth?: boolean;
   fullHeight?: boolean;
   testId?: string;
@@ -36,7 +49,14 @@ type RowProps = {
   className?: string;
   gap?: string | number;
   alignItems?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
-  justifyContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-between' | 'space-around' | 'space-evenly';
+  justifyContent?:
+    | 'start'
+    | 'end'
+    | 'center'
+    | 'stretch'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
   wrap?: boolean | 'nowrap' | 'wrap' | 'wrap-reverse';
   fullWidth?: boolean;
   testId?: string;
@@ -56,19 +76,27 @@ type ColProps = {
 };
 
 // Utility functions
-const processGap = (gapValue: string | number | undefined, getSpacing: (key: string, fallback?: string) => string): string => {
+/* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
+const processGap = (
+  gapValue: string | number | undefined,
+  /* eslint-disable-next-line no-unused-vars */
+  getSpacing: (key: string, fallback?: string) => string
+): string => {
   if (gapValue === undefined) {
     return getSpacing('md', '1rem');
   }
-  
+
   if (typeof gapValue === 'number') {
     return `${gapValue}px`;
   }
-  
+
   return gapValue;
 };
 
-const getResponsiveValue = (value: any, defaultValue: number = 0) => {
+const getResponsiveValue = (
+  value: number | { [key: string]: number },
+  defaultValue: number = 0
+) => {
   if (typeof value === 'object') {
     // Base implementation - would need media queries for responsive
     return value.base || defaultValue;
@@ -79,9 +107,9 @@ const getResponsiveValue = (value: any, defaultValue: number = 0) => {
 // === Styled Components ===
 const StyledGrid = styled.div<Omit<GridProps, 'testId' | 'children' | 'className'>>`
   display: grid;
-  grid-template-columns: ${({ columns }) => 
+  grid-template-columns: ${({ columns }) =>
     columns ? (typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns) : undefined};
-  grid-template-rows: ${({ rows }) => 
+  grid-template-rows: ${({ rows }) =>
     rows ? (typeof rows === 'number' ? `repeat(${rows}, auto)` : rows) : undefined};
   grid-auto-flow: ${({ autoFlow }) => autoFlow || undefined};
   gap: ${({ gap, theme }) => {
@@ -94,8 +122,8 @@ const StyledGrid = styled.div<Omit<GridProps, 'testId' | 'children' | 'className
   justify-items: ${({ justifyItems }) => justifyItems || undefined};
   align-content: ${({ alignContent }) => alignContent || undefined};
   justify-content: ${({ justifyContent }) => justifyContent || undefined};
-  width: ${({ fullWidth }) => fullWidth ? '100%' : undefined};
-  height: ${({ fullHeight }) => fullHeight ? '100%' : undefined};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : undefined)};
+  height: ${({ fullHeight }) => (fullHeight ? '100%' : undefined)};
 `;
 
 const StyledGridItem = styled.div<Omit<GridItemProps, 'testId' | 'children' | 'className'>>`
@@ -115,8 +143,7 @@ const StyledGridItem = styled.div<Omit<GridItemProps, 'testId' | 'children' | 'c
 const StyledRow = styled.div<Omit<RowProps, 'testId' | 'children' | 'className'>>`
   display: flex;
   flex-direction: row;
-  flex-wrap: ${({ wrap }) => 
-    wrap === true ? 'wrap' : (typeof wrap === 'string' ? wrap : 'nowrap')};
+  flex-wrap: ${({ wrap }) => (wrap === true ? 'wrap' : typeof wrap === 'string' ? wrap : 'nowrap')};
   gap: ${({ gap, theme }) => {
     // Handle both numeric and string gaps
     if (gap === undefined) return theme.spacing?.md || '1rem';
@@ -125,14 +152,14 @@ const StyledRow = styled.div<Omit<RowProps, 'testId' | 'children' | 'className'>
   }};
   align-items: ${({ alignItems }) => alignItems || undefined};
   justify-content: ${({ justifyContent }) => justifyContent || undefined};
-  width: ${({ fullWidth }) => fullWidth ? '100%' : undefined};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : undefined)};
 `;
 
 const StyledCol = styled.div<Omit<ColProps, 'testId' | 'children' | 'className'>>`
   display: flex;
   flex-direction: column;
   flex-grow: ${({ grow }) => grow || undefined};
-  flex-shrink: ${({ shrink }) => shrink !== undefined ? shrink : 1};
+  flex-shrink: ${({ shrink }) => (shrink !== undefined ? shrink : 1)};
   flex-basis: ${({ basis }) => basis || undefined};
   align-self: ${({ alignSelf }) => alignSelf || undefined};
   order: ${({ order }) => order || undefined};
@@ -162,7 +189,7 @@ export const Grid = ({
   justifyContent,
   fullWidth,
   fullHeight,
-  testId
+  testId,
 }: GridProps) => {
   return (
     <StyledGrid
@@ -193,7 +220,7 @@ export const GridItem = ({
   rowStart,
   alignSelf,
   justifySelf,
-  testId
+  testId,
 }: GridItemProps) => {
   return (
     <StyledGridItem
@@ -219,7 +246,7 @@ export const Row = ({
   justifyContent,
   wrap,
   fullWidth,
-  testId
+  testId,
 }: RowProps) => {
   return (
     <StyledRow
@@ -246,7 +273,7 @@ export const Col = ({
   grow,
   shrink,
   basis,
-  testId
+  testId,
 }: ColProps) => {
   return (
     <StyledCol
@@ -263,4 +290,4 @@ export const Col = ({
       {children}
     </StyledCol>
   );
-}; 
+};

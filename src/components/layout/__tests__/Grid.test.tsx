@@ -6,11 +6,7 @@ import { DirectThemeProvider } from '../../../core/theme/DirectThemeProvider';
 import { extendedMockTheme } from '../../../core/theme/__mocks__/mockTheme';
 
 const renderWithTheme = (ui: React.ReactElement) => {
-  return render(
-    <DirectThemeProvider initialTheme={extendedMockTheme}>
-      {ui}
-    </DirectThemeProvider>
-  );
+  return render(<DirectThemeProvider initialTheme={extendedMockTheme}>{ui}</DirectThemeProvider>);
 };
 
 describe('Grid components', () => {
@@ -20,7 +16,7 @@ describe('Grid components', () => {
         <div data-testid="grid-child">Grid Child</div>
       </Grid>
     );
-    
+
     expect(screen.getByTestId('grid')).toBeInTheDocument();
     expect(screen.getByTestId('grid-child')).toBeInTheDocument();
     expect(screen.getByText('Grid Child')).toBeInTheDocument();
@@ -34,7 +30,7 @@ describe('Grid components', () => {
         </GridItem>
       </Grid>
     );
-    
+
     expect(screen.getByTestId('grid-item')).toBeInTheDocument();
     expect(screen.getByTestId('grid-item-child')).toBeInTheDocument();
     expect(screen.getByText('Grid Item Child')).toBeInTheDocument();
@@ -46,7 +42,7 @@ describe('Grid components', () => {
         <div data-testid="row-child">Row Child</div>
       </Row>
     );
-    
+
     expect(screen.getByTestId('row')).toBeInTheDocument();
     expect(screen.getByTestId('row-child')).toBeInTheDocument();
     expect(screen.getByText('Row Child')).toBeInTheDocument();
@@ -60,7 +56,7 @@ describe('Grid components', () => {
         </Col>
       </Row>
     );
-    
+
     expect(screen.getByTestId('col')).toBeInTheDocument();
     expect(screen.getByTestId('col-child')).toBeInTheDocument();
     expect(screen.getByText('Col Child')).toBeInTheDocument();
@@ -72,7 +68,7 @@ describe('Grid components', () => {
         <div />
       </Grid>
     );
-    
+
     const gridElement = screen.getByTestId('grid');
     expect(gridElement).toHaveStyle('display: grid');
     expect(gridElement).toHaveStyle('grid-template-columns: repeat(3, 1fr)');
@@ -84,7 +80,7 @@ describe('Grid components', () => {
         <div />
       </Row>
     );
-    
+
     const rowElement = screen.getByTestId('row');
     expect(rowElement).toHaveStyle('display: flex');
     expect(rowElement).toHaveStyle('flex-direction: row');
@@ -99,11 +95,11 @@ describe('Grid components', () => {
         </Col>
       </Row>
     );
-    
+
     const colElement = screen.getByTestId('col');
     expect(colElement).toHaveStyle('display: flex');
     expect(colElement).toHaveStyle('flex-direction: column');
     // Width should be 50% (6/12 * 100%)
     expect(colElement).toHaveStyle('width: 50%');
   });
-}); 
+});

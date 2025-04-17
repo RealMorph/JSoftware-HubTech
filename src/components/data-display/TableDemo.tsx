@@ -72,23 +72,25 @@ const userColumns: TableColumn<User>[] = [
   {
     key: 'status',
     header: 'Status',
-    render: (value) => {
+    render: value => {
       const statusColors = {
         active: '#4caf50',
         inactive: '#f44336',
         pending: '#ff9800',
       };
-      
+
       return (
-        <div style={{
-          display: 'inline-block',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          backgroundColor: statusColors[value as 'active' | 'inactive' | 'pending'],
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '0.85em',
-        }}>
+        <div
+          style={{
+            display: 'inline-block',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            backgroundColor: statusColors[value as 'active' | 'inactive' | 'pending'],
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.85em',
+          }}
+        >
           {value}
         </div>
       );
@@ -97,13 +99,14 @@ const userColumns: TableColumn<User>[] = [
   {
     key: 'dateJoined',
     header: 'Date Joined',
-    render: (value) => new Date(value as string).toLocaleDateString(),
+    render: value => new Date(value as string).toLocaleDateString(),
   },
 ];
 
 const DemoContainer = styled.div`
   padding: ${props => getThemeValue(props.theme as ThemeConfig, 'spacing.6')};
-  background-color: ${props => getThemeValue(props.theme as ThemeConfig, 'colors.background.primary')};
+  background-color: ${props =>
+    getThemeValue(props.theme as ThemeConfig, 'colors.background.primary')};
 `;
 
 const DemoSection = styled.section`
@@ -130,16 +133,31 @@ export const TableDemo: React.FC = () => {
 
   const handleRowClick = (row: User) => {
     setSelectedRow(row);
-    alert(`Selected user: ${row.name}`);
+    window.alert(`Selected user: ${row.name}`);
   };
 
   return (
     <DemoContainer>
       <DemoTitle>Table Component</DemoTitle>
       <DemoDescription>
-        The Table component provides a way to display data in a structured, tabular format.
-        Below are various configurations of the Table component.
+        The Table component provides a way to display data in a structured, tabular format. Below
+        are various configurations of the Table component.
       </DemoDescription>
+
+      {selectedRow && (
+        <div
+          style={{
+            padding: '12px',
+            marginBottom: '20px',
+            backgroundColor: '#f0f8ff',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+          }}
+        >
+          <strong>Selected User:</strong> {selectedRow.name} ({selectedRow.email}) -{' '}
+          {selectedRow.role}
+        </div>
+      )}
 
       <DemoSection>
         <DemoTitle>Basic Table</DemoTitle>
@@ -149,7 +167,9 @@ export const TableDemo: React.FC = () => {
 
       <DemoSection>
         <DemoTitle>Striped Table</DemoTitle>
-        <DemoDescription>A table with alternating row colors for better readability.</DemoDescription>
+        <DemoDescription>
+          A table with alternating row colors for better readability.
+        </DemoDescription>
         <Table<User> data={sampleUsers} columns={userColumns} striped />
       </DemoSection>
 
@@ -161,7 +181,9 @@ export const TableDemo: React.FC = () => {
 
       <DemoSection>
         <DemoTitle>Compact Table</DemoTitle>
-        <DemoDescription>A table with smaller cell padding for dense information display.</DemoDescription>
+        <DemoDescription>
+          A table with smaller cell padding for dense information display.
+        </DemoDescription>
         <Table<User> data={sampleUsers} columns={userColumns} size="small" />
       </DemoSection>
 
@@ -174,28 +196,30 @@ export const TableDemo: React.FC = () => {
       <DemoSection>
         <DemoTitle>Interactive Table</DemoTitle>
         <DemoDescription>A table with hover effects and clickable rows.</DemoDescription>
-        <Table<User> 
-          data={sampleUsers} 
-          columns={userColumns} 
-          hover 
-          onRowClick={handleRowClick} 
+        <Table<User>
+          data={sampleUsers}
+          columns={userColumns}
+          hover
+          onRowClick={handleRowClick}
           caption="Click on a row to select a user"
         />
       </DemoSection>
 
       <DemoSection>
         <DemoTitle>Fully Featured Table</DemoTitle>
-        <DemoDescription>A table combining multiple features: striped, bordered, hover effects, and clickable rows.</DemoDescription>
-        <Table<User> 
-          data={sampleUsers} 
-          columns={userColumns} 
-          striped 
-          bordered 
-          hover 
-          onRowClick={handleRowClick} 
+        <DemoDescription>
+          A table combining multiple features: striped, bordered, hover effects, and clickable rows.
+        </DemoDescription>
+        <Table<User>
+          data={sampleUsers}
+          columns={userColumns}
+          striped
+          bordered
+          hover
+          onRowClick={handleRowClick}
           caption="Users Table with all features enabled"
         />
       </DemoSection>
     </DemoContainer>
   );
-}; 
+};

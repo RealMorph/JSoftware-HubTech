@@ -39,38 +39,52 @@ const getAnimationStyles = (
 ) => {
   const { duration, easing, slideDistance, fadeOpacity, scaleEffect } = options;
   const animationDuration = `${duration}ms`;
-  
+
   // Determine which animation to apply based on type
   if (animationType === 'switch' && options.enableTabSwitch) {
     return css`
-      animation: ${fadeIn} ${animationDuration} ${easing} forwards,
-                ${slideDistance ? css`${slideIn(slideDistance)} ${animationDuration} ${easing} forwards` : ''};
+      animation:
+        ${fadeIn} ${animationDuration} ${easing} forwards,
+        ${slideDistance
+          ? css`
+              ${slideIn(slideDistance)} ${animationDuration} ${easing} forwards
+            `
+          : ''};
     `;
   }
-  
+
   if (animationType === 'dragPreview' && options.enableDragPreview) {
     return css`
       animation: ${scaleIn(scaleEffect || 0.97)} ${animationDuration} ${easing} forwards;
     `;
   }
-  
+
   return '';
 };
 
 // Animated version of Tab
-const AnimatedStyledTab = styled(Tab)<AnimatedTabProps & { 
-  animationOptions?: TabAnimationOptions;
-}>`
-  transition: 
-    background-color ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'},
-    box-shadow ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'},
-    opacity ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'},
-    transform ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'};
-    
-  ${props => props.isNew && props.animationOptions && getAnimationStyles(props.animationOptions, props.animationType)}
-  
+const AnimatedStyledTab = styled(Tab)<
+  AnimatedTabProps & {
+    animationOptions?: TabAnimationOptions;
+  }
+>`
+  transition:
+    background-color ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'},
+    box-shadow ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'},
+    opacity ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'},
+    transform ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'};
+
+  ${props =>
+    props.isNew &&
+    props.animationOptions &&
+    getAnimationStyles(props.animationOptions, props.animationType)}
+
   &:hover {
-    ${props => props.active ? '' : 'transform: translateY(-2px);'}
+    ${props => (props.active ? '' : 'transform: translateY(-2px);')}
   }
 `;
 
@@ -80,9 +94,13 @@ const AnimatedContent = styled.div<{
   animationOptions?: TabAnimationOptions;
 }>`
   padding: 16px;
-  display: ${props => props.active ? 'block' : 'none'};
-  animation: ${props => props.active && props.animationOptions?.enableTabSwitch ? 
-    css`${fadeIn} ${props.animationOptions.duration}ms ${props.animationOptions.easing}` : 'none'};
+  display: ${props => (props.active ? 'block' : 'none')};
+  animation: ${props =>
+    props.active && props.animationOptions?.enableTabSwitch
+      ? css`
+          ${fadeIn} ${props.animationOptions.duration}ms ${props.animationOptions.easing}
+        `
+      : 'none'};
 `;
 
 // Wrapper for grouped tabs with animation
@@ -91,22 +109,24 @@ const AnimatedGroupWrapper = styled.div<{
   animationOptions?: TabAnimationOptions;
 }>`
   overflow: hidden;
-  max-height: ${props => props.collapsed ? '0' : '1000px'};
-  opacity: ${props => props.collapsed ? 0 : 1};
-  transition: 
-    max-height ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'},
-    opacity ${props => props.animationOptions?.duration || 200}ms ${props => props.animationOptions?.easing || 'ease-in-out'};
+  max-height: ${props => (props.collapsed ? '0' : '1000px')};
+  opacity: ${props => (props.collapsed ? 0 : 1)};
+  transition:
+    max-height ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'},
+    opacity ${props => props.animationOptions?.duration || 200}ms
+      ${props => props.animationOptions?.easing || 'ease-in-out'};
 `;
 
 // AnimatedTab component with theme-aware animations
-export const AnimatedTab: React.FC<AnimatedTabProps> = ({ 
+export const AnimatedTab: React.FC<AnimatedTabProps> = ({
   isNew = false,
   animationType = 'switch',
-  ...props 
+  ...props
 }) => {
   const tabTheme = useTabTheme();
   const animationOptions = tabTheme.tabs.animation;
-  
+
   return (
     <AnimatedStyledTab
       {...props}
@@ -124,17 +144,13 @@ interface TabContentProps {
   children: React.ReactNode;
 }
 
-export const AnimatedTabContent: React.FC<TabContentProps> = ({
-  id,
-  active,
-  children
-}) => {
+export const AnimatedTabContent: React.FC<TabContentProps> = ({ id, active, children }) => {
   const tabTheme = useTabTheme();
   const [isVisible, setIsVisible] = useState(active);
-  
+
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-    
+
     if (active) {
       setIsVisible(true);
     } else {
@@ -142,16 +158,16 @@ export const AnimatedTabContent: React.FC<TabContentProps> = ({
         setIsVisible(false);
       }, tabTheme.tabs.animation.duration);
     }
-    
+
     return () => {
       if (timeout) clearTimeout(timeout);
     };
   }, [active, tabTheme.tabs.animation.duration]);
-  
+
   if (!isVisible && !active) return null;
-  
+
   return (
-    <AnimatedContent 
+    <AnimatedContent
       id={`tab-content-${id}`}
       role="tabpanel"
       aria-labelledby={`tab-${id}`}
@@ -170,15 +186,11 @@ interface AnimatedTabGroupProps {
   children: React.ReactNode;
 }
 
-export const AnimatedTabGroup: React.FC<AnimatedTabGroupProps> = ({
-  id,
-  collapsed,
-  children
-}) => {
+export const AnimatedTabGroup: React.FC<AnimatedTabGroupProps> = ({ id, collapsed, children }) => {
   const tabTheme = useTabTheme();
-  
+
   return (
-    <AnimatedGroupWrapper 
+    <AnimatedGroupWrapper
       id={`tab-group-${id}`}
       collapsed={collapsed}
       animationOptions={tabTheme.tabs.animation}
@@ -194,22 +206,22 @@ export const TabAnimationsDemo: React.FC = () => {
   const [tabs, setTabs] = useState([
     { id: 'tab1', label: 'Dashboard' },
     { id: 'tab2', label: 'Reports' },
-    { id: 'tab3', label: 'Settings' }
+    { id: 'tab3', label: 'Settings' },
   ]);
   const [groupCollapsed, setGroupCollapsed] = useState(false);
   const [newTabAdded, setNewTabAdded] = useState(false);
-  
+
   const handleAddTab = () => {
-    const newTab = { 
-      id: `tab${tabs.length + 1}`, 
-      label: `New Tab ${tabs.length + 1}` 
+    const newTab = {
+      id: `tab${tabs.length + 1}`,
+      label: `New Tab ${tabs.length + 1}`,
     };
     setTabs([...tabs, newTab]);
     setActiveTab(newTab.id);
     setNewTabAdded(true);
     setTimeout(() => setNewTabAdded(false), 1000);
   };
-  
+
   const handleRemoveTab = (id: string) => {
     const newTabs = tabs.filter(tab => tab.id !== id);
     if (activeTab === id && newTabs.length > 0) {
@@ -217,21 +229,18 @@ export const TabAnimationsDemo: React.FC = () => {
     }
     setTabs(newTabs);
   };
-  
+
   return (
     <div>
       <h3>Tab Animation Demo</h3>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <button onClick={handleAddTab}>Add New Tab</button>
-        <button 
-          onClick={() => setGroupCollapsed(!groupCollapsed)}
-          style={{ marginLeft: '10px' }}
-        >
+        <button onClick={() => setGroupCollapsed(!groupCollapsed)} style={{ marginLeft: '10px' }}>
           {groupCollapsed ? 'Expand Group' : 'Collapse Group'}
         </button>
       </div>
-      
+
       <div style={{ display: 'flex' }}>
         <div style={{ width: '200px', marginRight: '20px' }}>
           <h4>Tab Group</h4>
@@ -252,14 +261,10 @@ export const TabAnimationsDemo: React.FC = () => {
             </div>
           </AnimatedTabGroup>
         </div>
-        
+
         <div style={{ flex: 1 }}>
           {tabs.map(tab => (
-            <AnimatedTabContent 
-              key={tab.id}
-              id={tab.id}
-              active={activeTab === tab.id}
-            >
+            <AnimatedTabContent key={tab.id} id={tab.id} active={activeTab === tab.id}>
               <h4>{tab.label} Content</h4>
               <p>This is the content for {tab.label}.</p>
             </AnimatedTabContent>
@@ -268,4 +273,4 @@ export const TabAnimationsDemo: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

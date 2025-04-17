@@ -16,7 +16,7 @@ jest.mock('../theme-system', () => ({
 }));
 
 jest.mock('../theme-adapter', () => ({
-  adaptThemeForEmotion: jest.fn().mockReturnValue({})
+  adaptThemeForEmotion: jest.fn().mockReturnValue({}),
 }));
 
 // Create mock theme
@@ -128,14 +128,14 @@ const mockTheme: ThemeConfig = {
       linear: 'linear',
     },
   },
-  name: 'Test Theme'
+  name: 'Test Theme',
 };
 
 // Mock theme service
 const mockThemeService = {
   getDefaultTheme: jest.fn().mockReturnValue(mockTheme),
-  getDarkTheme: jest.fn().mockReturnValue({...mockTheme, name: 'Dark Theme'}),
-  getLightTheme: jest.fn().mockReturnValue({...mockTheme, name: 'Light Theme'})
+  getDarkTheme: jest.fn().mockReturnValue({ ...mockTheme, name: 'Dark Theme' }),
+  getLightTheme: jest.fn().mockReturnValue({ ...mockTheme, name: 'Light Theme' }),
 };
 
 // Mock Button implementation for testing

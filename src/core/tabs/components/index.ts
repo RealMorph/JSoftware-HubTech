@@ -12,9 +12,9 @@ export { TabAnimationsPage } from './TabAnimationsPage';
 export { Tab, StyledTab, StyledTabContainer, TabsDemo } from '../theme/StyledTab';
 
 // Export animation-related components
-export { 
-  AnimatedTab, 
-  AnimatedTabContent, 
-  AnimatedTabGroup, 
-  TabAnimationsDemo 
-} from '../theme/AnimatedTab'; 
+export {
+  AnimatedTab,
+  AnimatedTabContent,
+  AnimatedTabGroup,
+  TabAnimationsDemo,
+} from '../theme/AnimatedTab';

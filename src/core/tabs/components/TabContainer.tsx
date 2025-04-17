@@ -10,10 +10,7 @@ interface TabContainerProps {
   showGroups?: boolean; // Whether to show the groups panel
 }
 
-export const TabContainer: React.FC<TabContainerProps> = ({ 
-  tabManager,
-  showGroups = true
-}) => {
+export const TabContainer: React.FC<TabContainerProps> = ({ tabManager, showGroups = true }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [groups, setGroups] = useState<TabGroup[]>([]);
   const [activeTab, setActiveTab] = useState<Tab | null>(null);
@@ -22,7 +19,7 @@ export const TabContainer: React.FC<TabContainerProps> = ({
     const loadedTabs = await tabManager.getTabs();
     const activeTab = await tabManager.getActiveTab();
     const loadedGroups = await tabManager.groups;
-    
+
     setTabs(loadedTabs);
     setActiveTab(activeTab);
     setGroups(loadedGroups);
@@ -51,9 +48,9 @@ export const TabContainer: React.FC<TabContainerProps> = ({
 
   // New handlers for group functionality
   const handleGroupCreate = async (title: string) => {
-    const newGroup = await tabManager.createGroup({ 
+    const newGroup = await tabManager.createGroup({
       title,
-      tabIds: [] // Add the required tabIds property
+      tabIds: [], // Add the required tabIds property
     });
     await refreshState();
     return newGroup;
@@ -90,7 +87,10 @@ export const TabContainer: React.FC<TabContainerProps> = ({
   };
 
   return (
-    <div className={`${showGroups ? 'tab-container-with-groups' : 'tab-container'}`} data-testid="tab-container">
+    <div
+      className={`${showGroups ? 'tab-container-with-groups' : 'tab-container'}`}
+      data-testid="tab-container"
+    >
       {showGroups && (
         <TabGroupList
           groups={groups}

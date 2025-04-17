@@ -53,7 +53,13 @@ const CodeBlock = styled.pre`
 `;
 
 const HomeSvg = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="currentColor"
+  >
     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
   </svg>
 );
@@ -66,7 +72,7 @@ export const BreadcrumbsDemo: React.FC = () => {
   const simpleBreadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', path: '/' },
     { label: 'Products', path: '/products' },
-    { label: 'Laptops', path: '/products/laptops', active: true }
+    { label: 'Laptops', path: '/products/laptops', active: true },
   ];
 
   // Breadcrumbs with icons
@@ -74,7 +80,7 @@ export const BreadcrumbsDemo: React.FC = () => {
     { label: 'Home', path: '/', icon: <HomeSvg /> },
     { label: 'Users', path: '/users' },
     { label: 'User Profile', path: '/users/profile' },
-    { label: 'Settings', path: '/users/profile/settings', active: true }
+    { label: 'Settings', path: '/users/profile/settings', active: true },
   ];
 
   // Long breadcrumbs that will be collapsed
@@ -86,7 +92,11 @@ export const BreadcrumbsDemo: React.FC = () => {
     { label: 'Laptops', path: '/products/electronics/computers/laptops' },
     { label: 'Gaming', path: '/products/electronics/computers/laptops/gaming' },
     { label: 'RTX Series', path: '/products/electronics/computers/laptops/gaming/rtx' },
-    { label: 'RTX 4090', path: '/products/electronics/computers/laptops/gaming/rtx/4090', active: true }
+    {
+      label: 'RTX 4090',
+      path: '/products/electronics/computers/laptops/gaming/rtx/4090',
+      active: true,
+    },
   ];
 
   // Custom separators
@@ -94,13 +104,16 @@ export const BreadcrumbsDemo: React.FC = () => {
   const [currentSeparator, setCurrentSeparator] = useState(0);
 
   const handleChangeSeparator = () => {
-    setCurrentSeparator((prev) => (prev + 1) % separators.length);
+    setCurrentSeparator(prev => (prev + 1) % separators.length);
   };
 
   return (
     <DemoContainer>
       <h1>Breadcrumbs Component Demo</h1>
-      <p>This demo showcases the various configurations and capabilities of the Breadcrumbs component.</p>
+      <p>
+        This demo showcases the various configurations and capabilities of the Breadcrumbs
+        component.
+      </p>
 
       <DemoSection>
         <Title>Basic Usage</Title>
@@ -141,7 +154,9 @@ export const BreadcrumbsDemo: React.FC = () => {
 
       <DemoSection>
         <Title>Long Breadcrumbs with Collapse</Title>
-        <Description>For deep navigation hierarchies, breadcrumbs automatically collapse with ellipsis.</Description>
+        <Description>
+          For deep navigation hierarchies, breadcrumbs automatically collapse with ellipsis.
+        </Description>
 
         <ExampleContainer>
           <ExampleTitle>Auto-collapsing Breadcrumbs</ExampleTitle>
@@ -152,8 +167,8 @@ export const BreadcrumbsDemo: React.FC = () => {
   itemsAfterCollapse={2}
 />`}</CodeBlock>
 
-          <Breadcrumbs 
-            items={longBreadcrumbs} 
+          <Breadcrumbs
+            items={longBreadcrumbs}
             maxItems={5}
             itemsBeforeCollapse={2}
             itemsAfterCollapse={2}
@@ -172,30 +187,29 @@ export const BreadcrumbsDemo: React.FC = () => {
   separator="${separators[currentSeparator]}"
 />`}</CodeBlock>
 
-          <button 
+          <button
             onClick={handleChangeSeparator}
-            style={{ 
+            style={{
               marginBottom: '16px',
               padding: '6px 12px',
               background: '#f3f4f6',
               border: '1px solid #e5e7eb',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Change Separator
           </button>
 
-          <Breadcrumbs 
-            items={simpleBreadcrumbs}
-            separator={separators[currentSeparator]}
-          />
+          <Breadcrumbs items={simpleBreadcrumbs} separator={separators[currentSeparator]} />
         </ExampleContainer>
       </DemoSection>
 
       <DemoSection>
         <Title>Auto-generated Breadcrumbs</Title>
-        <Description>Breadcrumbs can be automatically generated based on the current route.</Description>
+        <Description>
+          Breadcrumbs can be automatically generated based on the current route.
+        </Description>
 
         <ExampleContainer>
           <ExampleTitle>Route-based Breadcrumbs</ExampleTitle>
@@ -210,19 +224,19 @@ export const BreadcrumbsDemo: React.FC = () => {
 />`}</CodeBlock>
 
           <p style={{ marginBottom: '12px', color: '#6b7280', fontStyle: 'italic' }}>
-            Note: In a real application, this would show breadcrumbs based on the current route.
-            For demo purposes, it's shown with mock data.
+            Note: In a real application, this would show breadcrumbs based on the current route. For
+            demo purposes, it's shown with mock data.
           </p>
 
-          <Breadcrumbs 
+          <Breadcrumbs
             items={[
               { label: 'Dashboard', path: '/dashboard' },
               { label: 'Product Catalog', path: '/dashboard/products' },
-              { label: 'Laptop Models', path: '/dashboard/products/laptops', active: true }
+              { label: 'Laptop Models', path: '/dashboard/products/laptops', active: true },
             ]}
           />
         </ExampleContainer>
       </DemoSection>
     </DemoContainer>
   );
-}; 
+};

@@ -14,7 +14,7 @@ export const mockTheme: ThemeConfig = {
   id: 'mock-theme',
   name: 'Mock Theme',
   description: 'A standardized theme for testing',
-  
+
   // Colors conform to ThemeColors interface
   colors: {
     primary: '#3f51b5',
@@ -33,7 +33,7 @@ export const mockTheme: ThemeConfig = {
     white: '#ffffff',
     surface: '#ffffff',
   },
-  
+
   // Typography conforms to TypographyConfig
   typography: {
     fontFamily: {
@@ -74,7 +74,7 @@ export const mockTheme: ThemeConfig = {
       widest: '0.1em',
     },
   },
-  
+
   // Spacing conforms to SpacingConfig
   spacing: {
     xs: '0.25rem',
@@ -86,7 +86,7 @@ export const mockTheme: ThemeConfig = {
     '3xl': '3rem',
     '4xl': '4rem',
   },
-  
+
   // Breakpoints conform to BreakpointConfig
   breakpoints: {
     xs: '0px',
@@ -96,7 +96,7 @@ export const mockTheme: ThemeConfig = {
     xl: '1920px',
     '2xl': '2560px',
   },
-  
+
   // BorderRadius conforms to BorderRadiusConfig
   borderRadius: {
     none: '0',
@@ -108,7 +108,7 @@ export const mockTheme: ThemeConfig = {
     '2xl': '1rem',
     full: '9999px',
   },
-  
+
   // Shadows conform to ShadowConfig
   shadows: {
     none: 'none',
@@ -120,7 +120,7 @@ export const mockTheme: ThemeConfig = {
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
-  
+
   // Transitions conform to TransitionConfig
   transitions: {
     duration: {
@@ -141,13 +141,13 @@ export const mockTheme: ThemeConfig = {
  * Extended mock theme with color scales for components that need them
  * This extends the base mockTheme with additional color scales
  */
-export const extendedMockTheme: ThemeConfig & { 
-  colors: ThemeConfig['colors'] & { 
+export const extendedMockTheme: ThemeConfig & {
+  colors: ThemeConfig['colors'] & {
     primary: { [key: string]: string };
     secondary: { [key: string]: string };
     error: { [key: string]: string };
     gray: { [key: string]: string };
-  } 
+  };
 } = {
   ...mockTheme,
   colors: {
@@ -179,7 +179,7 @@ export const extendedMockTheme: ThemeConfig & {
     },
     error: {
       50: '#FEF2F2',
-      100: '#FEE2E2', 
+      100: '#FEE2E2',
       200: '#FECACA',
       300: '#FCA5A5',
       400: '#F87171',
@@ -203,4 +203,4 @@ export const extendedMockTheme: ThemeConfig & {
       900: '#111827',
     },
   },
-}; 
+};

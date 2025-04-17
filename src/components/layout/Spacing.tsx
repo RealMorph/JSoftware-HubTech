@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import styled from '@emotion/styled';
+// import styled from '@emotion/styled'; // Unused import
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { getSpacingValue } from './spacing-utils';
 
@@ -45,6 +45,7 @@ type DividerProps = {
 };
 
 // Convert a spacing value (number or string) to a CSS value
+/* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
 const toSpacingValue = (value: number | string | undefined): string => {
   if (value === undefined) return '0';
   if (typeof value === 'number') return `${value}px`;
@@ -62,30 +63,37 @@ export const Spacer = ({
   ...rest
 }: SpacerProps) => {
   const theme = useDirectTheme();
-  
+
   const spacingValue = getSpacingValue(size, theme.getSpacing, '4px');
-  
+
   const spacerStyle = {
     display: inline ? 'inline-block' : 'block',
-    width: (axis === 'horizontal' || axis === 'both') ? spacingValue : undefined,
-    height: (axis === 'vertical' || axis === 'both') ? spacingValue : undefined,
+    width: axis === 'horizontal' || axis === 'both' ? spacingValue : undefined,
+    height: axis === 'vertical' || axis === 'both' ? spacingValue : undefined,
   };
-  
+
   return (
-    <div 
-      className={className}
-      style={spacerStyle}
-      data-testid={dataTestId || testId}
-      {...rest}
-    />
+    <div className={className} style={spacerStyle} data-testid={dataTestId || testId} {...rest} />
   );
 };
 
 export const Box = ({
   children,
   className,
-  m, mt, mr, mb, ml, mx, my,
-  p, pt, pr, pb, pl, px, py,
+  m,
+  mt,
+  mr,
+  mb,
+  ml,
+  mx,
+  my,
+  p,
+  pt,
+  pr,
+  pb,
+  pl,
+  px,
+  py,
   style,
   testId,
   'data-testid': dataTestId,
@@ -95,47 +103,101 @@ export const Box = ({
 
   // Simplified direct handling of spacing values
   // Handle margin values
-  const margin = typeof m === 'number' ? `${m}px` : m !== undefined ? theme.getSpacing(String(m), String(m)) : undefined;
-  const marginX = typeof mx === 'number' ? `${mx}px` : mx !== undefined ? theme.getSpacing(String(mx), String(mx)) : undefined;
-  const marginY = typeof my === 'number' ? `${my}px` : my !== undefined ? theme.getSpacing(String(my), String(my)) : undefined;
-  
-  const marginTop = typeof mt === 'number' ? `${mt}px` : 
-                    mt !== undefined ? theme.getSpacing(String(mt), String(mt)) : 
-                    marginY || margin;
-                    
-  const marginRight = typeof mr === 'number' ? `${mr}px` : 
-                      mr !== undefined ? theme.getSpacing(String(mr), String(mr)) : 
-                      marginX || margin;
-                      
-  const marginBottom = typeof mb === 'number' ? `${mb}px` : 
-                       mb !== undefined ? theme.getSpacing(String(mb), String(mb)) : 
-                       marginY || margin;
-                       
-  const marginLeft = typeof ml === 'number' ? `${ml}px` : 
-                     ml !== undefined ? theme.getSpacing(String(ml), String(ml)) : 
-                     marginX || margin;
+  const margin =
+    typeof m === 'number'
+      ? `${m}px`
+      : m !== undefined
+        ? theme.getSpacing(String(m), String(m))
+        : undefined;
+  const marginX =
+    typeof mx === 'number'
+      ? `${mx}px`
+      : mx !== undefined
+        ? theme.getSpacing(String(mx), String(mx))
+        : undefined;
+  const marginY =
+    typeof my === 'number'
+      ? `${my}px`
+      : my !== undefined
+        ? theme.getSpacing(String(my), String(my))
+        : undefined;
+
+  const marginTop =
+    typeof mt === 'number'
+      ? `${mt}px`
+      : mt !== undefined
+        ? theme.getSpacing(String(mt), String(mt))
+        : marginY || margin;
+
+  const marginRight =
+    typeof mr === 'number'
+      ? `${mr}px`
+      : mr !== undefined
+        ? theme.getSpacing(String(mr), String(mr))
+        : marginX || margin;
+
+  const marginBottom =
+    typeof mb === 'number'
+      ? `${mb}px`
+      : mb !== undefined
+        ? theme.getSpacing(String(mb), String(mb))
+        : marginY || margin;
+
+  const marginLeft =
+    typeof ml === 'number'
+      ? `${ml}px`
+      : ml !== undefined
+        ? theme.getSpacing(String(ml), String(ml))
+        : marginX || margin;
 
   // Handle padding values
-  const padding = typeof p === 'number' ? `${p}px` : p !== undefined ? theme.getSpacing(String(p), String(p)) : undefined;
-  const paddingX = typeof px === 'number' ? `${px}px` : px !== undefined ? theme.getSpacing(String(px), String(px)) : undefined;
-  const paddingY = typeof py === 'number' ? `${py}px` : py !== undefined ? theme.getSpacing(String(py), String(py)) : undefined;
-  
-  const paddingTop = typeof pt === 'number' ? `${pt}px` : 
-                     pt !== undefined ? theme.getSpacing(String(pt), String(pt)) : 
-                     paddingY || padding;
-                     
-  const paddingRight = typeof pr === 'number' ? `${pr}px` : 
-                       pr !== undefined ? theme.getSpacing(String(pr), String(pr)) : 
-                       paddingX || padding;
-                       
-  const paddingBottom = typeof pb === 'number' ? `${pb}px` : 
-                        pb !== undefined ? theme.getSpacing(String(pb), String(pb)) : 
-                        paddingY || padding;
-                        
-  const paddingLeft = typeof pl === 'number' ? `${pl}px` : 
-                      pl !== undefined ? theme.getSpacing(String(pl), String(pl)) : 
-                      paddingX || padding;
-  
+  const padding =
+    typeof p === 'number'
+      ? `${p}px`
+      : p !== undefined
+        ? theme.getSpacing(String(p), String(p))
+        : undefined;
+  const paddingX =
+    typeof px === 'number'
+      ? `${px}px`
+      : px !== undefined
+        ? theme.getSpacing(String(px), String(px))
+        : undefined;
+  const paddingY =
+    typeof py === 'number'
+      ? `${py}px`
+      : py !== undefined
+        ? theme.getSpacing(String(py), String(py))
+        : undefined;
+
+  const paddingTop =
+    typeof pt === 'number'
+      ? `${pt}px`
+      : pt !== undefined
+        ? theme.getSpacing(String(pt), String(pt))
+        : paddingY || padding;
+
+  const paddingRight =
+    typeof pr === 'number'
+      ? `${pr}px`
+      : pr !== undefined
+        ? theme.getSpacing(String(pr), String(pr))
+        : paddingX || padding;
+
+  const paddingBottom =
+    typeof pb === 'number'
+      ? `${pb}px`
+      : pb !== undefined
+        ? theme.getSpacing(String(pb), String(pb))
+        : paddingY || padding;
+
+  const paddingLeft =
+    typeof pl === 'number'
+      ? `${pl}px`
+      : pl !== undefined
+        ? theme.getSpacing(String(pl), String(pl))
+        : paddingX || padding;
+
   const boxStyle = {
     marginTop,
     marginRight,
@@ -145,19 +207,19 @@ export const Box = ({
     paddingRight,
     paddingBottom,
     paddingLeft,
-    ...style
+    ...style,
   };
 
   // For testing purposes - add data attributes with the computed values
   const testDataAttributes = {
     'data-margin-top': marginTop,
     'data-margin-right': marginRight,
-    'data-margin-bottom': marginBottom, 
+    'data-margin-bottom': marginBottom,
     'data-margin-left': marginLeft,
     'data-padding-top': paddingTop,
     'data-padding-right': paddingRight,
     'data-padding-bottom': paddingBottom,
-    'data-padding-left': paddingLeft
+    'data-padding-left': paddingLeft,
   };
 
   return (
@@ -183,26 +245,24 @@ export const Divider = ({
   ...rest
 }: DividerProps) => {
   const theme = useDirectTheme();
-  
-  const borderColor = color ? 
-    theme.getColor(`${color}`, color) : 
-    theme.getColor('border', '#e5e7eb');
-  
+
+  const borderColor = color
+    ? theme.getColor(`${color}`, color)
+    : theme.getColor('border', '#e5e7eb');
+
   const dividerStyle = {
     display: 'block',
     backgroundColor: borderColor,
     height: orientation === 'horizontal' ? getSpacingValue(size, theme.getSpacing, '1px') : 'auto',
     width: orientation === 'vertical' ? getSpacingValue(size, theme.getSpacing, '1px') : 'auto',
-    margin: orientation === 'horizontal' ? `${theme.getSpacing('4', '16px')} 0` : `0 ${theme.getSpacing('4', '16px')}`,
+    margin:
+      orientation === 'horizontal'
+        ? `${theme.getSpacing('4', '16px')} 0`
+        : `0 ${theme.getSpacing('4', '16px')}`,
     alignSelf: 'stretch',
   };
-  
+
   return (
-    <div
-      className={className}
-      style={dividerStyle}
-      data-testid={dataTestId || testId}
-      {...rest}
-    />
+    <div className={className} style={dividerStyle} data-testid={dataTestId || testId} {...rest} />
   );
-}; 
+};

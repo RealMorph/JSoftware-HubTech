@@ -11,18 +11,18 @@ export interface TabStyleOptions {
   maxWidth?: string;
   padding?: string;
   margin?: string;
-  
+
   // Appearance
   borderRadius?: string;
   fontWeight?: number | string;
   textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   opacity?: number;
   shadow?: string;
-  
+
   // Tab shape and style
   tabShape?: 'rectangle' | 'rounded' | 'pill' | 'underlined';
   separatorStyle?: 'none' | 'line' | 'dot' | 'space';
-  
+
   // Icons and buttons
   iconSize?: string;
   closeButtonSize?: string;
@@ -37,7 +37,7 @@ export interface TabAnimationOptions {
   slideDistance?: string;
   fadeOpacity?: number;
   scaleEffect?: number;
-  
+
   // Feature flags
   enableTabSwitch: boolean;
   enableGroupCollapse: boolean;
@@ -55,7 +55,7 @@ export interface TabThemeExtension {
       hover: TabStyleOptions;
     };
     animation: TabAnimationOptions;
-  }
+  };
 }
 
 /**
@@ -78,15 +78,15 @@ export const defaultTabThemeExtension: TabThemeExtension = {
         tabShape: 'rounded',
         separatorStyle: 'none',
         iconSize: '16px',
-        closeButtonSize: '14px'
+        closeButtonSize: '14px',
       },
       active: {
         fontWeight: 600,
-        shadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        shadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
       },
       hover: {
-        opacity: 0.9
-      }
+        opacity: 0.9,
+      },
     },
     animation: {
       duration: 200,
@@ -96,42 +96,45 @@ export const defaultTabThemeExtension: TabThemeExtension = {
       scaleEffect: 0.97,
       enableTabSwitch: true,
       enableGroupCollapse: true,
-      enableDragPreview: true
-    }
-  }
+      enableDragPreview: true,
+    },
+  },
 };
 
 /**
  * Extends the base theme with tab-specific theme options
  */
-export function createTabTheme(baseTheme: Theme, customExtension?: Partial<TabThemeExtension>): Theme & { tabs: TabThemeExtension['tabs'] } {
+export function createTabTheme(
+  baseTheme: Theme,
+  customExtension?: Partial<TabThemeExtension>
+): Theme & { tabs: TabThemeExtension['tabs'] } {
   const mergedExtension: TabThemeExtension = {
     tabs: {
       animation: {
         ...defaultTabThemeExtension.tabs.animation,
-        ...customExtension?.tabs?.animation
+        ...customExtension?.tabs?.animation,
       },
       styles: {
         default: {
           ...defaultTabThemeExtension.tabs.styles.default,
-          ...customExtension?.tabs?.styles?.default
+          ...customExtension?.tabs?.styles?.default,
         },
         active: {
           ...defaultTabThemeExtension.tabs.styles.default,
           ...defaultTabThemeExtension.tabs.styles.active,
-          ...customExtension?.tabs?.styles?.active
+          ...customExtension?.tabs?.styles?.active,
         },
         hover: {
           ...defaultTabThemeExtension.tabs.styles.default,
           ...defaultTabThemeExtension.tabs.styles.hover,
-          ...customExtension?.tabs?.styles?.hover
-        }
-      }
-    }
+          ...customExtension?.tabs?.styles?.hover,
+        },
+      },
+    },
   };
 
   return {
     ...baseTheme,
-    tabs: mergedExtension.tabs
+    tabs: mergedExtension.tabs,
   };
-} 
+}

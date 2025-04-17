@@ -19,12 +19,12 @@ export function getThemeValue(theme: any, path: string): string {
   if (!theme) {
     return themeValueFallbacks[path] || '';
   }
-  
+
   // Try to get the value from the theme
   try {
     const parts = path.split('.');
     let value: any = theme;
-    
+
     for (const part of parts) {
       if (value === undefined || value === null) {
         // Try fallback
@@ -32,7 +32,7 @@ export function getThemeValue(theme: any, path: string): string {
       }
       value = value[part];
     }
-    
+
     if (value !== undefined && value !== null) {
       return String(value);
     }
@@ -40,7 +40,7 @@ export function getThemeValue(theme: any, path: string): string {
     // If any error occurs, use fallback
     console.warn(`Error accessing theme value for path: ${path}`, e);
   }
-  
+
   // Use fallback if value not found
   const fallbackValue = themeValueFallbacks[path] || '';
   if (!fallbackValue) {
@@ -115,10 +115,10 @@ export const mixins = {
     themed(theme => {
       const breakpointValue = getThemeValue(theme, `breakpoints.${breakpoint}`);
       // Ensure breakpoint value has 'px' unit
-      const breakpointWithUnit = breakpointValue.toString().endsWith('px') 
-        ? breakpointValue 
+      const breakpointWithUnit = breakpointValue.toString().endsWith('px')
+        ? breakpointValue
         : `${breakpointValue}px`;
-      
+
       return {
         [`@media (min-width: ${breakpointWithUnit})`]: {
           // This will be extended by the component using it

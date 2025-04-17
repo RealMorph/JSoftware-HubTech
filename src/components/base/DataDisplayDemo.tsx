@@ -1,9 +1,153 @@
 import React, { useState } from 'react';
+import styled from '@emotion/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { Card, CardHeader, CardContent, CardFooter } from './Card';
 import { List, ListItem } from './List';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHeaderCell } from './Table';
 import { Button } from './Button';
 
+/**
+ * Theme styles interface for the DataDisplayDemo component
+ * Defines styling properties sourced from the theme
+ */
+interface ThemeStyles {
+  colors: {
+    background: string;
+    text: string;
+    subtext: string;
+    border: string;
+    tableStripedBg: string;
+    cardOutlinedBorder: string;
+    cardFlatBackground: string;
+  };
+  spacing: {
+    page: string;
+    section: string;
+    component: string;
+    item: string;
+    sm: string;
+    md: string;
+    lg: string;
+  };
+  typography: {
+    title: {
+      fontSize: string;
+      fontWeight: string;
+      marginBottom: string;
+    };
+    sectionTitle: {
+      fontSize: string;
+      fontWeight: string;
+      marginBottom: string;
+    };
+    componentTitle: {
+      fontSize: string;
+      fontWeight: string;
+      marginBottom: string;
+    };
+  };
+  borderRadius: string;
+  shadows: {
+    card: string;
+  };
+}
+
+// Theme-based styled components
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: ${props => props.$themeStyles.spacing.page};
+`;
+
+const DemoTitle = styled.h1<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
+  font-size: ${props => props.$themeStyles.typography.title.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.title.fontWeight};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const CardGrid = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: ${props => props.$themeStyles.spacing.component};
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
+`;
+
+const ActionButtonsContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${props => props.$themeStyles.spacing.item};
+`;
+
+const TableSection = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.section};
+`;
+
+const TableDescription = styled.p<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.component};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const TableTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.item};
+  font-size: ${props => props.$themeStyles.typography.sectionTitle.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.sectionTitle.fontWeight};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const TableSubtitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin: ${props => `${props.$themeStyles.spacing.section} 0 ${props.$themeStyles.spacing.item}`};
+  font-size: ${props => props.$themeStyles.typography.sectionTitle.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.sectionTitle.fontWeight};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const ActionButtons = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  gap: ${props => props.$themeStyles.spacing.item};
+`;
+
+const CardVariantsContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.$themeStyles.spacing.item};
+  margin-top: ${props => props.$themeStyles.spacing.item};
+`;
+
+const ComponentTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacing.item};
+  font-size: ${props => props.$themeStyles.typography.componentTitle.fontSize};
+  font-weight: ${props => props.$themeStyles.typography.componentTitle.fontWeight};
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const PropertyItem = styled.p<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.colors.text};
+`;
+
+const ComponentSection = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacing.md};
+`;
+
+const OutlinedCard = styled(Card)<{ $themeStyles: ThemeStyles }>`
+  width: 100%;
+  border: 1px solid ${props => props.$themeStyles.colors.cardOutlinedBorder};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+`;
+
+const FlatCard = styled(Card)<{ $themeStyles: ThemeStyles }>`
+  width: 100%;
+  background-color: ${props => props.$themeStyles.colors.cardFlatBackground};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+`;
+
+const StyledCard = styled(Card)<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: 0;
+`;
+
+/**
+ * User interface representing a user entity
+ */
 interface User {
   id: number;
   name: string;
@@ -11,6 +155,9 @@ interface User {
   role: string;
 }
 
+/**
+ * Product interface representing a product entity
+ */
 interface Product {
   id: number;
   name: string;
@@ -19,7 +166,69 @@ interface Product {
   stock: number;
 }
 
+/**
+ * Creates theme styles using the DirectTheme context
+ * @param themeContext - The DirectTheme context
+ * @returns ThemeStyles object with theme values
+ */
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getSpacing, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    colors: {
+      background: getColor('background', '#ffffff'),
+      text: getColor('text.primary', '#333333'),
+      subtext: getColor('text.secondary', '#666666'),
+      border: getColor('border', '#e0e0e0'),
+      tableStripedBg: getColor('gray.50', '#f9fafb'),
+      cardOutlinedBorder: getColor('border', '#e0e0e0'),
+      cardFlatBackground: getColor('gray.50', '#f5f5f5'),
+    },
+    spacing: {
+      page: getSpacing('6', '24px'),
+      section: getSpacing('12', '48px'),
+      component: getSpacing('6', '24px'),
+      item: getSpacing('4', '16px'),
+      sm: getSpacing('2', '8px'),
+      md: getSpacing('4', '16px'),
+      lg: getSpacing('6', '24px'),
+    },
+    typography: {
+      title: {
+        fontSize: getTypography('fontSize.xl', '24px') as string,
+        fontWeight: getTypography('fontWeight.bold', '700') as string,
+        marginBottom: getSpacing('8', '32px'),
+      },
+      sectionTitle: {
+        fontSize: getTypography('fontSize.lg', '18px') as string,
+        fontWeight: getTypography('fontWeight.semibold', '600') as string,
+        marginBottom: getSpacing('4', '16px'),
+      },
+      componentTitle: {
+        fontSize: getTypography('fontSize.md', '16px') as string,
+        fontWeight: getTypography('fontWeight.medium', '500') as string,
+        marginBottom: getSpacing('2', '8px'),
+      },
+    },
+    borderRadius: getBorderRadius('md', '8px'),
+    shadows: {
+      card: getShadow(
+        'md',
+        '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+      ),
+    },
+  };
+}
+
+/**
+ * Demo component showcasing various data display components
+ * Includes Card, List, and Table components with different configurations
+ */
 export const DataDisplayDemo: React.FC = () => {
+  // Initialize theme context and styles
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
   // Sample data for the demos
   const users: User[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
@@ -52,90 +261,124 @@ export const DataDisplayDemo: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
-      <h1 style={{ marginBottom: '32px' }}>Data Display Components</h1>
+  // Handlers for actions without console.log
+  // eslint-disable-next-line no-unused-vars
+  const handleNotificationClick = (_index: number) => {
+    // Handle notification click
+  };
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '48px' }}>
+  // eslint-disable-next-line no-unused-vars
+  const handleActionClick = (_actionName: string) => {
+    // Handle action click
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleEditUser = (_userId: number) => {
+    // Handle edit user
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleViewProduct = (_productId: number) => {
+    // Handle view product
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleEditProduct = (_productId: number) => {
+    // Handle edit product
+  };
+
+  return (
+    <DemoContainer $themeStyles={themeStyles}>
+      <DemoTitle $themeStyles={themeStyles}>Data Display Components</DemoTitle>
+
+      <CardGrid $themeStyles={themeStyles}>
         {/* Card Demo */}
-        <Card variant="elevation">
+        <StyledCard variant="elevation" $themeStyles={themeStyles}>
           <CardHeader>
             <h2>Card Component</h2>
           </CardHeader>
           <CardContent>
-            <p>Cards are versatile containers for displaying content and actions on a single topic.</p>
-            <div style={{ marginTop: '16px' }}>
-              <h3>Card Variants</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
-                <Card variant="outlined" style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+            <p>
+              Cards are versatile containers for displaying content and actions on a single topic.
+            </p>
+            <ComponentSection $themeStyles={themeStyles}>
+              <ComponentTitle $themeStyles={themeStyles}>Card Variants</ComponentTitle>
+              <CardVariantsContainer $themeStyles={themeStyles}>
+                <OutlinedCard variant="outlined" $themeStyles={themeStyles}>
                   <CardContent>
                     <p>Outlined Card</p>
                   </CardContent>
-                </Card>
-                <Card variant="flat" style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+                </OutlinedCard>
+                <FlatCard variant="flat" $themeStyles={themeStyles}>
                   <CardContent>
                     <p>Flat Card</p>
                   </CardContent>
-                </Card>
-              </div>
-            </div>
+                </FlatCard>
+              </CardVariantsContainer>
+            </ComponentSection>
           </CardContent>
           <CardFooter>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+            <ActionButtonsContainer $themeStyles={themeStyles}>
               <Button variant="secondary">Cancel</Button>
               <Button variant="primary">Save</Button>
-            </div>
+            </ActionButtonsContainer>
           </CardFooter>
-        </Card>
+        </StyledCard>
 
         {/* List Demo */}
-        <Card variant="elevation">
+        <StyledCard variant="elevation" $themeStyles={themeStyles}>
           <CardHeader>
             <h2>List Component</h2>
           </CardHeader>
           <CardContent>
             <p>Lists are continuous vertical indexes of text or images.</p>
-            
-            <div style={{ marginTop: '16px' }}>
-              <h3>Notifications</h3>
+
+            <ComponentSection $themeStyles={themeStyles}>
+              <ComponentTitle $themeStyles={themeStyles}>Notifications</ComponentTitle>
               <List>
                 {notifications.map((notification, index) => (
-                  <ListItem key={index} onClick={() => console.log(`Notification ${index} clicked`)}>
+                  <ListItem key={index} onClick={() => handleNotificationClick(index)}>
                     {notification}
                   </ListItem>
                 ))}
               </List>
-            </div>
+            </ComponentSection>
 
-            <div style={{ marginTop: '24px' }}>
-              <h3>Quick Actions</h3>
+            <ComponentSection $themeStyles={themeStyles}>
+              <ComponentTitle $themeStyles={themeStyles}>Quick Actions</ComponentTitle>
               <List interactive={true}>
                 {quickActions.map((action, index) => (
-                  <ListItem 
+                  <ListItem
                     key={index}
-                    onClick={() => console.log(`Action ${action.name} clicked`)}
+                    onClick={() => handleActionClick(action.name)}
                     startContent={<span>{action.icon}</span>}
-                    endContent={<Button size="sm" variant="secondary">Select</Button>}
+                    endContent={
+                      <Button size="sm" variant="secondary">
+                        Select
+                      </Button>
+                    }
                   >
                     {action.name}
                   </ListItem>
                 ))}
               </List>
-            </div>
+            </ComponentSection>
           </CardContent>
-        </Card>
-      </div>
+        </StyledCard>
+      </CardGrid>
 
       {/* Table Demos */}
-      <div style={{ marginBottom: '48px' }}>
+      <TableSection $themeStyles={themeStyles}>
         <Card variant="elevation">
           <CardHeader>
             <h2>Table Component</h2>
           </CardHeader>
           <CardContent>
-            <p style={{ marginBottom: '24px' }}>Tables display information in a way that's easy to scan.</p>
-            
-            <h3 style={{ marginBottom: '16px' }}>Users Table</h3>
+            <TableDescription $themeStyles={themeStyles}>
+              Tables display information in a way that's easy to scan.
+            </TableDescription>
+
+            <TableTitle $themeStyles={themeStyles}>Users Table</TableTitle>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -147,8 +390,8 @@ export const DataDisplayDemo: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
-                  <TableRow 
+                {users.map(user => (
+                  <TableRow
                     key={user.id}
                     onClick={() => setSelectedUser(user)}
                     selected={selectedUser?.id === user.id}
@@ -158,12 +401,12 @@ export const DataDisplayDemo: React.FC = () => {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.role}</TableCell>
                     <TableCell>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="secondary"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
-                          console.log(`Edit user ${user.id}`);
+                          handleEditUser(user.id);
                         }}
                       >
                         Edit
@@ -174,7 +417,7 @@ export const DataDisplayDemo: React.FC = () => {
               </TableBody>
             </Table>
 
-            <h3 style={{ margin: '32px 0 16px' }}>Products Table</h3>
+            <TableSubtitle $themeStyles={themeStyles}>Products Table</TableSubtitle>
             <Table variant="striped">
               <TableHeader>
                 <TableRow>
@@ -187,8 +430,8 @@ export const DataDisplayDemo: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
-                  <TableRow 
+                {products.map(product => (
+                  <TableRow
                     key={product.id}
                     onClick={() => setSelectedProduct(product)}
                     selected={selectedProduct?.id === product.id}
@@ -199,28 +442,28 @@ export const DataDisplayDemo: React.FC = () => {
                     <TableCell>{product.category}</TableCell>
                     <TableCell>{product.stock}</TableCell>
                     <TableCell>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <Button 
-                          size="sm" 
+                      <ActionButtons $themeStyles={themeStyles}>
+                        <Button
+                          size="sm"
                           variant="ghost"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
-                            console.log(`View product ${product.id}`);
+                            handleViewProduct(product.id);
                           }}
                         >
                           View
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="secondary"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
-                            console.log(`Edit product ${product.id}`);
+                            handleEditProduct(product.id);
                           }}
                         >
                           Edit
                         </Button>
-                      </div>
+                      </ActionButtons>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -228,57 +471,69 @@ export const DataDisplayDemo: React.FC = () => {
             </Table>
           </CardContent>
         </Card>
-      </div>
+      </TableSection>
 
       {/* Selected Items Display */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+      <CardGrid $themeStyles={themeStyles}>
         {selectedUser && (
           <Card variant="outlined">
             <CardHeader>
               <h3>Selected User</h3>
             </CardHeader>
             <CardContent>
-              <p><strong>ID:</strong> {selectedUser.id}</p>
-              <p><strong>Name:</strong> {selectedUser.name}</p>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Role:</strong> {selectedUser.role}</p>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>ID:</strong> {selectedUser.id}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Name:</strong> {selectedUser.name}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Email:</strong> {selectedUser.email}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Role:</strong> {selectedUser.role}
+              </PropertyItem>
             </CardContent>
             <CardFooter>
-              <Button 
-                variant="secondary" 
-                onClick={() => setSelectedUser(null)}
-              >
+              <Button variant="secondary" onClick={() => setSelectedUser(null)}>
                 Clear Selection
               </Button>
             </CardFooter>
           </Card>
         )}
-        
+
         {selectedProduct && (
           <Card variant="outlined">
             <CardHeader>
               <h3>Selected Product</h3>
             </CardHeader>
             <CardContent>
-              <p><strong>ID:</strong> {selectedProduct.id}</p>
-              <p><strong>Name:</strong> {selectedProduct.name}</p>
-              <p><strong>Price:</strong> ${selectedProduct.price.toFixed(2)}</p>
-              <p><strong>Category:</strong> {selectedProduct.category}</p>
-              <p><strong>Stock:</strong> {selectedProduct.stock}</p>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>ID:</strong> {selectedProduct.id}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Name:</strong> {selectedProduct.name}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Price:</strong> ${selectedProduct.price.toFixed(2)}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Category:</strong> {selectedProduct.category}
+              </PropertyItem>
+              <PropertyItem $themeStyles={themeStyles}>
+                <strong>Stock:</strong> {selectedProduct.stock}
+              </PropertyItem>
             </CardContent>
             <CardFooter>
-              <Button 
-                variant="secondary" 
-                onClick={() => setSelectedProduct(null)}
-              >
+              <Button variant="secondary" onClick={() => setSelectedProduct(null)}>
                 Clear Selection
               </Button>
             </CardFooter>
           </Card>
         )}
-      </div>
-    </div>
+      </CardGrid>
+    </DemoContainer>
   );
 };
 
-export default DataDisplayDemo; 
+export default DataDisplayDemo;

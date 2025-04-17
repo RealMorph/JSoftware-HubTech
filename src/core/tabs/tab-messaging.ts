@@ -7,7 +7,7 @@ export enum MessageType {
   STATE_UPDATE = 'state_update',
   CUSTOM_EVENT = 'custom_event',
   DEPENDENCY_UPDATE = 'dependency_update',
-  REQUEST_STATE = 'request_state'
+  REQUEST_STATE = 'request_state',
 }
 
 /**
@@ -51,11 +51,11 @@ export interface TabMessagingManager {
   sendMessage(message: Omit<TabMessage, 'id' | 'timestamp'>): Promise<void>;
   subscribe(subscription: Omit<MessageSubscription, 'id'>): string;
   unsubscribe(subscriptionId: string): void;
-  
+
   // State sharing
   getTabState(tabId: string): any;
   updateTabState(tabId: string, state: any, broadcast?: boolean): Promise<void>;
-  
+
   // Dependencies
   addDependency(dependency: TabDependency): Promise<void>;
   removeDependency(dependentId: string, providerId: string): Promise<void>;
@@ -72,13 +72,13 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
   private tabStates: Map<string, any> = new Map();
   private dependencies: TabDependency[] = [];
   private messageHistoryLimit: number = 100;
-  
+
   constructor(messageHistoryLimit?: number) {
     if (messageHistoryLimit) {
       this.messageHistoryLimit = messageHistoryLimit;
     }
   }
-  
+
   /**
    * Send a message to tabs
    */
@@ -86,21 +86,21 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
     const fullMessage: TabMessage = {
       ...message,
       id: generateUUID(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     // Add to message history
     this.messages.push(fullMessage);
-    
+
     // Trim message history if needed
     if (this.messages.length > this.messageHistoryLimit) {
       this.messages = this.messages.slice(-this.messageHistoryLimit);
     }
-    
+
     // Notify subscribers
     this.notifySubscribers(fullMessage);
   }
-  
+
   /**
    * Subscribe to messages
    */
@@ -108,41 +108,41 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
     const id = generateUUID();
     const fullSubscription: MessageSubscription = {
       ...subscription,
-      id
+      id,
     };
-    
+
     this.subscriptions.push(fullSubscription);
     return id;
   }
-  
+
   /**
    * Unsubscribe from messages
    */
   unsubscribe(subscriptionId: string): void {
     this.subscriptions = this.subscriptions.filter(sub => sub.id !== subscriptionId);
   }
-  
+
   /**
    * Get the state of a tab
    */
   getTabState(tabId: string): any {
     return this.tabStates.get(tabId) || null;
   }
-  
+
   /**
    * Update the state of a tab
    */
   async updateTabState(tabId: string, state: any, broadcast: boolean = true): Promise<void> {
     this.tabStates.set(tabId, state);
-    
+
     if (broadcast) {
       await this.sendMessage({
         type: MessageType.STATE_UPDATE,
         senderId: tabId,
-        payload: state
+        payload: state,
       });
     }
-    
+
     // Notify dependents of state change
     const dependents = this.getDependents(tabId);
     for (const dependency of dependents) {
@@ -152,23 +152,24 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
         targetId: dependency.dependentId,
         payload: {
           dependencyType: dependency.type,
-          state
-        }
+          state,
+        },
       });
     }
   }
-  
+
   /**
    * Add a dependency between tabs
    */
   async addDependency(dependency: TabDependency): Promise<void> {
     // Check if dependency already exists
     const existingIndex = this.dependencies.findIndex(
-      d => d.dependentId === dependency.dependentId && 
-           d.providerId === dependency.providerId && 
-           d.type === dependency.type
+      d =>
+        d.dependentId === dependency.dependentId &&
+        d.providerId === dependency.providerId &&
+        d.type === dependency.type
     );
-    
+
     if (existingIndex !== -1) {
       // Update existing dependency
       this.dependencies[existingIndex] = dependency;
@@ -176,7 +177,7 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
       // Add new dependency
       this.dependencies.push(dependency);
     }
-    
+
     // Send initial state to the dependent
     const providerState = this.getTabState(dependency.providerId);
     if (providerState) {
@@ -186,12 +187,12 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
         targetId: dependency.dependentId,
         payload: {
           dependencyType: dependency.type,
-          state: providerState
-        }
+          state: providerState,
+        },
       });
     }
   }
-  
+
   /**
    * Remove a dependency between tabs
    */
@@ -200,21 +201,21 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
       d => !(d.dependentId === dependentId && d.providerId === providerId)
     );
   }
-  
+
   /**
    * Get all dependencies for a tab
    */
   getDependencies(tabId: string): TabDependency[] {
     return this.dependencies.filter(d => d.dependentId === tabId);
   }
-  
+
   /**
    * Get all tabs that depend on a tab
    */
   getDependents(tabId: string): TabDependency[] {
     return this.dependencies.filter(d => d.providerId === tabId);
   }
-  
+
   /**
    * Notify subscribers of a new message
    */
@@ -224,7 +225,7 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
       const isTargetMatch = !message.targetId || message.targetId === subscription.tabId;
       const isTypeMatch = !subscription.messageType || subscription.messageType === message.type;
       const isSenderMatch = !subscription.senderId || subscription.senderId === message.senderId;
-      
+
       if (isTargetMatch && isTypeMatch && isSenderMatch) {
         try {
           subscription.callback(message);
@@ -234,4 +235,4 @@ export class DefaultTabMessagingManager implements TabMessagingManager {
       }
     }
   }
-} 
+}

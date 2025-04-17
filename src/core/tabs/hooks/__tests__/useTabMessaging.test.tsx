@@ -9,24 +9,30 @@ const mockTabManager = {
   subscribeToTabMessages: jest.fn(),
   unsubscribeFromTabMessages: jest.fn(),
   getTabState: jest.fn(),
-  updateTabState: jest.fn()
+  updateTabState: jest.fn(),
 };
 
 // Create a test component to use the hook
-function TestComponent({ tabId, onHookResult }: { tabId: string, onHookResult: (result: any) => void }) {
+function TestComponent({
+  tabId,
+  onHookResult,
+}: {
+  tabId: string;
+  onHookResult: (result: any) => void;
+}) {
   const hookResult = useTabMessaging(mockTabManager as any, tabId);
-  
+
   useEffect(() => {
     onHookResult(hookResult);
   }, [hookResult, onHookResult]);
-  
+
   return null;
 }
 
 describe('useTabMessaging', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Set up subscription ID return value
     mockTabManager.subscribeToTabMessages.mockReturnValue('mock-subscription-id');
   });
@@ -44,20 +50,16 @@ describe('useTabMessaging', () => {
 
   it('should send messages correctly', () => {
     let hookResult: any;
-    const onHookResult = jest.fn((result) => {
+    const onHookResult = jest.fn(result => {
       hookResult = result;
     });
-    
+
     render(<TestComponent tabId="tab-1" onHookResult={onHookResult} />);
-    
+
     expect(onHookResult).toHaveBeenCalled();
-    
+
     act(() => {
-      hookResult.sendMessage(
-        MessageType.CUSTOM_EVENT,
-        { test: 'value' },
-        'tab-2'
-      );
+      hookResult.sendMessage(MessageType.CUSTOM_EVENT, { test: 'value' }, 'tab-2');
     });
 
     expect(mockTabManager.sendTabMessage).toHaveBeenCalledWith(
@@ -70,12 +72,12 @@ describe('useTabMessaging', () => {
 
   it('should send events correctly', () => {
     let hookResult: any;
-    const onHookResult = jest.fn((result) => {
+    const onHookResult = jest.fn(result => {
       hookResult = result;
     });
-    
+
     render(<TestComponent tabId="tab-1" onHookResult={onHookResult} />);
-    
+
     act(() => {
       hookResult.sendEvent('testEvent', { data: 123 }, 'tab-2');
     });
@@ -90,31 +92,27 @@ describe('useTabMessaging', () => {
 
   it('should update state correctly', () => {
     let hookResult: any;
-    const onHookResult = jest.fn((result) => {
+    const onHookResult = jest.fn(result => {
       hookResult = result;
     });
-    
+
     render(<TestComponent tabId="tab-1" onHookResult={onHookResult} />);
-    
+
     act(() => {
       hookResult.updateState({ test: 'value' }, true);
     });
 
-    expect(mockTabManager.updateTabState).toHaveBeenCalledWith(
-      'tab-1',
-      { test: 'value' },
-      true
-    );
+    expect(mockTabManager.updateTabState).toHaveBeenCalledWith('tab-1', { test: 'value' }, true);
   });
 
   it('should request state correctly', () => {
     let hookResult: any;
-    const onHookResult = jest.fn((result) => {
+    const onHookResult = jest.fn(result => {
       hookResult = result;
     });
-    
+
     render(<TestComponent tabId="tab-1" onHookResult={onHookResult} />);
-    
+
     act(() => {
       hookResult.requestState('tab-2');
     });
@@ -134,9 +132,7 @@ describe('useTabMessaging', () => {
       return 'mock-subscription-id';
     });
 
-    const { result } = renderHook(() => 
-      useTabMessaging(mockTabManager as any, 'tab-1')
-    );
+    const { result } = renderHook(() => useTabMessaging(mockTabManager as any, 'tab-1'));
 
     // Initially should have no messages
     expect(result.current.messages).toEqual([]);
@@ -148,7 +144,7 @@ describe('useTabMessaging', () => {
       type: MessageType.CUSTOM_EVENT,
       senderId: 'tab-2',
       timestamp: Date.now(),
-      payload: { test: 'value' }
+      payload: { test: 'value' },
     };
 
     act(() => {
@@ -167,9 +163,7 @@ describe('useTabMessaging', () => {
       return 'mock-subscription-id';
     });
 
-    const { result } = renderHook(() => 
-      useTabMessaging(mockTabManager as any, 'tab-1')
-    );
+    const { result } = renderHook(() => useTabMessaging(mockTabManager as any, 'tab-1'));
 
     // Simulate receiving a message
     act(() => {
@@ -178,7 +172,7 @@ describe('useTabMessaging', () => {
         type: MessageType.CUSTOM_EVENT,
         senderId: 'tab-2',
         timestamp: Date.now(),
-        payload: { test: 'value' }
+        payload: { test: 'value' },
       });
     });
 
@@ -194,4 +188,4 @@ describe('useTabMessaging', () => {
     expect(result.current.messages).toEqual([]);
     expect(result.current.lastMessage).toBeNull();
   });
-}); 
+});

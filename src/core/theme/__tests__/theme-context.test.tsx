@@ -9,7 +9,7 @@ import { ThemeServiceContext } from '../theme-context';
 const mockThemeService = {
   getDefaultTheme: jest.fn(),
   getDarkTheme: jest.fn(),
-  getLightTheme: jest.fn()
+  getLightTheme: jest.fn(),
 };
 
 // Create a default theme for testing
@@ -121,7 +121,7 @@ const mockTheme: ThemeConfig = {
       linear: 'linear',
     },
   },
-  name: 'Test Theme'
+  name: 'Test Theme',
 };
 
 // Mock the css-variables and theme-system modules
@@ -134,7 +134,7 @@ jest.mock('../theme-system', () => ({
 }));
 
 jest.mock('../theme-adapter', () => ({
-  adaptThemeForEmotion: jest.fn().mockReturnValue({})
+  adaptThemeForEmotion: jest.fn().mockReturnValue({}),
 }));
 
 // Test component that uses the theme context
@@ -143,10 +143,12 @@ function TestComponent() {
   return (
     <div>
       <div data-testid="current-theme">{currentTheme?.name}</div>
-      <button data-testid="toggle-dark-mode" onClick={toggleDarkMode}>Toggle Dark Mode</button>
-      <button 
-        data-testid="set-theme-button" 
-        onClick={() => setTheme({...mockTheme, name: 'New Theme'})}
+      <button data-testid="toggle-dark-mode" onClick={toggleDarkMode}>
+        Toggle Dark Mode
+      </button>
+      <button
+        data-testid="set-theme-button"
+        onClick={() => setTheme({ ...mockTheme, name: 'New Theme' })}
       >
         Change Theme
       </button>
@@ -158,8 +160,8 @@ describe('ThemeProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockThemeService.getDefaultTheme.mockReturnValue(mockTheme);
-    mockThemeService.getDarkTheme.mockReturnValue({...mockTheme, name: 'Dark Theme'});
-    mockThemeService.getLightTheme.mockReturnValue({...mockTheme, name: 'Light Theme'});
+    mockThemeService.getDarkTheme.mockReturnValue({ ...mockTheme, name: 'Dark Theme' });
+    mockThemeService.getLightTheme.mockReturnValue({ ...mockTheme, name: 'Light Theme' });
   });
 
   it('should provide theme context to children', async () => {
@@ -223,8 +225,8 @@ describe('ThemeProvider', () => {
   });
 
   it('should use initialTheme when provided', async () => {
-    const customTheme = {...mockTheme, name: 'Custom Initial Theme'};
-    
+    const customTheme = { ...mockTheme, name: 'Custom Initial Theme' };
+
     const { getByTestId } = render(
       <ThemeServiceContext.Provider value={mockThemeService}>
         <ThemeProvider initialTheme={customTheme}>

@@ -41,7 +41,7 @@ const MapButton = styled.button`
   font-size: 12px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
+
   &:hover {
     background: #f8f8f8;
   }
@@ -66,15 +66,15 @@ delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIconRetina,
   iconUrl: markerIcon,
-  shadowUrl: markerShadow
+  shadowUrl: markerShadow,
 });
 
-const LeafletMap: React.FC<LeafletMapProps> = ({ 
-  center, 
-  zoom, 
-  markers = [], 
-  height, 
-  onMarkerClick 
+const LeafletMap: React.FC<LeafletMapProps> = ({
+  center,
+  zoom,
+  markers = [],
+  height,
+  onMarkerClick,
 }) => {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -86,7 +86,8 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
       mapRef.current = L.map(mapContainerRef.current).setView(center, zoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(mapRef.current);
     }
 
@@ -117,19 +118,19 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
     if (mapRef.current) {
       markers.forEach(markerData => {
         const marker = L.marker(markerData.position);
-        
+
         if (markerData.popup) {
           marker.bindPopup(markerData.popup);
         }
-        
+
         if (markerData.title) {
           marker.bindTooltip(markerData.title);
         }
-        
+
         if (onMarkerClick) {
           marker.on('click', () => onMarkerClick(markerData));
         }
-        
+
         marker.addTo(mapRef.current!);
         markersRef.current.push(marker);
       });
@@ -165,4 +166,4 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
   );
 };
 
-export default LeafletMap; 
+export default LeafletMap;

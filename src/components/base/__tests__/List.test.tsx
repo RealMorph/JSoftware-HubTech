@@ -19,7 +19,7 @@ const mockTheme: ThemeConfig = {
     text: {
       primary: '#000000',
       secondary: '#222222',
-      disabled: '#666666'
+      disabled: '#666666',
     },
     border: '#e0e0e0',
     white: '#ffffff',
@@ -37,13 +37,13 @@ const mockTheme: ThemeConfig = {
       700: '#374151',
       800: '#1f2937',
       900: '#111827',
-    } as any
+    } as any,
   } as any, // Cast entire colors object as any to handle nested color objects
   typography: {
     fontFamily: {
       base: 'Roboto, sans-serif',
       heading: 'Roboto, sans-serif',
-      monospace: 'monospace'
+      monospace: 'monospace',
     },
     fontSize: {
       xs: '0.75rem',
@@ -53,21 +53,21 @@ const mockTheme: ThemeConfig = {
       xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
-      '4xl': '2.25rem'
+      '4xl': '2.25rem',
     },
     fontWeight: {
       light: 300,
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
     lineHeight: {
       none: 1,
       tight: 1.25,
       normal: 1.5,
       relaxed: 1.625,
-      loose: 2
+      loose: 2,
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -75,8 +75,8 @@ const mockTheme: ThemeConfig = {
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em'
-    }
+      widest: '0.1em',
+    },
   },
   spacing: {
     xs: '0.25rem',
@@ -95,7 +95,7 @@ const mockTheme: ThemeConfig = {
     '4': '1rem' as any,
     '5': '1.25rem' as any,
     '6': '1.5rem' as any,
-    '8': '2rem' as any
+    '8': '2rem' as any,
   },
   breakpoints: {
     xs: '0px',
@@ -103,7 +103,7 @@ const mockTheme: ThemeConfig = {
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px'
+    '2xl': '1536px',
   },
   borderRadius: {
     none: '0',
@@ -113,7 +113,7 @@ const mockTheme: ThemeConfig = {
     lg: '0.5rem',
     xl: '0.75rem',
     '2xl': '1rem',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
@@ -123,21 +123,21 @@ const mockTheme: ThemeConfig = {
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
   transitions: {
     duration: {
       fast: '150ms',
       normal: '300ms',
-      slow: '500ms'
+      slow: '500ms',
     },
     timing: {
       easeIn: 'ease-in',
       easeOut: 'ease-out',
       easeInOut: 'ease-in-out',
-      linear: 'linear'
-    }
-  }
+      linear: 'linear',
+    },
+  },
 };
 
 // Add primary color nested object for testing
@@ -145,16 +145,12 @@ const mockTheme: ThemeConfig = {
 (mockTheme.colors as any).primary = {
   50: '#eff6ff',
   100: '#dbeafe',
-  700: '#1d4ed8'
+  700: '#1d4ed8',
 };
 
 // Wrapper component that provides the theme
 const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <DirectThemeProvider initialTheme={mockTheme}>
-      {children}
-    </DirectThemeProvider>
-  );
+  return <DirectThemeProvider initialTheme={mockTheme}>{children}</DirectThemeProvider>;
 };
 
 describe('List Component', () => {
@@ -169,7 +165,7 @@ describe('List Component', () => {
 
     const list = screen.getByTestId('list');
     const listItem = screen.getByTestId('list-item');
-    
+
     expect(list).toBeInTheDocument();
     expect(listItem).toBeInTheDocument();
     expect(listItem).toHaveTextContent('List item 1');
@@ -210,7 +206,9 @@ describe('List Component', () => {
     list = screen.getByTestId('list');
     const listItem = screen.getByTestId('list-item');
     expect(list).toHaveStyle({ border: 'none' });
-    expect(listItem).toHaveStyle({ borderBottom: `1px solid ${(mockTheme.colors as any).gray[200]}` });
+    expect(listItem).toHaveStyle({
+      borderBottom: `1px solid ${(mockTheme.colors as any).gray[200]}`,
+    });
   });
 
   test('renders list with different sizes', () => {
@@ -223,7 +221,9 @@ describe('List Component', () => {
     );
 
     let listItem = screen.getByTestId('list-item');
-    expect(listItem).toHaveStyle({ padding: `${(mockTheme.spacing as any)['1']} ${(mockTheme.spacing as any)['2']}` });
+    expect(listItem).toHaveStyle({
+      padding: `${(mockTheme.spacing as any)['1']} ${(mockTheme.spacing as any)['2']}`,
+    });
 
     rerender(
       <ThemeWrapper>
@@ -234,7 +234,9 @@ describe('List Component', () => {
     );
 
     listItem = screen.getByTestId('list-item');
-    expect(listItem).toHaveStyle({ padding: `${(mockTheme.spacing as any)['2']} ${(mockTheme.spacing as any)['3']}` });
+    expect(listItem).toHaveStyle({
+      padding: `${(mockTheme.spacing as any)['2']} ${(mockTheme.spacing as any)['3']}`,
+    });
 
     rerender(
       <ThemeWrapper>
@@ -245,7 +247,9 @@ describe('List Component', () => {
     );
 
     listItem = screen.getByTestId('list-item');
-    expect(listItem).toHaveStyle({ padding: `${(mockTheme.spacing as any)['3']} ${(mockTheme.spacing as any)['4']}` });
+    expect(listItem).toHaveStyle({
+      padding: `${(mockTheme.spacing as any)['3']} ${(mockTheme.spacing as any)['4']}`,
+    });
   });
 
   test('handles interactive list items', () => {
@@ -259,11 +263,11 @@ describe('List Component', () => {
 
     const listItem = screen.getByTestId('list-item');
     expect(listItem).toHaveStyle({ cursor: 'pointer' });
-    
+
     // Hover state
     fireEvent.mouseOver(listItem);
     expect(listItem).toHaveStyle({ backgroundColor: (mockTheme.colors as any).gray[50] });
-    
+
     // Return to initial state
     fireEvent.mouseOut(listItem);
     expect(listItem).toHaveStyle({ backgroundColor: 'transparent' });
@@ -273,15 +277,17 @@ describe('List Component', () => {
     render(
       <ThemeWrapper>
         <List data-testid="list">
-          <ListItem data-testid="list-item" selected>List item 1</ListItem>
+          <ListItem data-testid="list-item" selected>
+            List item 1
+          </ListItem>
         </List>
       </ThemeWrapper>
     );
 
     const listItem = screen.getByTestId('list-item');
-    expect(listItem).toHaveStyle({ 
+    expect(listItem).toHaveStyle({
       backgroundColor: (mockTheme.colors as any).primary[50],
-      color: (mockTheme.colors as any).primary[700]
+      color: (mockTheme.colors as any).primary[700],
     });
     expect(listItem).toHaveAttribute('aria-selected', 'true');
   });
@@ -290,17 +296,19 @@ describe('List Component', () => {
     render(
       <ThemeWrapper>
         <List data-testid="list">
-          <ListItem data-testid="list-item" disabled>List item 1</ListItem>
+          <ListItem data-testid="list-item" disabled>
+            List item 1
+          </ListItem>
         </List>
       </ThemeWrapper>
     );
 
     const listItem = screen.getByTestId('list-item');
-    expect(listItem).toHaveStyle({ 
+    expect(listItem).toHaveStyle({
       backgroundColor: (mockTheme.colors as any).gray[50],
       color: (mockTheme.colors as any).gray[400],
       cursor: 'not-allowed',
-      opacity: 0.7
+      opacity: 0.7,
     });
     expect(listItem).toHaveAttribute('aria-disabled', 'true');
   });
@@ -309,7 +317,7 @@ describe('List Component', () => {
     render(
       <ThemeWrapper>
         <List data-testid="list">
-          <ListItem 
+          <ListItem
             data-testid="list-item"
             startContent={<span data-testid="start-content">Start</span>}
             endContent={<span data-testid="end-content">End</span>}
@@ -322,10 +330,10 @@ describe('List Component', () => {
 
     expect(screen.getByTestId('start-content')).toBeInTheDocument();
     expect(screen.getByTestId('start-content')).toHaveTextContent('Start');
-    
+
     expect(screen.getByTestId('end-content')).toBeInTheDocument();
     expect(screen.getByTestId('end-content')).toHaveTextContent('End');
-    
+
     expect(screen.getByTestId('list-item')).toHaveTextContent('List item 1');
   });
-}); 
+});

@@ -166,23 +166,19 @@ const testColumns: Column<TestItem>[] = [
 
 // Custom render function with theme
 const renderWithTheme = (ui: React.ReactElement) => {
-  return render(
-    <DirectThemeProvider initialTheme={mockTheme}>
-      {ui}
-    </DirectThemeProvider>
-  );
+  return render(<DirectThemeProvider initialTheme={mockTheme}>{ui}</DirectThemeProvider>);
 };
 
 describe('DataGrid Component', () => {
   it('renders the grid with data', () => {
     renderWithTheme(<DataGrid data={testData} columns={testColumns} />);
-    
+
     // Check if all column headers are rendered
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Email')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
-    
+
     // Check if data rows are rendered
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('jane@example.com')).toBeInTheDocument();
@@ -190,14 +186,16 @@ describe('DataGrid Component', () => {
   });
 
   it('shows no data message when data is empty', () => {
-    renderWithTheme(<DataGrid data={[]} columns={testColumns} noDataMessage="Custom no data message" />);
-    
+    renderWithTheme(
+      <DataGrid data={[]} columns={testColumns} noDataMessage="Custom no data message" />
+    );
+
     expect(screen.getByText('Custom no data message')).toBeInTheDocument();
   });
 
   it('renders loading state correctly', () => {
     renderWithTheme(<DataGrid data={testData} columns={testColumns} loading={true} />);
-    
+
     // Check for loading state by looking for loading overlay
     const loadingOverlay = screen.getByTestId('loading-overlay');
     expect(loadingOverlay).toBeInTheDocument();
@@ -205,14 +203,14 @@ describe('DataGrid Component', () => {
 
   it('allows sorting by clicking on column headers', async () => {
     renderWithTheme(<DataGrid data={testData} columns={testColumns} enableSorting={true} />);
-    
+
     // Get ID column header and click it to sort
     const idHeader = screen.getByText('ID');
     fireEvent.click(idHeader);
-    
+
     // Verify the click was registered
     expect(screen.getByText('1')).toBeInTheDocument();
-    
+
     // Click again to verify we can trigger sorting multiple times
     fireEvent.click(idHeader);
     expect(screen.getByText('1')).toBeInTheDocument();
@@ -220,13 +218,13 @@ describe('DataGrid Component', () => {
 
   it('allows filtering data', () => {
     renderWithTheme(<DataGrid data={testData} columns={testColumns} enableFiltering={true} />);
-    
+
     // Find name filter input (second filter input)
     const nameFilterInput = screen.getAllByPlaceholderText('Filter...')[1]; // Use the Name filter, not ID
-    
+
     // Enter filter text
     fireEvent.change(nameFilterInput, { target: { value: 'John' } });
-    
+
     // Wait for filtered results
     const johnRow = screen.getByText('John Doe');
     expect(johnRow).toBeInTheDocument();
@@ -235,31 +233,25 @@ describe('DataGrid Component', () => {
 
   it('handles row click events', () => {
     const handleRowClick = jest.fn();
-    
-    renderWithTheme(
-      <DataGrid 
-        data={testData} 
-        columns={testColumns} 
-        onRowClick={handleRowClick} 
-      />
-    );
-    
+
+    renderWithTheme(<DataGrid data={testData} columns={testColumns} onRowClick={handleRowClick} />);
+
     // Click on a row
     const johnDoeCell = screen.getByText('John Doe');
     const row = johnDoeCell.closest('tr');
     fireEvent.click(row as HTMLElement);
-    
+
     // Check if the click handler was called with the right data
     expect(handleRowClick).toHaveBeenCalledWith(testData[0]);
   });
 
   it('applies correct theme styling', () => {
     renderWithTheme(<DataGrid data={testData} columns={testColumns} striped={true} />);
-    
+
     // Get the table element
     const table = screen.getByRole('table');
     expect(table).toBeInTheDocument();
-    
+
     // Check header styling
     const header = screen.getAllByRole('columnheader')[0];
     expect(header).toHaveStyle('font-weight: 600');
@@ -267,33 +259,31 @@ describe('DataGrid Component', () => {
 
   it('works with pagination controls', () => {
     // Create more test data to enable pagination
-    const manyItems = Array.from({ length: 25 }, (_, i) => ({
-      id: i + 1,
-      name: `Person ${i + 1}`,
-      email: `person${i + 1}@example.com`,
-      status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'inactive' : 'pending',
-    } as TestItem));
-    
-    renderWithTheme(
-      <DataGrid 
-        data={manyItems} 
-        columns={testColumns}
-        defaultPageSize={10}
-      />
+    const manyItems = Array.from(
+      { length: 25 },
+      (_, i) =>
+        ({
+          id: i + 1,
+          name: `Person ${i + 1}`,
+          email: `person${i + 1}@example.com`,
+          status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'inactive' : 'pending',
+        }) as TestItem
     );
-    
+
+    renderWithTheme(<DataGrid data={manyItems} columns={testColumns} defaultPageSize={10} />);
+
     // Check that pagination info is displayed
     expect(screen.getByText('1-10 of 25')).toBeInTheDocument();
-    
+
     // Click next page button
     const nextButton = screen.getByText('Next');
     fireEvent.click(nextButton);
-    
+
     // Check that we're now on page 2
     expect(screen.getByText('11-20 of 25')).toBeInTheDocument();
-    
+
     // Person 11 should be visible, Person 1 should not
     expect(screen.getByText('Person 11')).toBeInTheDocument();
     expect(screen.queryByText('Person 1')).not.toBeInTheDocument();
   });
-}); 
+});

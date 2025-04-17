@@ -6,11 +6,7 @@ import { DirectThemeProvider } from '../../../core/theme/DirectThemeProvider';
 import { extendedMockTheme } from '../../../core/theme/__mocks__/mockTheme';
 
 const renderWithTheme = (ui: React.ReactElement) => {
-  return render(
-    <DirectThemeProvider initialTheme={extendedMockTheme}>
-      {ui}
-    </DirectThemeProvider>
-  );
+  return render(<DirectThemeProvider initialTheme={extendedMockTheme}>{ui}</DirectThemeProvider>);
 };
 
 describe('TextField component', () => {

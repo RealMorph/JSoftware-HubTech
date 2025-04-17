@@ -32,7 +32,8 @@ const globalStyles = css`
     /* CSS variables will be injected here by theme system */
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     font-family: var(--font-family-base, system-ui, -apple-system, sans-serif);
@@ -42,7 +43,9 @@ const globalStyles = css`
     background-color: var(--color-background, #fff);
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -61,7 +64,12 @@ const globalStyles = css`
   }
 
   /* Typography baseline */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-family-heading, system-ui, -apple-system, sans-serif);
     margin-top: 0;
     margin-bottom: var(--spacing-md, 1rem);
@@ -99,18 +107,23 @@ const globalStyles = css`
   }
 
   /* Forms */
-  button, input, select, textarea {
+  button,
+  input,
+  select,
+  textarea {
     font-family: inherit;
     font-size: 100%;
     line-height: 1.15;
     margin: 0;
   }
 
-  button, input {
+  button,
+  input {
     overflow: visible;
   }
 
-  button, select {
+  button,
+  select {
     text-transform: none;
   }
 
@@ -134,10 +147,7 @@ export interface ThemeProviderProps {
   initialTheme?: ThemeConfig;
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  children,
-  initialTheme,
-}) => {
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, initialTheme }) => {
   const themeService = useThemeService();
   const [currentTheme, setCurrentTheme] = useState<ThemeConfig>(
     initialTheme || themeService.getDefaultTheme()
@@ -155,12 +165,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Theme toggling function
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    
+
     // Get dark/light theme based on current mode
     const newTheme = !isDarkMode
       ? themeService.getDarkTheme() || currentTheme
       : themeService.getLightTheme() || currentTheme;
-    
+
     setCurrentTheme(newTheme);
   };
 
@@ -176,9 +186,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       }}
     >
       <Global styles={globalStyles} />
-      <EmotionThemeProvider theme={emotionTheme}>
-        {children}
-      </EmotionThemeProvider>
+      <EmotionThemeProvider theme={emotionTheme}>{children}</EmotionThemeProvider>
     </ThemeContext.Provider>
   );
-}; 
+};

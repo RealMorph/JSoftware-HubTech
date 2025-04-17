@@ -81,5 +81,5 @@ export {
   Select,
   SelectDemo,
   DatePicker,
-  DatePickerDemo
+  DatePickerDemo,
 };

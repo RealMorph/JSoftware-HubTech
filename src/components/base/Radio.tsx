@@ -1,7 +1,5 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react';
-import styled from '@emotion/styled';
-import { useTheme } from '../../core/theme/ThemeProvider';
-import { getThemeValue } from '../../core/theme/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>;
 
@@ -52,14 +50,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     },
     ref
   ) => {
-    const { currentTheme } = useTheme();
+    const theme = useDirectTheme();
     const id = providedId || `radio-${Math.random().toString(36).substring(2, 11)}`;
     const labelId = `${id}-label`;
     const helperId = `${id}-helper`;
-
-    // Helper function to access theme values
-    const getThemeVal = (path: string): string =>
-      currentTheme ? getThemeValue(currentTheme, path) : '';
 
     // Calculate sizes based on component size
     const getRadioSize = () => {
@@ -70,17 +64,17 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     // Get color based on state and color prop
     const getBorderColor = () => {
-      if (disabled) return getThemeVal('colors.gray.300');
-      if (error) return getThemeVal('colors.error.500');
+      if (disabled) return theme.getColor('gray.300', '#d1d5db');
+      if (error) return theme.getColor('error', '#f44336');
       if (checked) {
-        if (color === 'primary') return getThemeVal('colors.primary.500');
-        if (color === 'secondary') return getThemeVal('colors.secondary.500');
-        if (color === 'success') return getThemeVal('colors.success');
-        if (color === 'error') return getThemeVal('colors.error.500');
-        if (color === 'warning') return getThemeVal('colors.warning');
-        if (color === 'info') return getThemeVal('colors.info');
+        if (color === 'primary') return theme.getColor('primary', '#1976d2');
+        if (color === 'secondary') return theme.getColor('secondary', '#dc004e');
+        if (color === 'success') return theme.getColor('success', '#4caf50');
+        if (color === 'error') return theme.getColor('error', '#f44336');
+        if (color === 'warning') return theme.getColor('warning', '#ff9800');
+        if (color === 'info') return theme.getColor('info', '#2196f3');
       }
-      return getThemeVal('colors.gray.500');
+      return theme.getColor('gray.500', '#6b7280');
     };
 
     const getBackgroundColor = () => {
@@ -88,20 +82,20 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     };
 
     const getDotColor = () => {
-      if (disabled) return getThemeVal('colors.gray.300');
-      if (color === 'primary') return getThemeVal('colors.primary.500');
-      if (color === 'secondary') return getThemeVal('colors.secondary.500');
-      if (color === 'success') return getThemeVal('colors.success');
-      if (color === 'error') return getThemeVal('colors.error.500');
-      if (color === 'warning') return getThemeVal('colors.warning');
-      if (color === 'info') return getThemeVal('colors.info');
-      return getThemeVal('colors.primary.500');
+      if (disabled) return theme.getColor('gray.300', '#d1d5db');
+      if (color === 'primary') return theme.getColor('primary', '#1976d2');
+      if (color === 'secondary') return theme.getColor('secondary', '#dc004e');
+      if (color === 'success') return theme.getColor('success', '#4caf50');
+      if (color === 'error') return theme.getColor('error', '#f44336');
+      if (color === 'warning') return theme.getColor('warning', '#ff9800');
+      if (color === 'info') return theme.getColor('info', '#2196f3');
+      return theme.getColor('primary', '#1976d2');
     };
 
     const getTextColor = () => {
-      if (disabled) return getThemeVal('colors.gray.400');
-      if (error) return getThemeVal('colors.error.500');
-      return getThemeVal('colors.gray.900');
+      if (disabled) return theme.getColor('gray.400', '#9ca3af');
+      if (error) return theme.getColor('error', '#f44336');
+      return theme.getColor('gray.900', '#111827');
     };
 
     // Container styles
@@ -110,8 +104,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       alignItems: 'flex-start',
       position: 'relative',
       cursor: disabled ? 'not-allowed' : 'pointer',
-      fontSize: getThemeVal('typography.scale.base'),
-      fontFamily: getThemeVal('typography.family'),
+      fontSize: theme.getTypography('fontSize.md', '1rem') as string,
+      fontFamily: theme.getTypography('fontFamily.base', 'system-ui, sans-serif') as string,
     };
 
     // Radio button outer circle styles
@@ -138,7 +132,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       backgroundColor: getDotColor(),
       opacity: checked ? 1 : 0,
       transform: checked ? 'scale(1)' : 'scale(0)',
-      transition: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+      transition:
+        'transform 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)',
     };
 
     // Hide the actual input visually but keep it accessible
@@ -157,7 +152,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     // Label styles
     const labelStyles: React.CSSProperties = {
-      fontSize: getThemeVal('typography.scale.base'),
+      fontSize: theme.getTypography('fontSize.md', '1rem') as string,
       lineHeight: 1.5,
       color: getTextColor(),
       userSelect: 'none',
@@ -167,8 +162,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const helperTextStyles: React.CSSProperties = {
       marginTop: '4px',
       marginLeft: `calc(${getRadioSize()} + 8px)`, // Align with label
-      fontSize: getThemeVal('typography.scale.xs'),
-      color: error ? getThemeVal('colors.error.500') : getThemeVal('colors.gray.500'),
+      fontSize: theme.getTypography('fontSize.xs', '0.75rem') as string,
+      color: error ? theme.getColor('error', '#f44336') : theme.getColor('gray.500', '#6b7280'),
     };
 
     // Handle change
@@ -216,4 +211,4 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
 Radio.displayName = 'Radio';
 
-export default Radio; 
+export default Radio;

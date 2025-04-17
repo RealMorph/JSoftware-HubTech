@@ -35,13 +35,13 @@ const StyledPanel = styled.div<{
   display: flex;
   flex-direction: column;
   position: relative;
-  width: ${props => props.$fullWidth ? '100%' : 'auto'};
-  height: ${props => props.$fullHeight ? '100%' : 'auto'};
+  width: ${props => (props.$fullWidth ? '100%' : 'auto')};
+  height: ${props => (props.$fullHeight ? '100%' : 'auto')};
   padding: ${props => props.$padding};
   background-color: ${props => props.$bgColor};
   border-radius: ${props => props.$borderRadius};
   box-shadow: ${props => props.$boxShadow};
-  border: ${props => props.$variant === 'outlined' ? `1px solid ${props.$borderColor}` : 'none'};
+  border: ${props => (props.$variant === 'outlined' ? `1px solid ${props.$borderColor}` : 'none')};
   overflow: hidden;
 `;
 
@@ -68,10 +68,14 @@ export const Panel = forwardRef<HTMLDivElement, PanelProps>(
 
     const getPaddingValue = (): string => {
       switch (padding) {
-        case 'none': return '0';
-        case 'small': return getSpacing('4', '1rem');
-        case 'large': return getSpacing('8', '2rem');
-        default: return getSpacing('6', '1.5rem'); // medium (default)
+        case 'none':
+          return '0';
+        case 'small':
+          return getSpacing('4', '1rem');
+        case 'large':
+          return getSpacing('8', '2rem');
+        default:
+          return getSpacing('6', '1.5rem'); // medium (default)
       }
     };
 
@@ -131,13 +135,13 @@ export interface PanelHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 export const PanelHeader = forwardRef<HTMLDivElement, PanelHeaderProps>(
   ({ divider = false, children, style, ...props }, ref) => {
     const { getColor, getSpacing } = useDirectTheme();
-    
+
     const customStyles: React.CSSProperties = {
       padding: getSpacing('md', '1rem'),
       borderBottom: divider ? `1px solid ${getColor('border', '#e5e7eb')}` : undefined,
-      ...style
+      ...style,
     };
-    
+
     return (
       <div ref={ref} style={customStyles} {...props}>
         {children}
@@ -155,9 +159,9 @@ export const PanelBody = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      ...style
+      ...style,
     };
-    
+
     return (
       <div ref={ref} style={customStyles} {...props}>
         {children}
@@ -177,13 +181,13 @@ export interface PanelFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 export const PanelFooter = forwardRef<HTMLDivElement, PanelFooterProps>(
   ({ divider = false, children, style, ...props }, ref) => {
     const { getColor, getSpacing } = useDirectTheme();
-    
+
     const customStyles: React.CSSProperties = {
       padding: getSpacing('md', '1rem'),
       borderTop: divider ? `1px solid ${getColor('border', '#e5e7eb')}` : undefined,
-      ...style
+      ...style,
     };
-    
+
     return (
       <div ref={ref} style={customStyles} {...props}>
         {children}
@@ -192,4 +196,4 @@ export const PanelFooter = forwardRef<HTMLDivElement, PanelFooterProps>(
   }
 );
 
-PanelFooter.displayName = 'PanelFooter'; 
+PanelFooter.displayName = 'PanelFooter';

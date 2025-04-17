@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'> {
+export interface TextFieldProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'> {
   /** Field label */
   label?: string;
   /** Helper text displayed below the input */
@@ -52,12 +53,11 @@ const Label = styled.label<{
 }>`
   font-size: ${props => props.$themeStyles.labelFontSize};
   margin-bottom: ${props => props.$themeStyles.labelMargin};
-  color: ${props =>
-    props.$error
-      ? props.$themeStyles.errorColor
-      : props.$themeStyles.labelColor};
-  
-  ${props => props.$required && `
+  color: ${props => (props.$error ? props.$themeStyles.errorColor : props.$themeStyles.labelColor)};
+
+  ${props =>
+    props.$required &&
+    `
     &::after {
       content: " *";
       color: ${props.$themeStyles.errorColor};
@@ -73,9 +73,7 @@ const HelperText = styled.div<{
   font-size: ${props => props.$themeStyles.helperTextFontSize};
   margin-top: ${props => props.$themeStyles.helperTextMargin};
   color: ${props =>
-    props.$error
-      ? props.$themeStyles.errorColor
-      : props.$themeStyles.helperTextColor};
+    props.$error ? props.$themeStyles.errorColor : props.$themeStyles.helperTextColor};
 `;
 
 // Input wrapper component (for adornments)
@@ -97,17 +95,15 @@ const InputWrapper = styled.div<{
     props.$error
       ? props.$themeStyles.errorColor
       : props.$focused
-      ? props.$themeStyles.focusBorderColor
-      : props.$themeStyles.borderColor};
+        ? props.$themeStyles.focusBorderColor
+        : props.$themeStyles.borderColor};
   border-radius: ${props => props.$themeStyles.borderRadius};
   padding: ${props => props.$themeStyles.padding};
   transition: ${props => props.$themeStyles.transition};
 
   &:hover {
     border-color: ${props =>
-      props.$error
-        ? props.$themeStyles.errorColor
-        : props.$themeStyles.hoverBorderColor};
+      props.$error ? props.$themeStyles.errorColor : props.$themeStyles.hoverBorderColor};
   }
 `;
 
@@ -127,11 +123,11 @@ const Input = styled.input<{
   padding: 0;
   padding-left: ${props => (props.$hasStartAdornment ? '8px' : '0')};
   padding-right: ${props => (props.$hasEndAdornment ? '8px' : '0')};
-  
+
   &::placeholder {
     color: ${props => props.$themeStyles.placeholderColor};
   }
-  
+
   &:disabled {
     cursor: not-allowed;
   }
@@ -167,14 +163,8 @@ export const TextField: React.FC<TextFieldProps> = ({
   ...rest
 }) => {
   // Use direct theme access
-  const {
-    getColor,
-    getTypography,
-    getSpacing,
-    getBorderRadius,
-    getTransition
-  } = useDirectTheme();
-  
+  const { getColor, getTypography, getSpacing, getBorderRadius, getTransition } = useDirectTheme();
+
   const [focused, setFocused] = useState(false);
   const inputId = id || `textfield-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -277,16 +267,11 @@ export const TextField: React.FC<TextFieldProps> = ({
       data-testid="text-field"
     >
       {label && (
-        <Label
-          htmlFor={inputId}
-          $error={error}
-          $required={required}
-          $themeStyles={themeStyles}
-        >
+        <Label htmlFor={inputId} $error={error} $required={required} $themeStyles={themeStyles}>
           {label}
         </Label>
       )}
-      
+
       <InputWrapper
         $variant={variant}
         $size={size}
@@ -297,11 +282,9 @@ export const TextField: React.FC<TextFieldProps> = ({
         $themeStyles={themeStyles}
       >
         {startAdornment && (
-          <StartAdornment color={themeStyles.labelColor}>
-            {startAdornment}
-          </StartAdornment>
+          <StartAdornment color={themeStyles.labelColor}>{startAdornment}</StartAdornment>
         )}
-        
+
         <Input
           id={inputId}
           $hasStartAdornment={!!startAdornment}
@@ -314,14 +297,10 @@ export const TextField: React.FC<TextFieldProps> = ({
           required={required}
           {...rest}
         />
-        
-        {endAdornment && (
-          <EndAdornment color={themeStyles.labelColor}>
-            {endAdornment}
-          </EndAdornment>
-        )}
+
+        {endAdornment && <EndAdornment color={themeStyles.labelColor}>{endAdornment}</EndAdornment>}
       </InputWrapper>
-      
+
       {helperText && (
         <HelperText $error={error} $themeStyles={themeStyles}>
           {helperText}

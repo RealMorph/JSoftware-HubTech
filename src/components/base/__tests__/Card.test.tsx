@@ -19,7 +19,7 @@ const mockTheme: ThemeConfig = {
     text: {
       primary: '#000000',
       secondary: '#222222',
-      disabled: '#666666'
+      disabled: '#666666',
     },
     border: '#e0e0e0',
     white: '#ffffff',
@@ -36,13 +36,13 @@ const mockTheme: ThemeConfig = {
       700: '#374151',
       800: '#1f2937',
       900: '#111827',
-    } as any
+    } as any,
   },
   typography: {
     fontFamily: {
       base: 'Roboto, sans-serif',
       heading: 'Roboto, sans-serif',
-      monospace: 'monospace'
+      monospace: 'monospace',
     },
     fontSize: {
       xs: '0.75rem',
@@ -52,21 +52,21 @@ const mockTheme: ThemeConfig = {
       xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
-      '4xl': '2.25rem'
+      '4xl': '2.25rem',
     },
     fontWeight: {
       light: 300,
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
     lineHeight: {
       none: 1,
       tight: 1.25,
       normal: 1.5,
       relaxed: 1.625,
-      loose: 2
+      loose: 2,
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -74,8 +74,8 @@ const mockTheme: ThemeConfig = {
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em'
-    }
+      widest: '0.1em',
+    },
   },
   spacing: {
     xs: '0.25rem',
@@ -97,7 +97,7 @@ const mockTheme: ThemeConfig = {
     '8': '2rem' as any,
     '10': '2.5rem' as any,
     '12': '3rem' as any,
-    '16': '4rem' as any
+    '16': '4rem' as any,
   },
   breakpoints: {
     xs: '0px',
@@ -105,7 +105,7 @@ const mockTheme: ThemeConfig = {
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px'
+    '2xl': '1536px',
   },
   borderRadius: {
     none: '0',
@@ -115,7 +115,7 @@ const mockTheme: ThemeConfig = {
     lg: '0.5rem',
     xl: '0.75rem',
     '2xl': '1rem',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
@@ -125,30 +125,26 @@ const mockTheme: ThemeConfig = {
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
   transitions: {
     duration: {
       fast: '150ms',
       normal: '300ms',
-      slow: '500ms'
+      slow: '500ms',
     },
     timing: {
       easeIn: 'ease-in',
       easeOut: 'ease-out',
       easeInOut: 'ease-in-out',
-      linear: 'linear'
-    }
-  }
+      linear: 'linear',
+    },
+  },
 };
 
 // Wrapper component that provides the theme
 const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <DirectThemeProvider initialTheme={mockTheme}>
-      {children}
-    </DirectThemeProvider>
-  );
+  return <DirectThemeProvider initialTheme={mockTheme}>{children}</DirectThemeProvider>;
 };
 
 describe('Card Component', () => {
@@ -261,46 +257,41 @@ describe('Card Component', () => {
     );
 
     const card = screen.getByTestId('card');
-    
+
     // Initial state
-    expect(card).toHaveStyle({ 
+    expect(card).toHaveStyle({
       boxShadow: mockTheme.shadows.sm,
-      transform: undefined
+      transform: undefined,
     });
 
     // Hover state
     fireEvent.mouseOver(card);
-    expect(card).toHaveStyle({ 
+    expect(card).toHaveStyle({
       boxShadow: mockTheme.shadows.md,
-      transform: 'translateY(-2px)'
+      transform: 'translateY(-2px)',
     });
 
     // Return to initial state
     fireEvent.mouseOut(card);
-    expect(card).toHaveStyle({ 
+    expect(card).toHaveStyle({
       boxShadow: mockTheme.shadows.sm,
-      transform: 'translateY(0)'
+      transform: 'translateY(0)',
     });
   });
 
   test('renders card with custom bg and border colors', () => {
     render(
       <ThemeWrapper>
-        <Card 
-          data-testid="card" 
-          bgColor="primary"
-          borderColor="secondary"
-          variant="outlined"
-        >
+        <Card data-testid="card" bgColor="primary" borderColor="secondary" variant="outlined">
           <div>Card content</div>
         </Card>
       </ThemeWrapper>
     );
 
     const card = screen.getByTestId('card');
-    expect(card).toHaveStyle({ 
+    expect(card).toHaveStyle({
       backgroundColor: mockTheme.colors.primary,
-      border: `1px solid ${mockTheme.colors.secondary}`
+      border: `1px solid ${mockTheme.colors.secondary}`,
     });
   });
 
@@ -322,18 +313,18 @@ describe('Card Component', () => {
     expect(header).toBeInTheDocument();
     expect(content).toBeInTheDocument();
     expect(footer).toBeInTheDocument();
-    
+
     expect(header).toHaveTextContent('Header');
     expect(content).toHaveTextContent('Content');
     expect(footer).toHaveTextContent('Footer');
 
     // Check styling
-    expect(header).toHaveStyle({ 
-      borderBottom: `1px solid ${(mockTheme.colors.gray as any)[100]}`
+    expect(header).toHaveStyle({
+      borderBottom: `1px solid ${(mockTheme.colors.gray as any)[100]}`,
     });
-    
-    expect(footer).toHaveStyle({ 
-      borderTop: `1px solid ${(mockTheme.colors.gray as any)[100]}`
+
+    expect(footer).toHaveStyle({
+      borderTop: `1px solid ${(mockTheme.colors.gray as any)[100]}`,
     });
   });
-}); 
+});

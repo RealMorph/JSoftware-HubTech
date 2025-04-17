@@ -1,111 +1,65 @@
-import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import { createPortal } from 'react-dom';
-import styled, { keyframes, css } from 'styled-components';
-import { Theme } from '@emotion/react';
-import { getThemeValue } from '../../core/theme/styled';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import styled from '@emotion/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-// Types
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textColor: string;
+  successColor: string;
+  errorColor: string;
+  warningColor: string;
+  infoColor: string;
+  borderRadius: string;
+  shadowColor: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    textColor: getColor('text.primary', '#333333'),
+    successColor: getColor('success', '#4caf50'),
+    errorColor: getColor('error', '#f44336'),
+    warningColor: getColor('warning', '#ff9800'),
+    infoColor: getColor('info', '#2196f3'),
+    borderRadius: getBorderRadius('md', '4px'),
+    shadowColor: getShadow('md', '0 4px 6px rgba(0, 0, 0, 0.1)'),
+  };
+}
+
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
-export type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
 
 export interface ToastProps {
-  id: string;
-  type: ToastType;
-  title?: string;
-  message: string;
-  duration?: number;
-  onClose: (id: string) => void;
-  showProgressBar?: boolean;
-  showCloseButton?: boolean;
-}
-
-export interface ToastOptions {
+  // eslint-disable-next-line no-unused-vars
+  id?: string;
   type?: ToastType;
-  title?: string;
   message: string;
   duration?: number;
-  position?: ToastPosition;
-  showProgressBar?: boolean;
-  showCloseButton?: boolean;
+  onClose?: (id: string) => void;
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center'
+    | 'bottom-center';
 }
 
-interface ToastContextProps {
-  showToast: (options: ToastOptions) => string;
-  closeToast: (id: string) => void;
-  closeAllToasts: () => void;
-  position: ToastPosition;
-  setPosition: (position: ToastPosition) => void;
-}
-
-// Helper function for theming
-const themeValue = (theme: Theme) => (path: string, fallback?: string) => {
-  const value = getThemeValue(theme, path);
-  return value || fallback || '';
-};
-
-const slideIn = keyframes`
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-`;
-
-const slideOut = keyframes`
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-`;
-
-const getToastColor = (type: ToastType) => {
-  switch (type) {
-    case 'success':
-      return '#4caf50';
-    case 'error':
-      return '#f44336';
-    case 'warning':
-      return '#ff9800';
-    case 'info':
-    default:
-      return '#2196f3';
-  }
-};
-
-// Styled Components
-const ToastContainer = styled.div<{ type: ToastType; isExiting: boolean }>`
-  display: flex;
-  align-items: flex-start;
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid ${({ type }) => getToastColor(type)};
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  max-width: 400px;
-  animation: ${({ isExiting }) => 
-    isExiting
-      ? css`${slideOut} 0.3s forwards`
-      : css`${slideIn} 0.3s forwards`
-  };
-`;
-
-const ToastsWrapper = styled.div<{ position: ToastPosition }>`
+// Styled components
+const ToastContainer = styled.div<{
+  type: ToastType;
+  position: string;
+  $themeStyles: ThemeStyles;
+  id?: string;
+}>`
   position: fixed;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  max-width: 400px;
-  
-  ${({ position }) => {
-    switch (position) {
+  ${props => {
+    switch (props.position) {
       case 'top-right':
         return 'top: 20px; right: 20px;';
       case 'top-left':
@@ -122,214 +76,178 @@ const ToastsWrapper = styled.div<{ position: ToastPosition }>`
         return 'top: 20px; right: 20px;';
     }
   }}
-`;
+  background-color: ${props => {
+    switch (props.type) {
+      case 'success':
+        return props.$themeStyles.successColor;
+      case 'error':
+        return props.$themeStyles.errorColor;
+      case 'warning':
+        return props.$themeStyles.warningColor;
+      case 'info':
+        return props.$themeStyles.infoColor;
+      default:
+        return props.$themeStyles.infoColor;
+    }
+  }};
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  box-shadow: ${props => props.$themeStyles.shadowColor};
+  margin-bottom: 10px;
+  min-width: 250px;
+  max-width: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
 
-const ToastContent = styled.div`
-  flex: 1;
-`;
-
-const ToastTitle = styled.div<{ type: ToastType }>`
-  color: ${({ type }) => getToastColor(type)};
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-`;
-
-const ToastMessage = styled.div`
-  font-size: 0.875rem;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const CloseButton = styled.button`
-  background: transparent;
+  background: none;
   border: none;
-  color: #999;
+  color: white;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 1.25rem;
-  margin-left: 0.5rem;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
-  height: 24px;
-  width: 24px;
-  line-height: 24px;
-  text-align: center;
-  
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+
   &:hover {
-    color: #666;
+    opacity: 1;
   }
 `;
 
-const ToastIcon = ({ type }: { type: ToastType }) => {
-  switch (type) {
-    case 'success':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
-      );
-    case 'error':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="15" y1="9" x2="9" y2="15"></line>
-          <line x1="9" y1="9" x2="15" y2="15"></line>
-        </svg>
-      );
-    case 'warning':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-          <line x1="12" y1="9" x2="12" y2="13"></line>
-          <line x1="12" y1="17" x2="12.01" y2="17"></line>
-        </svg>
-      );
-    case 'info':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-      );
-    default:
-      return null;
-  }
+const Message = styled.div`
+  flex: 1;
+`;
+
+// Generate a unique ID for each toast
+const generateId = (): string => {
+  return `toast-${Math.random().toString(36).substring(2, 11)}`;
 };
 
-// Context
-const ToastContext = createContext<ToastContextProps>({
-  showToast: () => '',
-  closeToast: () => {},
-  closeAllToasts: () => {},
-  position: 'top-right',
-  setPosition: () => {},
-});
-
-// Toast Component
-const Toast: React.FC<ToastProps> = ({
-  id,
-  type,
-  title,
+// Main Toast component
+export const Toast: React.FC<ToastProps & { id?: string }> = ({
+  type = 'info',
   message,
-  duration = 5000,
+  duration = 3000,
   onClose,
-  showProgressBar = true,
-  showCloseButton = true,
+  position = 'top-right',
+  id = generateId(),
 }) => {
-  const [isExiting, setIsExiting] = useState(false);
-  
-  const handleClose = useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => onClose(id), 300); // Wait for exit animation to complete
-  }, [id, onClose]);
-  
-  useEffect(() => {
-    if (duration > 0) {
-      const timeout = setTimeout(handleClose, duration);
-      return () => clearTimeout(timeout);
-    }
-  }, [duration, handleClose]);
-  
-  return (
-    <ToastContainer type={type} isExiting={isExiting}>
-      <ToastContent>
-        <ToastTitle type={type}>
-          <ToastIcon type={type} />
-          {title || type.charAt(0).toUpperCase() + type.slice(1)}
-        </ToastTitle>
-        <ToastMessage>{message}</ToastMessage>
-      </ToastContent>
-      {showCloseButton && (
-        <CloseButton onClick={handleClose}>&times;</CloseButton>
-      )}
-    </ToastContainer>
-  );
-};
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
 
-// Toast Provider Component
-export const ToastProvider: React.FC<{
-  children: React.ReactNode;
-  defaultPosition?: ToastPosition;
-}> = ({ children, defaultPosition = 'top-right' }) => {
-  const [toasts, setToasts] = useState<Array<ToastProps & { id: string }>>([]);
-  const [position, setPosition] = useState<ToastPosition>(defaultPosition);
-  const [mounted, setMounted] = useState(false);
-  const [portalElement, setPortalElement] = useState<Element | null>(null);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    setMounted(true);
-    const portal = document.createElement('div');
-    document.body.appendChild(portal);
-    setPortalElement(portal);
-    return () => {
-      document.body.removeChild(portal);
-      setMounted(false);
-    };
-  }, []);
-  
-  const showToast = useCallback(
-    (options: ToastOptions) => {
-      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const toast = {
-        id,
-        type: options.type || 'info',
-        title: options.title,
-        message: options.message,
-        duration: options.duration !== undefined ? options.duration : 5000,
-        onClose: (toastId: string) => closeToast(toastId),
-        showProgressBar: options.showProgressBar !== undefined ? options.showProgressBar : true,
-        showCloseButton: options.showCloseButton !== undefined ? options.showCloseButton : true,
-      };
-      
-      setToasts((prevToasts) => [...prevToasts, toast]);
-      
-      if (options.position && options.position !== position) {
-        setPosition(options.position);
+    const timer = setTimeout(() => {
+      setVisible(false);
+      if (onClose) {
+        onClose(id);
       }
-      
-      return id;
-    },
-    [position]
-  );
-  
-  const closeToast = useCallback((id: string) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
-  }, []);
-  
-  const closeAllToasts = useCallback(() => {
-    setToasts([]);
-  }, []);
-  
-  const contextValue = {
-    showToast,
-    closeToast,
-    closeAllToasts,
-    position,
-    setPosition,
+    }, duration);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [duration, id, onClose]);
+
+  const handleClose = () => {
+    setVisible(false);
+    if (onClose) {
+      onClose(id);
+    }
   };
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-  
-  return (
-    <ToastContext.Provider value={contextValue}>
-      {children}
-      {mounted && portalElement && createPortal(
-        <ToastsWrapper position={position}>
-          {toasts.map((toast) => (
-            <Toast key={toast.id} {...toast} />
-          ))}
-        </ToastsWrapper>,
-        portalElement
-      )}
-    </ToastContext.Provider>
+  if (!visible) return null;
+
+  // Create portal for toast
+  return ReactDOM.createPortal(
+    <ToastContainer type={type} position={position} $themeStyles={themeStyles} id={id}>
+      <Message>{message}</Message>
+      <CloseButton onClick={handleClose}>×</CloseButton>
+    </ToastContainer>,
+    document.body
   );
 };
 
-// Hook for using toast
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-}; 
+// Add default export
+export default Toast;
+
+// ToastManager to handle multiple toasts
+interface ToastItem extends ToastProps {
+  id: string;
+}
+
+export interface ToastManagerProps {
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center'
+    | 'bottom-center';
+}
+
+export const useToast = (position: ToastManagerProps['position'] = 'top-right') => {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  const addToast = (props: Omit<ToastProps, 'id' | 'onClose' | 'position'>) => {
+    const id = generateId();
+    const newToast: ToastItem = {
+      ...props,
+      id,
+      onClose: removeToast,
+      position,
+    };
+
+    setToasts(prev => [...prev, newToast]);
+    return id;
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const ToastManager: React.FC = () => {
+    return (
+      <>
+        {toasts.map(toast => (
+          <Toast key={toast.id} {...toast} />
+        ))}
+      </>
+    );
+  };
+
+  return {
+    addToast,
+    removeToast,
+    ToastManager,
+    // Helper methods for convenience
+    success: (message: string, duration?: number) =>
+      addToast({ type: 'success', message, duration }),
+    error: (message: string, duration?: number) => addToast({ type: 'error', message, duration }),
+    warning: (message: string, duration?: number) =>
+      addToast({ type: 'warning', message, duration }),
+    info: (message: string, duration?: number) => addToast({ type: 'info', message, duration }),
+  };
+};

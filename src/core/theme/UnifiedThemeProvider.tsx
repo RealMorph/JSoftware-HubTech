@@ -2,13 +2,13 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 import { Global, css } from '@emotion/react';
 import { ThemeConfig } from './consolidated-types';
-import { 
-  adaptThemeForEmotion, 
-  adaptEmotionTheme, 
+import {
+  adaptThemeForEmotion,
+  adaptEmotionTheme,
   isThemeConfig,
   getThemeColor,
   getThemeTypography,
-  getThemeSpacing 
+  getThemeSpacing,
 } from './theme-adapter';
 import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
@@ -20,11 +20,11 @@ export interface UnifiedThemeContextType {
   // Theme access
   currentTheme: ThemeConfig;
   emotionTheme: any;
-  
+
   // Theme management
   setTheme: (theme: ThemeConfig) => void;
   toggleDarkMode: () => void;
-  
+
   // Theme utilities
   getColor: (path: string, fallback?: string) => string;
   getTypography: (path: string, fallback?: string | number) => string | number;
@@ -49,7 +49,8 @@ const globalStyles = css`
     /* CSS variables will be injected here by theme system */
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     font-family: var(--font-family-base, system-ui, -apple-system, sans-serif);
@@ -59,7 +60,9 @@ const globalStyles = css`
     background-color: var(--color-background, #fff);
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -78,7 +81,12 @@ const globalStyles = css`
   }
 
   /* Typography baseline */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-family-heading, system-ui, -apple-system, sans-serif);
     margin-top: 0;
     margin-bottom: var(--spacing-md, 1rem);
@@ -116,18 +124,23 @@ const globalStyles = css`
   }
 
   /* Forms */
-  button, input, select, textarea {
+  button,
+  input,
+  select,
+  textarea {
     font-family: inherit;
     font-size: 100%;
     line-height: 1.15;
     margin: 0;
   }
 
-  button, input {
+  button,
+  input {
     overflow: visible;
   }
 
-  button, select {
+  button,
+  select {
     text-transform: none;
   }
 `;
@@ -159,25 +172,27 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({
     initialTheme,
   }) => {
     const themeService = useThemeService();
-    
+
     // Initialize theme state
     const [currentTheme, setCurrentTheme] = useState<ThemeConfig>(() => {
       // Validate initial theme if provided
       if (initialTheme) {
         if (!isThemeConfig(initialTheme)) {
-          console.warn('Invalid theme provided to UnifiedThemeProvider. Using default theme instead.');
+          console.warn(
+            'Invalid theme provided to UnifiedThemeProvider. Using default theme instead.'
+          );
           return themeService.getDefaultTheme();
         }
         return initialTheme;
       }
       return themeService.getDefaultTheme();
     });
-    
+
     const [isDarkMode, setIsDarkMode] = useState(false);
-    
+
     // Create emotion-compatible theme
     const emotionTheme = adaptThemeForEmotion(currentTheme);
-    
+
     // Apply theme to the document
     useEffect(() => {
       if (currentTheme) {
@@ -185,29 +200,29 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({
         generateCssVariables(currentTheme);
       }
     }, [currentTheme]);
-    
+
     // Theme toggling function
     const toggleDarkMode = () => {
       setIsDarkMode(!isDarkMode);
-      
+
       // Get dark/light theme based on current mode
       const newTheme = !isDarkMode
         ? themeService.getDarkTheme() || currentTheme
         : themeService.getLightTheme() || currentTheme;
-      
+
       setCurrentTheme(newTheme);
     };
-    
+
     // Simplified theme getters that use the theme adapter
-    const getColor = (path: string, fallback?: string) => 
+    const getColor = (path: string, fallback?: string) =>
       getThemeColor(currentTheme, path, fallback);
-      
-    const getTypography = (path: string, fallback?: string | number) => 
+
+    const getTypography = (path: string, fallback?: string | number) =>
       getThemeTypography(currentTheme, path, fallback);
-      
-    const getSpacing = (key: string, fallback?: string) => 
+
+    const getSpacing = (key: string, fallback?: string) =>
       getThemeSpacing(currentTheme, key, fallback);
-    
+
     // Create context value
     const contextValue: UnifiedThemeContextType = {
       currentTheme,
@@ -216,25 +231,21 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({
       toggleDarkMode,
       getColor,
       getTypography,
-      getSpacing
+      getSpacing,
     };
-    
+
     return (
       <UnifiedThemeContext.Provider value={contextValue}>
         <Global styles={globalStyles} />
-        <EmotionThemeProvider theme={emotionTheme}>
-          {children}
-        </EmotionThemeProvider>
+        <EmotionThemeProvider theme={emotionTheme}>{children}</EmotionThemeProvider>
       </UnifiedThemeContext.Provider>
     );
   };
-  
+
   // If themeService is provided, wrap with ThemeServiceProvider
   return (
     <ThemeServiceProvider themeService={themeService}>
-      <UnifiedThemeProviderInner initialTheme={initialTheme}>
-        {children}
-      </UnifiedThemeProviderInner>
+      <UnifiedThemeProviderInner initialTheme={initialTheme}>{children}</UnifiedThemeProviderInner>
     </ThemeServiceProvider>
   );
 };
@@ -243,4 +254,4 @@ export const UnifiedThemeProvider: React.FC<UnifiedThemeProviderProps> = ({
  * Legacy compatibility layer for existing components
  * that expect the old ThemeProvider interface
  */
-export const ThemeProvider = UnifiedThemeProvider; 
+export const ThemeProvider = UnifiedThemeProvider;

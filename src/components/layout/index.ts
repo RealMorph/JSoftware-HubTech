@@ -11,4 +11,4 @@ export { Box, Spacer, Divider } from './Spacing';
 export { Panel, PanelHeader, PanelBody, PanelFooter } from './Panel';
 
 // Container component
-export { Container } from './Container'; 
+export { Container } from './Container';

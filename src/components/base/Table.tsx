@@ -19,11 +19,11 @@ const defaultTheme = {
       600: '#757575',
       700: '#616161',
       800: '#424242',
-      900: '#212121'
+      900: '#212121',
     },
     text: {
       primary: '#212121',
-      secondary: '#757575'
+      secondary: '#757575',
     },
     white: '#ffffff',
     surface: '#ffffff',
@@ -31,17 +31,17 @@ const defaultTheme = {
       default: '#ffffff',
       paper: '#ffffff',
       secondary: '#f5f5f5',
-      tertiary: '#fafafa'
+      tertiary: '#fafafa',
     },
     border: {
-      primary: '#e0e0e0'
-    }
+      primary: '#e0e0e0',
+    },
   },
   typography: {
     family: {
       primary: 'system-ui, -apple-system, sans-serif',
       secondary: 'system-ui, -apple-system, sans-serif',
-      monospace: 'monospace'
+      monospace: 'monospace',
     },
     scale: {
       xs: '0.75rem',
@@ -52,25 +52,25 @@ const defaultTheme = {
       '2xl': '1.5rem',
       '3xl': '1.875rem',
       '4xl': '2.25rem',
-      '5xl': '3rem'
+      '5xl': '3rem',
     },
     weights: {
       light: '300',
       normal: '400',
       medium: '500',
       semibold: '600',
-      bold: '700'
+      bold: '700',
     },
     lineHeights: {
       tight: '1.25',
       normal: '1.5',
-      loose: '1.75'
+      loose: '1.75',
     },
     letterSpacing: {
       tight: '-0.025em',
       normal: '0',
-      wide: '0.025em'
-    }
+      wide: '0.025em',
+    },
   },
   spacing: {
     '0': '0',
@@ -86,22 +86,22 @@ const defaultTheme = {
     '16': '4rem',
     '20': '5rem',
     '24': '6rem',
-    '32': '8rem'
+    '32': '8rem',
   },
   borderRadius: {
     none: '0',
     sm: '0.125rem',
     md: '0.25rem',
     lg: '0.5rem',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
     sm: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
     md: '0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12)',
     lg: '0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)',
-    xl: '0 15px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05)'
-  }
+    xl: '0 15px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05)',
+  },
 };
 
 export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
@@ -175,7 +175,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     // Helper function to access theme values with fallbacks
     const getThemeVal = (path: string): string => {
       if (!theme) return getNestedValue(defaultTheme, path);
-      
+
       // Use direct theme access with fallbacks
       const parts = path.split('.');
       if (parts[0] === 'colors') {
@@ -183,7 +183,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
       } else if (parts[0] === 'borderRadius') {
         return getBorderRadius(parts[1], getNestedValue(defaultTheme, path));
       }
-      
+
       // Use default theme as fallback for other properties
       return getNestedValue(defaultTheme, path);
     };
@@ -192,12 +192,12 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     function getNestedValue(obj: any, path: string): string {
       const keys = path.split('.');
       let current = obj;
-      
+
       for (const key of keys) {
         if (current === undefined || current === null) return '';
         current = current[key];
       }
-      
+
       return current?.toString() || '';
     }
 
@@ -205,16 +205,16 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
       width: fullWidth ? '100%' : 'auto',
       borderCollapse: 'separate',
       borderSpacing: 0,
-      ...(variant === 'bordered' 
+      ...(variant === 'bordered'
         ? {
             borderWidth: '1px',
             borderStyle: 'solid',
             borderColor: getColor('gray.200', '#E5E7EB'),
-            borderRadius: getBorderRadius('md', '0.25rem')
+            borderRadius: getBorderRadius('md', '0.25rem'),
           }
         : {
             borderWidth: '0',
-            borderStyle: 'none'
+            borderStyle: 'none',
           }),
       overflow: 'hidden',
       fontFamily: getThemeVal('typography.family.primary'),
@@ -222,7 +222,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     };
 
     // Clone children to add context properties
-    const enhancedChildren = React.Children.map(children, (child) => {
+    const enhancedChildren = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, {
           _variant: variant,
@@ -249,11 +249,14 @@ Table.displayName = 'Table';
 /**
  * TableHeader component - Header section of a table
  */
-export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps & {
-  _variant?: 'default' | 'bordered' | 'striped';
-  _size?: 'small' | 'medium' | 'large';
-  _stickyheader?: string;
-}>(
+export const TableHeader = forwardRef<
+  HTMLTableSectionElement,
+  TableHeaderProps & {
+    _variant?: 'default' | 'bordered' | 'striped';
+    _size?: 'small' | 'medium' | 'large';
+    _stickyheader?: string;
+  }
+>(
   (
     {
       children,
@@ -274,7 +277,7 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps 
         const colorPath = path.substring(7); // Remove 'colors.' prefix
         return getColor(colorPath, getNestedValue(defaultTheme, path));
       }
-      
+
       // Use default theme for other properties
       return getNestedValue(defaultTheme, path);
     };
@@ -283,25 +286,28 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps 
     function getNestedValue(obj: any, path: string): string {
       const keys = path.split('.');
       let current = obj;
-      
+
       for (const key of keys) {
         if (current === undefined || current === null) return '';
         current = current[key];
       }
-      
+
       return current?.toString() || '';
     }
 
     const styles: React.CSSProperties = {
-      backgroundColor: _variant === 'striped' ? getThemeVal('colors.gray.100') : getThemeVal('colors.background.default'),
-      ..._stickyheader === 'true'
+      backgroundColor:
+        _variant === 'striped'
+          ? getThemeVal('colors.gray.100')
+          : getThemeVal('colors.background.default'),
+      ...(_stickyheader === 'true'
         ? {
             position: 'sticky',
             top: 0,
             zIndex: 1,
             boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
           }
-        : {},
+        : {}),
     };
 
     return (
@@ -318,14 +324,7 @@ TableHeader.displayName = 'TableHeader';
  * TableBody component - Body section of a table
  */
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
-  (
-    {
-      children,
-      className,
-      ...props
-    },
-    ref
-  ) => {
+  ({ children, className, ...props }, ref) => {
     return (
       <tbody ref={ref} className={className} {...props}>
         {children}
@@ -339,11 +338,14 @@ TableBody.displayName = 'TableBody';
 /**
  * TableRow component - Row within a table
  */
-export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps & {
-  _variant?: 'default' | 'bordered' | 'striped';
-  _size?: 'small' | 'medium' | 'large';
-  _hoverable?: string;
-}>(
+export const TableRow = forwardRef<
+  HTMLTableRowElement,
+  TableRowProps & {
+    _variant?: 'default' | 'bordered' | 'striped';
+    _size?: 'small' | 'medium' | 'large';
+    _hoverable?: string;
+  }
+>(
   (
     {
       children,
@@ -367,7 +369,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps & {
         const colorPath = path.substring(7); // Remove 'colors.' prefix
         return getColor(colorPath, getNestedValue(defaultTheme, path));
       }
-      
+
       // Use default theme for other properties
       return getNestedValue(defaultTheme, path);
     };
@@ -376,12 +378,12 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps & {
     function getNestedValue(obj: any, path: string): string {
       const keys = path.split('.');
       let current = obj;
-      
+
       for (const key of keys) {
         if (current === undefined || current === null) return '';
         current = current[key];
       }
-      
+
       return current?.toString() || '';
     }
 
@@ -443,81 +445,76 @@ TableRow.displayName = 'TableRow';
 /**
  * TableCell component - Cell within a table row
  */
-export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps & {
-  _size?: 'small' | 'medium' | 'large';
-}>(
-  (
-    {
-      children,
-      align = 'left',
-      className,
-      _size = 'medium',
-      ...props
-    },
-    ref
-  ) => {
-    const { getSpacing } = useDirectTheme();
+export const TableCell = forwardRef<
+  HTMLTableCellElement,
+  TableCellProps & {
+    _size?: 'small' | 'medium' | 'large';
+  }
+>(({ children, align = 'left', className, _size = 'medium', ...props }, ref) => {
+  const { getSpacing } = useDirectTheme();
 
-    // Helper function to access theme values with fallbacks
-    const getThemeVal = (path: string): string => {
-      // Use direct theme access for spacing
-      if (path.startsWith('spacing.')) {
-        const spacingKey = path.substring(8); // Remove 'spacing.' prefix
-        return getSpacing(spacingKey, getNestedValue(defaultTheme, path));
-      }
-      
-      // Use default theme for other properties
-      return getNestedValue(defaultTheme, path);
-    };
-
-    // Helper to extract nested values from an object using a path string
-    function getNestedValue(obj: any, path: string): string {
-      const keys = path.split('.');
-      let current = obj;
-      
-      for (const key of keys) {
-        if (current === undefined || current === null) return '';
-        current = current[key];
-      }
-      
-      return current?.toString() || '';
+  // Helper function to access theme values with fallbacks
+  const getThemeVal = (path: string): string => {
+    // Use direct theme access for spacing
+    if (path.startsWith('spacing.')) {
+      const spacingKey = path.substring(8); // Remove 'spacing.' prefix
+      return getSpacing(spacingKey, getNestedValue(defaultTheme, path));
     }
 
-    const getPadding = (): string => {
-      switch (_size) {
-        case 'small':
-          return `${getThemeVal('spacing.2')} ${getThemeVal('spacing.3')}`;
-        case 'large':
-          return `${getThemeVal('spacing.4')} ${getThemeVal('spacing.6')}`;
-        default: // medium
-          return `${getThemeVal('spacing.3')} ${getThemeVal('spacing.4')}`;
-      }
-    };
+    // Use default theme for other properties
+    return getNestedValue(defaultTheme, path);
+  };
 
-    const styles: React.CSSProperties = {
-      padding: getPadding(),
-      textAlign: align,
-      borderBottom: `1px solid ${getThemeVal('colors.gray.200')}`,
-      fontWeight: 'normal',
-      whiteSpace: 'nowrap',
-    };
+  // Helper to extract nested values from an object using a path string
+  function getNestedValue(obj: any, path: string): string {
+    const keys = path.split('.');
+    let current = obj;
 
-    return (
-      <td ref={ref} style={styles} className={className} {...props}>
-        {children}
-      </td>
-    );
+    for (const key of keys) {
+      if (current === undefined || current === null) return '';
+      current = current[key];
+    }
+
+    return current?.toString() || '';
   }
-);
+
+  const getPadding = (): string => {
+    switch (_size) {
+      case 'small':
+        return `${getThemeVal('spacing.2')} ${getThemeVal('spacing.3')}`;
+      case 'large':
+        return `${getThemeVal('spacing.4')} ${getThemeVal('spacing.6')}`;
+      default: // medium
+        return `${getThemeVal('spacing.3')} ${getThemeVal('spacing.4')}`;
+    }
+  };
+
+  const styles: React.CSSProperties = {
+    padding: getPadding(),
+    textAlign: align,
+    borderBottom: `1px solid ${getThemeVal('colors.gray.200')}`,
+    fontWeight: 'normal',
+    whiteSpace: 'nowrap',
+  };
+
+  return (
+    <td ref={ref} style={styles} className={className} {...props}>
+      {children}
+    </td>
+  );
+});
 
 TableCell.displayName = 'TableCell';
 
 /**
  * TableHeaderCell component - Header cell within a table row
  */
-export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps & {
-  _size?: 'small' | 'medium' | 'large';
-}>(
+export const TableHeaderCell = forwardRef<
+  HTMLTableCellElement,
+  TableHeaderCellProps & {
+    _size?: 'small' | 'medium' | 'large';
+  }
+>(
   (
     {
       children,
@@ -543,7 +540,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         const spacingKey = path.substring(8); // Remove 'spacing.' prefix
         return getSpacing(spacingKey, getNestedValue(defaultTheme, path));
       }
-      
+
       // Use default theme for other properties
       return getNestedValue(defaultTheme, path);
     };
@@ -552,12 +549,12 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
     function getNestedValue(obj: any, path: string): string {
       const keys = path.split('.');
       let current = obj;
-      
+
       for (const key of keys) {
         if (current === undefined || current === null) return '';
         current = current[key];
       }
-      
+
       return current?.toString() || '';
     }
 
@@ -574,7 +571,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
 
     const getSortIcon = () => {
       if (!sortable) return null;
-      
+
       if (sortDirection === 'asc') {
         return <span style={{ marginLeft: '4px' }}>▲</span>;
       } else if (sortDirection === 'desc') {
@@ -604,13 +601,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
     };
 
     return (
-      <th
-        ref={ref}
-        style={styles}
-        className={className}
-        onClick={handleClick}
-        {...props}
-      >
+      <th ref={ref} style={styles} className={className} onClick={handleClick} {...props}>
         {children}
         {getSortIcon()}
       </th>

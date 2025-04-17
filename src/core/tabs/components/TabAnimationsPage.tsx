@@ -31,7 +31,7 @@ const ContentLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
-  
+
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
   }
@@ -65,17 +65,17 @@ export const TabAnimationsPage: React.FC = () => {
   const [animationOptions, setAnimationOptions] = useState<TabAnimationOptions>(
     defaultTabThemeExtension.tabs.animation
   );
-  
+
   const [previewTheme, setPreviewTheme] = useState<any>({
     currentTheme: {
       ...theme.currentTheme,
       tabs: {
         ...((theme.currentTheme as any)?.tabs || {}),
-        animation: animationOptions
-      }
-    }
+        animation: animationOptions,
+      },
+    },
   });
-  
+
   const handleApplyAnimations = (newAnimations: TabAnimationOptions) => {
     setAnimationOptions(newAnimations);
     setPreviewTheme({
@@ -83,28 +83,32 @@ export const TabAnimationsPage: React.FC = () => {
         ...theme.currentTheme,
         tabs: {
           ...((theme.currentTheme as any)?.tabs || {}),
-          animation: newAnimations
-        }
-      }
+          animation: newAnimations,
+        },
+      },
     });
   };
-  
+
   // Apply CSS custom properties for animations
   useEffect(() => {
     const root = document.documentElement;
-    
+
     root.style.setProperty('--tab-animation-duration', `${animationOptions.duration}ms`);
     root.style.setProperty('--tab-animation-easing', animationOptions.easing);
-    
+
     if (animationOptions.slideDistance) {
       root.style.setProperty('--tab-animation-slide-distance', animationOptions.slideDistance);
     }
-    
-    root.style.setProperty('--tab-animation-fade-opacity', 
-      animationOptions.fadeOpacity ? animationOptions.fadeOpacity.toString() : '0.8');
-    root.style.setProperty('--tab-animation-scale-effect', 
-      animationOptions.scaleEffect ? animationOptions.scaleEffect.toString() : '0.97');
-    
+
+    root.style.setProperty(
+      '--tab-animation-fade-opacity',
+      animationOptions.fadeOpacity ? animationOptions.fadeOpacity.toString() : '0.8'
+    );
+    root.style.setProperty(
+      '--tab-animation-scale-effect',
+      animationOptions.scaleEffect ? animationOptions.scaleEffect.toString() : '0.97'
+    );
+
     return () => {
       // Clean up custom properties
       root.style.removeProperty('--tab-animation-duration');
@@ -114,40 +118,47 @@ export const TabAnimationsPage: React.FC = () => {
       root.style.removeProperty('--tab-animation-scale-effect');
     };
   }, [animationOptions]);
-  
+
   return (
     <PageContainer>
       <PageHeader>
         <PageTitle>Tab Animation System</PageTitle>
         <PageDescription>
-          Customize tab animations and transitions with the controls below. 
-          Changes will be immediately reflected in the preview panel.
+          Customize tab animations and transitions with the controls below. Changes will be
+          immediately reflected in the preview panel.
         </PageDescription>
       </PageHeader>
-      
+
       <ContentLayout>
         <CustomizerContainer>
           <TabAnimationCustomizer onApplyAnimations={handleApplyAnimations} />
         </CustomizerContainer>
-        
+
         <PreviewContainer>
           <PreviewHeader>
             <h2>Live Preview</h2>
           </PreviewHeader>
-          
+
           <ThemeProvider theme={previewTheme}>
             <TabAnimationsDemo />
           </ThemeProvider>
         </PreviewContainer>
       </ContentLayout>
-      
+
       <div style={{ marginTop: '40px' }}>
         <h2>Animation System Guide</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
           <div>
             <h3>Using Animated Tabs</h3>
-            <pre style={{ background: '#f5f5f5', padding: '16px', borderRadius: '4px', overflow: 'auto' }}>
-{`import { 
+            <pre
+              style={{
+                background: '#f5f5f5',
+                padding: '16px',
+                borderRadius: '4px',
+                overflow: 'auto',
+              }}
+            >
+              {`import { 
   AnimatedTab, 
   AnimatedTabContent, 
   AnimatedTabGroup 
@@ -178,7 +189,7 @@ export const TabAnimationsPage: React.FC = () => {
 </AnimatedTabGroup>`}
             </pre>
           </div>
-          
+
           <div>
             <h3>Animation Properties</h3>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -216,4 +227,4 @@ export const TabAnimationsPage: React.FC = () => {
       </div>
     </PageContainer>
   );
-}; 
+};

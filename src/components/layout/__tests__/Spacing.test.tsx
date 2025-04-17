@@ -17,18 +17,18 @@ const mockTheme = {
     text: {
       primary: '#000000',
       secondary: '#757575',
-      disabled: '#9e9e9e'
+      disabled: '#9e9e9e',
     },
     background: '#ffffff',
     surface: '#f5f5f5',
     border: '#e5e7eb',
-    white: '#ffffff'
+    white: '#ffffff',
   },
   typography: {
     fontFamily: {
       base: "'Roboto', 'Helvetica', 'Arial', sans-serif",
       heading: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-      monospace: "'Roboto Mono', monospace"
+      monospace: "'Roboto Mono', monospace",
     },
     fontSize: {
       xs: '0.75rem',
@@ -38,21 +38,21 @@ const mockTheme = {
       xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
-      '4xl': '2.25rem'
+      '4xl': '2.25rem',
     },
     fontWeight: {
       light: 300,
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
     lineHeight: {
       none: 1,
       tight: 1.25,
       normal: 1.5,
       relaxed: 1.75,
-      loose: 2
+      loose: 2,
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -60,8 +60,8 @@ const mockTheme = {
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em'
-    }
+      widest: '0.1em',
+    },
   },
   spacing: {
     xs: '0.25rem',
@@ -71,7 +71,7 @@ const mockTheme = {
     xl: '2rem',
     '2xl': '2.5rem',
     '3xl': '3rem',
-    '4xl': '4rem'
+    '4xl': '4rem',
   },
   breakpoints: {
     xs: '0px',
@@ -79,7 +79,7 @@ const mockTheme = {
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px'
+    '2xl': '1536px',
   },
   borderRadius: {
     none: '0',
@@ -89,7 +89,7 @@ const mockTheme = {
     lg: '0.5rem',
     xl: '0.75rem',
     '2xl': '1rem',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
@@ -99,29 +99,30 @@ const mockTheme = {
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
   },
   transitions: {
     duration: {
       fast: '150ms',
       normal: '200ms',
-      slow: '300ms'
+      slow: '300ms',
     },
     timing: {
       easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
       easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
       easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      linear: 'linear'
-    }
+      linear: 'linear',
+    },
   },
   // Need these for DirectThemeProvider
   getSpacing: (key: string, fallback?: string) => {
-    return key in mockTheme.spacing 
-      ? mockTheme.spacing[key as keyof typeof mockTheme.spacing] 
+    return key in mockTheme.spacing
+      ? mockTheme.spacing[key as keyof typeof mockTheme.spacing]
       : fallback || '0';
   },
   getColor: (path: string, fallback?: string) => {
     if (path.startsWith('text.') && typeof mockTheme.colors.text === 'object') {
+      /* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
       const [_, key] = path.split('.');
       return mockTheme.colors.text[key as keyof typeof mockTheme.colors.text] || fallback || '#000';
     }
@@ -132,16 +133,12 @@ const mockTheme = {
   getBorderRadius: () => '0',
   getShadow: () => 'none',
   getTypography: () => '',
-  getTransition: () => ''
+  getTransition: () => '',
 };
 
 describe('Spacing Components', () => {
   const renderWithTheme = (ui: React.ReactElement) => {
-    return render(
-      <DirectThemeProvider initialTheme={mockTheme}>
-        {ui}
-      </DirectThemeProvider>
-    );
+    return render(<DirectThemeProvider initialTheme={mockTheme}>{ui}</DirectThemeProvider>);
   };
 
   // Basic tests for each component that should always pass
@@ -153,7 +150,11 @@ describe('Spacing Components', () => {
     });
 
     test('applies styles correctly', () => {
-      renderWithTheme(<Box data-testid="box" style={{ color: 'red' }}>Box with style</Box>);
+      renderWithTheme(
+        <Box data-testid="box" style={{ color: 'red' }}>
+          Box with style
+        </Box>
+      );
       const box = screen.getByTestId('box');
       expect(box).toHaveStyle('color: red');
     });
@@ -200,4 +201,4 @@ describe('Spacing Components', () => {
       expect(divider).toBeInTheDocument();
     });
   });
-}); 
+});

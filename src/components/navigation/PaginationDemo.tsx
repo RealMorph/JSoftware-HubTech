@@ -110,7 +110,7 @@ const PaginationDemo: React.FC = () => {
   // Basic pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
-  
+
   // Configuration options
   const [shape, setShape] = useState<'rounded' | 'square' | 'circular'>('rounded');
   const [size, setSize] = useState<'small' | 'medium' | 'large'>('medium');
@@ -118,144 +118,142 @@ const PaginationDemo: React.FC = () => {
   const [showFirstLast, setShowFirstLast] = useState(true);
   const [showPrevNext, setShowPrevNext] = useState(true);
   const [showPageNumbers, setShowPageNumbers] = useState(true);
-  
+
   // Custom icons state
   const [customIcons, setCustomIcons] = useState(false);
-  
+
   // Handle pagination change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  
+
   // Custom icons if enabled
   const prevIcon = customIcons ? '◀' : '‹';
   const nextIcon = customIcons ? '▶' : '›';
   const firstIcon = customIcons ? '⏮' : '«';
   const lastIcon = customIcons ? '⏭' : '»';
-  
+
   return (
     <DemoContainer>
       <h1>Pagination Component Demo</h1>
-      <p>This demo showcases the various configurations and capabilities of the Pagination component.</p>
+      <p>
+        This demo showcases the various configurations and capabilities of the Pagination component.
+      </p>
 
       <DemoSection>
         <Title>Configuration Demo</Title>
         <Description>
           Customize the pagination component with different options to see how it behaves.
         </Description>
-        
+
         <Controls>
           <ControlGroup>
             <Label>Current Page</Label>
-            <Input 
-              type="number" 
-              min={1} 
-              max={totalPages} 
-              value={currentPage} 
-              onChange={(e) => setCurrentPage(Math.min(Math.max(1, parseInt(e.target.value) || 1), totalPages))} 
+            <Input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={currentPage}
+              onChange={e =>
+                setCurrentPage(Math.min(Math.max(1, parseInt(e.target.value) || 1), totalPages))
+              }
             />
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>Total Pages</Label>
-            <Input 
-              type="number" 
-              min={1} 
-              max={100} 
-              value={totalPages} 
-              onChange={(e) => {
+            <Input
+              type="number"
+              min={1}
+              max={100}
+              value={totalPages}
+              onChange={e => {
                 const newTotal = Math.max(1, parseInt(e.target.value) || 1);
                 setTotalPages(newTotal);
                 if (currentPage > newTotal) {
                   setCurrentPage(newTotal);
                 }
-              }} 
+              }}
             />
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>Shape</Label>
-            <Select 
-              value={shape} 
-              onChange={(e) => setShape(e.target.value as any)}
-            >
+            <Select value={shape} onChange={e => setShape(e.target.value as any)}>
               <option value="rounded">Rounded</option>
               <option value="square">Square</option>
               <option value="circular">Circular</option>
             </Select>
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>Size</Label>
-            <Select 
-              value={size} 
-              onChange={(e) => setSize(e.target.value as any)}
-            >
+            <Select value={size} onChange={e => setSize(e.target.value as any)}>
               <option value="small">Small</option>
               <option value="medium">Medium</option>
               <option value="large">Large</option>
             </Select>
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>Siblings</Label>
-            <Input 
-              type="number" 
-              min={0} 
-              max={5} 
-              value={siblingCount} 
-              onChange={(e) => setSiblingCount(Math.max(0, parseInt(e.target.value) || 0))} 
+            <Input
+              type="number"
+              min={0}
+              max={5}
+              value={siblingCount}
+              onChange={e => setSiblingCount(Math.max(0, parseInt(e.target.value) || 0))}
             />
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>
-              <Checkbox 
-                type="checkbox" 
-                checked={showFirstLast} 
-                onChange={() => setShowFirstLast(!showFirstLast)} 
+              <Checkbox
+                type="checkbox"
+                checked={showFirstLast}
+                onChange={() => setShowFirstLast(!showFirstLast)}
               />
               Show First/Last
             </Label>
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>
-              <Checkbox 
-                type="checkbox" 
-                checked={showPrevNext} 
-                onChange={() => setShowPrevNext(!showPrevNext)} 
+              <Checkbox
+                type="checkbox"
+                checked={showPrevNext}
+                onChange={() => setShowPrevNext(!showPrevNext)}
               />
               Show Prev/Next
             </Label>
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>
-              <Checkbox 
-                type="checkbox" 
-                checked={showPageNumbers} 
-                onChange={() => setShowPageNumbers(!showPageNumbers)} 
+              <Checkbox
+                type="checkbox"
+                checked={showPageNumbers}
+                onChange={() => setShowPageNumbers(!showPageNumbers)}
               />
               Show Page Numbers
             </Label>
           </ControlGroup>
-          
+
           <ControlGroup>
             <Label>
-              <Checkbox 
-                type="checkbox" 
-                checked={customIcons} 
-                onChange={() => setCustomIcons(!customIcons)} 
+              <Checkbox
+                type="checkbox"
+                checked={customIcons}
+                onChange={() => setCustomIcons(!customIcons)}
               />
               Custom Icons
             </Label>
           </ControlGroup>
         </Controls>
-        
+
         <ExampleContainer>
           <ExampleTitle>Live Preview</ExampleTitle>
-          <Pagination 
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
@@ -270,7 +268,7 @@ const PaginationDemo: React.FC = () => {
             firstLabel={firstIcon}
             lastLabel={lastIcon}
           />
-          
+
           <ResultDisplay>
             <p>Current Page: {currentPage}</p>
             <CodeBlock>{`<Pagination
@@ -283,10 +281,14 @@ const PaginationDemo: React.FC = () => {
   showFirstLast={${showFirstLast}}
   showPrevNext={${showPrevNext}}
   showPageNumbers={${showPageNumbers}}
-  ${customIcons ? `prevLabel="${prevIcon}"
+  ${
+    customIcons
+      ? `prevLabel="${prevIcon}"
   nextLabel="${nextIcon}"
   firstLabel="${firstIcon}"
-  lastLabel="${lastIcon}"` : ''}
+  lastLabel="${lastIcon}"`
+      : ''
+  }
 />`}</CodeBlock>
           </ResultDisplay>
         </ExampleContainer>
@@ -294,10 +296,8 @@ const PaginationDemo: React.FC = () => {
 
       <DemoSection>
         <Title>Common Examples</Title>
-        <Description>
-          Here are some common examples of pagination configurations.
-        </Description>
-        
+        <Description>Here are some common examples of pagination configurations.</Description>
+
         <ExampleContainer>
           <ExampleTitle>Basic Pagination</ExampleTitle>
           <CodeBlock>{`<Pagination
@@ -305,14 +305,14 @@ const PaginationDemo: React.FC = () => {
   totalPages={10}
   onPageChange={handlePageChange}
 />`}</CodeBlock>
-          
+
           <Pagination
             currentPage={5}
             totalPages={10}
-            onPageChange={(page) => console.log(`Go to page ${page}`)}
+            onPageChange={page => console.log(`Go to page ${page}`)}
           />
         </ExampleContainer>
-        
+
         <ExampleContainer>
           <ExampleTitle>Compact Pagination</ExampleTitle>
           <CodeBlock>{`<Pagination
@@ -322,16 +322,16 @@ const PaginationDemo: React.FC = () => {
   size="small"
   showFirstLast={false}
 />`}</CodeBlock>
-          
+
           <Pagination
             currentPage={5}
             totalPages={10}
-            onPageChange={(page) => console.log(`Go to page ${page}`)}
+            onPageChange={page => console.log(`Go to page ${page}`)}
             size="small"
             showFirstLast={false}
           />
         </ExampleContainer>
-        
+
         <ExampleContainer>
           <ExampleTitle>Circular Buttons</ExampleTitle>
           <CodeBlock>{`<Pagination
@@ -340,15 +340,15 @@ const PaginationDemo: React.FC = () => {
   onPageChange={handlePageChange}
   shape="circular"
 />`}</CodeBlock>
-          
+
           <Pagination
             currentPage={5}
             totalPages={10}
-            onPageChange={(page) => console.log(`Go to page ${page}`)}
+            onPageChange={page => console.log(`Go to page ${page}`)}
             shape="circular"
           />
         </ExampleContainer>
-        
+
         <ExampleContainer>
           <ExampleTitle>Many Pages</ExampleTitle>
           <CodeBlock>{`<Pagination
@@ -357,15 +357,15 @@ const PaginationDemo: React.FC = () => {
   onPageChange={handlePageChange}
   siblingCount={1}
 />`}</CodeBlock>
-          
+
           <Pagination
             currentPage={50}
             totalPages={100}
-            onPageChange={(page) => console.log(`Go to page ${page}`)}
+            onPageChange={page => console.log(`Go to page ${page}`)}
             siblingCount={1}
           />
         </ExampleContainer>
-        
+
         <ExampleContainer>
           <ExampleTitle>Simple Previous/Next</ExampleTitle>
           <CodeBlock>{`<Pagination
@@ -376,11 +376,11 @@ const PaginationDemo: React.FC = () => {
   prevLabel="Previous"
   nextLabel="Next"
 />`}</CodeBlock>
-          
+
           <Pagination
             currentPage={5}
             totalPages={10}
-            onPageChange={(page) => console.log(`Go to page ${page}`)}
+            onPageChange={page => console.log(`Go to page ${page}`)}
             showPageNumbers={false}
             prevLabel="Previous"
             nextLabel="Next"
@@ -391,4 +391,4 @@ const PaginationDemo: React.FC = () => {
   );
 };
 
-export { PaginationDemo }; 
+export { PaginationDemo };

@@ -5,7 +5,7 @@ import { ThemeConfig } from './types';
  */
 function setNestedCSSVariables(root: HTMLElement, prefix: string, obj: Record<string, any>): void {
   if (!obj) return;
-  
+
   Object.entries(obj).forEach(([key, value]) => {
     if (value && typeof value === 'object') {
       setNestedCSSVariables(root, `${prefix}-${key}`, value);
@@ -20,42 +20,42 @@ function setNestedCSSVariables(root: HTMLElement, prefix: string, obj: Record<st
  */
 export const applyTheme = (theme: ThemeConfig) => {
   console.log('Applying theme:', theme.name || 'unnamed theme');
-  
+
   if (!theme) {
     console.error('No theme provided to applyTheme');
     return;
   }
-  
+
   // Apply theme to document root
   const root = document.documentElement;
-  
+
   // Apply colors
   if (theme.colors) {
     // Primary and secondary colors
     if (theme.colors.primary) root.style.setProperty('--color-primary', theme.colors.primary);
     if (theme.colors.secondary) root.style.setProperty('--color-secondary', theme.colors.secondary);
-    
+
     // Background colors
     if (theme.colors.background) {
       Object.entries(theme.colors.background).forEach(([key, value]) => {
         root.style.setProperty(`--color-background-${key}`, value);
       });
     }
-    
+
     // Text colors
     if (theme.colors.textColors) {
       Object.entries(theme.colors.textColors).forEach(([key, value]) => {
         root.style.setProperty(`--color-text-${key}`, value);
       });
     }
-    
+
     // Border colors
     if (theme.colors.border) {
       Object.entries(theme.colors.border).forEach(([key, value]) => {
         root.style.setProperty(`--color-border-${key}`, value);
       });
     }
-    
+
     // State colors
     if (theme.colors.success) root.style.setProperty('--color-success', theme.colors.success);
     if (theme.colors.warning) root.style.setProperty('--color-warning', theme.colors.warning);
@@ -67,19 +67,19 @@ export const applyTheme = (theme: ThemeConfig) => {
     root.style.setProperty('--font-family-primary', theme.typography.family.primary);
     root.style.setProperty('--font-family-secondary', theme.typography.family.secondary);
     root.style.setProperty('--font-family-monospace', theme.typography.family.monospace);
-    
+
     if (theme.typography.scale) {
       Object.entries(theme.typography.scale).forEach(([key, value]) => {
         root.style.setProperty(`--font-size-${key}`, value);
       });
     }
-    
+
     if (theme.typography.weights) {
       Object.entries(theme.typography.weights).forEach(([key, value]) => {
         root.style.setProperty(`--font-weight-${key}`, value);
       });
     }
-    
+
     if (theme.typography.lineHeights) {
       Object.entries(theme.typography.lineHeights).forEach(([key, value]) => {
         root.style.setProperty(`--line-height-${key}`, value);
@@ -131,6 +131,6 @@ export const applyTheme = (theme: ThemeConfig) => {
       root.style.setProperty(`--transition-${key}`, value);
     });
   }
-  
+
   console.log('Theme applied successfully');
 };

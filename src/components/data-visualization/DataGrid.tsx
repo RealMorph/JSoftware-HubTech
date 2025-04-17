@@ -81,7 +81,7 @@ function DataGrid<T extends Record<string, any> = any>({
   pageSizeOptions = [10, 25, 50, 100],
   defaultPageSize = 10,
   className,
-  noDataMessage = "No data available",
+  noDataMessage = 'No data available',
   onRowClick,
   highlightOnHover = true,
   striped = true,
@@ -90,78 +90,81 @@ function DataGrid<T extends Record<string, any> = any>({
   height,
   loading = false,
   loadingComponent,
-  testId
+  testId,
 }: DataGridProps<T>): React.ReactElement {
   // Access the theme
   const theme = useDirectTheme();
-  
+
   // Add gridRef for container reference
   const gridRef = useRef<HTMLDivElement>(null);
-  
+
   // State for sorting
   const [sortConfig, setSortConfig] = useState<SortConfig | undefined>(initialSort);
-  
+
   // State for filtering
   const [filters, setFilters] = useState<Record<string, any>>({});
-  
+
   // State for pagination
   const [pageSize, setPageSize] = useState(defaultPageSize);
   const [currentPage, setCurrentPage] = useState(0);
-  
+
   // Handle sort click
-  const handleSort = useCallback((columnId: string) => {
-    if (!enableSorting) return;
-    
-    setSortConfig(prevSortConfig => {
-      if (!prevSortConfig || prevSortConfig.key !== columnId) {
+  const handleSort = useCallback(
+    (columnId: string) => {
+      if (!enableSorting) return;
+
+      setSortConfig(prevSortConfig => {
+        if (!prevSortConfig || prevSortConfig.key !== columnId) {
+          return { key: columnId, direction: 'asc' };
+        }
+
+        if (prevSortConfig.direction === 'asc') {
+          return { key: columnId, direction: 'desc' };
+        }
+
         return { key: columnId, direction: 'asc' };
-      }
-      
-      if (prevSortConfig.direction === 'asc') {
-        return { key: columnId, direction: 'desc' };
-      }
-      
-      return { key: columnId, direction: 'asc' };
-    });
-    
-    // Reset to first page when sorting changes
-    setCurrentPage(0);
-  }, [enableSorting]);
-  
+      });
+
+      // Reset to first page when sorting changes
+      setCurrentPage(0);
+    },
+    [enableSorting]
+  );
+
   // Handle filter change
   const handleFilterChange = useCallback((columnId: string, value: any) => {
     setFilters(prevFilters => {
       const newFilters = { ...prevFilters };
-      
+
       if (value === '' || value === null || value === undefined) {
         delete newFilters[columnId];
       } else {
         newFilters[columnId] = value;
       }
-      
+
       return newFilters;
     });
-    
+
     // Reset to first page when filters change
     setCurrentPage(0);
   }, []);
-  
+
   // Handle page size change
   const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const newPageSize = parseInt(e.target.value, 10);
     setPageSize(newPageSize);
     setCurrentPage(0);
   }, []);
-  
+
   // Handle pagination
   const handlePreviousPage = useCallback(() => {
     setCurrentPage(prev => Math.max(prev - 1, 0));
   }, []);
-  
+
   const handleNextPage = useCallback((totalPages: number) => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
   }, []);
-  
+
   // Get value from row using accessor
   const getRowValue = useCallback((row: T, accessor: keyof T | ((data: T) => any)) => {
     if (typeof accessor === 'function') {
@@ -169,57 +172,57 @@ function DataGrid<T extends Record<string, any> = any>({
     }
     return row[accessor];
   }, []);
-  
+
   // Sort and filter data
   const processedData = useMemo(() => {
     let result = [...data];
-    
+
     // Apply filters
     if (Object.keys(filters).length > 0) {
       result = result.filter(row => {
         return Object.entries(filters).every(([columnId, filterValue]) => {
           const column = columns.find(col => col.id === columnId);
           if (!column) return true;
-          
+
           const value = getRowValue(row, column.accessor);
-          
+
           if (typeof value === 'string' && typeof filterValue === 'string') {
             return value.toLowerCase().includes(filterValue.toLowerCase());
           }
-          
+
           return value === filterValue;
         });
       });
     }
-    
+
     // Apply sorting
     if (sortConfig) {
       const { key, direction } = sortConfig;
       const column = columns.find(col => col.id === key);
-      
+
       if (column) {
         result.sort((a, b) => {
           const aValue = getRowValue(a, column.accessor);
           const bValue = getRowValue(b, column.accessor);
-          
+
           if (aValue === bValue) return 0;
-          
+
           // For string values, use localeCompare for better sorting
           if (typeof aValue === 'string' && typeof bValue === 'string') {
             const compareResult = aValue.localeCompare(bValue);
             return direction === 'asc' ? compareResult : -compareResult;
           }
-          
+
           // For other types, use standard comparison
           const compareResult = aValue < bValue ? -1 : 1;
           return direction === 'asc' ? compareResult : -compareResult;
         });
       }
     }
-    
+
     return result;
   }, [data, columns, filters, sortConfig, getRowValue]);
-  
+
   // Calculate pagination
   const totalItems = processedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -239,64 +242,66 @@ function DataGrid<T extends Record<string, any> = any>({
     flex-direction: column;
     height: ${props => props.height || 'auto'};
   `;
-  
+
   const GridHeader = styled.div<{ stickyHeader?: boolean }>`
     display: flex;
     align-items: center;
     padding: 16px;
     background-color: ${() => theme.getColor('background', '#ffffff')};
     border-bottom: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
-    ${props => props.stickyHeader && `
+    ${props =>
+      props.stickyHeader &&
+      `
       position: sticky;
       top: 0;
       z-index: 10;
     `}
   `;
-  
+
   const FilterSection = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 8px;
   `;
-  
+
   const FilterItem = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
   `;
-  
+
   const FilterLabel = styled.span`
     font-size: 14px;
     font-weight: 500;
   `;
-  
+
   const FilterInput = styled.input`
     padding: 8px;
     border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
     border-radius: 4px;
     min-width: 150px;
-    
+
     &:focus {
       outline: none;
       border-color: ${() => theme.getColor('primary', '#1976d2')};
     }
   `;
-  
+
   const TableContainer = styled.div`
     overflow: auto;
     flex: 1;
   `;
-  
+
   const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
   `;
-  
+
   const TableHead = styled.thead`
     background-color: ${() => theme.getColor('surface', '#f5f5f5')};
   `;
-  
+
   interface TableHeadCellProps {
     width?: string;
     minWidth?: string;
@@ -305,7 +310,7 @@ function DataGrid<T extends Record<string, any> = any>({
     isSorted?: boolean;
     sortDirection?: 'asc' | 'desc';
   }
-  
+
   const TableHeadCell = styled.th<TableHeadCellProps>`
     padding: 12px 16px;
     font-weight: 600;
@@ -314,34 +319,38 @@ function DataGrid<T extends Record<string, any> = any>({
     width: ${props => props.width || 'auto'};
     min-width: ${props => props.minWidth || '100px'};
     max-width: ${props => props.maxWidth || 'none'};
-    cursor: ${props => props.sortable ? 'pointer' : 'default'};
+    cursor: ${props => (props.sortable ? 'pointer' : 'default')};
     user-select: none;
     white-space: nowrap;
-    
+
     &:hover {
-      ${props => props.sortable && `
+      ${props =>
+        props.sortable &&
+        `
         background-color: ${theme.getColor('background.hover', '#f0f0f0')};
       `}
     }
-    
+
     &::after {
-      ${props => props.isSorted && `
+      ${props =>
+        props.isSorted &&
+        `
         content: '${props.sortDirection === 'asc' ? '▲' : '▼'}';
         margin-left: 8px;
         font-size: 12px;
       `}
     }
   `;
-  
+
   const TableBody = styled.tbody``;
-  
+
   interface TableRowProps {
     highlightOnHover?: boolean;
     striped?: boolean;
     isEven: boolean;
     clickable?: boolean;
   }
-  
+
   const TableRow = styled.tr<TableRowProps>`
     background-color: ${props => {
       if (props.striped && props.isEven) {
@@ -349,27 +358,31 @@ function DataGrid<T extends Record<string, any> = any>({
       }
       return theme.getColor('background', '#ffffff');
     }};
-    
-    ${props => props.highlightOnHover && `
+
+    ${props =>
+      props.highlightOnHover &&
+      `
       &:hover {
         background-color: ${theme.getColor('background.hover', '#f0f0f0')};
       }
     `}
-    
-    ${props => props.clickable && `
+
+    ${props =>
+      props.clickable &&
+      `
       cursor: pointer;
     `}
   `;
-  
+
   interface TableCellProps {
     dense?: boolean;
   }
-  
+
   const TableCell = styled.td<TableCellProps>`
-    padding: ${props => props.dense ? '8px 16px' : '12px 16px'};
+    padding: ${props => (props.dense ? '8px 16px' : '12px 16px')};
     border-bottom: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
   `;
-  
+
   const Pagination = styled.div`
     display: flex;
     justify-content: space-between;
@@ -378,69 +391,69 @@ function DataGrid<T extends Record<string, any> = any>({
     border-top: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
     background-color: ${() => theme.getColor('background', '#ffffff')};
   `;
-  
+
   const PageSizeSelector = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
   `;
-  
+
   const PageSizeLabel = styled.span`
     font-size: 14px;
   `;
-  
+
   const SelectWrapper = styled.div`
     position: relative;
   `;
-  
+
   const PageSizeSelect = styled.select`
     padding: 6px 8px;
     border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
     border-radius: 4px;
     background-color: ${() => theme.getColor('background', '#ffffff')};
     min-width: 80px;
-    
+
     &:focus {
       outline: none;
       border-color: ${() => theme.getColor('primary', '#1976d2')};
     }
   `;
-  
+
   const PaginationControls = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
   `;
-  
+
   const PaginationInfo = styled.span`
     font-size: 14px;
   `;
-  
+
   const PaginationButton = styled.button<{ disabled?: boolean }>`
     padding: 6px 10px;
     border: 1px solid ${() => theme.getColor('border', '#e0e0e0')};
     border-radius: 4px;
     background-color: ${() => theme.getColor('background', '#ffffff')};
-    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-    opacity: ${props => props.disabled ? 0.5 : 1};
-    
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+    opacity: ${props => (props.disabled ? 0.5 : 1)};
+
     &:hover:not(:disabled) {
       background-color: ${() => theme.getColor('background.hover', '#f0f0f0')};
     }
-  
+
     &:focus {
       outline: none;
       border-color: ${() => theme.getColor('primary', '#1976d2')};
     }
   `;
-  
+
   const NoDataMessage = styled.div`
     padding: 32px;
     text-align: center;
     color: ${() => theme.getColor('text.secondary', '#666')};
     font-size: 16px;
   `;
-  
+
   const LoadingOverlay = styled.div`
     position: absolute;
     top: 0;
@@ -453,7 +466,7 @@ function DataGrid<T extends Record<string, any> = any>({
     align-items: center;
     z-index: 20;
   `;
-  
+
   const LoadingSpinner = styled.div`
     border: 4px solid #f3f3f3;
     border-top: 4px solid ${() => theme.getColor('primary', '#1976d2')};
@@ -461,13 +474,17 @@ function DataGrid<T extends Record<string, any> = any>({
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
-    
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   `;
-  
+
   // Default filter component
   const DefaultFilter: React.FC<FilterProps> = ({ value, onChange }) => {
     return (
@@ -479,26 +496,26 @@ function DataGrid<T extends Record<string, any> = any>({
       />
     );
   };
-  
+
   // Filter components
   const renderFilters = () => {
     if (!enableFiltering) return null;
-    
+
     const filterableColumns = columns.filter(col => col.filterable !== false);
     if (filterableColumns.length === 0) return null;
-    
+
     return (
       <FilterSection>
         {filterableColumns.map(column => {
           const FilterComponent = column.filterComponent || DefaultFilter;
-          
+
           return (
             <FilterItem key={column.id}>
               <FilterLabel>{column.header}:</FilterLabel>
               <FilterComponent
                 column={column}
                 value={filters[column.id] || ''}
-                onChange={(value) => handleFilterChange(column.id, value)}
+                onChange={value => handleFilterChange(column.id, value)}
               />
             </FilterItem>
           );
@@ -506,16 +523,11 @@ function DataGrid<T extends Record<string, any> = any>({
       </FilterSection>
     );
   };
-  
+
   return (
-    <GridContainer 
-      ref={gridRef} 
-      className={className} 
-      data-testid={testId}
-      style={{ height }}
-    >
+    <GridContainer ref={gridRef} className={className} data-testid={testId} style={{ height }}>
       {renderFilters()}
-      
+
       <TableContainer>
         <Table>
           <TableHead>
@@ -540,7 +552,7 @@ function DataGrid<T extends Record<string, any> = any>({
               ))}
             </tr>
           </TableHead>
-          
+
           <TableBody>
             {paginatedData.length > 0 ? (
               paginatedData.map((row, rowIndex) => (
@@ -554,7 +566,7 @@ function DataGrid<T extends Record<string, any> = any>({
                 >
                   {columns.map(column => (
                     <TableCell key={column.id} dense={dense}>
-                      {column.renderCell 
+                      {column.renderCell
                         ? column.renderCell(getRowValue(row, column.accessor), row)
                         : getRowValue(row, column.accessor)}
                     </TableCell>
@@ -571,7 +583,7 @@ function DataGrid<T extends Record<string, any> = any>({
           </TableBody>
         </Table>
       </TableContainer>
-      
+
       {totalPages > 0 && (
         <Pagination>
           <PageSizeSelector>
@@ -586,15 +598,12 @@ function DataGrid<T extends Record<string, any> = any>({
               </PageSizeSelect>
             </SelectWrapper>
           </PageSizeSelector>
-          
+
           <PaginationControls>
             <PaginationInfo>
               {startIndex + 1}-{endIndex} of {totalItems}
             </PaginationInfo>
-            <PaginationButton
-              onClick={handlePreviousPage}
-              disabled={currentPage === 0}
-            >
+            <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 0}>
               Previous
             </PaginationButton>
             <PaginationButton
@@ -606,7 +615,7 @@ function DataGrid<T extends Record<string, any> = any>({
           </PaginationControls>
         </Pagination>
       )}
-      
+
       {loading && (
         <LoadingOverlay data-testid="loading-overlay">
           {loadingComponent || <LoadingSpinner />}
@@ -616,4 +625,4 @@ function DataGrid<T extends Record<string, any> = any>({
   );
 }
 
-export default DataGrid; 
+export default DataGrid;

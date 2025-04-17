@@ -4,7 +4,7 @@ import { TabMessage, MessageType } from '../tab-messaging';
 
 /**
  * Hook for managing tab messaging
- * 
+ *
  * @param tabManager The tab manager instance
  * @param tabId The ID of the current tab
  * @param messageType Optional filter for message types
@@ -32,11 +32,7 @@ export function useTabMessaging(
   // Function to send a custom event
   const sendEvent = useCallback(
     (eventName: string, data: any, targetId?: string) => {
-      return sendMessage(
-        MessageType.CUSTOM_EVENT,
-        { eventName, data },
-        targetId
-      );
+      return sendMessage(MessageType.CUSTOM_EVENT, { eventName, data }, targetId);
     },
     [sendMessage]
   );
@@ -52,11 +48,7 @@ export function useTabMessaging(
   // Function to request state from another tab
   const requestState = useCallback(
     (fromTabId: string) => {
-      return sendMessage(
-        MessageType.REQUEST_STATE,
-        { requestingTabId: tabId },
-        fromTabId
-      );
+      return sendMessage(MessageType.REQUEST_STATE, { requestingTabId: tabId }, fromTabId);
     },
     [sendMessage, tabId]
   );
@@ -64,7 +56,7 @@ export function useTabMessaging(
   // Subscribe to messages
   useEffect(() => {
     const handleMessage = (message: TabMessage) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages(prevMessages => [...prevMessages, message]);
       setLastMessage(message);
     };
 
@@ -96,4 +88,4 @@ export function useTabMessaging(
     requestState,
     clearMessages,
   };
-} 
+}

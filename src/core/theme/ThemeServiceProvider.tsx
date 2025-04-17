@@ -9,8 +9,6 @@ export const ThemeServiceProvider: React.FC<{
   themeService: ThemeService;
 }> = ({ children, themeService }) => {
   return (
-    <ThemeServiceContext.Provider value={themeService}>
-      {children}
-    </ThemeServiceContext.Provider>
+    <ThemeServiceContext.Provider value={themeService}>{children}</ThemeServiceContext.Provider>
   );
-}; 
+};

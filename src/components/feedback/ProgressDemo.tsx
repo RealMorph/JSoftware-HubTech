@@ -1,161 +1,111 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
-import { Button } from '../base/Button';
-import { Progress } from './Progress';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-const DemoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 24px;
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textColor: string;
+  primaryColor: string;
+  borderColor: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    textColor: getColor('text.primary', '#333333'),
+    primaryColor: getColor('primary', '#3366CC'),
+    borderColor: getColor('border', '#e0e0e0'),
+  };
+}
+
+// Styled components
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: 1rem;
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  color: ${props => props.$themeStyles.textColor};
+  border: 1px solid ${props => props.$themeStyles.borderColor};
+  border-radius: 4px;
+  margin-bottom: 1rem;
 `;
 
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.textColor};
+  margin-top: 0;
+  margin-bottom: 1rem;
 `;
 
 const ProgressContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  margin-bottom: 1rem;
 `;
 
-const ProgressDemo: React.FC = () => {
-  const [linearValue, setLinearValue] = useState(0);
-  const [circularValue, setCircularValue] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+const ProgressBar = styled.div<{ value: number; $themeStyles: ThemeStyles }>`
+  height: 8px;
+  background-color: ${props => props.$themeStyles.primaryColor};
+  width: ${props => `${props.value}%`};
+  border-radius: 4px;
+  transition: width 0.3s ease;
+`;
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isLoading) {
-      interval = setInterval(() => {
-        setLinearValue((prev) => (prev >= 100 ? 0 : prev + 10));
-        setCircularValue((prev) => (prev >= 100 ? 0 : prev + 10));
-      }, 500);
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isLoading]);
+const ProgressTrack = styled.div<{ $themeStyles: ThemeStyles }>`
+  height: 8px;
+  background-color: ${props => props.$themeStyles.borderColor};
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+`;
 
-  const handleStartLoading = () => {
-    setIsLoading(true);
-  };
+const Label = styled.div<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.textColor};
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+`;
 
-  const handleStopLoading = () => {
-    setIsLoading(false);
-  };
+interface ProgressDemoProps {
+  title?: string;
+}
 
-  const handleReset = () => {
-    setLinearValue(0);
-    setCircularValue(0);
-    setIsLoading(false);
-  };
+// Export the ProgressDemo component
+export const ProgressDemo: React.FC<ProgressDemoProps> = ({ title = 'Progress Demo' }) => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
 
   return (
-    <DemoContainer>
-      <h2>Progress Component Demo</h2>
-      
-      <Section>
-        <h3>Linear Progress</h3>
-        <ProgressContainer>
-          <Progress 
-            type="linear" 
-            variant="determinate" 
-            value={linearValue} 
-            color="primary"
-            label="Determinate Progress"
-            showPercentage
-          />
-          <Progress 
-            type="linear" 
-            variant="indeterminate" 
-            color="secondary"
-            label="Indeterminate Progress"
-          />
-          <Progress 
-            type="linear" 
-            variant="determinate" 
-            value={linearValue} 
-            color="success"
-            size="small"
-            label="Small Progress"
-            showPercentage
-          />
-          <Progress 
-            type="linear" 
-            variant="determinate" 
-            value={linearValue} 
-            color="error"
-            size="large"
-            label="Large Progress"
-            showPercentage
-          />
-        </ProgressContainer>
-      </Section>
-      
-      <Section>
-        <h3>Circular Progress</h3>
-        <ProgressContainer>
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-            <Progress 
-              type="circular" 
-              variant="determinate" 
-              value={circularValue} 
-              color="primary"
-              showPercentage
-            />
-            <Progress 
-              type="circular" 
-              variant="indeterminate" 
-              color="secondary"
-            />
-            <Progress 
-              type="circular" 
-              variant="determinate" 
-              value={circularValue} 
-              color="success"
-              size="small"
-              showPercentage
-            />
-            <Progress 
-              type="circular" 
-              variant="determinate" 
-              value={circularValue} 
-              color="error"
-              size="large"
-              showPercentage
-            />
-          </div>
-        </ProgressContainer>
-      </Section>
-      
-      <ButtonGroup>
-        <Button variant="primary" onClick={handleStartLoading}>
-          Start Loading
-        </Button>
-        <Button variant="secondary" onClick={handleStopLoading}>
-          Stop Loading
-        </Button>
-        <Button variant="ghost" onClick={handleReset}>
-          Reset
-        </Button>
-      </ButtonGroup>
+    <DemoContainer $themeStyles={themeStyles}>
+      <Title $themeStyles={themeStyles}>{title}</Title>
+
+      <ProgressContainer>
+        <Label $themeStyles={themeStyles}>Determinate Progress (25%)</Label>
+        <ProgressTrack $themeStyles={themeStyles}>
+          <ProgressBar value={25} $themeStyles={themeStyles} />
+        </ProgressTrack>
+      </ProgressContainer>
+
+      <ProgressContainer>
+        <Label $themeStyles={themeStyles}>Determinate Progress (50%)</Label>
+        <ProgressTrack $themeStyles={themeStyles}>
+          <ProgressBar value={50} $themeStyles={themeStyles} />
+        </ProgressTrack>
+      </ProgressContainer>
+
+      <ProgressContainer>
+        <Label $themeStyles={themeStyles}>Determinate Progress (75%)</Label>
+        <ProgressTrack $themeStyles={themeStyles}>
+          <ProgressBar value={75} $themeStyles={themeStyles} />
+        </ProgressTrack>
+      </ProgressContainer>
+
+      <ProgressContainer>
+        <Label $themeStyles={themeStyles}>Determinate Progress (100%)</Label>
+        <ProgressTrack $themeStyles={themeStyles}>
+          <ProgressBar value={100} $themeStyles={themeStyles} />
+        </ProgressTrack>
+      </ProgressContainer>
     </DemoContainer>
   );
 };
 
-export default ProgressDemo; 
+// Add default export
+export default ProgressDemo;

@@ -1,12 +1,12 @@
 import React from 'react';
-import { List, ListItem } from './List';
+import { List } from './List';
 
 /**
  * ListDemo component showcasing different variations of the List component
  */
 export const ListDemo: React.FC = () => {
   const handleItemClick = (text: string) => {
-    alert(`Clicked on item: ${text}`);
+    window.alert(`Clicked on item: ${text}`);
   };
 
   return (
@@ -104,22 +104,20 @@ export const ListDemo: React.FC = () => {
           <List.Item secondaryText="More details about this item">
             Another item with details
           </List.Item>
-          <List.Item secondaryText="Created on April 8, 2023">
-            Item with timestamp
-          </List.Item>
+          <List.Item secondaryText="Created on April 8, 2023">Item with timestamp</List.Item>
         </List>
       </section>
 
       <section>
         <h2>Clickable List</h2>
         <List bordered>
-          <List.Item clickable onClick={() => handleItemClick("Clickable item 1")}>
+          <List.Item clickable onClick={() => handleItemClick('Clickable item 1')}>
             Clickable item 1
           </List.Item>
-          <List.Item clickable onClick={() => handleItemClick("Clickable item 2")}>
+          <List.Item clickable onClick={() => handleItemClick('Clickable item 2')}>
             Clickable item 2
           </List.Item>
-          <List.Item clickable onClick={() => handleItemClick("Clickable item 3")}>
+          <List.Item clickable onClick={() => handleItemClick('Clickable item 3')}>
             Clickable item 3
           </List.Item>
         </List>
@@ -128,20 +126,44 @@ export const ListDemo: React.FC = () => {
       <section>
         <h2>List with Icons</h2>
         <List bordered>
-          <List.Item icon={<span role="img" aria-label="check">✅</span>}>
+          <List.Item
+            icon={
+              <span role="img" aria-label="check">
+                ✅
+              </span>
+            }
+          >
             Completed task
           </List.Item>
-          <List.Item icon={<span role="img" aria-label="pending">⏳</span>}>
+          <List.Item
+            icon={
+              <span role="img" aria-label="pending">
+                ⏳
+              </span>
+            }
+          >
             Pending task
           </List.Item>
-          <List.Item icon={<span role="img" aria-label="warning">⚠️</span>}>
+          <List.Item
+            icon={
+              <span role="img" aria-label="warning">
+                ⚠️
+              </span>
+            }
+          >
             Task with warning
           </List.Item>
-          <List.Item icon={<span role="img" aria-label="error">❌</span>}>
+          <List.Item
+            icon={
+              <span role="img" aria-label="error">
+                ❌
+              </span>
+            }
+          >
             Failed task
           </List.Item>
         </List>
       </section>
     </div>
   );
-}; 
+};

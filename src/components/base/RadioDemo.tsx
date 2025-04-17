@@ -1,45 +1,162 @@
 import React, { useState } from 'react';
 import { Radio } from './Radio';
 import { Card, CardHeader, CardContent } from './Card';
+import styled from '@emotion/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
+// Define theme styles interface
+interface ThemeStyles {
+  // Colors
+  textPrimary: string;
+  textSecondary: string;
+  backgroundColor: string;
+  borderColor: string;
+  primaryColor: string;
+  errorColor: string;
+  // Typography
+  fontSizeSm: string;
+  fontSizeMd: string;
+  fontSizeLg: string;
+  fontWeightNormal: number;
+  fontWeightBold: number;
+  // Spacing
+  spacingXs: string;
+  spacingSm: string;
+  spacingMd: string;
+  spacingLg: string;
+  spacingXl: string;
+  // Other
+  borderRadius: string;
+  boxShadow: string;
+}
+
+// Create theme styles from DirectTheme context
+const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => {
+  const { getColor, getTypography, getSpacing, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    // Colors with fallbacks
+    textPrimary: getColor('text.primary', '#333333'),
+    textSecondary: getColor('text.secondary', '#666666'),
+    backgroundColor: getColor('background', '#ffffff'),
+    borderColor: getColor('border', '#e0e0e0'),
+    primaryColor: getColor('primary', '#0073ea'),
+    errorColor: getColor('error', '#d32f2f'),
+    // Typography with fallbacks
+    fontSizeSm: getTypography('fontSize.sm', '0.875rem') as string,
+    fontSizeMd: getTypography('fontSize.md', '1rem') as string,
+    fontSizeLg: getTypography('fontSize.lg', '1.25rem') as string,
+    fontWeightNormal: getTypography('fontWeight.normal', 400) as number,
+    fontWeightBold: getTypography('fontWeight.bold', 700) as number,
+    // Spacing with fallbacks
+    spacingXs: getSpacing('xs', '0.25rem'),
+    spacingSm: getSpacing('sm', '0.5rem'),
+    spacingMd: getSpacing('md', '1rem'),
+    spacingLg: getSpacing('lg', '1.5rem'),
+    spacingXl: getSpacing('xl', '2rem'),
+    // Other with fallbacks
+    borderRadius: getBorderRadius('md', '0.25rem'),
+    boxShadow: getShadow('md', '0 2px 4px rgba(0,0,0,0.1)'),
+  };
+};
+
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: ${props => props.$themeStyles.spacingXl};
+  color: ${props => props.$themeStyles.textPrimary};
+`;
+
+const PageTitle = styled.h1<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacingXl};
+  font-size: ${props => props.$themeStyles.fontSizeLg};
+  font-weight: ${props => props.$themeStyles.fontWeightBold};
+`;
+
+const DemoCard = styled(Card)<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacingXl};
+`;
+
+const SectionContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacingXl};
+`;
+
+const SectionTitle = styled.p<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+  margin-bottom: ${props => props.$themeStyles.spacingSm};
+  font-weight: ${props => props.$themeStyles.fontWeightBold};
+`;
+
+const RadioGroup = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.$themeStyles.spacingSm};
+`;
+
+const SelectedOption = styled.p<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacingMd};
+`;
+
+const HorizontalRadioGroup = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  gap: ${props => props.$themeStyles.spacingLg};
+  flex-wrap: wrap;
+`;
+
+const FormContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  border: 1px solid ${props => props.$themeStyles.borderColor};
+  padding: ${props => props.$themeStyles.spacingMd};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+`;
+
+const FormSectionTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacingMd};
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+`;
+
+const FormDivider = styled.h3<{ $themeStyles: ThemeStyles }>`
+  margin: ${props => props.$themeStyles.spacingLg} 0 ${props => props.$themeStyles.spacingMd};
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+`;
+
+const ActionButton = styled.button<{ $themeStyles: ThemeStyles; $isEnabled: boolean }>`
+  padding: ${props => props.$themeStyles.spacingSm} ${props => props.$themeStyles.spacingMd};
+  background-color: ${props => props.$themeStyles.primaryColor};
+  color: white;
+  border: none;
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  cursor: pointer;
+  opacity: ${props => (props.$isEnabled ? 1 : 0.5)};
+  margin-top: ${props => props.$themeStyles.spacingLg};
+`;
+
+/**
+ * Demo component showcasing different configurations of the Radio component
+ */
 export const RadioDemo: React.FC = () => {
-  // State for basic radio examples
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+
+  // State for radio examples
   const [selectedBasic, setSelectedBasic] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('medium');
   const [selectedColor, setSelectedColor] = useState<string>('primary');
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('');
-  
-  // Section title style
-  const sectionStyle: React.CSSProperties = {
-    marginBottom: '24px',
-  };
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: '16px',
-    marginBottom: '12px',
-    fontWeight: 'bold',
-  };
-
-  const radioGroupStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
-      <h1 style={{ marginBottom: '24px' }}>Radio Component Demo</h1>
-      
+    <DemoContainer $themeStyles={themeStyles}>
+      <PageTitle $themeStyles={themeStyles}>Radio Component Demo</PageTitle>
+
       {/* Basic Radio Group */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Basic Radio Group</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Basic selection</p>
-            <div style={radioGroupStyle}>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Basic selection</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
               <Radio
                 label="Option One"
                 name="basic-demo"
@@ -61,17 +178,17 @@ export const RadioDemo: React.FC = () => {
                 checked={selectedBasic === 'three'}
                 onChange={() => setSelectedBasic('three')}
               />
-            </div>
+            </RadioGroup>
             {selectedBasic && (
-              <p style={{ marginTop: '16px' }}>
+              <SelectedOption $themeStyles={themeStyles}>
                 Selected option: <strong>{selectedBasic}</strong>
-              </p>
+              </SelectedOption>
             )}
-          </div>
-          
-          <div style={sectionStyle}>
-            <p style={titleStyle}>With helper text</p>
-            <div style={radioGroupStyle}>
+          </SectionContainer>
+
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>With helper text</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
               <Radio
                 label="Standard delivery (Free)"
                 helperText="Delivery within 5-7 business days"
@@ -90,17 +207,13 @@ export const RadioDemo: React.FC = () => {
                 name="delivery"
                 value="next-day"
               />
-            </div>
-          </div>
-          
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Disabled state</p>
-            <div style={radioGroupStyle}>
-              <Radio
-                label="Available option"
-                name="disabled-demo"
-                value="available"
-              />
+            </RadioGroup>
+          </SectionContainer>
+
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Disabled state</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
+              <Radio label="Available option" name="disabled-demo" value="available" />
               <Radio
                 label="Currently unavailable"
                 name="disabled-demo"
@@ -114,20 +227,20 @@ export const RadioDemo: React.FC = () => {
                 checked
                 disabled
               />
-            </div>
-          </div>
+            </RadioGroup>
+          </SectionContainer>
         </CardContent>
-      </Card>
-      
+      </DemoCard>
+
       {/* Sizes */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Size Variations</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Different sizes</p>
-            <div style={radioGroupStyle}>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Different sizes</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
               <Radio
                 label="Small size"
                 size="small"
@@ -152,20 +265,20 @@ export const RadioDemo: React.FC = () => {
                 checked={selectedSize === 'large'}
                 onChange={() => setSelectedSize('large')}
               />
-            </div>
-          </div>
+            </RadioGroup>
+          </SectionContainer>
         </CardContent>
-      </Card>
-      
+      </DemoCard>
+
       {/* Colors */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Color Variations</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Different colors</p>
-            <div style={radioGroupStyle}>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Different colors</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
               <Radio
                 label="Primary color (default)"
                 color="primary"
@@ -214,20 +327,20 @@ export const RadioDemo: React.FC = () => {
                 checked={selectedColor === 'info'}
                 onChange={() => setSelectedColor('info')}
               />
-            </div>
-          </div>
+            </RadioGroup>
+          </SectionContainer>
         </CardContent>
-      </Card>
-      
+      </DemoCard>
+
       {/* Error State */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Error State</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Error indication</p>
-            <div style={radioGroupStyle}>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Error indication</SectionTitle>
+            <RadioGroup $themeStyles={themeStyles}>
               <Radio
                 label="Option with error"
                 error
@@ -235,27 +348,23 @@ export const RadioDemo: React.FC = () => {
                 name="error-demo"
                 value="error"
               />
-              <Radio
-                label="Normal option"
-                name="error-demo"
-                value="normal"
-              />
-            </div>
-          </div>
+              <Radio label="Normal option" name="error-demo" value="normal" />
+            </RadioGroup>
+          </SectionContainer>
         </CardContent>
-      </Card>
-      
+      </DemoCard>
+
       {/* Form Integration */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Form Integration Example</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Subscription Plans</p>
-            <div style={{ border: '1px solid #e0e0e0', padding: '16px', borderRadius: '4px' }}>
-              <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>Choose a Plan</h3>
-              <div style={radioGroupStyle}>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Subscription Plans</SectionTitle>
+            <FormContainer $themeStyles={themeStyles}>
+              <FormSectionTitle $themeStyles={themeStyles}>Choose a Plan</FormSectionTitle>
+              <RadioGroup $themeStyles={themeStyles}>
                 <Radio
                   label="Basic Plan - $9.99/month"
                   helperText="Access to basic features"
@@ -280,12 +389,12 @@ export const RadioDemo: React.FC = () => {
                   checked={selectedPlan === 'enterprise'}
                   onChange={() => setSelectedPlan('enterprise')}
                 />
-              </div>
-              
+              </RadioGroup>
+
               {selectedPlan && (
                 <>
-                  <h3 style={{ margin: '24px 0 16px', fontSize: '16px' }}>Payment Method</h3>
-                  <div style={radioGroupStyle}>
+                  <FormDivider $themeStyles={themeStyles}>Payment Method</FormDivider>
+                  <RadioGroup $themeStyles={themeStyles}>
                     <Radio
                       label="Credit Card"
                       name="payment-method"
@@ -307,61 +416,40 @@ export const RadioDemo: React.FC = () => {
                       checked={paymentMethod === 'bank-transfer'}
                       onChange={() => setPaymentMethod('bank-transfer')}
                     />
-                  </div>
+                  </RadioGroup>
                 </>
               )}
-              
-              <div style={{ marginTop: '24px' }}>
-                <button 
-                  style={{ 
-                    padding: '8px 16px',
-                    backgroundColor: '#0073ea',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    opacity: selectedPlan && paymentMethod ? 1 : 0.5,
-                  }}
-                  disabled={!selectedPlan || !paymentMethod}
-                >
-                  Subscribe Now
-                </button>
-              </div>
-            </div>
-          </div>
+
+              <ActionButton
+                $themeStyles={themeStyles}
+                $isEnabled={!!(selectedPlan && paymentMethod)}
+                disabled={!selectedPlan || !paymentMethod}
+              >
+                Subscribe Now
+              </ActionButton>
+            </FormContainer>
+          </SectionContainer>
         </CardContent>
-      </Card>
-      
+      </DemoCard>
+
       {/* Horizontal Layout */}
-      <Card variant="elevation" style={{ marginBottom: '32px' }}>
+      <DemoCard variant="elevation" $themeStyles={themeStyles}>
         <CardHeader>
           <h2>Horizontal Layout</h2>
         </CardHeader>
         <CardContent>
-          <div style={sectionStyle}>
-            <p style={titleStyle}>Radio buttons in a row</p>
-            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-              <Radio
-                label="Option A"
-                name="horizontal-demo"
-                value="a"
-              />
-              <Radio
-                label="Option B"
-                name="horizontal-demo"
-                value="b"
-              />
-              <Radio
-                label="Option C"
-                name="horizontal-demo"
-                value="c"
-              />
-            </div>
-          </div>
+          <SectionContainer $themeStyles={themeStyles}>
+            <SectionTitle $themeStyles={themeStyles}>Radio buttons in a row</SectionTitle>
+            <HorizontalRadioGroup $themeStyles={themeStyles}>
+              <Radio label="Option A" name="horizontal-demo" value="a" />
+              <Radio label="Option B" name="horizontal-demo" value="b" />
+              <Radio label="Option C" name="horizontal-demo" value="c" />
+            </HorizontalRadioGroup>
+          </SectionContainer>
         </CardContent>
-      </Card>
-    </div>
+      </DemoCard>
+    </DemoContainer>
   );
 };
 
-export default RadioDemo; 
+export default RadioDemo;

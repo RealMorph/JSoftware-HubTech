@@ -2,7 +2,6 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../DirectThemeProvider';
 import { Button } from './Button';
-import { ThemeConfig } from '../consolidated-types';
 
 // Using simple styles without the legacy mixins
 const DemoContainer = styled.div`
@@ -13,12 +12,12 @@ const DemoContainer = styled.div`
 
 const Section = styled.div`
   margin: ${props => props.theme.spacing?.md || '1rem'} 0;
-  
+
   & > h2 {
     font-size: ${props => props.theme.typography?.fontSize.xl || '1.25rem'};
     margin-bottom: ${props => props.theme.spacing?.md || '1rem'};
   }
-  
+
   & > div {
     display: flex;
     gap: ${props => props.theme.spacing?.md || '1rem'};

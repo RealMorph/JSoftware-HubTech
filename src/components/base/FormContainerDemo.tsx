@@ -1,69 +1,139 @@
 import React, { useState } from 'react';
 import { FormContainer, FieldConfig } from './FormContainer';
-import { TextField } from './TextField';
-import { Select } from './Select';
-import { Checkbox } from './Checkbox';
-import { Radio } from './Radio';
 import { Card, CardHeader, CardContent } from './Card';
 import { ValidationRule } from './Form';
 import styled from '@emotion/styled';
-import { useTheme } from '../../core/theme/theme-context';
-import { getThemeValue } from '../../core/theme/styled';
-import { getThemeProperty } from '../../core/theme/theme-provider-wrapper';
+import { useDirectTheme, DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
 
-const FormDemoContainer = styled.div`
+// Define a theme styles interface for consistent theming - simplified for this demo
+interface ThemeStyles {
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    surface: string;
+    text: string;
+    error: string;
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      small: string;
+      medium: string;
+      large: string;
+    };
+    fontWeight: {
+      regular: number;
+      medium: number;
+      bold: number;
+    };
+  };
+  borderRadius: string;
+}
+
+// Theme-based styled components
+const FormDemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: ${props => props.$themeStyles.spacing.xl};
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
 `;
 
-const DemoSection = styled.div`
+const DemoSection = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${props => props.$themeStyles.spacing.md};
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+const SectionTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.fontSize.large};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
+  margin-bottom: ${props => props.$themeStyles.spacing.md};
 `;
 
-const SectionDescription = styled.p`
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  color: ${props => getThemeProperty(props.theme, 'colors.gray.600', '#4B5563')};
+const SectionDescription = styled.p<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.typography.fontSize.medium};
+  margin-bottom: ${props => props.$themeStyles.spacing.md};
+  color: ${props => props.$themeStyles.colors.secondary};
 `;
 
-const ResultCard = styled(Card)`
-  margin-top: 1rem;
-  background-color: ${props => getThemeProperty(props.theme, 'colors.gray.50', '#F9FAFB')};
+const ResultCard = styled(Card)<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacing.md};
+  background-color: ${props => props.$themeStyles.colors.surface};
 `;
 
-const ResultContent = styled.pre`
-  font-family: monospace;
-  font-size: 0.875rem;
+const ResultContent = styled.pre<{ $themeStyles: ThemeStyles }>`
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  font-size: ${props => props.$themeStyles.typography.fontSize.small};
   white-space: pre-wrap;
   word-break: break-word;
 `;
 
-// Helper function to access theme values safely
-const getThemeVal = (currentTheme: any, path: string): string => {
-  if (!currentTheme) return '';
-  return getThemeProperty(currentTheme, path, '');
-};
+const ErrorContent = styled.div<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.colors.error};
+  padding: 0.5rem;
+`;
+
+// Create theme styles from the theme context
+function createThemeStyles(themeContext: DirectThemeContextType): ThemeStyles {
+  const { theme } = themeContext;
+
+  return {
+    colors: {
+      primary: theme.colors.primary,
+      secondary: theme.colors.secondary,
+      background: theme.colors.background,
+      surface: theme.colors.surface,
+      text: typeof theme.colors.text === 'string' ? theme.colors.text : theme.colors.text.primary,
+      error: theme.colors.error,
+    },
+    spacing: {
+      xs: theme.spacing.xs,
+      sm: theme.spacing.sm,
+      md: theme.spacing.md,
+      lg: theme.spacing.lg,
+      xl: theme.spacing.xl,
+    },
+    typography: {
+      fontFamily: theme.typography.fontFamily.base,
+      fontSize: {
+        small: theme.typography.fontSize.sm,
+        medium: theme.typography.fontSize.md,
+        large: theme.typography.fontSize.lg,
+      },
+      fontWeight: {
+        regular: theme.typography.fontWeight.normal,
+        medium: theme.typography.fontWeight.medium,
+        bold: theme.typography.fontWeight.bold,
+      },
+    },
+    borderRadius: theme.borderRadius.base,
+  };
+}
 
 /**
  * Demo component for FormContainer showcasing different validation scenarios
  */
 export const FormContainerDemo: React.FC = () => {
-  const { currentTheme } = useTheme();
-  const [basicFormResult, setBasicFormResult] = useState<Record<string, any> | null>(null);
-  const [advancedFormResult, setAdvancedFormResult] = useState<Record<string, any> | null>(null);
-  const [horizontalFormResult, setHorizontalFormResult] = useState<Record<string, any> | null>(null);
+  // Initialize theme context and styles
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+  const [basicFormResult, setBasicFormResult] = useState<Record<string, unknown> | null>(null);
+  const [advancedFormResult, setAdvancedFormResult] = useState<Record<string, unknown> | null>(
+    null
+  );
+  const [horizontalFormResult, setHorizontalFormResult] = useState<Record<string, unknown> | null>(
+    null
+  );
   const [loadingState, setLoadingState] = useState<{
     basic: boolean;
     advanced: boolean;
@@ -103,15 +173,15 @@ export const FormContainerDemo: React.FC = () => {
 
   // Advanced form fields with custom validation
   const passwordRule: ValidationRule = {
-    validator: (value) => {
+    validator: value => {
       // Password must have at least 8 characters, 1 uppercase, 1 lowercase, and 1 number
       return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value);
     },
     message: 'Password must have at least 8 characters, 1 uppercase, 1 lowercase, and 1 number',
   };
 
-  const matchPasswordRule = (values: Record<string, any>): ValidationRule => ({
-    validator: (value) => value === values.password,
+  const matchPasswordRule = (values: Record<string, unknown>): ValidationRule => ({
+    validator: value => value === values.password,
     message: 'Passwords do not match',
   });
 
@@ -158,7 +228,7 @@ export const FormContainerDemo: React.FC = () => {
       required: true,
       validationRules: [
         {
-          validator: (value) => parseInt(value) >= 18,
+          validator: value => parseInt(value) >= 18,
           message: 'You must be at least 18 years old',
         },
       ],
@@ -170,7 +240,7 @@ export const FormContainerDemo: React.FC = () => {
       required: true,
       validationRules: [
         {
-          validator: (value) => value === true,
+          validator: value => value === true,
           message: 'You must agree to the Terms and Conditions',
         },
       ],
@@ -200,10 +270,10 @@ export const FormContainerDemo: React.FC = () => {
   ];
 
   // Handle form submissions with simulated API call
-  const handleBasicSubmit = (values: Record<string, any>) => {
+  const handleBasicSubmit = (values: Record<string, unknown>) => {
     setLoadingState(prev => ({ ...prev, basic: true }));
     setErrorMessage(null);
-    
+
     // Simulate API call
     setTimeout(() => {
       setBasicFormResult(values);
@@ -211,10 +281,10 @@ export const FormContainerDemo: React.FC = () => {
     }, 1000);
   };
 
-  const handleAdvancedSubmit = (values: Record<string, any>) => {
+  const handleAdvancedSubmit = (values: Record<string, unknown>) => {
     setLoadingState(prev => ({ ...prev, advanced: true }));
     setErrorMessage(null);
-    
+
     // Simulate API call with possible error
     setTimeout(() => {
       // 20% chance of error for demo purposes
@@ -223,7 +293,7 @@ export const FormContainerDemo: React.FC = () => {
         setAdvancedFormResult(null);
       } else {
         // Remove confirmPassword from the result
-        const { confirmPassword, ...resultValues } = values;
+        const { ...resultValues } = values;
         setAdvancedFormResult(resultValues);
         setErrorMessage(null);
       }
@@ -231,9 +301,9 @@ export const FormContainerDemo: React.FC = () => {
     }, 1500);
   };
 
-  const handleHorizontalSubmit = (values: Record<string, any>) => {
+  const handleHorizontalSubmit = (values: Record<string, unknown>) => {
     setLoadingState(prev => ({ ...prev, horizontal: true }));
-    
+
     // Simulate API call
     setTimeout(() => {
       setHorizontalFormResult(values);
@@ -242,13 +312,13 @@ export const FormContainerDemo: React.FC = () => {
   };
 
   return (
-    <FormDemoContainer>
-      <DemoSection>
-        <SectionTitle>Basic Form</SectionTitle>
-        <SectionDescription>
+    <FormDemoContainer $themeStyles={themeStyles}>
+      <DemoSection $themeStyles={themeStyles}>
+        <SectionTitle $themeStyles={themeStyles}>Basic Form</SectionTitle>
+        <SectionDescription $themeStyles={themeStyles}>
           A simple contact form with basic validation.
         </SectionDescription>
-        
+
         <FormContainer
           title="Contact Us"
           description="Fill out this form to get in touch with our team."
@@ -257,12 +327,12 @@ export const FormContainerDemo: React.FC = () => {
           submitButtonText="Send Message"
           isLoading={loadingState.basic}
         />
-        
+
         {basicFormResult && (
-          <ResultCard>
+          <ResultCard $themeStyles={themeStyles}>
             <CardHeader>Form Submission</CardHeader>
             <CardContent>
-              <ResultContent>
+              <ResultContent $themeStyles={themeStyles}>
                 {JSON.stringify(basicFormResult, null, 2)}
               </ResultContent>
             </CardContent>
@@ -270,38 +340,38 @@ export const FormContainerDemo: React.FC = () => {
         )}
       </DemoSection>
 
-      <DemoSection>
-        <SectionTitle>Advanced Form with Custom Validation</SectionTitle>
-        <SectionDescription>
+      <DemoSection $themeStyles={themeStyles}>
+        <SectionTitle $themeStyles={themeStyles}>Advanced Form with Custom Validation</SectionTitle>
+        <SectionDescription $themeStyles={themeStyles}>
           A registration form with custom validation rules and error handling.
         </SectionDescription>
-        
+
         <FormContainer
           title="Create Account"
           description="Sign up for a new account with advanced validation."
-          fields={advancedFields.map(field => 
-            field.name === 'confirmPassword' 
-              ? { ...field, validationRules: [matchPasswordRule(advancedFormResult || {})] } 
+          fields={advancedFields.map(field =>
+            field.name === 'confirmPassword'
+              ? { ...field, validationRules: [matchPasswordRule(advancedFormResult || {})] }
               : field
           )}
           onSubmit={handleAdvancedSubmit}
           submitButtonText="Create Account"
           isLoading={loadingState.advanced}
         />
-        
+
         {errorMessage && (
-          <ResultCard>
-            <CardContent style={{ color: getThemeVal(currentTheme, 'colors.error.500') }}>
-              {errorMessage}
+          <ResultCard $themeStyles={themeStyles}>
+            <CardContent>
+              <ErrorContent $themeStyles={themeStyles}>{errorMessage}</ErrorContent>
             </CardContent>
           </ResultCard>
         )}
-        
+
         {advancedFormResult && (
-          <ResultCard>
+          <ResultCard $themeStyles={themeStyles}>
             <CardHeader>Account Created Successfully</CardHeader>
             <CardContent>
-              <ResultContent>
+              <ResultContent $themeStyles={themeStyles}>
                 {JSON.stringify(advancedFormResult, null, 2)}
               </ResultContent>
             </CardContent>
@@ -309,12 +379,12 @@ export const FormContainerDemo: React.FC = () => {
         )}
       </DemoSection>
 
-      <DemoSection>
-        <SectionTitle>Horizontal Layout Form</SectionTitle>
-        <SectionDescription>
+      <DemoSection $themeStyles={themeStyles}>
+        <SectionTitle $themeStyles={themeStyles}>Horizontal Layout Form</SectionTitle>
+        <SectionDescription $themeStyles={themeStyles}>
           A login form with horizontal layout for compact display.
         </SectionDescription>
-        
+
         <FormContainer
           title="Login"
           description="Sign in to your account"
@@ -324,12 +394,12 @@ export const FormContainerDemo: React.FC = () => {
           layout="horizontal"
           isLoading={loadingState.horizontal}
         />
-        
+
         {horizontalFormResult && (
-          <ResultCard>
+          <ResultCard $themeStyles={themeStyles}>
             <CardHeader>Login Attempt</CardHeader>
             <CardContent>
-              <ResultContent>
+              <ResultContent $themeStyles={themeStyles}>
                 {JSON.stringify(horizontalFormResult, null, 2)}
               </ResultContent>
             </CardContent>
@@ -340,4 +410,4 @@ export const FormContainerDemo: React.FC = () => {
   );
 };
 
-export default FormContainerDemo; 
+export default FormContainerDemo;

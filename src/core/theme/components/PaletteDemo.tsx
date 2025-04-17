@@ -5,9 +5,7 @@ import {
   generateStateColors,
   getContrastText,
   ColorScale,
-  ColorPalette,
 } from '../palette-generator';
-import { useTheme } from '../theme-context';
 
 interface ColorBlockProps {
   color: string;
@@ -91,7 +89,6 @@ interface PaletteDemoProps {
 }
 
 export const PaletteDemo: React.FC<PaletteDemoProps> = ({ initialColor = '#3B82F6' }) => {
-  const { currentTheme } = useTheme();
   const [baseColor, setBaseColor] = useState(initialColor);
 
   // Generate a palette from the base color

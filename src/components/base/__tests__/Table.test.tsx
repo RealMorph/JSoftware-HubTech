@@ -1,23 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableCell, 
-  TableHeaderCell 
-} from '../Table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHeaderCell } from '../Table';
 import { DirectThemeProvider } from '../../../core/theme/DirectThemeProvider';
 import { extendedMockTheme } from '../../../core/theme/__mocks__/mockTheme';
 
 const renderWithTheme = (ui: React.ReactElement) => {
-  return render(
-    <DirectThemeProvider initialTheme={extendedMockTheme}>
-      {ui}
-    </DirectThemeProvider>
-  );
+  return render(<DirectThemeProvider initialTheme={extendedMockTheme}>{ui}</DirectThemeProvider>);
 };
 
 describe('Table component', () => {
@@ -38,7 +27,7 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     expect(screen.getByTestId('test-table')).toBeInTheDocument();
     expect(screen.getByText('Header 1')).toBeInTheDocument();
     expect(screen.getByText('Cell 1')).toBeInTheDocument();
@@ -58,7 +47,7 @@ describe('Table component', () => {
     // Default variant
     let table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
-    
+
     // Bordered variant
     rerender(
       <DirectThemeProvider initialTheme={extendedMockTheme}>
@@ -71,10 +60,10 @@ describe('Table component', () => {
         </Table>
       </DirectThemeProvider>
     );
-    
+
     table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
-    
+
     // Striped variant
     rerender(
       <DirectThemeProvider initialTheme={extendedMockTheme}>
@@ -87,7 +76,7 @@ describe('Table component', () => {
         </Table>
       </DirectThemeProvider>
     );
-    
+
     table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
   });
@@ -106,7 +95,7 @@ describe('Table component', () => {
     // Small size
     let table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
-    
+
     // Medium size
     rerender(
       <DirectThemeProvider initialTheme={extendedMockTheme}>
@@ -119,10 +108,10 @@ describe('Table component', () => {
         </Table>
       </DirectThemeProvider>
     );
-    
+
     table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
-    
+
     // Large size
     rerender(
       <DirectThemeProvider initialTheme={extendedMockTheme}>
@@ -135,7 +124,7 @@ describe('Table component', () => {
         </Table>
       </DirectThemeProvider>
     );
-    
+
     table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
   });
@@ -150,7 +139,7 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
   });
@@ -165,10 +154,10 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
-    
+
     const row = screen.getByTestId('hoverable-row');
     fireEvent.mouseOver(row);
     fireEvent.mouseOut(row);
@@ -189,7 +178,7 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const table = screen.getByTestId('test-table');
     expect(table).toBeInTheDocument();
     expect(screen.getByText('Header 1')).toBeInTheDocument();
@@ -208,7 +197,7 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const selectedRow = screen.getByTestId('selected-row');
     const normalRow = screen.getByTestId('normal-row');
     expect(selectedRow).toBeInTheDocument();
@@ -228,7 +217,7 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const disabledRow = screen.getByTestId('disabled-row');
     const normalRow = screen.getByTestId('normal-row');
     expect(disabledRow).toBeInTheDocument();
@@ -240,14 +229,20 @@ describe('Table component', () => {
       <Table data-testid="test-table">
         <TableBody>
           <TableRow>
-            <TableCell align="left" data-testid="left-cell">Left</TableCell>
-            <TableCell align="center" data-testid="center-cell">Center</TableCell>
-            <TableCell align="right" data-testid="right-cell">Right</TableCell>
+            <TableCell align="left" data-testid="left-cell">
+              Left
+            </TableCell>
+            <TableCell align="center" data-testid="center-cell">
+              Center
+            </TableCell>
+            <TableCell align="right" data-testid="right-cell">
+              Right
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
     );
-    
+
     expect(screen.getByTestId('left-cell')).toBeInTheDocument();
     expect(screen.getByTestId('center-cell')).toBeInTheDocument();
     expect(screen.getByTestId('right-cell')).toBeInTheDocument();
@@ -259,9 +254,9 @@ describe('Table component', () => {
       <Table data-testid="test-table">
         <TableHeader>
           <TableRow>
-            <TableHeaderCell 
-              sortable={true} 
-              sortDirection="asc" 
+            <TableHeaderCell
+              sortable={true}
+              sortDirection="asc"
               onSort={handleSort}
               data-testid="sortable-header"
             >
@@ -276,11 +271,11 @@ describe('Table component', () => {
         </TableBody>
       </Table>
     );
-    
+
     const sortableHeader = screen.getByTestId('sortable-header');
     expect(sortableHeader).toBeInTheDocument();
-    
+
     fireEvent.click(sortableHeader);
     expect(handleSort).toHaveBeenCalledTimes(1);
   });
-}); 
+});

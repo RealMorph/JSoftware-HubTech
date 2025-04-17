@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableCell, 
-  TableHeaderCell 
-} from './Table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHeaderCell } from './Table';
 import { Button } from './Button';
 
 interface User {
@@ -41,7 +34,13 @@ export const TableDemo: React.FC = () => {
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'active' },
     { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User', status: 'inactive' },
     { id: 4, name: 'Alice Williams', email: 'alice@example.com', role: 'Editor', status: 'active' },
-    { id: 5, name: 'Charlie Brown', email: 'charlie@example.com', role: 'User', status: 'inactive' },
+    {
+      id: 5,
+      name: 'Charlie Brown',
+      email: 'charlie@example.com',
+      role: 'User',
+      status: 'inactive',
+    },
   ];
 
   // Handle sort
@@ -64,10 +63,10 @@ export const TableDemo: React.FC = () => {
   // Sort the data
   const sortedUsers = [...users].sort((a, b) => {
     if (!sortField || !sortDirection) return 0;
-    
+
     const aValue = a[sortField];
     const bValue = b[sortField];
-    
+
     if (sortDirection === 'asc') {
       return aValue > bValue ? 1 : -1;
     } else {
@@ -82,7 +81,7 @@ export const TableDemo: React.FC = () => {
       {/* Table Variants */}
       <div style={demoSectionStyle}>
         <h2 style={demoTitleStyle}>Table Variants</h2>
-        
+
         <h3 style={{ marginBottom: '8px' }}>Default</h3>
         <Table variant="default" style={{ marginBottom: '24px' }}>
           <TableHeader>
@@ -94,7 +93,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 3).map((user) => (
+            {users.slice(0, 3).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -116,7 +115,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 3).map((user) => (
+            {users.slice(0, 3).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -138,7 +137,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 3).map((user) => (
+            {users.slice(0, 3).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -153,7 +152,7 @@ export const TableDemo: React.FC = () => {
       {/* Table Sizes */}
       <div style={demoSectionStyle}>
         <h2 style={demoTitleStyle}>Table Sizes</h2>
-        
+
         <h3 style={{ marginBottom: '8px' }}>Small</h3>
         <Table variant="bordered" size="small" style={{ marginBottom: '24px' }}>
           <TableHeader>
@@ -164,7 +163,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 2).map((user) => (
+            {users.slice(0, 2).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -184,7 +183,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 2).map((user) => (
+            {users.slice(0, 2).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -204,7 +203,7 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.slice(0, 2).map((user) => (
+            {users.slice(0, 2).map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -218,11 +217,7 @@ export const TableDemo: React.FC = () => {
       {/* Hoverable and Selectable Rows */}
       <div style={demoSectionStyle}>
         <h2 style={demoTitleStyle}>Hoverable and Selectable Rows</h2>
-        <Table 
-          variant="striped" 
-          hoverable 
-          style={{ marginBottom: '24px' }}
-        >
+        <Table variant="striped" hoverable style={{ marginBottom: '24px' }}>
           <TableHeader>
             <TableRow>
               <TableHeaderCell>Name</TableHeaderCell>
@@ -233,9 +228,9 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow 
-                key={user.id} 
+            {users.map(user => (
+              <TableRow
+                key={user.id}
                 selected={user.id === selectedUserId}
                 onClick={() => setSelectedUserId(user.id === selectedUserId ? null : user.id)}
               >
@@ -243,19 +238,23 @@ export const TableDemo: React.FC = () => {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
-                  <span style={{
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                    backgroundColor: user.status === 'active' ? '#ecfdf5' : '#fef2f2',
-                    color: user.status === 'active' ? '#065f46' : '#b91c1c',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
+                  <span
+                    style={{
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      backgroundColor: user.status === 'active' ? '#ecfdf5' : '#fef2f2',
+                      color: user.status === 'active' ? '#065f46' : '#b91c1c',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                    }}
+                  >
                     {user.status}
                   </span>
                 </TableCell>
                 <TableCell align="center">
-                  <Button variant="primary" size="sm">View</Button>
+                  <Button variant="primary" size="sm">
+                    View
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -300,20 +299,22 @@ export const TableDemo: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedUsers.map((user) => (
+            {sortedUsers.map(user => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
-                  <span style={{
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                    backgroundColor: user.status === 'active' ? '#ecfdf5' : '#fef2f2',
-                    color: user.status === 'active' ? '#065f46' : '#b91c1c',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
+                  <span
+                    style={{
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      backgroundColor: user.status === 'active' ? '#ecfdf5' : '#fef2f2',
+                      color: user.status === 'active' ? '#065f46' : '#b91c1c',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                    }}
+                  >
                     {user.status}
                   </span>
                 </TableCell>
@@ -327,4 +328,4 @@ export const TableDemo: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

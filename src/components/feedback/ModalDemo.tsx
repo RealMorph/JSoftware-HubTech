@@ -1,188 +1,211 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { Button } from '../base/Button';
-import { Modal } from './Modal';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-const DemoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 24px;
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textColor: string;
+  textSecondaryColor: string;
+  primaryColor: string;
+  borderColor: string;
+  shadowColor: string;
+  overlayColor: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getShadow } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    textColor: getColor('text.primary', '#333333'),
+    textSecondaryColor: getColor('text.secondary', '#666666'),
+    primaryColor: getColor('primary', '#3366CC'),
+    borderColor: getColor('border', '#e0e0e0'),
+    shadowColor: getShadow('md', '0 4px 6px rgba(0, 0, 0, 0.1)'),
+    overlayColor: 'rgba(0, 0, 0, 0.5)',
+  };
+}
+
+// Styled components
+const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: 1rem;
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  color: ${props => props.$themeStyles.textColor};
+  border: 1px solid ${props => props.$themeStyles.borderColor};
+  border-radius: 4px;
+  margin-bottom: 1rem;
 `;
 
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.textColor};
+  margin-top: 0;
+  margin-bottom: 1rem;
+`;
+
+const Button = styled.button<{ primary?: boolean; $themeStyles: ThemeStyles }>`
+  background-color: ${props =>
+    props.primary ? props.$themeStyles.primaryColor : props.$themeStyles.backgroundColor};
+  color: ${props => (props.primary ? '#ffffff' : props.$themeStyles.textColor)};
+  border: 1px solid
+    ${props => (props.primary ? props.$themeStyles.primaryColor : props.$themeStyles.borderColor)};
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const ButtonGroup = styled.div`
+  margin-bottom: 1rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
 `;
 
-const ModalContent = styled.div`
-  padding: 16px;
+const ModalOverlay = styled.div<{ $themeStyles: ThemeStyles }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: ${props => props.$themeStyles.overlayColor};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 `;
 
-const ModalFooter = styled.div`
+const ModalContent = styled.div<{ $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$themeStyles.backgroundColor};
+  border-radius: 4px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: ${props => props.$themeStyles.shadowColor};
+`;
+
+const ModalHeader = styled.div<{ $themeStyles: ThemeStyles }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid ${props => props.$themeStyles.borderColor};
+`;
+
+const ModalTitle = styled.h4<{ $themeStyles: ThemeStyles }>`
+  margin: 0;
+  color: ${props => props.$themeStyles.textColor};
+`;
+
+const CloseButton = styled.button<{ $themeStyles: ThemeStyles }>`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: ${props => props.$themeStyles.textSecondaryColor};
+  line-height: 1;
+`;
+
+const ModalBody = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: 1rem;
+  color: ${props => props.$themeStyles.textColor};
+`;
+
+const ModalFooter = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 16px;
-  border-top: 1px solid #e0e0e0;
+  padding-top: 0.5rem;
+  border-top: 1px solid ${props => props.$themeStyles.borderColor};
 `;
 
-const ModalDemo: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [modalSize, setModalSize] = useState<'small' | 'medium' | 'large' | 'full'>('medium');
-  const [modalPosition, setModalPosition] = useState<'center' | 'top' | 'right' | 'bottom' | 'left'>('center');
-  const [modalAnimation, setModalAnimation] = useState<'fade' | 'slide' | 'scale' | 'none'>('fade');
+interface ModalDemoProps {
+  title?: string;
+}
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
+// Export the ModalDemo component
+export const ModalDemo: React.FC<ModalDemoProps> = ({ title = 'Modal Demo' }) => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
 
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
+  const [isBasicModalOpen, setIsBasicModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   return (
-    <DemoContainer>
-      <h2>Modal Component Demo</h2>
-      
-      <Section>
-        <h3>Modal Size</h3>
-        <ButtonGroup>
-          <Button 
-            variant={modalSize === 'small' ? 'primary' : 'secondary'} 
-            onClick={() => setModalSize('small')}
-          >
-            Small
-          </Button>
-          <Button 
-            variant={modalSize === 'medium' ? 'primary' : 'secondary'} 
-            onClick={() => setModalSize('medium')}
-          >
-            Medium
-          </Button>
-          <Button 
-            variant={modalSize === 'large' ? 'primary' : 'secondary'} 
-            onClick={() => setModalSize('large')}
-          >
-            Large
-          </Button>
-          <Button 
-            variant={modalSize === 'full' ? 'primary' : 'secondary'} 
-            onClick={() => setModalSize('full')}
-          >
-            Full
-          </Button>
-        </ButtonGroup>
-      </Section>
-      
-      <Section>
-        <h3>Modal Position</h3>
-        <ButtonGroup>
-          <Button 
-            variant={modalPosition === 'center' ? 'primary' : 'secondary'} 
-            onClick={() => setModalPosition('center')}
-          >
-            Center
-          </Button>
-          <Button 
-            variant={modalPosition === 'top' ? 'primary' : 'secondary'} 
-            onClick={() => setModalPosition('top')}
-          >
-            Top
-          </Button>
-          <Button 
-            variant={modalPosition === 'right' ? 'primary' : 'secondary'} 
-            onClick={() => setModalPosition('right')}
-          >
-            Right
-          </Button>
-          <Button 
-            variant={modalPosition === 'bottom' ? 'primary' : 'secondary'} 
-            onClick={() => setModalPosition('bottom')}
-          >
-            Bottom
-          </Button>
-          <Button 
-            variant={modalPosition === 'left' ? 'primary' : 'secondary'} 
-            onClick={() => setModalPosition('left')}
-          >
-            Left
-          </Button>
-        </ButtonGroup>
-      </Section>
-      
-      <Section>
-        <h3>Modal Animation</h3>
-        <ButtonGroup>
-          <Button 
-            variant={modalAnimation === 'fade' ? 'primary' : 'secondary'} 
-            onClick={() => setModalAnimation('fade')}
-          >
-            Fade
-          </Button>
-          <Button 
-            variant={modalAnimation === 'slide' ? 'primary' : 'secondary'} 
-            onClick={() => setModalAnimation('slide')}
-          >
-            Slide
-          </Button>
-          <Button 
-            variant={modalAnimation === 'scale' ? 'primary' : 'secondary'} 
-            onClick={() => setModalAnimation('scale')}
-          >
-            Scale
-          </Button>
-          <Button 
-            variant={modalAnimation === 'none' ? 'primary' : 'secondary'} 
-            onClick={() => setModalAnimation('none')}
-          >
-            None
-          </Button>
-        </ButtonGroup>
-      </Section>
-      
+    <DemoContainer $themeStyles={themeStyles}>
+      <Title $themeStyles={themeStyles}>{title}</Title>
+
       <ButtonGroup>
-        <Button variant="primary" onClick={handleOpenModal}>
-          Open Modal
+        <Button $themeStyles={themeStyles} primary onClick={() => setIsBasicModalOpen(true)}>
+          Open Basic Modal
+        </Button>
+        <Button $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(true)}>
+          Open Confirmation Modal
         </Button>
       </ButtonGroup>
-      
-      <Modal
-        isOpen={isOpen}
-        onClose={handleCloseModal}
-        title="Modal Demo"
-        size={modalSize}
-        position={modalPosition}
-        animation={modalAnimation}
-      >
-        <ModalContent>
-          <p>This is a demo of the Modal component with various configurations.</p>
-          <p>Current settings:</p>
-          <ul>
-            <li>Size: {modalSize}</li>
-            <li>Position: {modalPosition}</li>
-            <li>Animation: {modalAnimation}</li>
-          </ul>
-          <p>You can change these settings using the buttons above and then open the modal to see the changes.</p>
-        </ModalContent>
-        <ModalFooter>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleCloseModal}>
-            Confirm
-          </Button>
-        </ModalFooter>
-      </Modal>
+
+      {/* Basic Modal */}
+      {isBasicModalOpen && (
+        <ModalOverlay $themeStyles={themeStyles}>
+          <ModalContent $themeStyles={themeStyles}>
+            <ModalHeader $themeStyles={themeStyles}>
+              <ModalTitle $themeStyles={themeStyles}>Basic Modal</ModalTitle>
+              <CloseButton $themeStyles={themeStyles} onClick={() => setIsBasicModalOpen(false)}>
+                ×
+              </CloseButton>
+            </ModalHeader>
+            <ModalBody $themeStyles={themeStyles}>
+              <p>This is a basic modal dialog using DirectThemeProvider for styling.</p>
+            </ModalBody>
+            <ModalFooter $themeStyles={themeStyles}>
+              <Button $themeStyles={themeStyles} onClick={() => setIsBasicModalOpen(false)}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <ModalOverlay $themeStyles={themeStyles}>
+          <ModalContent $themeStyles={themeStyles}>
+            <ModalHeader $themeStyles={themeStyles}>
+              <ModalTitle $themeStyles={themeStyles}>Confirmation</ModalTitle>
+              <CloseButton $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(false)}>
+                ×
+              </CloseButton>
+            </ModalHeader>
+            <ModalBody $themeStyles={themeStyles}>
+              <p>Are you sure you want to perform this action?</p>
+            </ModalBody>
+            <ModalFooter $themeStyles={themeStyles}>
+              <Button $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                $themeStyles={themeStyles}
+                primary
+                onClick={() => {
+                  window.alert('Action confirmed!');
+                  setIsConfirmModalOpen(false);
+                }}
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </DemoContainer>
   );
 };
 
-export default ModalDemo; 
+// Add default export
+export default ModalDemo;

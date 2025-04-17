@@ -10,12 +10,12 @@ export interface ThemeService {
    * Gets the default theme
    */
   getDefaultTheme(): ThemeConfig;
-  
+
   /**
    * Gets a dark theme if available
    */
   getDarkTheme(): ThemeConfig | null;
-  
+
   /**
    * Gets a light theme if available
    */
@@ -30,38 +30,38 @@ export class InMemoryThemeService implements ThemeService {
   private defaultTheme: ThemeConfig;
   private darkTheme: ThemeConfig | null = null;
   private lightTheme: ThemeConfig | null = null;
-  
+
   constructor(defaultTheme: ThemeConfig = modernTheme) {
     this.defaultTheme = defaultTheme;
     this.lightTheme = defaultTheme;
   }
-  
+
   getDefaultTheme(): ThemeConfig {
     return this.defaultTheme;
   }
-  
+
   getDarkTheme(): ThemeConfig | null {
     return this.darkTheme;
   }
-  
+
   getLightTheme(): ThemeConfig | null {
     return this.lightTheme;
   }
-  
+
   /**
    * Set the default theme
    */
   setDefaultTheme(theme: ThemeConfig): void {
     this.defaultTheme = theme;
   }
-  
+
   /**
    * Set the dark theme
    */
   setDarkTheme(theme: ThemeConfig): void {
     this.darkTheme = theme;
   }
-  
+
   /**
    * Set the light theme
    */
@@ -81,4 +81,4 @@ export const ThemeServiceContext = createContext<ThemeService>(inMemoryThemeServ
  */
 export const useThemeService = (): ThemeService => {
   return useContext(ThemeServiceContext);
-}; 
+};

@@ -21,14 +21,14 @@ export const themeValueFallbacks: Record<string, string> = {
   'colors.white': '#FFFFFF',
   'colors.surface': '#FFFFFF',
   'colors.text': '#000000',
-  
+
   // Background colors
   'colors.background.primary': '#FFFFFF',
   'colors.background.secondary': '#F2F2F7',
   'colors.background.tertiary': '#E5E5EA',
   'colors.background.paper': '#FFFFFF',
   'colors.background.default': '#FFFFFF',
-  
+
   // Text colors
   'colors.textColors.primary': '#000000',
   'colors.textColors.secondary': '#3C3C43',
@@ -36,21 +36,23 @@ export const themeValueFallbacks: Record<string, string> = {
   'colors.textColors.contrastText': '#FFFFFF',
   'colors.text.primary': '#000000',
   'colors.text.secondary': '#3C3C43',
-  
+
   // Border colors
   'colors.border.primary': '#C7C7CC',
   'colors.border.secondary': '#D1D1D6',
-  
+
   // Semantic colors
   'colors.success': '#34C759',
   'colors.warning': '#FF9500',
   'colors.error': '#FF3B30',
-  
+
   // Typography
-  'typography.family.primary': 'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
+  'typography.family.primary':
+    'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
   'typography.family.secondary': 'Georgia, Cambria, Times New Roman, Times, serif',
-  'typography.family.monospace': 'SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
-  
+  'typography.family.monospace':
+    'SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
+
   // Typography scale
   'typography.scale.xs': '0.75rem',
   'typography.scale.sm': '0.875rem',
@@ -58,7 +60,7 @@ export const themeValueFallbacks: Record<string, string> = {
   'typography.scale.lg': '1.125rem',
   'typography.scale.xl': '1.25rem',
   'typography.scale.2xl': '1.5rem',
-  
+
   // Typography weights
   'typography.weights.thin': '100',
   'typography.weights.extralight': '200',
@@ -67,7 +69,7 @@ export const themeValueFallbacks: Record<string, string> = {
   'typography.weights.medium': '500',
   'typography.weights.semibold': '600',
   'typography.weights.bold': '700',
-  
+
   // Spacing
   'spacing.0': '0',
   'spacing.1': '0.25rem',
@@ -77,37 +79,37 @@ export const themeValueFallbacks: Record<string, string> = {
   'spacing.6': '1.5rem',
   'spacing.unit': '0.25rem',
   'spacing.md': '1rem',
-  
+
   // Border radius
   'borderRadius.none': '0',
   'borderRadius.sm': '0.125rem',
   'borderRadius.base': '0.25rem',
   'borderRadius.md': '0.375rem',
   'borderRadius.lg': '0.5rem',
-  
+
   // Shadows
   'shadows.none': 'none',
   'shadows.sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   'shadows.base': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
   'shadows.md': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-  
+
   // Transitions
   'transitions.fast': '150ms',
   'transitions.normal': '300ms',
   'transitions.slow': '500ms',
-  
+
   // Color scales (flat colors mapped to scale values)
   'colors.primary.50': '#EFF6FF',
   'colors.primary.100': '#DBEAFE',
   'colors.primary.500': '#007AFF',
   'colors.primary.600': '#0062CC',
   'colors.primary.700': '#0050A6',
-  
+
   'colors.secondary.50': '#F5F3FF',
   'colors.secondary.100': '#E9D5FF',
   'colors.secondary.500': '#5856D6',
   'colors.secondary.600': '#4240B0',
-  
+
   'colors.gray.50': '#F9FAFB',
   'colors.gray.100': '#F3F4F6',
   'colors.gray.200': '#E5E7EB',
@@ -128,17 +130,17 @@ export const themeValueFallbacks: Record<string, string> = {
  * @returns The value from the theme or the default value
  */
 export function getThemeValue<T = string>(
-  theme: DefaultTheme | ThemeConfig, 
-  path: string, 
+  theme: DefaultTheme | ThemeConfig,
+  path: string,
   defaultValue?: T
 ): T {
   const value = get(theme, path, defaultValue);
-  
+
   // Special handling for text color which can be string or object
   if (path === 'colors.text' && typeof value === 'object') {
     return get(value, 'primary', defaultValue) as T;
   }
-  
+
   return value as T;
 }
 
@@ -178,23 +180,15 @@ export function responsive<T>(
  */
 export function isCompleteTheme(theme: unknown): boolean {
   if (!theme || typeof theme !== 'object') return false;
-  
-  const requiredProperties = [
-    'colors', 
-    'typography', 
-    'spacing', 
-    'shadows',
-    'transitions'
-  ];
-  
-  return requiredProperties.every(prop => 
-    prop in (theme as Record<string, unknown>)
-  );
+
+  const requiredProperties = ['colors', 'typography', 'spacing', 'shadows', 'transitions'];
+
+  return requiredProperties.every(prop => prop in (theme as Record<string, unknown>));
 }
 
 /**
  * Helper to access color values from a theme
- * 
+ *
  * @param theme The theme object
  * @param colorName The name of the color to access
  * @param variant Optional variant of the color (for complex color objects)
@@ -227,7 +221,7 @@ export function getThemeColor(
 
 /**
  * Helper to access spacing values from a theme
- * 
+ *
  * @param theme The theme object
  * @param size The spacing size key
  * @param fallback Optional fallback value
@@ -247,7 +241,7 @@ export function getThemeSpacing(
 
 /**
  * Helper to access font size values from a theme
- * 
+ *
  * @param theme The theme object
  * @param size The font size key
  * @param fallback Optional fallback value
@@ -267,7 +261,7 @@ export function getThemeFontSize(
 
 /**
  * Helper to access shadow values from a theme
- * 
+ *
  * @param theme The theme object
  * @param size The shadow size key
  * @param fallback Optional fallback value
@@ -287,7 +281,7 @@ export function getThemeShadow(
 
 /**
  * Helper to access border radius values from a theme
- * 
+ *
  * @param theme The theme object
  * @param size The border radius size key
  * @param fallback Optional fallback value
@@ -307,7 +301,7 @@ export function getThemeBorderRadius(
 
 /**
  * Helper to access transition duration values from a theme
- * 
+ *
  * @param theme The theme object
  * @param speed The transition speed key
  * @param fallback Optional fallback value
@@ -327,7 +321,7 @@ export function getThemeTransitionDuration(
 
 /**
  * Helper to build a full transition CSS value from theme
- * 
+ *
  * @param theme The theme object
  * @param property CSS property to transition
  * @param speed Speed key from theme
@@ -342,46 +336,53 @@ export function getThemeTransition(
 ): string {
   const duration = getThemeTransitionDuration(theme, speed, '300ms');
   const timingFunction = theme.transitions?.timing?.[easing] || 'ease-in-out';
-  
+
   return `${property} ${duration} ${timingFunction}`;
 }
 
 /**
  * Validates if a theme object conforms to the ThemeConfig interface
  * and returns detailed validation errors if not
- * 
+ *
  * @param theme The theme object to validate
  * @returns Array of validation error messages, empty if valid
  */
 export function validateTheme(theme: unknown): string[] {
   const errors: string[] = [];
-  
+
   if (!theme) {
     errors.push('Theme object is undefined or null');
     return errors;
   }
-  
+
   if (typeof theme !== 'object') {
     errors.push(`Theme must be an object, got ${typeof theme}`);
     return errors;
   }
-  
+
   // Check required top-level properties
-  const requiredProps = ['colors', 'typography', 'spacing', 'borderRadius', 'shadows', 'transitions'];
-  
+  const requiredProps = [
+    'colors',
+    'typography',
+    'spacing',
+    'borderRadius',
+    'shadows',
+    'transitions',
+  ];
+
   for (const prop of requiredProps) {
     if (!(prop in (theme as any))) {
       errors.push(`Missing required property: ${prop}`);
     }
   }
-  
+
   // Return early if missing required properties
   if (errors.length > 0) {
     return errors;
   }
-  
+
   const { colors, typography, spacing, borderRadius, shadows, transitions } = theme as any;
-  
+
   // Validate colors
   if (typeof colors !== 'object') {
     errors.push('colors must be an object');
@@ -413,7 +414,7 @@ export function validateTheme(theme: unknown): string[] {
       });
     }
   }
-  
+
   // Validate typography
   if (typeof typography !== 'object') {
     errors.push('typography must be an object');
@@ -446,7 +447,7 @@ export function validateTheme(theme: unknown): string[] {
       });
     }
   }
-  
+
   // Validate spacing
   if (typeof spacing !== 'object') {
     errors.push('spacing must be an object');
@@ -463,7 +464,7 @@ export function validateTheme(theme: unknown): string[] {
       });
     }
   }
-  
+
   // Validate borderRadius
   if (typeof borderRadius !== 'object') {
     errors.push('borderRadius must be an object');
@@ -475,7 +476,7 @@ export function validateTheme(theme: unknown): string[] {
       }
     });
   }
-  
+
   // Validate shadows
   if (typeof shadows !== 'object') {
     errors.push('shadows must be an object');
@@ -488,7 +489,7 @@ export function validateTheme(theme: unknown): string[] {
       }
     }
   }
-  
+
   // Validate transitions
   if (typeof transitions !== 'object') {
     errors.push('transitions must be an object');
@@ -515,13 +516,13 @@ export function validateTheme(theme: unknown): string[] {
       });
     }
   }
-  
+
   return errors;
 }
 
 /**
  * Checks if a theme object is valid
- * 
+ *
  * @param theme The theme object to check
  * @returns True if the theme is valid, false otherwise
  */
@@ -531,18 +532,18 @@ export function isValidTheme(theme: unknown): theme is ThemeConfig {
 
 /**
  * Ensures a theme is valid, throwing an error with validation messages if not
- * 
+ *
  * @param theme The theme object to validate
  * @returns The validated theme
  * @throws Error if the theme is invalid
  */
 export function ensureValidTheme(theme: unknown): ThemeConfig {
   const errors = validateTheme(theme);
-  
+
   if (errors.length > 0) {
     throw new Error(`Invalid theme: ${errors.join(', ')}`);
   }
-  
+
   return {
     ...(theme as ThemeConfig),
     id: (theme as Partial<ThemeConfig>).id || 'default-theme-id',
@@ -552,12 +553,12 @@ export function ensureValidTheme(theme: unknown): ThemeConfig {
 /**
  * Creates a theme validator function that validates themes when NODE_ENV is 'development',
  * but only performs a basic check in production for performance
- * 
+ *
  * @returns A theme validator function
  */
 export function createThemeValidator() {
   const isDev = process.env.NODE_ENV !== 'production';
-  
+
   return (theme: unknown): ThemeConfig => {
     if (isDev) {
       // Perform full validation in development
@@ -567,7 +568,7 @@ export function createThemeValidator() {
       if (!isThemeConfig(theme)) {
         throw new Error('Invalid theme structure');
       }
-      
+
       // In production, still ensure the ID exists
       return {
         ...(theme as ThemeConfig),
@@ -591,20 +592,23 @@ export function getDefaultedTheme(theme?: ThemeConfig | null): ThemeConfig {
  * Extract custom component props from a props object
  * This helps avoid DOM warnings about non-standard props
  */
-export function extractCustomProps<T extends Record<string, any>>(props: T, customPropNames: string[]): {
+export function extractCustomProps<T extends Record<string, any>>(
+  props: T,
+  customPropNames: string[]
+): {
   customProps: Record<string, any>;
   restProps: Omit<T, keyof Record<string, any>>;
 } {
   const customProps: Record<string, any> = {};
   const restProps = { ...props };
-  
+
   customPropNames.forEach(name => {
     if (name in restProps) {
       customProps[name] = restProps[name];
       delete (restProps as Record<string, any>)[name];
     }
   });
-  
+
   return { customProps, restProps };
 }
 
@@ -614,4 +618,4 @@ export function extractCustomProps<T extends Record<string, any>>(props: T, cust
  */
 export function asTheme(theme: any): Record<string, any> {
   return theme as Record<string, any>;
-} 
+}

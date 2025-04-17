@@ -23,4 +23,4 @@ const DataGridDemoPage = () => {
   );
 };
 
-export default DataGridDemoPage; 
+export default DataGridDemoPage;

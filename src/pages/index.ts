@@ -8,4 +8,4 @@ export { default as DataGridDemoPage } from './DataGridDemoPage';
 // - /demos - Demo home page
 // - /demos/form - Form components demo
 // - /demos/data-display - Data display components demo
-// - /demos/data-grid - Data Grid component with filtering and sorting 
+// - /demos/data-grid - Data Grid component with filtering and sorting

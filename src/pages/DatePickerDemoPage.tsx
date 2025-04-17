@@ -23,7 +23,7 @@ const DatePickerDemoPage = () => {
   return (
     <PageContainer>
       <SectionTitle>Date & Time Pickers</SectionTitle>
-      
+
       <SectionContainer>
         <h2>Date Picker</h2>
         <DatePickerDemo />
@@ -37,4 +37,4 @@ const DatePickerDemoPage = () => {
   );
 };
 
-export default DatePickerDemoPage; 
+export default DatePickerDemoPage;

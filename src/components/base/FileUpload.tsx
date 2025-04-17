@@ -1,7 +1,6 @@
 import React, { useRef, useState, useCallback, ChangeEvent, DragEvent } from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '../../core/theme/theme-context';
-import { getThemeValue } from '../../core/theme/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 export type FileUploadVariant = 'default' | 'inline' | 'card';
 export type FileUploadSize = 'sm' | 'md' | 'lg';
@@ -12,98 +11,104 @@ export interface FileUploadProps {
    * @example ['image/*', '.pdf', 'application/msword']
    */
   accept?: string;
-  
+
   /**
    * Allow multiple file selection
    */
   multiple?: boolean;
-  
+
   /**
    * Maximum file size in bytes
    */
   maxSize?: number;
-  
+
   /**
    * Minimum file size in bytes
    */
   minSize?: number;
-  
+
   /**
    * Maximum number of files allowed
    */
   maxFiles?: number;
-  
+
   /**
    * Custom validation function
    */
+  /* eslint-disable-next-line no-unused-vars */
   validator?: (file: File) => { valid: boolean; message?: string };
-  
+
   /**
    * Called when files are added
    */
+  /* eslint-disable-next-line no-unused-vars */
   onFilesAdded: (files: File[]) => void;
-  
+
   /**
    * Called when a file is rejected
    */
+  /* eslint-disable-next-line no-unused-vars */
   onFileRejected?: (file: File, reason: string) => void;
-  
+
   /**
    * Custom drop zone text
    */
   dropZoneText?: string;
-  
+
   /**
    * Custom button text
    */
   buttonText?: string;
-  
+
   /**
    * Helper text
    */
   helperText?: string;
-  
+
   /**
    * Error message
    */
   error?: string | boolean;
-  
+
   /**
    * Whether the component is disabled
    */
   disabled?: boolean;
-  
+
   /**
    * Component visual variant
    */
   variant?: FileUploadVariant;
-  
+
   /**
    * Component size
    */
   size?: FileUploadSize;
-  
+
   /**
    * Show file preview (for images)
    */
   showPreview?: boolean;
-  
+
   /**
    * Custom class name
    */
   className?: string;
-  
+
   /**
    * Label for the file input
    */
   label?: string;
-  
+
   /**
    * Whether the field is required
    */
   required?: boolean;
 }
 
+/**
+ * Helper function to format file size
+ */
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -112,150 +117,196 @@ const formatFileSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// Theme helper function
-const themeValue = (props: any, path: string) => {
-  return props.theme?.currentTheme
-    ? getThemeValue(props.theme.currentTheme, path)
-    : '';
-};
+/**
+ * ThemeStyles interface for FileUpload component
+ */
+interface ThemeStyles {
+  colors: {
+    primary: string;
+    background: string;
+    backgroundSecondary: string;
+    text: string;
+    textSecondary: string;
+    textDisabled: string;
+    border: string;
+    error: string;
+  };
+  spacing: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+  };
+  borderRadius: {
+    sm: string;
+    md: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontWeight: {
+      medium: string;
+      bold: string;
+    };
+    fontSize: {
+      xs: string;
+      sm: string;
+      md: string;
+      lg: string;
+    };
+  };
+}
 
-const Container = styled.div<{ disabled?: boolean; hasError?: boolean; size: FileUploadSize; variant: FileUploadVariant }>`
+/**
+ * Function to create ThemeStyles from DirectThemeProvider
+ */
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getSpacing, getBorderRadius } = themeContext;
+
+  return {
+    colors: {
+      primary: getColor('primary', '#1976d2'),
+      background: getColor('background', '#ffffff'),
+      backgroundSecondary: getColor('background.secondary', '#f5f5f5'),
+      text: getColor('text.primary', '#333333'),
+      textSecondary: getColor('text.secondary', '#666666'),
+      textDisabled: getColor('text.disabled', '#999999'),
+      border: getColor('border', '#e0e0e0'),
+      error: getColor('error', '#f44336'),
+    },
+    spacing: {
+      xs: getSpacing('2', '0.5rem'),
+      sm: getSpacing('3', '0.75rem'),
+      md: getSpacing('4', '1rem'),
+      lg: getSpacing('6', '1.5rem'),
+    },
+    borderRadius: {
+      sm: getBorderRadius('sm', '4px'),
+      md: getBorderRadius('md', '8px'),
+    },
+    typography: {
+      fontFamily: getTypography('fontFamily.base', 'sans-serif') as string,
+      fontWeight: {
+        medium: '500',
+        bold: '700',
+      },
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        md: '1rem',
+        lg: '1.25rem',
+      },
+    },
+  };
+}
+
+// Styled components
+const Container = styled.div<{ $themeStyles: ThemeStyles; $disabled?: boolean }>`
   display: flex;
   flex-direction: column;
-  font-family: ${props => themeValue(props, 'typography.family.primary') || 'sans-serif'};
-  color: ${props => 
-    props.disabled 
-      ? themeValue(props, 'colors.gray.400') 
-      : themeValue(props, 'colors.gray.900')};
-
-  ${({ size }) => {
-    switch (size) {
-      case 'sm': return 'font-size: 0.875rem;';
-      case 'lg': return 'font-size: 1.125rem;';
-      default: return 'font-size: 1rem;';
-    }
-  }}
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  color: ${props =>
+    props.$disabled ? props.$themeStyles.colors.textDisabled : props.$themeStyles.colors.text};
 `;
 
-const Label = styled.label`
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+const Label = styled.label<{ $themeStyles: ThemeStyles }>`
+  margin-bottom: ${props => props.$themeStyles.spacing.xs};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
   display: flex;
   align-items: center;
 `;
 
-const Required = styled.span`
-  color: ${props => themeValue(props, 'colors.error.500')};
-  margin-left: 0.25rem;
+const RequiredIndicator = styled.span<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.colors.error};
+  margin-left: ${props => props.$themeStyles.spacing.xs};
 `;
 
-const DropZone = styled.div<{ isDragActive: boolean; disabled?: boolean; hasError?: boolean; size: FileUploadSize; variant: FileUploadVariant }>`
-  border: 2px dashed ${props => {
-    if (props.disabled) return themeValue(props, 'colors.gray.300');
-    if (props.hasError) return themeValue(props, 'colors.error.500');
-    if (props.isDragActive) return themeValue(props, 'colors.primary.500');
-    return themeValue(props, 'colors.gray.300');
+const DropZone = styled.div<{
+  $themeStyles: ThemeStyles;
+  $isDragActive: boolean;
+  $hasError: boolean;
+  $disabled: boolean;
+  $variant: FileUploadVariant;
+  $size: FileUploadSize;
+}>`
+  border: 2px dashed
+    ${props => {
+      if (props.$disabled) return props.$themeStyles.colors.border;
+      if (props.$hasError) return props.$themeStyles.colors.error;
+      if (props.$isDragActive) return props.$themeStyles.colors.primary;
+      return props.$themeStyles.colors.border;
+    }};
+  border-radius: ${props => props.$themeStyles.borderRadius.md};
+  background-color: ${props => props.$themeStyles.colors.background};
+  padding: ${props => {
+    if (props.$variant === 'inline') return '0.5rem 1rem';
+    else if (props.$size === 'sm') return '1rem';
+    else if (props.$size === 'lg') return '2rem';
+    else return '1.5rem';
   }};
-  border-radius: ${props => themeValue(props, 'borderRadius.md') || '4px'};
-  background-color: ${props => {
-    if (props.disabled) return themeValue(props, 'colors.gray.100');
-    if (props.isDragActive) return themeValue(props, 'colors.primary.50');
-    return themeValue(props, 'colors.gray.50');
-  }};
-  padding: ${({ variant, size }) => {
-    if (variant === 'inline') return '0.5rem';
-    if (size === 'sm') return '1rem';
-    if (size === 'lg') return '2.5rem';
-    return '1.5rem';
-  }};
-  text-align: center;
-  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
-  transition: all 0.2s ease-in-out;
   display: flex;
-  flex-direction: ${({ variant }) => variant === 'inline' ? 'row' : 'column'};
+  flex-direction: ${props => (props.$variant === 'inline' ? 'row' : 'column')};
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-
-  &:hover {
-    ${props => !props.disabled && !props.hasError && `
-      border-color: ${themeValue(props, 'colors.primary.500')};
-      background-color: ${themeValue(props, 'colors.primary.50')}10;
-    `}
-  }
-
-  ${({ variant }) => variant === 'card' && `
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  `}
+  gap: ${props => props.$themeStyles.spacing.xs};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
+  transition: all 0.2s ease-in-out;
 `;
 
-const UploadIcon = styled.div`
+const UploadIcon = styled.div<{ $themeStyles: ThemeStyles }>`
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: ${props => themeValue(props, 'colors.primary.500')};
+  background-color: ${props => props.$themeStyles.colors.primary};
   color: #ffffff;
   font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  
-  &:before {
-    content: "↑";
-  }
+  margin-bottom: ${props => props.$themeStyles.spacing.xs};
 `;
 
-const BrowseButton = styled.button<{ disabled?: boolean; size: FileUploadSize }>`
-  background-color: ${props => themeValue(props, 'colors.primary.500')};
+const BrowseButton = styled.button<{
+  $themeStyles: ThemeStyles;
+  $disabled: boolean;
+  $size: FileUploadSize;
+}>`
+  background-color: ${props => props.$themeStyles.colors.primary};
   color: #ffffff;
   border: none;
-  border-radius: ${props => themeValue(props, 'borderRadius.sm') || '2px'};
-  padding: ${({ size }) => {
-    if (size === 'sm') return '0.25rem 0.5rem';
-    if (size === 'lg') return '0.5rem 1.5rem';
-    return '0.375rem 1rem';
+  border-radius: ${props => props.$themeStyles.borderRadius.sm};
+  padding: ${props => {
+    if (props.$size === 'sm') return '0.25rem 0.5rem';
+    else if (props.$size === 'lg') return '0.5rem 1.5rem';
+    else return '0.375rem 1rem';
   }};
-  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   font-size: inherit;
-  opacity: ${({ disabled }) => disabled ? 0.7 : 1};
+  opacity: ${props => (props.$disabled ? 0.7 : 1)};
   transition: background-color 0.2s ease-in-out;
   font-family: inherit;
-  
-  &:hover {
-    ${props => !props.disabled && `
-      background-color: ${themeValue(props, 'colors.primary.600')};
-    `}
-  }
 `;
 
-const FileInput = styled.input`
-  display: none;
+const HelperText = styled.div<{ $themeStyles: ThemeStyles; $hasError: boolean }>`
+  margin-top: ${props => props.$themeStyles.spacing.xs};
+  font-size: ${props => props.$themeStyles.typography.fontSize.xs};
+  color: ${props =>
+    props.$hasError ? props.$themeStyles.colors.error : props.$themeStyles.colors.textSecondary};
 `;
 
-const HelperText = styled.div<{ hasError?: boolean }>`
-  margin-top: 0.375rem;
-  font-size: 0.75rem;
-  color: ${props => 
-    props.hasError 
-      ? themeValue(props, 'colors.error.500') 
-      : themeValue(props, 'colors.gray.500')};
-`;
-
-const PreviewContainer = styled.div`
-  margin-top: 1rem;
+const PreviewContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  margin-top: ${props => props.$themeStyles.spacing.md};
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: ${props => props.$themeStyles.spacing.xs};
 `;
 
-const PreviewItem = styled.div`
+const PreviewItem = styled.div<{ $themeStyles: ThemeStyles }>`
   position: relative;
   width: 100px;
   height: 100px;
-  border-radius: ${props => themeValue(props, 'borderRadius.sm') || '2px'};
+  border-radius: ${props => props.$themeStyles.borderRadius.sm};
   overflow: hidden;
-  border: 1px solid ${props => themeValue(props, 'colors.gray.200')};
+  border: 1px solid ${props => props.$themeStyles.colors.border};
 `;
 
 const PreviewImage = styled.img`
@@ -264,67 +315,65 @@ const PreviewImage = styled.img`
   object-fit: cover;
 `;
 
-const PreviewFile = styled.div`
+const PreviewFile = styled.div<{ $themeStyles: ThemeStyles }>`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  font-size: 0.75rem;
-  padding: 0.5rem;
-  background-color: ${props => themeValue(props, 'colors.gray.50')};
-  color: ${props => themeValue(props, 'colors.gray.900')};
+  font-size: ${props => props.$themeStyles.typography.fontSize.xs};
+  padding: ${props => props.$themeStyles.spacing.xs};
+  background-color: ${props => props.$themeStyles.colors.backgroundSecondary};
+  color: ${props => props.$themeStyles.colors.text};
 `;
 
-const FileExt = styled.div`
+const FileExtension = styled.div<{ $themeStyles: ThemeStyles }>`
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
   margin-bottom: 0.25rem;
-  color: ${props => themeValue(props, 'colors.primary.500')};
+  color: ${props => props.$themeStyles.colors.primary};
   text-transform: uppercase;
 `;
 
-const RemoveButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+const FileName = styled.div`
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+`;
+
+const RemoveButton = styled.button<{ $themeStyles: ThemeStyles; $preview?: boolean }>`
+  position: ${props => (props.$preview ? 'absolute' : 'static')};
+  top: ${props => (props.$preview ? '0' : 'auto')};
+  right: ${props => (props.$preview ? '0' : 'auto')};
+  width: ${props => (props.$preview ? '20px' : 'auto')};
+  height: ${props => (props.$preview ? '20px' : 'auto')};
+  background-color: ${props => (props.$preview ? 'rgba(0, 0, 0, 0.5)' : 'transparent')};
+  color: ${props => (props.$preview ? 'white' : props.$themeStyles.colors.textSecondary)};
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-  
-  &:before {
-    content: "×";
-  }
+  font-size: ${props => (props.$preview ? '0.75rem' : '1rem')};
 `;
 
-const FileList = styled.ul`
+const FileList = styled.ul<{ $themeStyles: ThemeStyles }>`
   list-style: none;
   padding: 0;
-  margin-top: 0.5rem;
+  margin-top: ${props => props.$themeStyles.spacing.xs};
 `;
 
-const FileItem = styled.li`
+const FileListItem = styled.li<{ $themeStyles: ThemeStyles; $isLast: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
-  border-bottom: 1px solid ${props => themeValue(props, 'colors.gray.200')};
-  
-  &:last-child {
-    border-bottom: none;
-  }
+  padding: ${props => props.$themeStyles.spacing.xs};
+  border-bottom: ${props =>
+    props.$isLast ? 'none' : `1px solid ${props.$themeStyles.colors.border}`};
 `;
 
 const FileInfo = styled.div`
@@ -332,17 +381,19 @@ const FileInfo = styled.div`
   flex-direction: column;
 `;
 
-const FileName = styled.span`
-  font-weight: 500;
+const FileNameText = styled.span<{ $themeStyles: ThemeStyles }>`
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
   margin-bottom: 0.25rem;
 `;
 
-const FileSize = styled.span`
-  color: ${props => themeValue(props, 'colors.gray.500')};
-  font-size: 0.75rem;
+const FileSize = styled.span<{ $themeStyles: ThemeStyles }>`
+  color: ${props => props.$themeStyles.colors.textSecondary};
+  font-size: ${props => props.$themeStyles.typography.fontSize.xs};
 `;
 
-export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>((props, ref) => {
+export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
+  /* eslint-disable-next-line no-unused-vars */
+  (props, _ref) => {
   const {
     accept,
     multiple = false,
@@ -366,233 +417,291 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>((p
     ...rest
   } = props;
 
-  const { currentTheme } = useTheme();
+  const theme = useDirectTheme();
+    const themeStyles = createThemeStyles(theme);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+    /* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
   const ownRef = useRef<HTMLInputElement>(null);
-  const inputRef = ref || ownRef;
+    // Using forwardRef for any external ref handling
 
   const [isDragActive, setIsDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
-  const validateFile = useCallback((file: File): { valid: boolean; message?: string } => {
-    // Check file size
-    if (maxSize && file.size > maxSize) {
-      return { valid: false, message: `File "${file.name}" is too large. Maximum size is ${formatFileSize(maxSize)}.` };
-    }
-    
-    if (minSize && file.size < minSize) {
-      return { valid: false, message: `File "${file.name}" is too small. Minimum size is ${formatFileSize(minSize)}.` };
-    }
-    
-    // Check file type
-    if (accept) {
-      const acceptedTypes = accept.split(',').map(type => type.trim());
-      
-      const fileType = file.type;
-      const fileExtension = `.${file.name.split('.').pop()}`;
-      
-      const isAcceptedType = acceptedTypes.some(type => {
-        if (type.startsWith('.')) {
-          // Extension check
-          return type.toLowerCase() === fileExtension.toLowerCase();
-        } else if (type.endsWith('/*')) {
-          // Mime type group check (e.g., image/*)
-          const typeGroup = type.split('/')[0];
-          return fileType.startsWith(`${typeGroup}/`);
-        } else {
-          // Exact mime type check
-          return type === fileType;
+  // Validate a file based on props
+  const validateFile = useCallback(
+    (file: File): { valid: boolean; message?: string } => {
+      // Check file size
+      if (maxSize && file.size > maxSize) {
+        return {
+          valid: false,
+          message: `File is too large. Maximum size is ${formatFileSize(maxSize)}.`,
+        };
+      }
+
+      if (minSize && file.size < minSize) {
+        return {
+          valid: false,
+          message: `File is too small. Minimum size is ${formatFileSize(minSize)}.`,
+        };
+      }
+
+      // Check file type if accept is provided
+      if (accept) {
+        const acceptedTypes = accept.split(',').map(type => type.trim());
+        const fileType = file.type;
+        const fileExtension = '.' + file.name.split('.').pop();
+
+        const isAccepted = acceptedTypes.some(type => {
+          if (type.startsWith('.')) {
+            // Extension check
+            return fileExtension.toLowerCase() === type.toLowerCase();
+          } else if (type.endsWith('/*')) {
+            // MIME type wildcard (e.g., image/*)
+            const baseMimeType = type.split('/')[0];
+            return fileType.startsWith(baseMimeType + '/');
+          } else {
+            // Exact MIME type
+            return fileType === type;
+          }
+        });
+
+        if (!isAccepted) {
+          return { valid: false, message: `File type not accepted. Allowed types: ${accept}.` };
         }
-      });
-      
-      if (!isAcceptedType) {
-        return { valid: false, message: `File "${file.name}" has an invalid file type. Accepted types: ${accept}.` };
       }
-    }
-    
-    // Custom validation
-    if (validator) {
-      return validator(file);
-    }
-    
-    return { valid: true };
-  }, [accept, maxSize, minSize, validator]);
 
-  const handleFileChange = useCallback((selectedFiles: FileList | null) => {
-    if (!selectedFiles || disabled) return;
-    
-    const newValidFiles: File[] = [];
-    const currentFilesCount = multiple ? files.length : 0;
-    
-    // Check max files constraint
-    if (maxFiles && currentFilesCount + selectedFiles.length > maxFiles) {
-      const message = `Maximum number of files (${maxFiles}) exceeded.`;
-      console.warn(message);
-      onFileRejected?.(new File([], "max-files-exceeded"), message);
-      return;
-    }
-    
-    Array.from(selectedFiles).forEach(file => {
-      const { valid, message } = validateFile(file);
-      
-      if (valid) {
-        newValidFiles.push(file);
-      } else if (onFileRejected && message) {
-        onFileRejected(file, message);
+      // Custom validation if provided
+      if (validator) {
+        return validator(file);
       }
-    });
-    
-    if (newValidFiles.length > 0) {
-      const updatedFiles = multiple 
-        ? [...files, ...newValidFiles]
-        : newValidFiles;
-      
-      setFiles(updatedFiles);
-      onFilesAdded(updatedFiles);
-    }
-  }, [disabled, files, maxFiles, multiple, onFileRejected, onFilesAdded, validateFile]);
 
-  const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    handleFileChange(event.target.files);
-    // Reset the input value so the same file can be selected again
-    if (event.target.value) event.target.value = '';
-  }, [handleFileChange]);
+      return { valid: true };
+    },
+    [maxSize, minSize, accept, validator]
+  );
 
-  const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragActive(false);
-    
-    if (disabled) return;
-    handleFileChange(event.dataTransfer.files);
-  }, [handleFileChange, disabled]);
+    // Process selected files
+    const handleFiles = useCallback(
+      (selectedFiles: File[]) => {
+        if (maxFiles && files.length + selectedFiles.length > maxFiles) {
+          onFileRejected?.(selectedFiles[0], `Maximum number of files (${maxFiles}) exceeded.`);
+          return;
+        }
 
-  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    if (!isDragActive && !disabled) {
-      setIsDragActive(true);
-    }
-  }, [isDragActive, disabled]);
+        const validFiles: File[] = [];
 
-  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
+        selectedFiles.forEach(file => {
+          const validationResult = validateFile(file);
+
+          if (validationResult.valid) {
+            validFiles.push(file);
+          } else {
+            onFileRejected?.(file, validationResult.message || 'File rejected.');
+          }
+        });
+
+        if (validFiles.length > 0) {
+          const newFiles = [...files, ...validFiles];
+          setFiles(newFiles);
+          onFilesAdded(newFiles);
+        }
+      },
+      [files, maxFiles, onFileRejected, validateFile, onFilesAdded]
+    );
+
+  // Handle drag events
+  const handleDragOver = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!disabled) {
+        setIsDragActive(true);
+      }
+    },
+    [disabled]
+  );
+
+  const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragActive(false);
   }, []);
 
+  // Handle file drop
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragActive(false);
+
+      if (disabled) return;
+
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      handleFiles(droppedFiles);
+    },
+      [disabled, handleFiles]
+  );
+
+  // Handle file selection from input
+    const handleInputChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files);
+      handleFiles(selectedFiles);
+        }
+      },
+      [handleFiles]
+  );
+
+  // Handle click on drop zone
   const handleClick = useCallback(() => {
-    if (disabled) return;
-    fileInputRef.current?.click();
+    if (!disabled && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }, [disabled]);
 
-  const removeFile = useCallback((index: number) => {
-    const newFiles = [...files];
-    newFiles.splice(index, 1);
-    setFiles(newFiles);
-    onFilesAdded(newFiles);
-  }, [files, onFilesAdded]);
+  // Remove a file
+  const removeFile = useCallback(
+    (index: number) => {
+      const newFiles = [...files];
+      newFiles.splice(index, 1);
+      setFiles(newFiles);
+      onFilesAdded(newFiles);
+    },
+    [files, onFilesAdded]
+  );
 
-  const getFilePreview = useCallback((file: File, index: number) => {
-    const isImage = file.type.startsWith('image/');
-    
-    return (
-      <PreviewItem key={`${file.name}-${index}`}>
-        {isImage ? (
-          <PreviewImage src={URL.createObjectURL(file)} alt={file.name} />
-        ) : (
-          <PreviewFile>
-            <FileExt>{file.name.split('.').pop()}</FileExt>
-            <span>{file.name.length > 10 ? `${file.name.slice(0, 10)}...` : file.name}</span>
-          </PreviewFile>
-        )}
-        <RemoveButton onClick={() => removeFile(index)} />
-      </PreviewItem>
-    );
-  }, [removeFile]);
+  // Get file preview component
+  const getFilePreview = useCallback(
+    (file: File, index: number) => {
+      const isImage = file.type.startsWith('image/');
 
+      return (
+          <PreviewItem key={index} $themeStyles={themeStyles}>
+          {isImage ? (
+              <PreviewImage src={URL.createObjectURL(file)} alt={file.name} />
+            ) : (
+              <PreviewFile $themeStyles={themeStyles}>
+                <FileExtension $themeStyles={themeStyles}>
+                  {file.name.split('.').pop()?.substring(0, 3)}
+                </FileExtension>
+                <FileName>{file.name}</FileName>
+              </PreviewFile>
+            )}
+            <RemoveButton
+            onClick={() => removeFile(index)}
+              $themeStyles={themeStyles}
+              $preview={true}
+            type="button"
+            aria-label="Remove file"
+          >
+            ×
+            </RemoveButton>
+          </PreviewItem>
+      );
+    },
+      [removeFile, themeStyles]
+  );
+
+  // Render file list (non-preview mode)
   const renderFileList = useCallback(() => {
-    if (!files.length) return null;
-    
+    if (files.length === 0) return null;
+
     return (
-      <FileList>
+        <FileList $themeStyles={themeStyles}>
         {files.map((file, index) => (
-          <FileItem key={`${file.name}-${index}`}>
-            <FileInfo>
-              <FileName>{file.name}</FileName>
-              <FileSize>{formatFileSize(file.size)}</FileSize>
-            </FileInfo>
-            <RemoveButton onClick={() => removeFile(index)} />
-          </FileItem>
-        ))}
-      </FileList>
-    );
-  }, [files, removeFile]);
+            <FileListItem
+            key={index}
+              $themeStyles={themeStyles}
+              $isLast={index === files.length - 1}
+            >
+              <FileInfo>
+                <FileNameText $themeStyles={themeStyles}>{file.name}</FileNameText>
+                <FileSize $themeStyles={themeStyles}>{formatFileSize(file.size)}</FileSize>
+              </FileInfo>
+              <RemoveButton
+              onClick={() => removeFile(index)}
+                $themeStyles={themeStyles}
+              type="button"
+              aria-label="Remove file"
+            >
+              ×
+              </RemoveButton>
+            </FileListItem>
+          ))}
+        </FileList>
+      );
+    }, [files, removeFile, themeStyles]);
 
   return (
-    <Container
-      className={className}
-      disabled={disabled}
-      hasError={!!error}
-      size={size}
-      variant={variant}
-    >
+      <Container className={className} $themeStyles={themeStyles} $disabled={disabled}>
       {label && (
-        <Label htmlFor={fileInputRef.current?.id}>
+          <Label htmlFor={fileInputRef.current?.id} $themeStyles={themeStyles}>
           {label}
-          {required && <Required>*</Required>}
-        </Label>
+            {required && <RequiredIndicator $themeStyles={themeStyles}>*</RequiredIndicator>}
+          </Label>
       )}
-      
-      <DropZone
+
+        <DropZone
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={handleClick}
-        isDragActive={isDragActive}
-        disabled={disabled}
-        hasError={!!error}
-        size={size}
-        variant={variant}
-      >
-        {variant !== 'inline' && <UploadIcon />}
-        
+          $themeStyles={themeStyles}
+          $isDragActive={isDragActive}
+          $hasError={!!error}
+          $disabled={disabled}
+          $variant={variant}
+          $size={size}
+        >
+          {variant !== 'inline' && <UploadIcon $themeStyles={themeStyles}>↑</UploadIcon>}
+
         <div>
-          {dropZoneText}
-          {' '}
-          <BrowseButton
+          {dropZoneText}{' '}
+            <BrowseButton
             type="button"
-            onClick={handleClick}
+              onClick={e => {
+                e.stopPropagation();
+                handleClick();
+              }}
             disabled={disabled}
-            size={size}
+              $themeStyles={themeStyles}
+              $disabled={disabled}
+              $size={size}
           >
             {buttonText}
-          </BrowseButton>
+            </BrowseButton>
         </div>
-      </DropZone>
-      
-      <FileInput
+        </DropZone>
+
+      <input
         ref={fileInputRef}
         type="file"
         onChange={handleInputChange}
         accept={accept}
         multiple={multiple}
         disabled={disabled}
+        style={{ display: 'none' }}
         {...rest}
       />
-      
-      {(helperText || error) && (
-        <HelperText hasError={!!error}>
-          {typeof error === 'string' ? error : helperText}
-        </HelperText>
-      )}
-      
-      {showPreview && files.length > 0 && (
-        <PreviewContainer>
-          {files.map((file, index) => getFilePreview(file, index))}
-        </PreviewContainer>
-      )}
-      
-      {!showPreview && renderFileList()}
-    </Container>
-  );
-});
 
-FileUpload.displayName = 'FileUpload'; 
+      {(helperText || error) && (
+          <HelperText $themeStyles={themeStyles} $hasError={!!error}>
+            {typeof error === 'string' ? error : helperText}
+          </HelperText>
+      )}
+
+      {showPreview && files.length > 0 && (
+          <PreviewContainer $themeStyles={themeStyles}>
+          {files.map((file, index) => getFilePreview(file, index))}
+          </PreviewContainer>
+      )}
+
+      {!showPreview && renderFileList()}
+      </Container>
+    );
+  }
+  );
+
+FileUpload.displayName = 'FileUpload';

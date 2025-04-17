@@ -6,16 +6,16 @@
  * @returns Properly formatted spacing value
  */
 export const getSpacingValue = (
-  value: number | string | undefined, 
-  themeGetSpacing: (key: string, fallback?: string) => string, 
+  value: number | string | undefined,
+  themeGetSpacing: (key: string, fallback?: string) => string,
   defaultValue: string = '0'
 ): string => {
   if (value === undefined) return defaultValue;
-  
+
   if (typeof value === 'number') {
     return `${value}px`;
   }
-  
+
   if (typeof value === 'string') {
     // Check if value is a theme spacing key (like 'md', 'lg', etc.)
     // Use the value itself as the fallback to ensure it's always returned correctly
@@ -23,6 +23,6 @@ export const getSpacingValue = (
     const result = themeGetSpacing(value, value);
     return result || value || defaultValue;
   }
-  
+
   return defaultValue;
-}; 
+};

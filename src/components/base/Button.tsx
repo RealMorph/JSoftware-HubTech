@@ -44,9 +44,15 @@ const StyledButton = styled.button<ButtonProps & { $themeStyles: any }>`
   }
 `;
 
-export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', size = 'md', ...props }) => {
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  ...props
+}) => {
   // Use the direct theme hook to access theme utilities
-  const { getColor, getTypography, getSpacing, getBorderRadius, getTransition, getShadow } = useDirectTheme();
+  const { getColor, getTypography, getSpacing, getBorderRadius, getTransition, getShadow } =
+    useDirectTheme();
 
   // Determine variant-specific styles
   const getVariantStyles = () => {

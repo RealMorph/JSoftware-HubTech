@@ -12,7 +12,7 @@ const mockTheme = {
     xl: '2rem',
     '2xl': '3rem',
     '3xl': '4rem',
-    '4xl': '6rem'
+    '4xl': '6rem',
   },
   colors: {
     primary: '#0070f3',
@@ -25,18 +25,18 @@ const mockTheme = {
     text: {
       primary: '#000000',
       secondary: '#6c757d',
-      disabled: '#adb5bd'
+      disabled: '#adb5bd',
     },
     background: '#ffffff',
     border: '#dee2e6',
     white: '#ffffff',
-    surface: '#f8f9fa'
+    surface: '#f8f9fa',
   },
   typography: {
     fontFamily: {
       base: 'system-ui, sans-serif',
       heading: 'system-ui, sans-serif',
-      monospace: 'monospace'
+      monospace: 'monospace',
     },
     fontSize: {
       xs: '0.75rem',
@@ -46,21 +46,21 @@ const mockTheme = {
       xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
-      '4xl': '2.25rem'
+      '4xl': '2.25rem',
     },
     fontWeight: {
       light: 300,
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
     lineHeight: {
       none: 1,
       tight: 1.25,
       normal: 1.5,
       relaxed: 1.75,
-      loose: 2
+      loose: 2,
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -68,8 +68,8 @@ const mockTheme = {
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em'
-    }
+      widest: '0.1em',
+    },
   },
   breakpoints: {
     xs: '0px',
@@ -77,7 +77,7 @@ const mockTheme = {
     md: '960px',
     lg: '1280px',
     xl: '1920px',
-    '2xl': '2560px'
+    '2xl': '2560px',
   },
   borderRadius: {
     none: '0',
@@ -87,7 +87,7 @@ const mockTheme = {
     lg: '8px',
     xl: '12px',
     '2xl': '16px',
-    full: '9999px'
+    full: '9999px',
   },
   shadows: {
     none: 'none',
@@ -97,30 +97,26 @@ const mockTheme = {
     lg: '0 10px 15px rgba(0, 0, 0, 0.1)',
     xl: '0 20px 25px rgba(0, 0, 0, 0.1)',
     '2xl': '0 25px 50px rgba(0, 0, 0, 0.1)',
-    inner: 'inset 0 2px 4px rgba(0, 0, 0, 0.05)'
+    inner: 'inset 0 2px 4px rgba(0, 0, 0, 0.05)',
   },
   transitions: {
     duration: {
       fast: '150ms',
       normal: '300ms',
-      slow: '500ms'
+      slow: '500ms',
     },
     timing: {
       easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
       easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
       easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      linear: 'linear'
-    }
-  }
+      linear: 'linear',
+    },
+  },
 };
 
 describe('Flex Component', () => {
   const renderWithTheme = (ui: React.ReactElement) => {
-    return render(
-      <DirectThemeProvider initialTheme={mockTheme}>
-        {ui}
-      </DirectThemeProvider>
-    );
+    return render(<DirectThemeProvider initialTheme={mockTheme}>{ui}</DirectThemeProvider>);
   };
 
   test('renders children correctly', () => {
@@ -139,13 +135,13 @@ describe('Flex Component', () => {
       flexWrap: 'nowrap',
       justifyContent: 'flex-start',
       alignItems: 'stretch',
-      gap: '1rem'
+      gap: '1rem',
     });
   });
 
   test('applies custom styles correctly', () => {
     renderWithTheme(
-      <Flex 
+      <Flex
         testId="flex-container"
         direction="column"
         wrap="wrap"
@@ -160,7 +156,7 @@ describe('Flex Component', () => {
         Content
       </Flex>
     );
-    
+
     const flexContainer = screen.getByTestId('flex-container');
     expect(flexContainer).toHaveStyle({
       display: 'inline-flex',
@@ -171,7 +167,7 @@ describe('Flex Component', () => {
       alignContent: 'space-between',
       gap: '2rem',
       width: '100%',
-      height: '100%'
+      height: '100%',
     });
   });
 
@@ -181,7 +177,7 @@ describe('Flex Component', () => {
         <FlexItem testId="flex-item">Item Content</FlexItem>
       </Flex>
     );
-    
+
     const flexItem = screen.getByTestId('flex-item');
     expect(flexItem).toBeInTheDocument();
     expect(flexItem).toHaveTextContent('Item Content');
@@ -190,7 +186,7 @@ describe('Flex Component', () => {
   test('applies custom FlexItem styles correctly', () => {
     renderWithTheme(
       <Flex>
-        <FlexItem 
+        <FlexItem
           testId="flex-item"
           flex="1 0 auto"
           grow={1}
@@ -203,7 +199,7 @@ describe('Flex Component', () => {
         </FlexItem>
       </Flex>
     );
-    
+
     const flexItem = screen.getByTestId('flex-item');
     expect(flexItem).toHaveStyle({
       flex: '1 0 auto',
@@ -211,15 +207,19 @@ describe('Flex Component', () => {
       flexShrink: 0,
       flexBasis: '50%',
       alignSelf: 'center',
-      order: 2
+      order: 2,
     });
   });
 
   test('applies numeric gap correctly', () => {
-    renderWithTheme(<Flex testId="flex-container" gap={16}>Content</Flex>);
+    renderWithTheme(
+      <Flex testId="flex-container" gap={16}>
+        Content
+      </Flex>
+    );
     const flexContainer = screen.getByTestId('flex-container');
     expect(flexContainer).toHaveStyle({
-      gap: '16px'
+      gap: '16px',
     });
   });
-}); 
+});

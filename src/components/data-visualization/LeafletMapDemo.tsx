@@ -41,7 +41,7 @@ const Button = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: #2377ee;
   }
@@ -49,46 +49,49 @@ const Button = styled.button`
 
 const LeafletMapDemo: React.FC = () => {
   // New York City coordinates
-  const initialCenter: [number, number] = [40.7128, -74.0060];
+  const initialCenter: [number, number] = [40.7128, -74.006];
   const [center, setCenter] = useState(initialCenter);
   const [zoom, setZoom] = useState(12);
-  
-  const [selectedMarker, setSelectedMarker] = useState<{ title: string, position: [number, number] } | null>(null);
-  
+
+  const [selectedMarker, setSelectedMarker] = useState<{
+    title: string;
+    position: [number, number];
+  } | null>(null);
+
   // Sample markers for famous locations in NYC
   const markers = [
     {
       position: [40.7484, -73.9857] as [number, number],
-      title: "Empire State Building",
-      popup: "A 102-story Art Deco skyscraper in Midtown Manhattan."
+      title: 'Empire State Building',
+      popup: 'A 102-story Art Deco skyscraper in Midtown Manhattan.',
     },
     {
-      position: [40.7128, -74.0060] as [number, number],
-      title: "World Trade Center",
-      popup: "The main building of the rebuilt World Trade Center complex in Lower Manhattan."
+      position: [40.7128, -74.006] as [number, number],
+      title: 'World Trade Center',
+      popup: 'The main building of the rebuilt World Trade Center complex in Lower Manhattan.',
     },
     {
       position: [40.7812, -73.9665] as [number, number],
-      title: "Central Park",
-      popup: "An urban park in Manhattan, New York City."
+      title: 'Central Park',
+      popup: 'An urban park in Manhattan, New York City.',
     },
     {
       position: [40.7614, -73.9776] as [number, number],
-      title: "Times Square",
-      popup: "A major commercial intersection, tourist destination, and entertainment center."
-    }
+      title: 'Times Square',
+      popup: 'A major commercial intersection, tourist destination, and entertainment center.',
+    },
   ];
-  
+
   const handleMarkerClick = (marker: MarkerData) => {
     setSelectedMarker({
       title: marker.title,
-      position: marker.position
+      position: marker.position,
     });
-    
+
     // Center the map on the clicked marker
     setCenter(marker.position);
   };
-  
+
   const handleResetView = () => {
     setCenter(initialCenter);
     setZoom(12);
@@ -98,21 +101,21 @@ const LeafletMapDemo: React.FC = () => {
   return (
     <DemoContainer>
       <Title>Interactive Map Component</Title>
-      
+
       <ControlPanel>
         <Button onClick={handleResetView}>Reset View</Button>
         <Button onClick={() => setZoom(zoom + 1)}>Zoom In</Button>
         <Button onClick={() => setZoom(Math.max(3, zoom - 1))}>Zoom Out</Button>
       </ControlPanel>
-      
-      <LeafletMap 
+
+      <LeafletMap
         center={center}
         zoom={zoom}
         markers={markers}
         height="500px"
         onMarkerClick={handleMarkerClick}
       />
-      
+
       {selectedMarker && (
         <MarkerInfo>
           <h3>{selectedMarker.title}</h3>
@@ -124,4 +127,4 @@ const LeafletMapDemo: React.FC = () => {
   );
 };
 
-export default LeafletMapDemo; 
+export default LeafletMapDemo;

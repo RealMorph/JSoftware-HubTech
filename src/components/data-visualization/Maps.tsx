@@ -1,7 +1,38 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { getThemeValue } from '../../core/theme/styled';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textColor: string;
+  textSecondaryColor: string;
+  primaryColor: string;
+  primaryDarkColor: string;
+  primaryLightColor: string;
+  secondaryColor: string;
+  secondaryDarkColor: string;
+  secondaryLightColor: string;
+  borderColor: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    textColor: getColor('text.primary', '#333333'),
+    textSecondaryColor: getColor('text.secondary', '#666666'),
+    primaryColor: getColor('primary', '#3366CC'),
+    primaryDarkColor: getColor('primaryDark', '#1a56cc'),
+    primaryLightColor: getColor('primaryLight', '#6699ff'),
+    secondaryColor: getColor('secondary', '#DC3912'),
+    secondaryDarkColor: getColor('secondaryDark', '#b02e0e'),
+    secondaryLightColor: getColor('secondaryLight', '#e46e54'),
+    borderColor: getColor('border', '#e0e0e0'),
+  };
+}
 
 // Types for map components
 export interface Location {
@@ -12,44 +43,25 @@ export interface Location {
   value?: number;
 }
 
-export interface Region {
-  id: string;
-  name: string;
-  path: string;
-  value?: number;
-}
-
-// SimpleMap props
 export interface SimpleMapProps {
   locations: Location[];
-  onLocationClick?: (locationId: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onLocationClick?: (id: string) => void;
   selectedLocationId?: string;
   width?: string;
   height?: string;
   zoom?: number;
-  center?: { latitude: number; longitude: number };
-}
-
-// ChoroplethMap props
-export interface ChoroplethMapProps {
-  regions: Region[];
-  onRegionClick?: (regionId: string) => void;
-  selectedRegionId?: string;
-  width?: string;
-  height?: string;
-  colorScale?: (value: number) => string;
+  center?: [number, number]; // [latitude, longitude]
 }
 
 // Styled components
-const MapContainer = styled.div<{width?: string; height?: string}>`
+const MapContainer = styled.div<{ width?: string; height?: string; $themeStyles: ThemeStyles }>`
   width: ${props => props.width || '100%'};
   height: ${props => props.height || '400px'};
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  background-color: ${props =>
-    getThemeValue(props.theme as ThemeConfig, 'colors.background')
-  };
+  background-color: ${props => props.$themeStyles.backgroundColor};
 `;
 
 const Canvas = styled.svg`
@@ -57,104 +69,53 @@ const Canvas = styled.svg`
   height: 100%;
 `;
 
-const LocationMarker = styled.circle<{selected?: boolean}>`
-  fill: ${props => 
-    props.selected 
-      ? getThemeValue(props.theme as ThemeConfig, 'colors.primary')
-      : getThemeValue(props.theme as ThemeConfig, 'colors.secondary')
-  };
-  stroke: ${props => 
-    props.selected 
-      ? getThemeValue(props.theme as ThemeConfig, 'colors.primaryDark')
-      : getThemeValue(props.theme as ThemeConfig, 'colors.secondaryDark')
-  };
+const LocationMarker = styled.circle<{ selected?: boolean; $themeStyles: ThemeStyles }>`
+  fill: ${props =>
+    props.selected ? props.$themeStyles.primaryColor : props.$themeStyles.secondaryColor};
+  stroke: ${props =>
+    props.selected ? props.$themeStyles.primaryDarkColor : props.$themeStyles.secondaryDarkColor};
   stroke-width: 2;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
-    fill: ${props => 
-      getThemeValue(props.theme as ThemeConfig, 'colors.primaryLight')
-    };
-    stroke: ${props => 
-      getThemeValue(props.theme as ThemeConfig, 'colors.primaryDark')
-    };
+    fill: ${props => props.$themeStyles.primaryLightColor};
+    stroke: ${props => props.$themeStyles.primaryDarkColor};
   }
 `;
 
-const LocationLabel = styled.text`
-  font-size: 10px;
-  fill: ${props => 
-    getThemeValue(props.theme as ThemeConfig, 'colors.text')
-  };
-  pointer-events: none;
-  user-select: none;
+const LocationLabel = styled.text<{ $themeStyles: ThemeStyles }>`
+  font-size: 12px;
+  fill: ${props => props.$themeStyles.textColor};
   text-anchor: middle;
   dominant-baseline: middle;
-  transform: translateY(-14px);
+  pointer-events: none;
+  user-select: none;
+  transform: translateY(20px);
 `;
 
-const RegionPath = styled.path<{selected?: boolean; fill?: string}>`
-  fill: ${props => 
-    props.fill || (props.selected 
-      ? getThemeValue(props.theme as ThemeConfig, 'colors.primary')
-      : getThemeValue(props.theme as ThemeConfig, 'colors.secondaryLight')
-    )
-  };
-  stroke: ${props => 
-    getThemeValue(props.theme as ThemeConfig, 'colors.border')
-  };
-  stroke-width: 1;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    fill: ${props => 
-      props.fill 
-        ? `${props.fill}cc` /* Add transparency to the custom color */
-        : getThemeValue(props.theme as ThemeConfig, 'colors.primaryLight')
-    };
-    stroke: ${props => 
-      getThemeValue(props.theme as ThemeConfig, 'colors.primaryDark')
-    };
-  }
-`;
-
-// Helper for simple map projection (Mercator)
+// Simple map projection function for demo
 const useMapProjection = (
-  locations: Location[], 
-  zoom = 1, 
-  center?: { latitude: number; longitude: number }
+  locations: Location[],
+  zoom: number = 1,
+  center: [number, number] = [0, 0]
 ) => {
-  // If no center is provided, calculate center from the locations
-  const mapCenter = center || {
-    latitude: locations.reduce((sum, loc) => sum + loc.latitude, 0) / Math.max(locations.length, 1),
-    longitude: locations.reduce((sum, loc) => sum + loc.longitude, 0) / Math.max(locations.length, 1)
-  };
-  
-  // Simple Mercator projection
+  const width = 800;
+  const height = 600;
+
+  // Very simple Mercator-like projection for demo purposes
   const projectedLocations = locations.map(location => {
-    // Convert lat/long to x/y coordinates (simplified Mercator)
-    const x = (location.longitude - mapCenter.longitude) * zoom * 100 + 400; // 400 is middle of 800px width
-    const y = 300 - (location.latitude - mapCenter.latitude) * zoom * 100; // 300 is middle of 600px height
-    
+    const x = (location.longitude - center[1]) * zoom * 2 + width / 2;
+    const y = (center[0] - location.latitude) * zoom * 2 + height / 2;
+
     return {
       ...location,
       x,
-      y
+      y,
     };
   });
-  
-  return projectedLocations;
-};
 
-// Default color scale for choropleth maps
-const defaultColorScale = (value: number) => {
-  // Generate a color from blue to red based on value (0-100)
-  const normalizedValue = Math.min(Math.max(value, 0), 100) / 100;
-  const r = Math.round(normalizedValue * 255);
-  const b = Math.round((1 - normalizedValue) * 255);
-  return `rgb(${r}, 100, ${b})`;
+  return projectedLocations;
 };
 
 /**
@@ -167,50 +128,53 @@ export const SimpleMap: React.FC<SimpleMapProps> = ({
   width,
   height,
   zoom = 1,
-  center
+  center = [0, 0],
 }) => {
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
   const projectedLocations = useMapProjection(locations, zoom, center);
-  
+
   return (
-    <MapContainer width={width} height={height}>
+    <MapContainer width={width} height={height} $themeStyles={themeStyles}>
       <Canvas viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
         {/* Draw a simple background - this could be replaced with actual country/region borders */}
         <rect x="0" y="0" width="800" height="600" fill="#f0f0f0" />
-        
+
         {/* Draw grid lines */}
         {Array.from({ length: 9 }).map((_, i) => (
-          <line 
+          <line
             key={`vgrid-${i}`}
-            x1={i * 100} 
-            y1="0" 
-            x2={i * 100} 
-            y2="600" 
-            stroke="#ccc" 
-            strokeWidth="1" 
+            x1={i * 100}
+            y1="0"
+            x2={i * 100}
+            y2="600"
+            stroke="#ccc"
+            strokeWidth="1"
           />
         ))}
         {Array.from({ length: 7 }).map((_, i) => (
-          <line 
+          <line
             key={`hgrid-${i}`}
-            x1="0" 
-            y1={i * 100} 
-            x2="800" 
-            y2={i * 100} 
-            stroke="#ccc" 
-            strokeWidth="1" 
+            x1="0"
+            y1={i * 100}
+            x2="800"
+            y2={i * 100}
+            stroke="#ccc"
+            strokeWidth="1"
           />
         ))}
-        
+
         {/* Draw markers for each location */}
         {projectedLocations.map(location => (
           <g key={location.id} onClick={() => onLocationClick?.(location.id)}>
             <LocationMarker
               cx={location.x}
               cy={location.y}
-              r={location.value ? 5 + (location.value / 20) : 8}
+              r={location.value ? 5 + location.value / 20 : 8}
               selected={location.id === selectedLocationId}
+              $themeStyles={themeStyles}
             />
-            <LocationLabel x={location.x} y={location.y}>
+            <LocationLabel x={location.x} y={location.y} $themeStyles={themeStyles}>
               {location.name}
             </LocationLabel>
           </g>
@@ -219,44 +183,3 @@ export const SimpleMap: React.FC<SimpleMapProps> = ({
     </MapContainer>
   );
 };
-
-/**
- * Choropleth Map component for visualizing regions with color coding
- */
-export const ChoroplethMap: React.FC<ChoroplethMapProps> = ({
-  regions,
-  onRegionClick,
-  selectedRegionId,
-  width,
-  height,
-  colorScale = defaultColorScale
-}) => {
-  return (
-    <MapContainer width={width} height={height}>
-      <Canvas viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
-        {/* Draw regions */}
-        {regions.map(region => (
-          <g key={region.id} onClick={() => onRegionClick?.(region.id)}>
-            <RegionPath
-              d={region.path}
-              selected={region.id === selectedRegionId}
-              fill={region.value !== undefined ? colorScale(region.value) : undefined}
-            />
-            {/* Region label - centered on the region path */}
-            <LocationLabel
-              x="400"
-              y="300"
-              style={{
-                transform: 'translate(-50%, -50%)',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              }}
-            >
-              {region.name}
-            </LocationLabel>
-          </g>
-        ))}
-      </Canvas>
-    </MapContainer>
-  );
-}; 

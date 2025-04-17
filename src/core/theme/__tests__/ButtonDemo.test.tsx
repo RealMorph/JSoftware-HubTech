@@ -122,11 +122,11 @@ const mockTheme: ThemeConfig = {
 // Create a LoadingComponent that shows a message when theme is not available
 const LoadingComponent = () => {
   const { theme } = useDirectTheme();
-  
+
   if (!theme) {
     return <div data-testid="loading-state">Loading theme...</div>;
   }
-  
+
   return <div data-testid="content">Theme loaded successfully</div>;
 };
 
@@ -141,14 +141,14 @@ describe('ButtonDemo loading state', () => {
     expect(screen.getByTestId('loading-state')).toBeInTheDocument();
     expect(screen.getByText('Loading theme...')).toBeInTheDocument();
   });
-  
+
   it('shows content when theme is provided', () => {
     render(
       <DirectThemeProvider initialTheme={mockTheme}>
         <LoadingComponent />
       </DirectThemeProvider>
     );
-    
+
     expect(screen.getByTestId('content')).toBeInTheDocument();
     expect(screen.getByText('Theme loaded successfully')).toBeInTheDocument();
     expect(screen.queryByTestId('loading-state')).not.toBeInTheDocument();

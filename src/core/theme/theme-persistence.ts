@@ -8,7 +8,13 @@ import {
 } from './typography';
 import { spacingScale, semanticSpacing } from './spacing';
 import { breakpointValues, containerMaxWidths } from './breakpoints';
-import { ThemeConfig, ThemeManager, ThemeState, ShadowConfig, ThemeColors } from './consolidated-types';
+import {
+  ThemeConfig,
+  ThemeManager,
+  ThemeState,
+  ShadowConfig,
+  ThemeColors,
+} from './consolidated-types';
 import { useLocalStorage } from '@/core/hooks/useLocalStorage';
 
 // Re-export these types explicitly to ensure consistency across the codebase
@@ -109,8 +115,10 @@ export const defaultTheme: ThemeConfig = {
   typography: {
     fontFamily: {
       base: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-      heading: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-      monospace: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      heading:
+        'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+      monospace:
+        'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     },
     fontSize: {
       xs: '0.75rem',
@@ -201,7 +209,7 @@ export const defaultTheme: ThemeConfig = {
 // Default theme state
 export const defaultThemeState: ThemeState = {
   name: 'Default Theme',
-  config: defaultTheme
+  config: defaultTheme,
 };
 
 // Save theme to local storage

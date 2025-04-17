@@ -8,20 +8,13 @@ import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
  */
 const DirectThemeExample: React.FC = () => {
   // Get theme access through the DirectTheme hook
-  const { 
-    theme, 
-    getColor, 
-    getTypography, 
-    getSpacing, 
-    getBorderRadius, 
-    getShadow, 
-    getTransition 
-  } = useDirectTheme();
+  const { theme, getColor, getTypography, getSpacing, getBorderRadius, getShadow, getTransition } =
+    useDirectTheme();
 
   return (
     <Container>
       <Heading>Direct Theme Implementation Example</Heading>
-      
+
       <Section>
         <SectionTitle>Color Usage</SectionTitle>
         <ColorGrid>
@@ -29,10 +22,9 @@ const DirectThemeExample: React.FC = () => {
           <ColorSwatch bgColor={getColor('secondary')}>Secondary</ColorSwatch>
           <ColorSwatch bgColor={getColor('success')}>Success</ColorSwatch>
           <ColorSwatch bgColor={getColor('error')}>Error</ColorSwatch>
-          <ColorSwatch 
-            bgColor={typeof theme.colors.text === 'string' 
-              ? theme.colors.text 
-              : theme.colors.text.primary
+          <ColorSwatch
+            bgColor={
+              typeof theme.colors.text === 'string' ? theme.colors.text : theme.colors.text.primary
             }
             isTextColor
           >
@@ -43,25 +35,25 @@ const DirectThemeExample: React.FC = () => {
 
       <Section>
         <SectionTitle>Typography Usage</SectionTitle>
-        <TypographySample 
+        <TypographySample
           fontSize={getTypography('fontSize.xl') as string}
           fontWeight={getTypography('fontWeight.bold') as number}
         >
           Extra Large Bold Text
         </TypographySample>
-        <TypographySample 
+        <TypographySample
           fontSize={getTypography('fontSize.lg') as string}
           fontWeight={getTypography('fontWeight.medium') as number}
         >
           Large Medium Text
         </TypographySample>
-        <TypographySample 
+        <TypographySample
           fontSize={getTypography('fontSize.md') as string}
           fontWeight={getTypography('fontWeight.normal') as number}
         >
           Medium Normal Text
         </TypographySample>
-        <TypographySample 
+        <TypographySample
           fontSize={getTypography('fontSize.sm') as string}
           fontWeight={getTypography('fontWeight.light') as number}
         >
@@ -104,19 +96,19 @@ const DirectThemeExample: React.FC = () => {
 
       <Section>
         <SectionTitle>Transition Usage</SectionTitle>
-        <TransitionButton 
+        <TransitionButton
           duration={getTransition('duration.fast')}
           timing={getTransition('timing.easeOut')}
         >
           Fast Button
         </TransitionButton>
-        <TransitionButton 
+        <TransitionButton
           duration={getTransition('duration.normal')}
           timing={getTransition('timing.easeInOut')}
         >
           Normal Button
         </TransitionButton>
-        <TransitionButton 
+        <TransitionButton
           duration={getTransition('duration.slow')}
           timing={getTransition('timing.easeIn')}
         >
@@ -188,14 +180,16 @@ interface ColorSwatchProps {
 const ColorSwatch = styled.div<ColorSwatchProps>`
   padding: 1rem;
   background-color: ${props => props.bgColor};
-  color: ${props => props.isTextColor ? 'white' : 'inherit'};
+  color: ${props => (props.isTextColor ? 'white' : 'inherit')};
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 6px;
   height: 80px;
-  color: ${props => props.isTextColor ? '#ffffff' : props.bgColor === '#ffffff' ? '#000000' : '#ffffff'};
-  box-shadow: ${props => props.bgColor === '#ffffff' ? '0 0 0 1px rgba(0,0,0,0.1) inset' : 'none'};
+  color: ${props =>
+    props.isTextColor ? '#ffffff' : props.bgColor === '#ffffff' ? '#000000' : '#ffffff'};
+  box-shadow: ${props =>
+    props.bgColor === '#ffffff' ? '0 0 0 1px rgba(0,0,0,0.1) inset' : 'none'};
   font-weight: bold;
 `;
 
@@ -307,4 +301,4 @@ const CodeBlock = styled.div`
   }
 `;
 
-export default DirectThemeExample; 
+export default DirectThemeExample;

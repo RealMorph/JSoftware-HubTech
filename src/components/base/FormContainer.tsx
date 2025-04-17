@@ -3,8 +3,19 @@ import { Form, ValidationRule } from './Form';
 import { Card, CardHeader, CardContent, CardFooter } from './Card';
 import { Button } from './Button';
 import { TextField } from './TextField';
-import { useTheme } from '../../core/theme/ThemeProvider';
-import { getThemeValue } from '../../core/theme/styled';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+
+// Define ThemeStyles interface to structure all theme-related properties
+interface ThemeStyles {
+  descriptionColor: string;
+  descriptionFontSize: string;
+}
+
+// Function to create theme styles from DirectTheme context
+const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
+  descriptionColor: themeContext.getColor('gray.600'),
+  descriptionFontSize: String(themeContext.getTypography('scale.sm')), // Convert any non-string values to string
+});
 
 export type FieldConfig = {
   /** Field name */
@@ -57,13 +68,16 @@ export type FormContainerProps = {
   /** Form layout - vertical (default) or horizontal */
   layout?: 'vertical' | 'horizontal';
   /** Custom renderer for specific fields */
-  renderField?: (fieldConfig: FieldConfig, formState: {
-    values: Record<string, any>;
-    errors: Record<string, string | null>;
-    touched: Record<string, boolean>;
-    handleChange: (name: string, value: any) => void;
-    handleBlur: (name: string) => void;
-  }) => React.ReactNode;
+  renderField?: (
+    fieldConfig: FieldConfig,
+    formState: {
+      values: Record<string, any>;
+      errors: Record<string, string | null>;
+      touched: Record<string, boolean>;
+      handleChange: (name: string, value: any) => void;
+      handleBlur: (name: string) => void;
+    }
+  ) => React.ReactNode;
 };
 
 /**
@@ -86,76 +100,72 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   layout = 'vertical',
   renderField,
 }) => {
-  const { currentTheme } = useTheme();
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
   const formId = React.useId(); // Generate unique ID for this form instance
-
-  // Helper function to access theme values
-  const getThemeVal = (path: string): string =>
-    currentTheme ? getThemeValue(currentTheme, path) : '';
 
   // Generate validation rules from field configs
   const generateValidationRules = React.useMemo(() => {
     const rules: Record<string, ValidationRule[]> = {};
-    
+
     fields.forEach(field => {
       const fieldRules: ValidationRule[] = [];
-      
+
       if (field.required) {
         fieldRules.push({
-          validator: (value) => value !== undefined && value !== null && value !== '',
+          validator: value => value !== undefined && value !== null && value !== '',
           message: `${field.label} is required`,
         });
       }
-      
+
       if (field.type === 'email') {
         fieldRules.push({
-          validator: (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+          validator: value => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
           message: 'Please enter a valid email address',
         });
       }
-      
+
       if (field.type === 'password') {
         fieldRules.push({
-          validator: (value) => !value || value.length >= 8,
+          validator: value => !value || value.length >= 8,
           message: 'Password must be at least 8 characters long',
         });
       }
-      
+
       if (field.validationRules?.length) {
         fieldRules.push(...field.validationRules);
       }
-      
+
       if (fieldRules.length > 0) {
         rules[field.name] = fieldRules;
       }
     });
-    
+
     return rules;
   }, [fields]);
 
-  const handleValidate = React.useCallback((values: Record<string, any>) => {
-    const errors: Record<string, string | null> = {};
-    const rules = generateValidationRules;
-    
-    Object.entries(rules).forEach(([fieldName, fieldRules]) => {
-      for (const rule of fieldRules) {
-        if (!rule.validator(values[fieldName])) {
-          errors[fieldName] = rule.message;
-          break;
+  const handleValidate = React.useCallback(
+    (values: Record<string, any>) => {
+      const errors: Record<string, string | null> = {};
+      const rules = generateValidationRules;
+
+      Object.entries(rules).forEach(([fieldName, fieldRules]) => {
+        for (const rule of fieldRules) {
+          if (!rule.validator(values[fieldName])) {
+            errors[fieldName] = rule.message;
+            break;
+          }
         }
-      }
-    });
-    
-    return errors;
-  }, [generateValidationRules]);
+      });
+
+      return errors;
+    },
+    [generateValidationRules]
+  );
 
   const renderFormContent = () => (
-    <Form 
-      defaultValues={defaultValues}
-      onSubmit={onSubmit}
-      validate={handleValidate}
-    >
-      {(formState) => {
+    <Form defaultValues={defaultValues} onSubmit={onSubmit} validate={handleValidate}>
+      {formState => {
         // Register fields when form mounts
         React.useEffect(() => {
           const rules = generateValidationRules;
@@ -167,21 +177,25 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         return (
           <>
             {description && (
-              <p style={{ 
-                marginBottom: '16px', 
-                color: getThemeVal('colors.gray.600'),
-                fontSize: getThemeVal('typography.scale.sm')
-              }}>
+              <p
+                style={{
+                  marginBottom: '16px',
+                  color: themeStyles.descriptionColor,
+                  fontSize: themeStyles.descriptionFontSize,
+                }}
+              >
                 {description}
               </p>
             )}
 
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: layout === 'horizontal' ? 'row' : 'column',
-              flexWrap: 'wrap',
-              gap: layout === 'horizontal' ? '24px' : '16px',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: layout === 'horizontal' ? 'row' : 'column',
+                flexWrap: 'wrap',
+                gap: layout === 'horizontal' ? '24px' : '16px',
+              }}
+            >
               {fields.map(field => {
                 if (renderField) {
                   return renderField(field, {
@@ -192,15 +206,19 @@ export const FormContainer: React.FC<FormContainerProps> = ({
                     handleBlur: formState.handleBlur,
                   });
                 }
-                
+
                 const error = formState.touched[field.name] ? formState.errors[field.name] : null;
                 const fieldId = `${formId}-${field.name}`; // Create unique ID for each field
-                
+
                 return (
-                  <div 
-                    key={field.name} 
-                    style={{ 
-                      flex: field.fullWidth ? '0 0 100%' : (layout === 'horizontal' ? '0 0 calc(50% - 12px)' : '0 0 100%'),
+                  <div
+                    key={field.name}
+                    style={{
+                      flex: field.fullWidth
+                        ? '0 0 100%'
+                        : layout === 'horizontal'
+                          ? '0 0 calc(50% - 12px)'
+                          : '0 0 100%',
                     }}
                   >
                     <TextField
@@ -209,7 +227,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
                       label={field.label}
                       type={field.type || 'text'}
                       value={formState.values[field.name] || ''}
-                      onChange={(value, e) => {
+                      onChange={(value: string) => {
                         formState.handleChange(field.name, value);
                       }}
                       onBlur={() => formState.handleBlur(field.name)}
@@ -226,26 +244,20 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
             {additionalContent}
 
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'flex-end', 
-              gap: '12px',
-              marginTop: '24px',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '12px',
+                marginTop: '24px',
+              }}
+            >
               {onCancel && (
-                <Button
-                  variant="secondary"
-                  onClick={onCancel}
-                  disabled={isLoading}
-                >
+                <Button variant="secondary" onClick={onCancel} disabled={isLoading}>
                   {cancelButtonText}
                 </Button>
               )}
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isLoading}
-              >
+              <Button type="submit" variant="primary" disabled={isLoading}>
                 {isLoading ? 'Processing...' : submitButtonText}
               </Button>
             </div>
@@ -271,11 +283,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           <h2>{title}</h2>
         </CardHeader>
       )}
-      <CardContent>
-        {renderFormContent()}
-      </CardContent>
+      <CardContent>{renderFormContent()}</CardContent>
     </Card>
   );
 };
 
-export default FormContainer; 
+export default FormContainer;

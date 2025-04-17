@@ -11,7 +11,7 @@ import {
   BorderRadiusConfig,
   ShadowConfig,
   TransitionConfig,
-  ThemeConfig
+  ThemeConfig,
 } from './consolidated-types';
 
 // Re-export all types from consolidated-types for backward compatibility
