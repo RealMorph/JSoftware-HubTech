@@ -56,6 +56,18 @@ export interface ThemeColors {
     buttonHover: string;
     googleButton: string;
   };
+  node: {
+    default: string;
+    active: string;
+    hover: string;
+    text: string;
+  };
+  edge: {
+    default: string;
+    active: string;
+    hover: string;
+    text: string;
+  };
 }
 
 // Typography related types
@@ -168,6 +180,20 @@ export interface ZIndexConfig {
   tooltip: number;
 }
 
+// Animation related types
+export interface AnimationConfig {
+  duration: {
+    short: string;
+    medium: string;
+    long: string;
+  };
+  easing: {
+    easeInOut: string;
+    easeIn: string;
+    easeOut: string;
+  };
+}
+
 // The consolidated ThemeConfig interface
 export interface ThemeConfig {
   colors: ThemeColors;
@@ -178,6 +204,7 @@ export interface ThemeConfig {
   shadows: ShadowConfig;
   transitions: TransitionConfig;
   zIndex: ZIndexConfig;
+  animation: AnimationConfig;
   id?: string;
   name?: string;
   description?: string;

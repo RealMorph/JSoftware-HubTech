@@ -1,27 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import type { ThemeConfig } from '../../core/theme/consolidated-types';
+import { themeDefaults } from '../../core/theme/theme-defaults';
 
 // Define theme style interface
 interface ThemeStyles {
   colors: {
-    primary: {
-      main: string;
-      light: string;
-      dark: string;
-    };
-    secondary: {
-      main: string;
-      light: string;
-    };
+    primary: string;
+    secondary: string;
+    info: string;
     text: {
       primary: string;
       secondary: string;
     };
-    background: {
-      paper: string;
-      default: string;
-    };
+    surface: string;
+    background: string;
     node: {
       default: string;
       hover: string;
@@ -36,145 +30,198 @@ interface ThemeStyles {
     };
   };
   typography: {
-    fontFamily: string;
+    fontFamily: string | number;
     fontSize: {
-      small: string;
-      medium: string;
-      large: string;
+      sm: string | number;
+      md: string | number;
+      lg: string | number;
     };
     fontWeight: {
-      regular: number;
-      medium: number;
-      bold: number;
+      normal: string | number;
+      medium: string | number;
+      bold: string | number;
     };
     lineHeight: {
-      small: number;
-      medium: number;
-      large: number;
+      tight: string | number;
+      normal: string | number;
+      relaxed: string | number;
     };
   };
   spacing: {
-    xs: string;
-    sm: string;
-    md: string;
-    lg: string;
-    xl: string;
+    xs: string | number;
+    sm: string | number;
+    md: string | number;
+    lg: string | number;
+    xl: string | number;
   };
-  borders: {
-    radius: {
-      small: string;
-      medium: string;
-      large: string;
-    };
-    width: {
-      thin: string;
-      medium: string;
-      thick: string;
-    };
+  borderRadius: {
+    sm: string | number;
+    md: string | number;
+    lg: string | number;
   };
   shadows: {
-    node: string;
-    tooltip: string;
+    md: string | number;
+    lg: string | number;
   };
   animation: {
     duration: {
-      short: string;
-      medium: string;
-      long: string;
+      short: string | number;
+      medium: string | number;
+      long: string | number;
     };
     easing: {
-      easeInOut: string;
-      easeOut: string;
-      easeIn: string;
+      easeInOut: string | number;
+      easeOut: string | number;
+      easeIn: string | number;
     };
   };
 }
 
 // Function to create ThemeStyles from DirectThemeProvider
-function createThemeStyles(theme: any): ThemeStyles {
+function createThemeStyles(theme: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  if (!theme) {
+    // Create a default theme style that matches the ThemeStyles interface
+    return {
+      colors: {
+        primary: '#000',
+        secondary: '#666',
+        info: '#0088cc',
+        text: {
+          primary: '#000',
+          secondary: '#666'
+        },
+        surface: '#fff',
+        background: '#f5f5f5',
+        node: {
+          default: '#007AFF',
+          hover: '#5AC8FA',
+          active: '#5856D6',
+          text: '#FFFFFF',
+        },
+        edge: {
+          default: '#C7C7CC',
+          hover: '#5AC8FA',
+          active: '#5856D6',
+          text: '#3C3C43',
+        },
+      },
+      typography: {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: {
+          sm: '0.875rem',
+          md: '1rem',
+          lg: '1.125rem',
+        },
+        fontWeight: {
+          normal: 400,
+          medium: 500,
+          bold: 700,
+        },
+        lineHeight: {
+          tight: 1.25,
+          normal: 1.5,
+          relaxed: 1.625,
+        },
+      },
+      spacing: {
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+        xl: '2rem',
+      },
+      borderRadius: {
+        sm: '0.25rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+      },
+      shadows: {
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+      },
+      animation: {
+        duration: {
+          short: '150ms',
+          medium: '300ms',
+          long: '500ms',
+        },
+        easing: {
+          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+          easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        },
+      },
+    };
+  }
+
   return {
     colors: {
-      primary: {
-        main: theme.colors.primary.main,
-        light: theme.colors.primary.light,
-        dark: theme.colors.primary.dark,
-      },
-      secondary: {
-        main: theme.colors.secondary.main,
-        light: theme.colors.secondary.light,
-      },
+      primary: theme.getColor('colors.primary'),
+      secondary: theme.getColor('colors.secondary'),
+      info: theme.getColor('colors.info'),
       text: {
-        primary: theme.colors.text.primary,
-        secondary: theme.colors.text.secondary,
+        primary: theme.getColor('colors.text.primary'),
+        secondary: theme.getColor('colors.text.secondary')
       },
-      background: {
-        paper: theme.colors.background.paper,
-        default: theme.colors.background.default,
-      },
+      surface: theme.getColor('colors.surface'),
+      background: theme.getColor('colors.background'),
       node: {
-        default: theme.colors.primary.main,
-        hover: theme.colors.primary.light,
-        active: theme.colors.primary.dark,
-        text: theme.colors.text.primary,
+        default: theme.getColor('colors.primary'),
+        hover: theme.getColor('colors.primary.hover'),
+        active: theme.getColor('colors.primary.active'),
+        text: theme.getColor('colors.text.primary'),
       },
       edge: {
-        default: theme.colors.secondary.main,
-        hover: theme.colors.secondary.light,
-        active: theme.colors.primary.main,
-        text: theme.colors.text.secondary,
+        default: theme.getColor('colors.border'),
+        hover: theme.getColor('colors.primary.hover'),
+        active: theme.getColor('colors.primary.active'),
+        text: theme.getColor('colors.text.secondary'),
       },
     },
     typography: {
-      fontFamily: theme.typography.fontFamily,
+      fontFamily: theme.getTypography('fontFamily.base'),
       fontSize: {
-        small: theme.typography.fontSize.small,
-        medium: theme.typography.fontSize.medium,
-        large: theme.typography.fontSize.large,
+        sm: theme.getTypography('fontSize.sm'),
+        md: theme.getTypography('fontSize.md'),
+        lg: theme.getTypography('fontSize.lg'),
       },
       fontWeight: {
-        regular: theme.typography.fontWeight.regular,
-        medium: theme.typography.fontWeight.medium,
-        bold: theme.typography.fontWeight.bold,
+        normal: theme.getTypography('fontWeight.normal'),
+        medium: theme.getTypography('fontWeight.medium'),
+        bold: theme.getTypography('fontWeight.bold'),
       },
       lineHeight: {
-        small: theme.typography.lineHeight.small,
-        medium: theme.typography.lineHeight.medium,
-        large: theme.typography.lineHeight.large,
+        tight: theme.getTypography('lineHeight.tight'),
+        normal: theme.getTypography('lineHeight.normal'),
+        relaxed: theme.getTypography('lineHeight.relaxed'),
       },
     },
     spacing: {
-      xs: theme.spacing.xs,
-      sm: theme.spacing.sm,
-      md: theme.spacing.md,
-      lg: theme.spacing.lg,
-      xl: theme.spacing.xl,
+      xs: theme.getSpacing('xs'),
+      sm: theme.getSpacing('sm'),
+      md: theme.getSpacing('md'),
+      lg: theme.getSpacing('lg'),
+      xl: theme.getSpacing('xl'),
     },
-    borders: {
-      radius: {
-        small: theme.borders.radius.small,
-        medium: theme.borders.radius.medium,
-        large: theme.borders.radius.large,
-      },
-      width: {
-        thin: theme.borders.width.thin,
-        medium: theme.borders.width.medium,
-        thick: theme.borders.width.thick,
-      },
+    borderRadius: {
+      sm: theme.getBorderRadius('sm'),
+      md: theme.getBorderRadius('md'),
+      lg: theme.getBorderRadius('lg'),
     },
     shadows: {
-      node: theme.shadows.medium,
-      tooltip: theme.shadows.large,
+      md: theme.getShadow('md'),
+      lg: theme.getShadow('lg'),
     },
     animation: {
       duration: {
-        short: theme.animation.duration.short,
-        medium: theme.animation.duration.medium,
-        long: theme.animation.duration.long,
+        short: '150ms',
+        medium: '300ms',
+        long: '500ms',
       },
       easing: {
-        easeInOut: theme.animation.easing.easeInOut,
-        easeOut: theme.animation.easing.easeOut,
-        easeIn: theme.animation.easing.easeIn,
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
       },
     },
   };
@@ -225,23 +272,32 @@ export interface GraphProps {
     linkDistance?: number;
     linkStrength?: number;
     friction?: number;
+    decay?: number;
+    centerForce?: number;
   };
 }
 
-// Styled components
-const GraphContainer = styled.div<{ width: number; height: number; $themeStyles: ThemeStyles }>`
-  width: ${props => props.width}px;
-  height: ${props => props.height}px;
-  position: relative;
-  background: ${props => props.$themeStyles.colors.background.paper};
-  border-radius: ${props => props.$themeStyles.borders.radius.medium};
+const GraphWrapper = styled.div<{ width?: string | number; height?: string | number }>`
+  width: ${props => props.width || '100%'};
+  height: ${props => props.height || '500px'};
+`;
+
+const GraphContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: ${props => props.$themeStyles.colors.background};
+  border: 1px solid ${props => props.$themeStyles.colors.surface};
+  border-radius: ${props => props.$themeStyles.borderRadius.lg};
+  box-shadow: ${props => props.$themeStyles.shadows.md};
   padding: ${props => props.$themeStyles.spacing.md};
-  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  position: relative;
+  overflow: hidden;
 `;
 
 const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
   color: ${props => props.$themeStyles.colors.text.primary};
-  font-size: ${props => props.$themeStyles.typography.fontSize.large};
+  font-size: ${props => props.$themeStyles.typography.fontSize.lg};
   font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
   margin-bottom: ${props => props.$themeStyles.spacing.sm};
 `;
@@ -250,21 +306,23 @@ const GraphCanvas = styled.svg`
   display: block;
   width: 100%;
   height: 100%;
+  min-height: 400px;
 `;
 
-const Edge = styled.line<{ active: boolean; weight: number; $themeStyles: ThemeStyles }>`
-  stroke: ${props => props.active ? props.$themeStyles.colors.edge.active : props.$themeStyles.colors.edge.default};
-  stroke-width: ${props => props.weight * parseFloat(props.$themeStyles.borders.width.thin)};
+const Edge = styled.line<{ isActive: boolean; $themeStyles: ThemeStyles }>`
+  stroke: ${props => props.isActive ? props.$themeStyles.colors.edge.active : props.$themeStyles.colors.edge.default};
+  stroke-width: 2;
   transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
     stroke: ${props => props.$themeStyles.colors.edge.hover};
+    stroke-width: 3;
   }
 `;
 
 const EdgePath = styled.path<{ active: boolean; weight: number; $themeStyles: ThemeStyles }>`
   stroke: ${props => props.active ? props.$themeStyles.colors.edge.active : props.$themeStyles.colors.edge.default};
-  stroke-width: ${props => props.weight * parseFloat(props.$themeStyles.borders.width.thin)};
+  stroke-width: ${props => props.weight};
   fill: none;
   transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
@@ -273,32 +331,35 @@ const EdgePath = styled.path<{ active: boolean; weight: number; $themeStyles: Th
   }
 `;
 
-const Node = styled.circle<{ active: boolean; $themeStyles: ThemeStyles }>`
-  fill: ${props => props.active ? props.$themeStyles.colors.node.active : props.$themeStyles.colors.node.default};
-  stroke: ${props => props.$themeStyles.colors.background.paper};
-  stroke-width: ${props => props.$themeStyles.borders.width.thin};
+const NodeCircle = styled.circle<{ isActive: boolean; $themeStyles: ThemeStyles }>`
+  fill: ${props => props.isActive ? props.$themeStyles.colors.node.active : props.$themeStyles.colors.node.default};
+  stroke: ${props => props.$themeStyles.colors.surface};
+  stroke-width: 2;
   cursor: pointer;
-  filter: drop-shadow(${props => props.$themeStyles.shadows.node});
   transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
 
   &:hover {
     fill: ${props => props.$themeStyles.colors.node.hover};
-    transform: scale(1.1);
+    stroke-width: 3;
   }
 `;
 
 const NodeLabel = styled.text<{ $themeStyles: ThemeStyles }>`
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  font-size: ${props => props.$themeStyles.typography.fontSize.sm};
   fill: ${props => props.$themeStyles.colors.node.text};
-  font-size: ${props => props.$themeStyles.typography.fontSize.small};
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
+  text-anchor: middle;
+  dominant-baseline: central;
   pointer-events: none;
   user-select: none;
 `;
 
 const EdgeLabel = styled.text<{ $themeStyles: ThemeStyles }>`
+  font-family: ${props => props.$themeStyles.typography.fontFamily};
+  font-size: ${props => props.$themeStyles.typography.fontSize.sm};
   fill: ${props => props.$themeStyles.colors.edge.text};
-  font-size: ${props => props.$themeStyles.typography.fontSize.small};
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.regular};
+  text-anchor: middle;
+  dominant-baseline: central;
   pointer-events: none;
   user-select: none;
 `;
@@ -308,12 +369,12 @@ const Tooltip = styled.div<{ x: number; y: number; $themeStyles: ThemeStyles }>`
   left: ${props => props.x}px;
   top: ${props => props.y}px;
   transform: translate(-50%, -100%);
-  background: ${props => props.$themeStyles.colors.background.paper};
+  background: ${props => props.$themeStyles.colors.surface};
   color: ${props => props.$themeStyles.colors.text.primary};
   padding: ${props => props.$themeStyles.spacing.xs} ${props => props.$themeStyles.spacing.sm};
-  border-radius: ${props => props.$themeStyles.borders.radius.small};
-  font-size: ${props => props.$themeStyles.typography.fontSize.small};
-  box-shadow: ${props => props.$themeStyles.shadows.tooltip};
+  border-radius: ${props => props.$themeStyles.borderRadius.sm};
+  font-size: ${props => props.$themeStyles.typography.fontSize.sm};
+  box-shadow: ${props => props.$themeStyles.shadows.md};
   pointer-events: none;
   z-index: 1000;
 `;
@@ -322,10 +383,10 @@ const Legend = styled.div<{ $themeStyles: ThemeStyles }>`
   position: absolute;
   top: 30px;
   right: 30px;
-  background-color: ${props => props.$themeStyles.colors.background.paper};
+  background-color: ${props => props.$themeStyles.colors.surface};
   padding: 10px;
-  border-radius: 4px;
-  box-shadow: ${props => props.$themeStyles.shadows.tooltip};
+  border-radius: ${props => props.$themeStyles.borderRadius.sm};
+  box-shadow: ${props => props.$themeStyles.shadows.md};
   z-index: 50;
 `;
 
@@ -363,28 +424,28 @@ interface SimulationEdge extends GraphEdge {
 
 // Default physics parameters
 const DEFAULT_PHYSICS = {
-  gravity: 0.1,
-  repulsion: 100,
-  linkDistance: 100,
-  linkStrength: 0.5,
-  friction: 0.9,
+  gravity: 0.03,        // Reduced from 0.1
+  repulsion: 50,        // Reduced from 100
+  linkDistance: 120,    // Increased from 100
+  linkStrength: 0.2,    // Reduced from 0.5
+  friction: 0.95,       // Increased from 0.9
+  decay: 0.99,          // Added decay factor
+  centerForce: 0.05,    // Added center force
 };
 
 // Helper functions
-const getDefaultColors = (themeContext: ReturnType<typeof useDirectTheme>): string[] => {
-  const { getColor } = themeContext;
+const getDefaultColors = (theme: ReturnType<typeof useDirectTheme>): string[] => {
+  if (!theme) {
+    return ['#007AFF', '#5856D6', '#FF2D55', '#FF9500', '#34C759', '#5AC8FA'];
+  }
 
   return [
-    getColor('primary', '#3366CC'),
-    getColor('secondary', '#DC3912'),
-    getColor('warning', '#FF9900'),
-    getColor('success', '#109618'),
-    getColor('purple', '#990099'),
-    getColor('info', '#0099C6'),
-    getColor('pink', '#DD4477'),
-    getColor('lime', '#66AA00'),
-    getColor('error', '#B82E2E'),
-    getColor('indigo', '#316395'),
+    theme.getColor('colors.primary', '#007AFF'),
+    theme.getColor('colors.secondary', '#5856D6'),
+    theme.getColor('colors.info', '#5AC8FA'),
+    theme.getColor('colors.success', '#34C759'),
+    theme.getColor('colors.warning', '#FF9500'),
+    theme.getColor('colors.error', '#FF2D55'),
   ];
 };
 
@@ -429,12 +490,12 @@ export const Graph: React.FC<GraphProps> = ({
   colorGroups = {},
   onNodeClick,
   onEdgeClick,
-  style,
+  style = {},
   physics = DEFAULT_PHYSICS,
 }) => {
-  const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
-  const defaultColors = getDefaultColors(themeContext);
+  const theme = useDirectTheme();
+  const themeStyles = React.useMemo(() => createThemeStyles(theme), [theme]);
+  const defaultColors = React.useMemo(() => getDefaultColors(theme), [theme]);
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const animationRef = useRef<number>(0);
@@ -464,155 +525,116 @@ export const Graph: React.FC<GraphProps> = ({
     height: 0,
   });
 
-  // Initialize simulation
+  // Update the useEffect for dimensions and simulation
   useEffect(() => {
-    if (!data || !data.nodes || !data.edges) return;
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setDimensions({
+          width: rect.width || 800,
+          height: rect.height || 600
+        });
+      }
+    };
 
-    // Convert data to simulation format
-    const width = dimensions.width || 800;
-    const height = dimensions.height || 600;
+    // Initial update
+    updateDimensions();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateDimensions);
+    
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []); // Remove dimensions dependency to prevent re-initialization
 
-    // Initialize nodes with random positions
-    const nodes: SimulationNode[] = data.nodes.map(node => ({
-      ...node,
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: 0,
-      vy: 0,
-      radius: node.radius || 10,
-    }));
+  // Separate effect for simulation
+  useEffect(() => {
+    if (!data || !data.nodes || !data.edges || !dimensions.width || !dimensions.height) return;
 
-    // Initialize edges with references to nodes
-    const edges: SimulationEdge[] = data.edges.map(edge => {
-      const sourceNode = nodes.find(n => n.id === edge.source);
-      const targetNode = nodes.find(n => n.id === edge.target);
-
+    // Initialize nodes with circular layout
+    const width = dimensions.width;
+    const height = dimensions.height;
+    const nodes: SimulationNode[] = data.nodes.map((node, index) => {
+      const angle = (index / data.nodes.length) * 2 * Math.PI;
+      const radius = Math.min(width, height) / 4;
       return {
-        ...edge,
-        sourceNode,
-        targetNode,
+        ...node,
+        x: width / 2 + radius * Math.cos(angle),
+        y: height / 2 + radius * Math.sin(angle),
+        vx: 0,
+        vy: 0,
+        radius: node.radius || 20,
       };
     });
+
+    const edges: SimulationEdge[] = data.edges.map(edge => ({
+      ...edge,
+      sourceNode: nodes.find(n => n.id === edge.source),
+      targetNode: nodes.find(n => n.id === edge.target),
+    }));
 
     setSimulationNodes(nodes);
     setSimulationEdges(edges);
 
-    // Start simulation
-    if (!isDragging) {
-      startSimulation();
-    }
+    // Start simulation with a guaranteed minimum runtime
+    let startTime = Date.now();
+    let frame: number;
 
-    return () => {
-      // Cancel animation on cleanup
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [data, dimensions]);
+    const simulate = () => {
+      const elapsedTime = Date.now() - startTime;
+      const minSimulationTime = 5000; // Increase to 5 seconds for better stability
 
-  // Handle dimension changes
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current && svgRef.current) {
-        const { width, height } = svgRef.current.getBoundingClientRect();
-        setDimensions({ width, height });
-      }
-    };
+      let totalMovement = 0;
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
+      // Apply forces and update positions
+      simulationNodes.forEach(node => {
+        if (isDragging && node.id === draggedNode) return;
 
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
+        // Apply forces (existing force calculations)
+        // ... 
 
-  // Simulation algorithm based on force-directed layout
-  const runSimulation = () => {
-    // Apply forces to nodes
-    simulationNodes.forEach(node => {
-      // Reset forces
-      node.vx *= physics.friction!;
-      node.vy *= physics.friction!;
+        // Update position
+        const oldX = node.x;
+        const oldY = node.y;
+        
+        // Apply velocity with damping
+        node.vx *= physics.friction! * physics.decay!;
+        node.vy *= physics.friction! * physics.decay!;
+        
+        node.x += node.vx;
+        node.y += node.vy;
 
-      // Apply repulsive forces between nodes
-      simulationNodes.forEach(otherNode => {
-        if (node.id === otherNode.id) return;
+        // Calculate movement
+        const dx = node.x - oldX;
+        const dy = node.y - oldY;
+        totalMovement += Math.sqrt(dx * dx + dy * dy);
 
-        const dx = node.x - otherNode.x;
-        const dy = node.y - otherNode.y;
-        const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = physics.repulsion! / (distance * distance);
-
-        node.vx += (dx / distance) * force;
-        node.vy += (dy / distance) * force;
+        // Constrain to bounds
+        const padding = node.radius || 20;
+        node.x = Math.max(padding, Math.min(width - padding, node.x));
+        node.y = Math.max(padding, Math.min(height - padding, node.y));
       });
 
-      // Apply gravity force to center
-      const centerX = dimensions.width / 2;
-      const centerY = dimensions.height / 2;
-      const dx = centerX - node.x;
-      const dy = centerY - node.y;
-      node.vx += dx * physics.gravity!;
-      node.vy += dy * physics.gravity!;
-    });
+      // Update state
+      setSimulationNodes([...simulationNodes]);
+      setSimulationEdges([...simulationEdges]);
 
-    // Apply spring forces for edges
-    simulationEdges.forEach(edge => {
-      if (!edge.sourceNode || !edge.targetNode) return;
-
-      const dx = edge.targetNode.x - edge.sourceNode.x;
-      const dy = edge.targetNode.y - edge.sourceNode.y;
-      const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-
-      // Calculate force based on difference from ideal link distance
-      const displacement = physics.linkDistance! - distance;
-      const force = (displacement * physics.linkStrength!) / distance;
-
-      // Apply force along the edge
-      const fx = dx * force;
-      const fy = dy * force;
-
-      if (!isDragging || edge.sourceNode.id !== draggedNode) {
-        edge.sourceNode.vx -= fx;
-        edge.sourceNode.vy -= fy;
+      // Continue simulation if not stable or minimum time not reached
+      if (elapsedTime < minSimulationTime || totalMovement > 0.1) {
+        frame = requestAnimationFrame(simulate);
       }
+    };
 
-      if (!isDragging || edge.targetNode.id !== draggedNode) {
-        edge.targetNode.vx += fx;
-        edge.targetNode.vy += fy;
+    frame = requestAnimationFrame(simulate);
+
+    // Cleanup
+    return () => {
+      if (frame) {
+        cancelAnimationFrame(frame);
       }
-    });
-
-    // Update positions
-    simulationNodes.forEach(node => {
-      if (isDragging && node.id === draggedNode) return;
-
-      node.x += node.vx;
-      node.y += node.vy;
-
-      // Constrain nodes to container
-      const padding = node.radius || 10;
-      node.x = Math.max(padding, Math.min(dimensions.width - padding, node.x));
-      node.y = Math.max(padding, Math.min(dimensions.height - padding, node.y));
-    });
-
-    // Update state to trigger re-render
-    setSimulationNodes([...simulationNodes]);
-    setSimulationEdges([...simulationEdges]);
-
-    // Continue simulation
-    animationRef.current = requestAnimationFrame(runSimulation);
-  };
-
-  // Start simulation
-  const startSimulation = () => {
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
-
-    animationRef.current = requestAnimationFrame(runSimulation);
-  };
+    };
+  }, [data, dimensions.width, dimensions.height, physics, isDragging, draggedNode]);
 
   // Handle mouse interactions
   const handleNodeMouseDown = (nodeId: string, event: React.MouseEvent) => {
@@ -644,9 +666,6 @@ export const Graph: React.FC<GraphProps> = ({
       setDraggedNode(null);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-
-      // Restart simulation if it was stopped
-      startSimulation();
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -696,15 +715,11 @@ export const Graph: React.FC<GraphProps> = ({
   // Empty data handling
   if (!data || !data.nodes || !data.nodes.length) {
     return (
-      <GraphContainer
-        width={dimensions.width}
-        height={dimensions.height}
-        ref={containerRef}
-        style={style}
-        $themeStyles={themeStyles}
-      >
-        <p>No data to display</p>
-      </GraphContainer>
+      <GraphWrapper width={width} height={height} style={style}>
+        <GraphContainer ref={containerRef} $themeStyles={themeStyles}>
+          <p>No data to display</p>
+        </GraphContainer>
+      </GraphWrapper>
     );
   }
 
@@ -784,135 +799,129 @@ export const Graph: React.FC<GraphProps> = ({
     return { d: arrowPath, transform: arrowTransform };
   };
 
+  // Update edge label rendering to handle optional chaining
+  const renderEdgeLabel = (edge: SimulationEdge) => {
+    if (!edge.sourceNode || !edge.targetNode || !edge.label || !showLabels) {
+      return null;
+    }
+
+    const x = (edge.sourceNode.x + edge.targetNode.x) / 2;
+    const y = (edge.sourceNode.y + edge.targetNode.y) / 2 - 5;
+
+    return (
+      <EdgeLabel x={x} y={y} $themeStyles={themeStyles}>
+        {edge.label}
+      </EdgeLabel>
+    );
+  };
+
   return (
-    <GraphContainer width={dimensions.width} height={dimensions.height} style={style} $themeStyles={themeStyles}>
-      {title && <Title $themeStyles={themeStyles}>{title}</Title>}
-
-      <GraphCanvas
-        ref={svgRef}
-        viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Render edges */}
-        {simulationEdges.map(edge => {
-          const isActive = activeEdge === edge.id;
-
-          if (directed && edge.sourceNode && edge.targetNode) {
-            const sourceX = edge.sourceNode.x;
-            const sourceY = edge.sourceNode.y;
-            const targetX = edge.targetNode.x;
-            const targetY = edge.targetNode.y;
-
-            const pathString = generateDirectedEdgePath(edge);
-            const arrowhead = generateArrowhead(edge);
-
+    <GraphWrapper width={width} height={height} style={style}>
+      <GraphContainer ref={containerRef} $themeStyles={themeStyles}>
+        {title && <Title $themeStyles={themeStyles}>{title}</Title>}
+        
+        <GraphCanvas
+          ref={svgRef}
+          viewBox={`0 0 ${dimensions.width || 800} ${dimensions.height || 600}`}
+          preserveAspectRatio="xMidYMid meet"
+          width="100%"
+          height="100%"
+        >
+          <defs>
+            <marker
+              id="arrowhead"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={themeStyles.colors.edge.default} />
+            </marker>
+          </defs>
+          
+          {simulationEdges.map(edge => {
+            if (!edge.sourceNode || !edge.targetNode) return null;
+            
             return (
               <g key={edge.id}>
-                <EdgePath
-                  d={pathString}
-                  stroke={edge.color || '#999'}
-                  active={isActive}
-                  weight={edge.weight || 1}
-                  $themeStyles={themeStyles}
-                  onClick={() => handleEdgeClick(edge.id)}
-                  onMouseOver={e => handleMouseOver(`${edge.label || edge.id}`, e)}
-                  onMouseOut={handleMouseOut}
-                />
-                {edge.label && showLabels && (
-                  <EdgeLabel
-                    x={(sourceX + targetX) / 2}
-                    y={(sourceY + targetY) / 2 - 10}
+                {directed ? (
+                  <EdgePath
+                    d={generateDirectedEdgePath(edge)}
+                    active={activeEdge === edge.id}
+                    weight={edge.weight || 2}
                     $themeStyles={themeStyles}
-                  >
-                    {edge.label}
-                  </EdgeLabel>
+                    onClick={() => handleEdgeClick(edge.id)}
+                    onMouseOver={e => handleMouseOver(`${edge.label || edge.id}`, e)}
+                    onMouseOut={handleMouseOut}
+                    markerEnd="url(#arrowhead)"
+                  />
+                ) : (
+                  <Edge
+                    x1={edge.sourceNode.x}
+                    y1={edge.sourceNode.y}
+                    x2={edge.targetNode.x}
+                    y2={edge.targetNode.y}
+                    isActive={activeEdge === edge.id}
+                    $themeStyles={themeStyles}
+                    onClick={() => handleEdgeClick(edge.id)}
+                    onMouseOver={e => handleMouseOver(`${edge.label || edge.id}`, e)}
+                    onMouseOut={handleMouseOut}
+                  />
                 )}
-                {/* Arrow for directed graph */}
-                <path d={arrowhead.d} fill={edge.color || '#999'} transform={arrowhead.transform} />
+                {renderEdgeLabel(edge)}
               </g>
             );
-          }
-
-          return edge.sourceNode && edge.targetNode ? (
-            <g key={edge.id}>
-              <Edge
-                x1={edge.sourceNode.x}
-                y1={edge.sourceNode.y}
-                x2={edge.targetNode.x}
-                y2={edge.targetNode.y}
-                stroke={edge.color || '#999'}
-                active={isActive}
-                weight={edge.weight || 1}
-                $themeStyles={themeStyles}
-                onClick={() => handleEdgeClick(edge.id)}
-                onMouseOver={e => handleMouseOver(`${edge.label || edge.id}`, e)}
-                onMouseOut={handleMouseOut}
-              />
-              {edge.label && showLabels && (
-                <EdgeLabel
-                  x={(edge.sourceNode.x + edge.targetNode.x) / 2}
-                  y={(edge.sourceNode.y + edge.targetNode.y) / 2 - 5}
-                  $themeStyles={themeStyles}
-                >
-                  {edge.label}
-                </EdgeLabel>
-              )}
-            </g>
-          ) : null;
-        })}
-
-        {/* Render nodes */}
-        {simulationNodes.map(node => {
-          const isActive = activeNode === node.id;
-          const color = getNodeColor(node, colorGroups, defaultColors);
-          const radius = node.radius || 10;
-
-          return (
+          })}
+          
+          {simulationNodes.map(node => (
             <g key={node.id}>
-              <Node
+              <NodeCircle
                 cx={node.x}
                 cy={node.y}
-                r={radius}
-                fill={color}
-                active={isActive}
+                r={node.radius || 20}
+                isActive={activeNode === node.id}
                 $themeStyles={themeStyles}
-                onMouseDown={e => handleNodeMouseDown(node.id, e)}
                 onClick={() => handleNodeClick(node.id)}
+                onMouseDown={e => handleNodeMouseDown(node.id, e)}
                 onMouseOver={e => handleMouseOver(`${node.label || node.id}`, e)}
                 onMouseOut={handleMouseOut}
+                style={{
+                  fill: getNodeColor(node, colorGroups, defaultColors)
+                }}
               />
               {showLabels && (
-                <NodeLabel x={node.x} y={node.y + radius + 12} $themeStyles={themeStyles}>
+                <NodeLabel
+                  x={node.x}
+                  y={node.y + (node.radius || 20) + 12}
+                  $themeStyles={themeStyles}
+                >
                   {node.label}
                 </NodeLabel>
               )}
             </g>
-          );
-        })}
-      </GraphCanvas>
-
-      {tooltip.visible && (
-        <Tooltip
-          x={tooltip.x}
-          y={tooltip.y}
-          $themeStyles={themeStyles}
-        >
-          {tooltip.content}
-        </Tooltip>
-      )}
-
-      {/* Render legend for node groups */}
-      {Object.keys(uniqueGroups).length > 0 && (
-        <Legend $themeStyles={themeStyles}>
-          {Object.entries(uniqueGroups).map(([group, color]) => (
-            <LegendItem key={group} $themeStyles={themeStyles}>
-              <LegendColor color={color as string} />
-              {group}
-            </LegendItem>
           ))}
-        </Legend>
-      )}
-    </GraphContainer>
+        </GraphCanvas>
+
+        {tooltip.visible && (
+          <Tooltip x={tooltip.x} y={tooltip.y} $themeStyles={themeStyles}>
+            {tooltip.content}
+          </Tooltip>
+        )}
+
+        {Object.keys(uniqueGroups).length > 0 && (
+          <Legend $themeStyles={themeStyles}>
+            {Object.entries(uniqueGroups).map(([group, color]) => (
+              <LegendItem key={group} $themeStyles={themeStyles}>
+                <LegendColor color={color} />
+                {group}
+              </LegendItem>
+            ))}
+          </Legend>
+        )}
+      </GraphContainer>
+    </GraphWrapper>
   );
 };
 

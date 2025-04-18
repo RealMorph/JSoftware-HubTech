@@ -143,5 +143,5 @@ const MyComponent = () => {
 All components can be viewed in the demo:
 
 ```
-/demos/visualization
+/demos/data-visualization
 ``` 

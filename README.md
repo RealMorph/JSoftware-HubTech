@@ -416,4 +416,5 @@ Contributions are welcome! Please check out our [contributing guidelines](CONTRI
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. #   J S o f t w a r e - H u b T e c h  
+ 

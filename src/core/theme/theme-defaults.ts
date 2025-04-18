@@ -23,6 +23,18 @@ export const themeDefaults: ThemeConfig = {
       buttonHover: '#0060b9',
       googleButton: '#fff',
     },
+    node: {
+      default: '#007AFF',
+      active: '#5856D6',
+      hover: '#5AC8FA',
+      text: '#FFFFFF',
+    },
+    edge: {
+      default: '#C7C7CC',
+      active: '#5856D6',
+      hover: '#5AC8FA',
+      text: '#3C3C43',
+    },
   },
   typography: {
     fontFamily: {
@@ -97,7 +109,7 @@ export const themeDefaults: ThemeConfig = {
     normal: '200ms',
     slow: '300ms',
     slower: '400ms',
-    slowest: '500ms',
+    slowest: '500ms'
   },
   zIndex: {
     hide: -1,
@@ -120,6 +132,18 @@ export const themeDefaults: ThemeConfig = {
     lg: '1024px',
     xl: '1280px',
     '2xl': '1536px',
+  },
+  animation: {
+    duration: {
+      short: '100ms',
+      medium: '200ms',
+      long: '300ms'
+    },
+    easing: {
+      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+      easeOut: 'cubic-bezier(0, 0, 0.2, 1)'
+    }
   },
 };
 

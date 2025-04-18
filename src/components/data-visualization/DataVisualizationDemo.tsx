@@ -18,8 +18,8 @@ interface ThemeStyles {
 const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => {
   return {
     colors: {
-      text: themeContext.getColor('text'),
-      border: themeContext.getColor('border'),
+      text: themeContext.getColor('colors.text', '#000'),
+      border: themeContext.getColor('colors.border', '#e2e8f0'),
     },
   };
 };
@@ -100,18 +100,18 @@ export const DataVisualizationDemo: React.FC = () => {
   // Sample data for graph
   const graphData = {
     nodes: [
-      { id: 'node1', label: 'User', radius: 25, color: '#3366CC' },
-      { id: 'node2', label: 'Profile', radius: 20, color: '#DC3912' },
-      { id: 'node3', label: 'Posts', radius: 22, color: '#FF9900' },
-      { id: 'node4', label: 'Comments', radius: 18, color: '#109618' },
-      { id: 'node5', label: 'Friends', radius: 20, color: '#990099' },
+      { id: 'node1', label: 'User', radius: 30, group: 'primary' },
+      { id: 'node2', label: 'Profile', radius: 25, group: 'secondary' },
+      { id: 'node3', label: 'Posts', radius: 28, group: 'info' },
+      { id: 'node4', label: 'Comments', radius: 22, group: 'success' },
+      { id: 'node5', label: 'Friends', radius: 25, group: 'warning' },
     ],
     edges: [
-      { id: 'edge1', source: 'node1', target: 'node2' },
-      { id: 'edge2', source: 'node1', target: 'node3' },
-      { id: 'edge3', source: 'node1', target: 'node5' },
-      { id: 'edge4', source: 'node3', target: 'node4' },
-      { id: 'edge5', source: 'node2', target: 'node5' },
+      { id: 'edge1', source: 'node1', target: 'node2', label: 'has' },
+      { id: 'edge2', source: 'node1', target: 'node3', label: 'creates' },
+      { id: 'edge3', source: 'node1', target: 'node5', label: 'connects' },
+      { id: 'edge4', source: 'node3', target: 'node4', label: 'contains' },
+      { id: 'edge5', source: 'node2', target: 'node5', label: 'suggests' },
     ],
   };
 
@@ -119,18 +119,19 @@ export const DataVisualizationDemo: React.FC = () => {
   const orgChartRoot = {
     id: 'ceo',
     label: 'CEO',
-    radius: 30,
-    color: '#3366CC',
+    radius: 35,
+    group: 'primary'
   };
 
   const orgChartChildren = {
     ceo: ['cto', 'cfo', 'coo'],
     cto: ['dev1', 'dev2'],
-    cfo: ['finance'],
+    cfo: ['finance1', 'finance2'],
     coo: ['hr', 'marketing'],
     dev1: [],
     dev2: [],
-    finance: [],
+    finance1: [],
+    finance2: [],
     hr: [],
     marketing: [],
   };
@@ -244,7 +245,22 @@ export const DataVisualizationDemo: React.FC = () => {
         <GridContainer>
           <ComponentContainer $themeStyles={themeStyles}>
             <ComponentTitle $themeStyles={themeStyles}>Network Graph</ComponentTitle>
-            <Graph data={graphData} width="100%" height="400px" onNodeClick={handleNodeClick} />
+            <Graph
+              data={graphData}
+              width="100%"
+              height="400px"
+              directed={true}
+              showLabels={true}
+              showTooltips={true}
+              onNodeClick={handleNodeClick}
+              physics={{
+                gravity: 0.05,
+                repulsion: 150,
+                linkDistance: 150,
+                linkStrength: 0.7,
+                friction: 0.9,
+              }}
+            />
             {selectedNode && (
               <div style={{ marginTop: '12px', fontSize: '14px' }}>
                 Selected: {graphData.nodes.find(n => n.id === selectedNode)?.label}
@@ -259,7 +275,17 @@ export const DataVisualizationDemo: React.FC = () => {
               children={orgChartChildren}
               width="100%"
               height="400px"
+              directed={true}
+              showLabels={true}
+              showTooltips={true}
               onNodeClick={handleNodeClick}
+              physics={{
+                gravity: 0.1,
+                repulsion: 200,
+                linkDistance: 100,
+                linkStrength: 0.8,
+                friction: 0.9,
+              }}
             />
           </ComponentContainer>
         </GridContainer>

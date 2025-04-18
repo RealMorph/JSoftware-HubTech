@@ -68,7 +68,7 @@ const NavLink = styled.a<{ $active?: boolean; $themeStyles?: boolean }>`
       : theme.colors.text};
   text-decoration: none;
   font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  transition: all ${({ theme }) => theme.transitions.duration.normal} ${({ theme }) => theme.transitions.timing.easeInOut};
+  transition: all ${({ theme }) => theme.transitions.normal};
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
@@ -821,27 +821,26 @@ const DemoHome = () => {
               insights.
             </p>
             <Link
-              to="/demos/visualization"
+              to="/demos/data-visualization"
               style={{
                 display: 'inline-block',
-                backgroundColor: '#ff6b6b',
+                backgroundColor: '#0073ea',
                 color: 'white',
                 padding: '8px 16px',
+                borderRadius: '6px',
                 textDecoration: 'none',
-                borderRadius: '4px',
-                fontWeight: 500,
                 fontSize: '14px',
+                fontWeight: 500,
                 transition: 'background-color 0.2s ease',
-                boxShadow: '0 2px 6px rgba(255, 107, 107, 0.3)',
               }}
               onMouseOver={e => {
-                e.currentTarget.style.backgroundColor = '#e05252';
+                e.currentTarget.style.backgroundColor = '#0060b9';
               }}
               onMouseOut={e => {
-                e.currentTarget.style.backgroundColor = '#ff6b6b';
+                e.currentTarget.style.backgroundColor = '#0073ea';
               }}
             >
-              View Demo
+              View Components →
             </Link>
           </div>
         </div>
@@ -917,8 +916,11 @@ const DemoHome = () => {
   );
 };
 
-// Layout wrapper for all demo pages that includes a back button and a modern header
-const DemoLayout = ({ children }: { children: React.ReactNode }) => {
+interface DemoLayoutProps {
+  children: React.ReactNode;
+}
+
+const DemoLayout: React.FC<DemoLayoutProps> = ({ children }) => {
   return (
     <div
       style={{
@@ -1010,26 +1012,46 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
 // Main Router component
 const Router = () => {
   return (
-    <ThemeServiceProvider themeService={inMemoryThemeService}>
-      <DirectThemeProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <ThemeServiceProvider themeService={inMemoryThemeService}>
+        <DirectThemeProvider>
           <Routes>
-            <Route path="/" element={<DemoHome />} />
+            {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/demos/data-display" element={<DataDisplayDemo />} />
-            <Route path="/demos/form" element={<FormDemo />} />
-            <Route path="/demos/date-picker" element={<DatePickerDemoPage />} />
-            <Route path="/demos/time-picker" element={<TimePickerDemoPage />} />
-            <Route path="/demos/layout" element={<LayoutDemo />} />
-            <Route path="/demos/feedback" element={<FeedbackDemoPage />} />
-            <Route path="/demos/tabs" element={<TabsDemoPage />} />
-            <Route path="/demos/navigation" element={<NavigationDemoPage />} />
-            <Route path="/demos/data-visualization" element={<DataVisualizationDemo />} />
+            
+            {/* Demo Routes - Publicly Accessible */}
+            <Route path="/demos" element={<DemoLayout><DemoHome /></DemoLayout>} />
+            <Route path="/demos/form" element={<DemoLayout><FormDemo /></DemoLayout>} />
+            <Route path="/demos/data-display" element={<DemoLayout><DataDisplayDemo /></DemoLayout>} />
+            <Route path="/demos/date-picker" element={<DemoLayout><DatePickerDemoPage /></DemoLayout>} />
+            <Route path="/demos/time-picker" element={<DemoLayout><TimePickerDemoPage /></DemoLayout>} />
+            <Route path="/demos/layout" element={<DemoLayout><LayoutDemo /></DemoLayout>} />
+            <Route path="/demos/feedback" element={<DemoLayout><FeedbackDemoPage /></DemoLayout>} />
+            <Route path="/demos/tabs" element={<DemoLayout><TabsDemoPage /></DemoLayout>} />
+            <Route path="/demos/navigation" element={<DemoLayout><NavigationDemoPage /></DemoLayout>} />
+            <Route path="/demos/data-visualization" element={<DemoLayout><DataVisualizationDemo /></DemoLayout>} />
+            <Route path="/demos/visualization" element={<DemoLayout><DataVisualizationDemo /></DemoLayout>} />
+            
+            {/* Protected Application Routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <DemoLayout>
+                  <DemoHome />
+                </DemoLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/*" element={
+              <ProtectedRoute>
+                <DemoLayout>
+                  {/* Add your protected app routes here */}
+                </DemoLayout>
+              </ProtectedRoute>
+            } />
           </Routes>
-        </BrowserRouter>
-      </DirectThemeProvider>
-    </ThemeServiceProvider>
+        </DirectThemeProvider>
+      </ThemeServiceProvider>
+    </BrowserRouter>
   );
 };
 

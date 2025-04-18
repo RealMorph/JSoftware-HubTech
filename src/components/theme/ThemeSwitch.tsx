@@ -1,35 +1,46 @@
 import React from 'react';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
+import ThemeSelector from './ThemeSelector';
 
-const SwitchContainer = styled.button<{ $themeStyles: any }>`
-  background: ${props => props.$themeStyles.colors.background};
-  border: 1px solid ${props => props.$themeStyles.colors.border};
-  border-radius: ${props => props.$themeStyles.borderRadius.full};
-  padding: ${props => props.$themeStyles.spacing.sm};
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+const SwitchContainer = styled.button<{ $themeStyles?: boolean }>`
+  background: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+  padding: ${({ theme }) => theme.spacing.sm};
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: ${props => props.$themeStyles.spacing.xs};
-  transition: all ${props => props.$themeStyles.transitions.duration.normal} ${props => props.$themeStyles.transitions.timing.easeInOut};
+  gap: ${({ theme }) => theme.spacing.xs};
+  transition: all ${({ theme }) => theme.transitions.normal};
   
   &:hover {
-    background: ${props => props.$themeStyles.colors.surface};
+    background: ${({ theme }) => theme.colors.background};
+    opacity: 0.8;
   }
 `;
 
 const ThemeSwitch: React.FC = () => {
-  const { theme, toggleDarkMode } = useDirectTheme();
+  const theme = useDirectTheme();
+  const isDarkMode = theme.getColor('background') === '#1e1e1e';
   
   return (
-    <SwitchContainer
-      data-testid="theme-switch"
-      onClick={toggleDarkMode}
-      $themeStyles={theme}
-      aria-label="Toggle theme"
-    >
-      {theme.colors.background === '#FFFFFF' ? '🌙' : '☀️'}
-    </SwitchContainer>
+    <Container>
+      <ThemeSelector />
+      <SwitchContainer
+        data-testid="theme-switch"
+        onClick={() => theme.toggleDarkMode()}
+        aria-label="Toggle dark mode"
+      >
+        {isDarkMode ? '☀️' : '🌙'}
+      </SwitchContainer>
+    </Container>
   );
 };
 
