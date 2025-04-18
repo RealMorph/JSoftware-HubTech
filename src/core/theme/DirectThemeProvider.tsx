@@ -13,6 +13,7 @@ import { applyTheme } from './theme-system';
 import { ThemeService, useThemeService, inMemoryThemeService } from './theme-context';
 import { ThemeServiceProvider } from './ThemeServiceProvider';
 import { spacingScale } from './spacing';
+import { themeDefaults } from './theme-defaults';
 
 // Context types
 export interface DirectThemeContextType {
@@ -26,14 +27,14 @@ export interface DirectThemeContextType {
   // Direct theme utility functions
   getColor: (path: string, fallback?: string) => string;
   getTypography: (path: string, fallback?: string | number) => string | number;
-  getSpacing: (key: keyof typeof spacingScale, fallback?: string) => string;
-  getBorderRadius: (key: string, fallback?: string) => string;
-  getShadow: (key: string, fallback?: string) => string;
+  getSpacing: (key: keyof SpacingConfig, fallback?: string) => string;
+  getBorderRadius: (key: keyof BorderRadiusConfig, fallback?: string) => string;
+  getShadow: (key: keyof ShadowConfig, fallback?: string) => string;
   getTransition: (key: string, fallback?: string) => string;
 }
 
 // Create the context
-const DirectThemeContext = createContext<DirectThemeContextType | undefined>(undefined);
+export const DirectThemeContext = createContext<DirectThemeContextType | undefined>(undefined);
 
 // Hook for components to access the theme
 export const useDirectTheme = (): DirectThemeContextType => {
@@ -57,11 +58,11 @@ const globalStyles = css`
   body {
     margin: 0;
     padding: 0;
-    font-family: var(--font-family-base, system-ui, -apple-system, sans-serif);
-    font-size: var(--font-size-base, 16px);
-    line-height: var(--line-height-base, 1.5);
-    color: var(--color-text-primary, #000);
-    background-color: var(--color-background, #fff);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
   }
 
   *,
@@ -188,127 +189,74 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
   initialTheme,
   themeService = inMemoryThemeService,
 }) => {
-  // Inner provider component that assumes themeService is available
-  const DirectThemeProviderInner: React.FC<DirectThemeProviderProps> = ({
-    children,
-    initialTheme,
-  }) => {
-    const themeService = useThemeService();
+  const [theme, setTheme] = useState<ThemeConfig>(initialTheme || themeDefaults);
 
-    // Initialize theme state
-    const [theme, setTheme] = useState<ThemeConfig>(() => {
-      if (initialTheme) {
-        return initialTheme;
-      }
-      return themeService.getDefaultTheme();
-    });
+  useEffect(() => {
+    if (theme) {
+      // Apply theme changes
+      applyTheme(theme);
+      // Generate and inject CSS variables
+      generateCssVariables(theme);
+    }
+  }, [theme]);
 
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    // Apply theme to the document
-    useEffect(() => {
-      if (theme) {
-        applyTheme(theme);
-        generateCssVariables(theme);
-      }
-    }, [theme]);
-
-    // Theme toggling function
-    const toggleDarkMode = () => {
-      setIsDarkMode(!isDarkMode);
-
-      // Get dark/light theme based on current mode
-      const newTheme = !isDarkMode
-        ? themeService.getDarkTheme() || theme
-        : themeService.getLightTheme() || theme;
-
-      setTheme(newTheme);
-    };
-
-    // Direct theme property access functions
-    const getColor = (path: string, fallback?: string): string => {
-      // Handle special case for text color object
-      if (path.startsWith('text.')) {
-        const textKey = path.split('.')[1];
-        const textColors =
-          typeof theme.colors.text === 'string'
-            ? {
-                primary: theme.colors.text,
-                secondary: theme.colors.text,
-                disabled: theme.colors.text,
-              }
-            : theme.colors.text;
-
-        return (textColors as any)[textKey] || fallback || '#000000';
-      }
-
-      // Standard color property access
-      return getNestedProperty(theme.colors, path, fallback || '#000000');
-    };
-
-    const getTypography = (path: string, fallback?: string | number): string | number => {
-      return getNestedProperty(theme.typography, path, fallback || '1rem');
-    };
-
-    const getSpacing = (key: keyof typeof spacingScale, fallback?: string): string => {
-      return spacingScale[key] || fallback || '0px';
-    };
-
-    const getBorderRadius = (key: string, fallback?: string): string => {
-      // Type-safe check if the key exists in border radius config
-      if (hasKey(theme.borderRadius, key)) {
-        return theme.borderRadius[key];
-      }
-      return fallback || '0';
-    };
-
-    const getShadow = (key: string, fallback?: string): string => {
-      // Type-safe check if the key exists in shadows config
-      if (hasKey(theme.shadows, key)) {
-        return theme.shadows[key];
-      }
-      return fallback || 'none';
-    };
-
-    const getTransition = (key: string, fallback?: string): string => {
-      const transitionKeys = key.split('.');
-      if (transitionKeys.length === 1) {
-        // Assume it's a duration shorthand
-        const durationKey = transitionKeys[0];
-        if (hasKey(theme.transitions.duration, durationKey)) {
-          return theme.transitions.duration[durationKey];
-        }
-        return fallback || '0ms';
-      }
-      return getNestedProperty(theme.transitions, key, fallback || '0ms');
-    };
-
-    // Create context value
-    const contextValue: DirectThemeContextType = {
-      theme,
-      setTheme,
-      toggleDarkMode,
-      getColor,
-      getTypography,
-      getSpacing,
-      getBorderRadius,
-      getShadow,
-      getTransition,
-    };
-
-    return (
-      <DirectThemeContext.Provider value={contextValue}>
-        <Global styles={globalStyles} />
-        {/* Cast theme as any to satisfy Emotion's theme provider */}
-        <EmotionThemeProvider theme={theme as any}>{children}</EmotionThemeProvider>
-      </DirectThemeContext.Provider>
-    );
+  const toggleDarkMode = () => {
+    setTheme(currentTheme => ({
+      ...currentTheme,
+      colors: {
+        ...currentTheme.colors,
+        background: currentTheme.colors.background === '#FFFFFF' ? '#000000' : '#FFFFFF',
+        text: typeof currentTheme.colors.text === 'object'
+          ? {
+              ...currentTheme.colors.text,
+              primary: currentTheme.colors.text.primary === '#000000' ? '#FFFFFF' : '#000000',
+            }
+          : currentTheme.colors.text === '#000000' ? '#FFFFFF' : '#000000',
+      },
+    }));
   };
 
-  // If themeService is provided, wrap with ThemeServiceProvider
+  const contextValue: DirectThemeContextType = {
+    theme,
+    setTheme,
+    toggleDarkMode,
+    getColor: (path, fallback) => {
+      const parts = path.split('.');
+      let value: any = theme.colors;
+      for (const part of parts) {
+        value = value?.[part];
+      }
+      return value || fallback || '';
+    },
+    getTypography: (path, fallback) => {
+      const parts = path.split('.');
+      let value: any = theme.typography;
+      for (const part of parts) {
+        value = value?.[part];
+      }
+      return value || fallback || '';
+    },
+    getSpacing: (key, fallback) => theme.spacing[key] || fallback || '',
+    getBorderRadius: (key, fallback) => theme.borderRadius[key] || fallback || '',
+    getShadow: (key, fallback) => theme.shadows[key] || fallback || '',
+    getTransition: (key, fallback) => {
+      const parts = key.split('.');
+      let value: any = theme.transitions;
+      for (const part of parts) {
+        value = value?.[part];
+      }
+      return value || fallback || '';
+    },
+  };
+
   return (
     <ThemeServiceProvider themeService={themeService}>
-      <DirectThemeProviderInner initialTheme={initialTheme}>{children}</DirectThemeProviderInner>
+      <DirectThemeContext.Provider value={contextValue}>
+        <EmotionThemeProvider theme={theme}>
+          <Global styles={globalStyles} />
+          {children}
+        </EmotionThemeProvider>
+      </DirectThemeContext.Provider>
     </ThemeServiceProvider>
   );
 };

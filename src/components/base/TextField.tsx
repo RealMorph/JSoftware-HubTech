@@ -1,9 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useId, ChangeEvent, FocusEvent } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
-export interface TextFieldProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'> {
+interface ThemeStyles {
+  fontSize: string;
+  fontFamily: string;
+  errorColor: string;
+  primaryColor: string;
+  grayColor400: string;
+  grayColor600: string;
+  grayColor900: string;
+  grayColor100: string;
+  grayColor50: string;
+  grayColor300: string;
+  grayColor500: string;
+  typographyScaleSm: string;
+  typographyScaleXs: string;
+  spacing4: string;
+  textColorPrimary: string;
+  spacingXs: string;
+}
+
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getSpacing } = themeContext;
+
+  return {
+    fontSize: getTypography('scale.base', '1rem').toString(),
+    fontFamily: getTypography('family', 'sans-serif').toString(),
+    errorColor: getColor('error.500', '#ef4444').toString(),
+    primaryColor: getColor('primary.500', '#3b82f6').toString(),
+    grayColor400: getColor('gray.400', '#9ca3af').toString(),
+    grayColor600: getColor('gray.600', '#4b5563').toString(),
+    grayColor900: getColor('gray.900', '#111827').toString(),
+    grayColor100: getColor('gray.100', '#f3f4f6').toString(),
+    grayColor50: getColor('gray.50', '#f9fafb').toString(),
+    grayColor300: getColor('gray.300', '#d1d5db').toString(),
+    grayColor500: getColor('gray.500', '#6b7280').toString(),
+    typographyScaleSm: getTypography('scale.sm', '0.875rem').toString(),
+    typographyScaleXs: getTypography('scale.xs', '0.75rem').toString(),
+    spacing4: getSpacing('4', '1rem').toString(),
+    textColorPrimary: getColor('text.primary', '#111827').toString(),
+    spacingXs: getSpacing('2', '0.5rem').toString(),
+  };
+}
+
+interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'> {
   /** Field label */
   label?: string;
   /** Helper text displayed below the input */
@@ -13,7 +54,7 @@ export interface TextFieldProps
   /** Whether the field is required */
   required?: boolean;
   /** Callback when value changes */
-  onChange?: (value: string) => void;
+  onChange?: (value: string, event: ChangeEvent<HTMLInputElement>) => void;
   /** TextField variant */
   variant?: 'standard' | 'outlined' | 'filled';
   /** Input size */
@@ -146,11 +187,11 @@ const EndAdornment = styled.div`
   color: ${props => props.color};
 `;
 
-export const TextField: React.FC<TextFieldProps> = ({
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({
   label,
   helperText,
   error = false,
-  required = false,
+  required,
   onChange,
   variant = 'outlined',
   size = 'medium',
@@ -161,98 +202,76 @@ export const TextField: React.FC<TextFieldProps> = ({
   disabled = false,
   id,
   ...rest
-}) => {
-  // Use direct theme access
-  const { getColor, getTypography, getSpacing, getBorderRadius, getTransition } = useDirectTheme();
-
+}, ref) => {
   const [focused, setFocused] = useState(false);
+  const themeContext = useDirectTheme();
+  const themeStyles = createThemeStyles(themeContext);
+  
   const inputId = id || `textfield-${Math.random().toString(36).substr(2, 9)}`;
+  const labelId = `${inputId}-label`;
+  const helperId = `${inputId}-helper`;
 
-  // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(e.target.value);
-    }
+  const rootStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: themeStyles.spacingXs,
   };
 
-  // Handle focus state
-  const handleFocus = () => {
+  const labelStyles: React.CSSProperties = {
+    color: themeStyles.textColorPrimary,
+    fontSize: themeStyles.typographyScaleXs,
+    fontFamily: themeStyles.fontFamily,
+    marginBottom: themeStyles.spacingXs,
+  };
+
+  const inputContainerStyles: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    border: `1px solid ${error ? themeStyles.errorColor : focused ? themeStyles.primaryColor : themeStyles.grayColor300}`,
+    borderRadius: '4px',
+    backgroundColor: disabled ? themeStyles.grayColor50 : 'white',
+    transition: 'border-color 0.2s ease',
+  };
+
+  const inputStyles: React.CSSProperties = {
+    flex: 1,
+    padding: themeStyles.spacing4,
+    border: 'none',
+    outline: 'none',
+    backgroundColor: 'transparent',
+    fontSize: size === 'small' ? themeStyles.typographyScaleXs : 
+             size === 'large' ? themeStyles.fontSize : 
+             themeStyles.typographyScaleSm,
+    fontFamily: themeStyles.fontFamily,
+    color: disabled ? themeStyles.grayColor500 : themeStyles.grayColor900,
+    width: '100%',
+  };
+
+  const adornmentStyles: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    padding: `0 ${themeStyles.spacingXs}`,
+    color: themeStyles.grayColor500,
+  };
+
+  const helperTextStyles: React.CSSProperties = {
+    fontSize: themeStyles.typographyScaleXs,
+    color: error ? themeStyles.errorColor : themeStyles.grayColor600,
+    marginTop: themeStyles.spacingXs,
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value, e);
+  };
+
+  const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
     setFocused(true);
+    rest.onFocus?.(e);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
     setFocused(false);
-  };
-
-  // Theme styles for the TextField
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'standard':
-        return {
-          border: `0 0 1px 0 solid`,
-          borderRadius: '0',
-          backgroundColor: 'transparent',
-          padding: `${getSpacing('2', '0.5rem')} 0`,
-        };
-      case 'filled':
-        return {
-          border: '0',
-          borderRadius: `${getBorderRadius('sm', '0.125rem')} ${getBorderRadius('sm', '0.125rem')} 0 0`,
-          backgroundColor: getColor('gray.100', '#F3F4F6'),
-          padding: getSpacing('3', '0.75rem'),
-        };
-      default: // outlined
-        return {
-          border: '1px solid',
-          borderRadius: getBorderRadius('md', '0.375rem'),
-          backgroundColor: 'transparent',
-          padding: getSpacing('3', '0.75rem'),
-        };
-    }
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          fontSize: getTypography('fontSize.sm', '0.875rem'),
-          padding: getSpacing('2', '0.5rem'),
-          labelFontSize: getTypography('fontSize.xs', '0.75rem'),
-          helperTextFontSize: getTypography('fontSize.xs', '0.75rem'),
-        };
-      case 'large':
-        return {
-          fontSize: getTypography('fontSize.lg', '1.125rem'),
-          padding: getSpacing('4', '1rem'),
-          labelFontSize: getTypography('fontSize.md', '1rem'),
-          helperTextFontSize: getTypography('fontSize.sm', '0.875rem'),
-        };
-      default: // medium
-        return {
-          fontSize: getTypography('fontSize.base', '1rem'),
-          padding: getSpacing('3', '0.75rem'),
-          labelFontSize: getTypography('fontSize.sm', '0.875rem'),
-          helperTextFontSize: getTypography('fontSize.xs', '0.75rem'),
-        };
-    }
-  };
-
-  const themeStyles = {
-    ...getVariantStyles(),
-    ...getSizeStyles(),
-    spacing: getSpacing('4', '1rem'),
-    labelMargin: getSpacing('1', '0.25rem'),
-    helperTextMargin: getSpacing('1', '0.25rem'),
-    fontFamily: getTypography('fontFamily.base', 'system-ui, sans-serif'),
-    inputColor: getColor('text.primary', '#1F2937'),
-    labelColor: getColor('text.secondary', '#4B5563'),
-    placeholderColor: getColor('text.tertiary', '#9CA3AF'),
-    helperTextColor: getColor('text.secondary', '#4B5563'),
-    errorColor: getColor('error.500', '#EF4444'),
-    borderColor: getColor('gray.300', '#D1D5DB'),
-    hoverBorderColor: getColor('gray.500', '#6B7280'),
-    focusBorderColor: getColor('primary.500', '#3B82F6'),
-    transition: `${getTransition('duration.normal', '200ms')} ease`,
+    rest.onBlur?.(e);
   };
 
   return (
@@ -267,45 +286,33 @@ export const TextField: React.FC<TextFieldProps> = ({
       data-testid="text-field"
     >
       {label && (
-        <Label htmlFor={inputId} $error={error} $required={required} $themeStyles={themeStyles}>
+        <label id={labelId} htmlFor={inputId} style={labelStyles}>
           {label}
-        </Label>
+          {required && <span style={{ color: themeStyles.errorColor }}> *</span>}
+        </label>
       )}
-
-      <InputWrapper
-        $variant={variant}
-        $size={size}
-        $error={error}
-        $focused={focused}
-        $hasStartAdornment={!!startAdornment}
-        $hasEndAdornment={!!endAdornment}
-        $themeStyles={themeStyles}
-      >
-        {startAdornment && (
-          <StartAdornment color={themeStyles.labelColor}>{startAdornment}</StartAdornment>
-        )}
-
-        <Input
+      <div style={inputContainerStyles}>
+        {startAdornment && <div style={adornmentStyles}>{startAdornment}</div>}
+        <input
+          {...rest}
           id={inputId}
-          $hasStartAdornment={!!startAdornment}
-          $hasEndAdornment={!!endAdornment}
-          $themeStyles={themeStyles}
+          ref={ref}
+          aria-invalid={error}
+          aria-describedby={helperText ? helperId : undefined}
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          style={inputStyles}
           disabled={disabled}
           required={required}
-          {...rest}
         />
-
-        {endAdornment && <EndAdornment color={themeStyles.labelColor}>{endAdornment}</EndAdornment>}
-      </InputWrapper>
-
-      {helperText && (
-        <HelperText $error={error} $themeStyles={themeStyles}>
-          {helperText}
-        </HelperText>
-      )}
+        {endAdornment && <div style={adornmentStyles}>{endAdornment}</div>}
+      </div>
+      {helperText && <div id={helperId} style={helperTextStyles}>{helperText}</div>}
     </TextFieldContainer>
   );
-};
+});
+
+TextField.displayName = 'TextField';
+
+export default TextField;

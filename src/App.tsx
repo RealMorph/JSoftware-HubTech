@@ -1,12 +1,15 @@
 import React from 'react';
-import { UnifiedThemeProvider } from './core/theme/theme-wrapper';
-import { TabsDemo } from './components/navigation/TabsDemo';
+import { DirectThemeProvider } from './core/theme/DirectThemeProvider';
+import { defaultTheme } from './core/theme/theme-persistence';
+import AppRouter from './Router';
 
 const App: React.FC = () => {
   return (
-    <UnifiedThemeProvider>
-      <TabsDemo />
-    </UnifiedThemeProvider>
+    <div data-testid="app-root">
+      <DirectThemeProvider initialTheme={defaultTheme}>
+        <AppRouter />
+      </DirectThemeProvider>
+    </div>
   );
 };
 

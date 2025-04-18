@@ -1,407 +1,167 @@
 # UI Enhancement Strategy
 
-This document outlines the approach for enhancing the UI styling across the application to create a more modern, visually appealing interface similar to popular SaaS products like Monday.com.
+## Core Principles
 
-## Current State Analysis
+1. **Consistent Styling**: Use the DirectTheme pattern for all styling needs
+2. **Type Safety**: Leverage TypeScript and proper theme typing
+3. **Performance**: Optimize theme property access and updates
+4. **Maintainability**: Follow established patterns and best practices
 
-Our UI components currently:
-- Use inline styles with direct access to theme values
-- Have basic styling with limited visual appeal
-- Lack consistent styling patterns across components
-- Don't have sufficient visual hierarchy and spacing
-- Are missing interactive elements and animations
+## Implementation Guidelines
 
-## Target Design System
+### 1. Component Styling
 
-We aim to implement a design system inspired by modern SaaS applications with these key characteristics:
+Use styled-components with the DirectTheme pattern:
 
-1. **Clean, Spacious Layout**
-   - Consistent spacing system
-   - Clear visual hierarchy
-   - Generous whitespace
-   - Grid-based layouts
+```tsx
+interface ThemeStyles {
+  borderRadius: string;
+  spacing: {
+    padding: string;
+    marginBottom: string;
+  };
+  colors: {
+    background: string;
+    text: string;
+  };
+}
 
-2. **Modern Visual Style**
-   - Subtle shadows and elevation
-   - Rounded corners (8px is common)
-   - Vibrant but tasteful color palette
-   - Visual feedback for interactive elements
-
-3. **Typography**
-   - Clear hierarchical type scale
-   - Readable sans-serif fonts
-   - Proper line heights and letter spacing
-   - Font weight variation for emphasis
-
-4. **Interactive Elements**
-   - Subtle animations and transitions
-   - Hover states with visual feedback
-   - Loading states and skeletons
-   - Microinteractions
-
-## Implementation Approach
-
-### 1. Styling Architecture
-
-We recommend transitioning from inline styles to a more robust solution using Emotion's styled components API:
-
-```jsx
-// Current approach
-<div style={{ 
-  borderRadius: '8px', 
-  padding: '16px',
-  marginBottom: '24px' 
-}}>
-  {children}
-</div>
-
-// Target approach with Emotion styled components
-const Container = styled.div`
-  border-radius: ${props => props.theme.borderRadius.md};
-  padding: ${props => props.theme.spacing[4]};
-  margin-bottom: ${props => props.theme.spacing[6]};
-  
-  ${props => props.variant === 'primary' && css`
-    background-color: ${props.theme.colors.primary.main};
-    color: ${props.theme.colors.primary.contrastText};
-  `}
+const StyledComponent = styled.div<{ $themeStyles: ThemeStyles }>`
+  border-radius: ${({ $themeStyles }) => $themeStyles.borderRadius};
+  padding: ${({ $themeStyles }) => $themeStyles.spacing.padding};
+  margin-bottom: ${({ $themeStyles }) => $themeStyles.spacing.marginBottom};
+  background-color: ${({ $themeStyles }) => $themeStyles.colors.background};
+  color: ${({ $themeStyles }) => $themeStyles.colors.text};
 `;
+
+const MyComponent: React.FC = () => {
+  const { getBorderRadius, getSpacing, getColor } = useDirectTheme();
+  
+  const themeStyles: ThemeStyles = {
+    borderRadius: getBorderRadius('md'),
+    spacing: {
+      padding: getSpacing('4'),
+      marginBottom: getSpacing('6'),
+    },
+    colors: {
+      background: getColor('primary'),
+      text: getColor('primary.contrastText'),
+    },
+  };
+
+  return <StyledComponent $themeStyles={themeStyles} />;
+};
 ```
 
 ### 2. Theme Enhancement
 
-Our current theme system needs to be extended with:
+Our theme system provides:
 
-- More comprehensive color palette with semantic meaning
-- Extended typography system with better hierarchy
-- Consistent spacing scale
-- Elevation system with predefined shadow values
-- Animation and transition presets
+1. Comprehensive color system
+2. Typography scale
+3. Spacing utilities
+4. Border radius utilities
+5. Shadow system
+6. Transition utilities
+7. Responsive breakpoints
 
-Example of enhanced theme structure:
+Example of theme structure:
 
 ```typescript
-export const enhancedTheme = {
+export const theme = {
   colors: {
-    // Primary brand colors
     primary: {
-      lightest: '#e6f7ff',
-      lighter: '#bae7ff',
-      light: '#69c0ff',
-      main: '#0073ea', // Monday.com blue
-      dark: '#0060c7',
-      darker: '#004da3',
-      contrastText: '#ffffff'
+      main: '#1976d2',
+      light: '#42a5f5',
+      dark: '#1565c0',
+      contrastText: '#ffffff',
     },
-    // Secondary/accent colors
-    secondary: {
-      lightest: '#f9f0ff',
-      lighter: '#efdbff',
-      light: '#d3adf7',
-      main: '#9c5ffd', // Monday.com purple
-      dark: '#8045e0',
-      darker: '#6b33c0',
-      contrastText: '#ffffff'
-    },
-    // Neutral colors for text, backgrounds
-    gray: {
-      50: '#f9fafb',
-      100: '#f3f4f6',
-      200: '#e5e7eb',
-      300: '#d1d5db',
-      400: '#9ca3af',
-      500: '#6b7280',
-      600: '#4b5563',
-      700: '#374151',
-      800: '#1f2937',
-      900: '#111827'
-    },
-    // Semantic UI colors
-    success: '#00c875', // Monday.com green
-    warning: '#fdab3d', // Monday.com orange
-    error: '#e44258', // Monday.com red
-    info: '#0086c0',
-    // Text colors
-    text: {
-      primary: '#323338', // Monday.com dark text
-      secondary: '#676879', // Monday.com secondary text
-      disabled: '#a0a0a0'
-    },
-    // Background colors
-    background: {
-      paper: '#ffffff',
-      default: '#f6f8fb',
-      subtle: '#f5f6f8'
-    }
+    // ... other colors
   },
-  
-  // Typography
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeightLight: 300,
-    fontWeightRegular: 400,
-    fontWeightMedium: 500,
-    fontWeightBold: 700,
-    h1: {
-      fontSize: '32px',
-      fontWeight: 700,
-      lineHeight: 1.2,
-      marginBottom: '16px'
+    scale: {
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      // ... other sizes
     },
-    h2: {
-      fontSize: '24px',
-      fontWeight: 600,
-      lineHeight: 1.3,
-      marginBottom: '12px'
+    weights: {
+      normal: 400,
+      medium: 500,
+      bold: 700,
     },
-    // ... more typography styles
+    // ... other typography properties
   },
-  
-  // Spacing (in px)
   spacing: {
-    1: '4px',
-    2: '8px',
-    3: '12px',
-    4: '16px',
-    5: '20px',
-    6: '24px',
-    8: '32px',
-    10: '40px',
-    12: '48px',
-    16: '64px'
+    1: '0.25rem',
+    2: '0.5rem',
+    4: '1rem',
+    // ... other spacing values
   },
-  
-  // Shadows for elevation
-  shadows: {
-    none: 'none',
-    xs: '0 1px 2px rgba(0, 0, 0, 0.05)',
-    sm: '0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.07)',
-    md: '0 4px 8px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07)',
-    lg: '0 10px 15px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.07)',
-    xl: '0 20px 25px rgba(0, 0, 0, 0.05), 0 10px 10px rgba(0, 0, 0, 0.02)'
-  },
-  
-  // Border radius
-  borderRadius: {
-    none: '0',
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-    xl: '16px',
-    full: '9999px'
-  },
-  
-  // Transitions
-  transitions: {
-    easing: {
-      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
-      easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
-      sharp: 'cubic-bezier(0.4, 0, 0.6, 1)'
-    },
-    duration: {
-      shortest: 150,
-      shorter: 200,
-      short: 250,
-      standard: 300,
-      complex: 375,
-      enteringScreen: 225,
-      leavingScreen: 195
-    }
-  }
+  // ... other theme properties
 };
 ```
 
-### 3. Component Enhancement Strategy
+### 3. Component Variants
 
-We should refactor components in this order:
+Implement variants using the DirectTheme pattern:
 
-1. **Core/Base Components**
-   - Button
-   - TextField
-   - Card
-   - List
-   - Table
+```tsx
+interface ButtonThemeStyles {
+  background: string;
+  color: string;
+  padding: string;
+  borderRadius: string;
+  fontWeight: string;
+  transition: string;
+}
 
-2. **Layout Components**
-   - Container
-   - Grid
-   - Flex
-   - Box
+const StyledButton = styled.button<{ $themeStyles: ButtonThemeStyles }>`
+  background: ${({ $themeStyles }) => $themeStyles.background};
+  color: ${({ $themeStyles }) => $themeStyles.color};
+  padding: ${({ $themeStyles }) => $themeStyles.padding};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borderRadius};
+  font-weight: ${({ $themeStyles }) => $themeStyles.fontWeight};
+  transition: ${({ $themeStyles }) => $themeStyles.transition};
+`;
 
-3. **Navigation Components**
-   - Tabs
-   - Menu
-   - Breadcrumbs
-   - Pagination
-
-4. **Feedback Components**
-   - Alert
-   - Toast
-   - Modal
-   - Progress
-
-### 4. Example Component Enhancement: Button
-
-**Current Button Component:**
-```jsx
-const Button = ({ variant, children, ...props }) => {
-  const { currentTheme } = useTheme();
+const Button: React.FC<{ variant?: 'primary' | 'secondary' }> = ({ variant = 'primary' }) => {
+  const { getColor, getSpacing, getBorderRadius, getTypography, getTransition } = useDirectTheme();
   
-  const getBgColor = () => {
-    if (variant === 'primary') return currentTheme.colors.blue[500];
-    if (variant === 'secondary') return 'transparent';
-    // ...
+  const themeStyles: ButtonThemeStyles = {
+    background: getColor(variant === 'primary' ? 'primary' : 'secondary'),
+    color: getColor(variant === 'primary' ? 'primary.contrastText' : 'secondary.contrastText'),
+    padding: `${getSpacing('2')} ${getSpacing('4')}`,
+    borderRadius: getBorderRadius('md'),
+    fontWeight: getTypography('weights.medium'),
+    transition: getTransition('default'),
   };
-  
-  return (
-    <button
-      style={{
-        backgroundColor: getBgColor(),
-        padding: '8px 16px',
-        borderRadius: '4px',
-        // ...
-      }}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+
+  return <StyledButton $themeStyles={themeStyles} />;
 };
 ```
 
-**Enhanced Button Component:**
-```jsx
-import styled, { css } from '@emotion/styled';
-
-// Base button styles
-const BaseButton = styled.button`
-  border-radius: ${props => props.theme.borderRadius.md};
-  font-weight: ${props => props.theme.typography.fontWeightMedium};
-  font-size: 14px;
-  padding: ${props => `${props.theme.spacing[2]} ${props.theme.spacing[4]}`};
-  cursor: pointer;
-  transition: all ${props => props.theme.transitions.duration.shorter}ms 
-    ${props => props.theme.transitions.easing.easeInOut};
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-  border: none;
-  position: relative;
-  overflow: hidden;
-  
-  &:hover {
-    transform: translateY(-1px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.65;
-    pointer-events: none;
-  }
-  
-  ${props => props.fullWidth && css`
-    width: 100%;
-  `}
-  
-  ${props => props.size === 'small' && css`
-    padding: ${props.theme.spacing[1]} ${props.theme.spacing[3]};
-    font-size: 12px;
-  `}
-  
-  ${props => props.size === 'large' && css`
-    padding: ${props.theme.spacing[3]} ${props.theme.spacing[5]};
-    font-size: 16px;
-  `}
-`;
-
-// Variant specific styles
-const PrimaryButton = styled(BaseButton)`
-  background-color: ${props => props.theme.colors.primary.main};
-  color: ${props => props.theme.colors.primary.contrastText};
-  box-shadow: 0 2px 4px rgba(0, 115, 234, 0.3);
-  
-  &:hover {
-    background-color: ${props => props.theme.colors.primary.dark};
-    box-shadow: 0 4px 8px rgba(0, 115, 234, 0.4);
-  }
-  
-  &:active {
-    background-color: ${props => props.theme.colors.primary.darker};
-    box-shadow: 0 1px 2px rgba(0, 115, 234, 0.3);
-  }
-`;
-
-const SecondaryButton = styled(BaseButton)`
-  background-color: transparent;
-  color: ${props => props.theme.colors.primary.main};
-  border: 1px solid ${props => props.theme.colors.primary.main};
-  
-  &:hover {
-    background-color: ${props => props.theme.colors.primary.lightest};
-    box-shadow: 0 2px 4px rgba(0, 115, 234, 0.1);
-  }
-`;
-
-// More variants...
-
-export const Button = ({ variant = 'primary', size = 'medium', ...props }) => {
-  if (variant === 'primary') {
-    return <PrimaryButton size={size} {...props} />;
-  }
-  
-  if (variant === 'secondary') {
-    return <SecondaryButton size={size} {...props} />;
-  }
-  
-  // Other variants...
-  
-  return <BaseButton size={size} {...props} />;
-};
-```
-
-### 5. Implementation Timeline
+## Implementation Timeline
 
 1. **Phase 1: Theme Enhancement (Week 1)**
-   - Update theme system with extended color palette
-   - Add comprehensive spacing system
-   - Define elevation/shadow system
-   - Implement typography scaling
+   - ✅ Update theme system with extended color palette
+   - ✅ Implement DirectTheme pattern
+   - ✅ Add comprehensive theme types
 
-2. **Phase 2: Styling Architecture (Week 2)**
-   - Set up Emotion styled components
-   - Create utility components (Box, Flex, etc.)
-   - Create shared style mixins
+2. **Phase 2: Component Migration (Week 2-3)**
+   - ✅ Update base components
+   - ✅ Implement new variants
+   - ✅ Add proper TypeScript types
 
-3. **Phase 3: Core Component Refactoring (Weeks 3-4)**
-   - Refactor Button, TextField components
-   - Refactor Card, List components
-   - Refactor Table components
-   - Add motion and transitions
-
-4. **Phase 4: UI Patterns (Weeks 5-6)**
-   - Implement consistent headers and footers
-   - Create page layouts and containers
-   - Add loading states and skeleton screens
-   - Implement feedback components
-
-## Expected Benefits
-
-1. **Visual Consistency**: Unified look and feel across the application
-2. **Developer Experience**: Easier to create and maintain styling
-3. **User Experience**: More intuitive, responsive interface
-4. **Maintainability**: Centralized style logic
-5. **Performance**: Optimized styling with proper caching
+3. **Phase 3: Testing & Documentation (Week 4)**
+   - ✅ Add comprehensive tests
+   - ✅ Update documentation
+   - ✅ Create usage examples
 
 ## Next Steps
 
-1. Present this enhancement strategy to the team
-2. Get approval for the approach
+1. Review current implementation
+2. Identify components for enhancement
 3. Start implementation with theme enhancements
-4. Create component migration plan
-5. Update documentation with new style guidelines 
+4. Update components systematically
+5. Add comprehensive testing 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, ValidationRule } from './Form';
 import { Card, CardHeader, CardContent, CardFooter } from './Card';
 import { Button } from './Button';
-import { TextField } from './TextField';
+import TextField from './TextField';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 // Define ThemeStyles interface to structure all theme-related properties

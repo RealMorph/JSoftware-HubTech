@@ -816,8 +816,12 @@ function DataGrid<T extends Record<string, any> = any>({
 
   // Default filter component
   const DefaultFilter: React.FC<FilterProps> = ({ value, onChange }) => {
+    const theme = useDirectTheme();
+    const themeStyles = createThemeStyles(theme);
+    
     return (
       <FilterInput
+        $themeStyles={themeStyles}
         type="text"
         value={value || ''}
         onChange={e => onChange(e.target.value)}

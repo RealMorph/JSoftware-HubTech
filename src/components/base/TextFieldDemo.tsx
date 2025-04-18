@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField } from './TextField';
+import TextField from './TextField';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
 export const TextFieldDemo: React.FC = () => {
   const [values, setValues] = useState({

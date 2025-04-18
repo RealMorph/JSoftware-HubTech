@@ -1,7 +1,7 @@
 import React, { act } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { TextField } from '../TextField';
+import TextField from '../TextField';
 import { DirectThemeProvider } from '../../../core/theme/DirectThemeProvider';
 import { extendedMockTheme } from '../../../core/theme/__mocks__/mockTheme';
 

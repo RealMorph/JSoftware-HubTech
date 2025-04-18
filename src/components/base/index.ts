@@ -1,7 +1,7 @@
 // Export all base components
 export * from './Button';
 export * from './ButtonDemo';
-export * from './TextField';
+export { default as TextField } from './TextField';
 export * from './TextFieldDemo';
 export * from './Card';
 export * from './CardDemo';
@@ -25,7 +25,7 @@ export * from './DatePickerDemo';
 
 import { Button } from './Button';
 import { ButtonDemo } from './ButtonDemo';
-import { TextField } from './TextField';
+import TextField from './TextField';
 import { TextFieldDemo } from './TextFieldDemo';
 import { Card, CardHeader, CardContent, CardFooter } from './Card';
 import { CardDemo } from './CardDemo';
@@ -51,7 +51,6 @@ import { DatePickerDemo } from './DatePickerDemo';
 export {
   Button,
   ButtonDemo,
-  TextField,
   TextFieldDemo,
   Card,
   CardHeader,

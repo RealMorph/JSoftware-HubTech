@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { UnifiedThemeProvider } from './core/theme/theme-wrapper';
+import styled from '@emotion/styled';
+import { DirectThemeProvider } from './core/theme/DirectThemeProvider';
+import { ThemeServiceProvider } from './core/theme/ThemeServiceProvider';
+import { inMemoryThemeService } from './core/theme/theme-context';
+import { ProtectedRoute } from './core/router/ProtectedRoute';
 import { FormDemo } from './components/base/FormDemo';
 import { DataDisplayDemo } from './components/base/DataDisplayDemo';
 import DatePickerDemoPage from './pages/DatePickerDemoPage';
@@ -10,98 +14,115 @@ import FeedbackDemoPage from './pages/FeedbackDemoPage';
 import TabsDemoPage from './pages/TabsDemoPage';
 import NavigationDemoPage from './pages/NavigationDemoPage';
 import { DataVisualizationDemo } from './components/data-visualization';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ThemeSwitch from './components/theme/ThemeSwitch';
+
+// Styled Components
+const Container = styled.div<{ $themeStyles?: boolean }>`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing.lg};
+  font-family: ${({ theme }) => theme.typography.fontFamily.base};
+`;
+
+const Header = styled.header<{ $themeStyles?: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  padding-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
+const Logo = styled.div<{ $themeStyles?: boolean }>`
+  font-size: ${({ theme }) => theme.typography.fontSize.xl};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.primary};
+  display: flex;
+  align-items: center;
+`;
+
+const LogoIcon = styled.span<{ $themeStyles?: boolean }>`
+  background: linear-gradient(to right, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.secondary});
+  color: ${({ theme }) => theme.colors.background};
+  width: 36px;
+  height: 36px;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: ${({ theme }) => theme.spacing.sm};
+  box-shadow: ${({ theme }) => theme.shadows.md};
+`;
+
+const Nav = styled.nav<{ $themeStyles?: boolean }>`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.lg};
+`;
+
+const NavLink = styled.a<{ $active?: boolean; $themeStyles?: boolean }>`
+  color: ${({ theme, $active }) => 
+    $active ? theme.colors.primary : typeof theme.colors.text === 'object' 
+      ? theme.colors.text.secondary 
+      : theme.colors.text};
+  text-decoration: none;
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  transition: all ${({ theme }) => theme.transitions.duration.normal} ${({ theme }) => theme.transitions.timing.easeInOut};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+    text-decoration: none;
+  }
+`;
+
+const Title = styled.h1<{ $themeStyles?: boolean }>`
+  font-size: ${({ theme }) => theme.typography.fontSize['2xl']};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+  color: ${({ theme }) => 
+    typeof theme.colors.text === 'object' 
+      ? theme.colors.text.primary 
+      : theme.colors.text};
+`;
+
+const Subtitle = styled.p<{ $themeStyles?: boolean }>`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  color: ${({ theme }) => 
+    typeof theme.colors.text === 'object' 
+      ? theme.colors.text.secondary 
+      : theme.colors.text};
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+`;
+
+const Grid = styled.div<{ $themeStyles?: boolean }>`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: ${({ theme }) => theme.spacing.lg};
+`;
 
 // Component that displays a list of available demos with modern styling
 const DemoHome = () => {
   return (
-    <div
-      style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '32px 24px',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      }}
-    >
-      {/* Header with logo and navigation */}
-      <header
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '36px',
-          borderBottom: '1px solid #e6e9ef',
-          paddingBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '24px',
-            fontWeight: 700,
-            color: '#0073ea',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <span
-            style={{
-              background: 'linear-gradient(to right, #0073ea, #00c2ff)',
-              color: 'white',
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: '12px',
-              boxShadow: '0 4px 8px rgba(0, 115, 234, 0.2)',
-            }}
-          >
-            M
-          </span>
+    <Container>
+      <Header>
+        <Logo>
+          <LogoIcon>M</LogoIcon>
           Component Library
-        </div>
-        <nav style={{ display: 'flex', gap: '24px' }}>
-          <a href="#" style={{ color: '#0073ea', textDecoration: 'none', fontWeight: 500 }}>
-            Home
-          </a>
-          <a href="#" style={{ color: '#676879', textDecoration: 'none', fontWeight: 500 }}>
-            Documentation
-          </a>
-          <a href="#" style={{ color: '#676879', textDecoration: 'none', fontWeight: 500 }}>
-            Theme
-          </a>
-        </nav>
-      </header>
+        </Logo>
+        <Nav>
+          <NavLink href="#" $active>Home</NavLink>
+          <NavLink href="#">Documentation</NavLink>
+          <NavLink href="#">Theme</NavLink>
+        </Nav>
+      </Header>
 
-      <h1
-        style={{
-          fontSize: '32px',
-          fontWeight: 700,
-          marginBottom: '8px',
-          color: '#323338',
-        }}
-      >
-        Component Demos
-      </h1>
-      <p
-        style={{
-          fontSize: '16px',
-          color: '#676879',
-          marginBottom: '40px',
-        }}
-      >
+      <Title>Component Demos</Title>
+      <Subtitle>
         Explore our component library - select a category to view interactive demos
-      </p>
+      </Subtitle>
 
-      {/* Component Categories in a modern card grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '24px',
-        }}
-      >
+      <Grid>
         {/* Data Display Card */}
         <div
           style={{
@@ -824,7 +845,7 @@ const DemoHome = () => {
             </Link>
           </div>
         </div>
-      </div>
+      </Grid>
 
       {/* Additional Info Section */}
       <div
@@ -892,7 +913,7 @@ const DemoHome = () => {
           </a>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 
@@ -954,20 +975,7 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
             </span>
             Component Library
           </div>
-          <Link
-            to="/demos"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              color: '#0073ea',
-              textDecoration: 'none',
-              fontWeight: 500,
-              fontSize: '14px',
-              gap: '6px',
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>←</span> Back to Demo List
-          </Link>
+          <ThemeSwitch />
         </div>
       </header>
 
@@ -1000,89 +1008,29 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Main Router component
-const AppRouter = () => {
+const Router = () => {
   return (
-    <BrowserRouter>
-      <UnifiedThemeProvider>
-        <Routes>
-          <Route path="/" element={<DemoHome />} />
-          <Route path="/demos" element={<DemoHome />} />
-          <Route
-            path="/demos/form"
-            element={
-              <DemoLayout>
-                <FormDemo />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/data-display"
-            element={
-              <DemoLayout>
-                <DataDisplayDemo />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/date-picker"
-            element={
-              <DemoLayout>
-                <DatePickerDemoPage />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/time-picker"
-            element={
-              <DemoLayout>
-                <TimePickerDemoPage />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/layout"
-            element={
-              <DemoLayout>
-                <LayoutDemo />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/feedback"
-            element={
-              <DemoLayout>
-                <FeedbackDemoPage />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/tabs"
-            element={
-              <DemoLayout>
-                <TabsDemoPage />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/navigation"
-            element={
-              <DemoLayout>
-                <NavigationDemoPage />
-              </DemoLayout>
-            }
-          />
-          <Route
-            path="/demos/visualization"
-            element={
-              <DemoLayout>
-                <DataVisualizationDemo />
-              </DemoLayout>
-            }
-          />
-        </Routes>
-      </UnifiedThemeProvider>
-    </BrowserRouter>
+    <ThemeServiceProvider themeService={inMemoryThemeService}>
+      <DirectThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<DemoHome />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/demos/data-display" element={<DataDisplayDemo />} />
+            <Route path="/demos/form" element={<FormDemo />} />
+            <Route path="/demos/date-picker" element={<DatePickerDemoPage />} />
+            <Route path="/demos/time-picker" element={<TimePickerDemoPage />} />
+            <Route path="/demos/layout" element={<LayoutDemo />} />
+            <Route path="/demos/feedback" element={<FeedbackDemoPage />} />
+            <Route path="/demos/tabs" element={<TabsDemoPage />} />
+            <Route path="/demos/navigation" element={<NavigationDemoPage />} />
+            <Route path="/demos/data-visualization" element={<DataVisualizationDemo />} />
+          </Routes>
+        </BrowserRouter>
+      </DirectThemeProvider>
+    </ThemeServiceProvider>
   );
 };
 
-export default AppRouter;
+export default Router;

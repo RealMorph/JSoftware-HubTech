@@ -121,6 +121,7 @@ const ModalBody = styled.div<{ $themeStyles: ThemeStyles }>`
 const ModalFooter = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
   padding-top: 0.5rem;
   border-top: 1px solid ${props => props.$themeStyles.borderColor};
 `;
@@ -136,6 +137,11 @@ export const ModalDemo: React.FC<ModalDemoProps> = ({ title = 'Modal Demo' }) =>
 
   const [isBasicModalOpen, setIsBasicModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const handleConfirm = () => {
+    window.alert('Action confirmed!');
+    setIsConfirmModalOpen(false);
+  };
 
   return (
     <DemoContainer $themeStyles={themeStyles}>
@@ -189,14 +195,7 @@ export const ModalDemo: React.FC<ModalDemoProps> = ({ title = 'Modal Demo' }) =>
               <Button $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(false)}>
                 Cancel
               </Button>
-              <Button
-                $themeStyles={themeStyles}
-                primary
-                onClick={() => {
-                  window.alert('Action confirmed!');
-                  setIsConfirmModalOpen(false);
-                }}
-              >
+              <Button $themeStyles={themeStyles} primary onClick={handleConfirm}>
                 Confirm
               </Button>
             </ModalFooter>
@@ -207,29 +206,4 @@ export const ModalDemo: React.FC<ModalDemoProps> = ({ title = 'Modal Demo' }) =>
   );
 };
 
-// Add default export
-export default ModalDemo;
-
-              <Button $themeStyles={themeStyles} onClick={() => setIsConfirmModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                $themeStyles={themeStyles}
-                primary
-                onClick={() => {
-                  window.alert('Action confirmed!');
-                  setIsConfirmModalOpen(false);
-                }}
-              >
-                Confirm
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-    </DemoContainer>
-  );
-};
-
-// Add default export
 export default ModalDemo;

@@ -8,7 +8,7 @@ import {
   ThemeTypography,
 } from '../types';
 import { Button } from '../../../components/base/Button';
-import { TextField } from '../../../components/base/TextField';
+import TextField from '../../../components/base/TextField';
 import styled from '@emotion/styled';
 
 // Theme styles interfaces

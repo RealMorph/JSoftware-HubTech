@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ThemeService, ThemeServiceContext } from './theme-context';
 
-/**
- * Provider for theme service
- */
-export const ThemeServiceProvider: React.FC<{
-  children: React.ReactNode;
+interface ThemeServiceProviderProps {
+  children: ReactNode;
   themeService: ThemeService;
-}> = ({ children, themeService }) => {
+}
+
+export const ThemeServiceProvider: React.FC<ThemeServiceProviderProps> = ({
+  children,
+  themeService,
+}) => {
   return (
-    <ThemeServiceContext.Provider value={themeService}>{children}</ThemeServiceContext.Provider>
+    <ThemeServiceContext.Provider value={themeService}>
+      {children}
+    </ThemeServiceContext.Provider>
   );
-};
+}; 

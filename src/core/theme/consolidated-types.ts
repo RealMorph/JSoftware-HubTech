@@ -40,22 +40,22 @@ export interface StateColors {
 export interface ThemeColors {
   primary: string;
   secondary: string;
-  tertiary?: string;
-  success: string;
-  warning: string;
   error: string;
+  warning: string;
   info: string;
-  text:
-    | string
-    | {
-        primary: string;
-        secondary: string;
-        disabled: string;
-      };
+  success: string;
   background: string;
-  border: string;
-  white: string;
   surface: string;
+  border: string;
+  text: {
+    primary: string;
+    secondary: string;
+  };
+  private: {
+    buttonBg: string;
+    buttonHover: string;
+    googleButton: string;
+  };
 }
 
 // Typography related types
@@ -85,6 +85,7 @@ export interface TypographyConfig {
   lineHeight: {
     none: number;
     tight: number;
+    snug: number;
     normal: number;
     relaxed: number;
     loose: number;
@@ -101,6 +102,7 @@ export interface TypographyConfig {
 
 // Spacing related types
 export interface SpacingConfig {
+  none: string;
   xs: string;
   sm: string;
   md: string;
@@ -108,7 +110,6 @@ export interface SpacingConfig {
   xl: string;
   '2xl': string;
   '3xl': string;
-  '4xl': string;
 }
 
 // Breakpoint related types
@@ -125,11 +126,9 @@ export interface BreakpointConfig {
 export interface BorderRadiusConfig {
   none: string;
   sm: string;
-  base: string;
   md: string;
   lg: string;
   xl: string;
-  '2xl': string;
   full: string;
 }
 
@@ -137,27 +136,36 @@ export interface BorderRadiusConfig {
 export interface ShadowConfig {
   none: string;
   sm: string;
-  base: string;
   md: string;
   lg: string;
-  xl: string;
-  '2xl': string;
-  inner: string;
+  input: string;
+  button: string;
 }
 
 // Transition related types
 export interface TransitionConfig {
-  duration: {
-    fast: string;
-    normal: string;
-    slow: string;
-  };
-  timing: {
-    easeIn: string;
-    easeOut: string;
-    easeInOut: string;
-    linear: string;
-  };
+  fastest: string;
+  faster: string;
+  fast: string;
+  normal: string;
+  slow: string;
+  slower: string;
+  slowest: string;
+}
+
+export interface ZIndexConfig {
+  hide: number;
+  auto: 'auto';
+  base: number;
+  docked: number;
+  dropdown: number;
+  sticky: number;
+  banner: number;
+  overlay: number;
+  modal: number;
+  popover: number;
+  toast: number;
+  tooltip: number;
 }
 
 // The consolidated ThemeConfig interface
@@ -169,6 +177,7 @@ export interface ThemeConfig {
   borderRadius: BorderRadiusConfig;
   shadows: ShadowConfig;
   transitions: TransitionConfig;
+  zIndex: ZIndexConfig;
   id?: string;
   name?: string;
   description?: string;

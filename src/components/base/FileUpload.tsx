@@ -349,13 +349,13 @@ const PreviewFile = styled.div<{ $themeStyles: ThemeStyles }>`
   flex-direction: column;
   font-size: ${props => props.$themeStyles.typography.fontSize.xs};
   padding: ${props => props.$themeStyles.spacing.xs};
-  background-color: ${props => props.$themeStyles.colors.backgroundSecondary};
+  background-color: ${props => props.$themeStyles.colors.background.default};
   color: ${props => props.$themeStyles.colors.text};
 `;
 
 const FileExtension = styled.div<{ $themeStyles: ThemeStyles }>`
   font-size: 1.5rem;
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.bold};
+  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
   margin-bottom: 0.25rem;
   color: ${props => props.$themeStyles.colors.primary};
   text-transform: uppercase;

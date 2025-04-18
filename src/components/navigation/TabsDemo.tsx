@@ -61,58 +61,19 @@ const DemoTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
 const tabs = [
   {
     id: 'tab1',
-    label: 'Overview',
-    content: <div>Overview content with detailed information about the system.</div>,
+    label: 'Dashboard',
+    content: <div>Main dashboard content with overview metrics.</div>
   },
   {
     id: 'tab2',
-    label: 'Settings',
-    content: <div>Settings panel with various configuration options.</div>,
+    label: 'Reports',
+    content: <div>Detailed reports and data analysis.</div>
   },
   {
     id: 'tab3',
     label: 'Analytics',
-    content: <div>Analytics dashboard with charts and metrics.</div>,
-  },
-];
-
-export const TabsDemo: React.FC = () => {
-  const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
-
-  return (
-    <DemoContainer $themeStyles={themeStyles}>
-      <DemoSection $themeStyles={themeStyles}>
-        <DemoTitle $themeStyles={themeStyles}>Default Tabs</DemoTitle>
-        <Tabs tabs={tabs} />
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <DemoTitle $themeStyles={themeStyles}>Pill Tabs</DemoTitle>
-        <Tabs tabs={tabs} variant="pills" />
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <DemoTitle $themeStyles={themeStyles}>Underline Tabs</DemoTitle>
-        <Tabs tabs={tabs} variant="underline" />
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <DemoTitle $themeStyles={themeStyles}>Tab Sizes</DemoTitle>
-        <Tabs tabs={tabs} size="small" />
-        <Tabs tabs={tabs} size="medium" />
-        <Tabs tabs={tabs} size="large" />
-      </DemoSection>
-    </DemoContainer>
-  );
-};
-
-export default TabsDemo;
-
-    id: 'tab3',
-    label: 'Analytics',
-    content: <div>Analytics dashboard with charts and metrics.</div>,
-  },
+    content: <div>Analytics dashboard with charts and metrics.</div>
+  }
 ];
 
 export const TabsDemo: React.FC = () => {

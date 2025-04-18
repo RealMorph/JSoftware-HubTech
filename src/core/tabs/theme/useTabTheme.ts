@@ -1,4 +1,4 @@
-import { useTheme } from '../../theme';
+import { useDirectTheme } from '../../theme/DirectThemeProvider';
 import {
   defaultTabThemeExtension,
   TabStyleOptions,
@@ -10,27 +10,27 @@ import {
  * Hook to access the tab theme configuration
  */
 export function useTabTheme() {
-  const theme = useTheme();
+  const { theme } = useDirectTheme();
 
   // Safely get the tab theme extension from the current theme or use default
   const tabTheme: TabThemeExtension = {
     tabs: {
       styles: {
         default: {
-          ...((theme?.currentTheme as any)?.tabs?.styles?.default ||
+          ...((theme as any)?.tabs?.styles?.default ||
             defaultTabThemeExtension.tabs.styles.default),
         },
         active: {
-          ...((theme?.currentTheme as any)?.tabs?.styles?.active ||
+          ...((theme as any)?.tabs?.styles?.active ||
             defaultTabThemeExtension.tabs.styles.active),
         },
         hover: {
-          ...((theme?.currentTheme as any)?.tabs?.styles?.hover ||
+          ...((theme as any)?.tabs?.styles?.hover ||
             defaultTabThemeExtension.tabs.styles.hover),
         },
       },
       animation: {
-        ...((theme?.currentTheme as any)?.tabs?.animation ||
+        ...((theme as any)?.tabs?.animation ||
           defaultTabThemeExtension.tabs.animation),
       },
     },

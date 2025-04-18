@@ -188,7 +188,7 @@ const HelpIcon = () => (
 /**
  * Demo component for the Menu
  */
-const MenuDemo: React.FC = () => {
+export const MenuDemo: React.FC = () => {
   const themeContext = useDirectTheme();
   const themeStyles = createThemeStyles(themeContext);
 
@@ -286,25 +286,10 @@ const MenuDemo: React.FC = () => {
 
   // Dropdown menu items
   const dropdownMenuItems: MenuItem[] = [
-    {
-      id: 'profile',
-      label: 'View Profile',
-      icon: <UserIcon />,
-      onClick: () => console.log('Profile clicked'),
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: <SettingsIcon />,
-      onClick: () => console.log('Settings clicked'),
-    },
+    { id: 'profile', label: 'Profile', icon: <UserIcon />, onClick: () => console.log('Profile clicked') },
+    { id: 'settings', label: 'Settings', icon: <SettingsIcon />, onClick: () => console.log('Settings clicked') },
+    { id: 'help', label: 'Help', icon: <HelpIcon />, onClick: () => console.log('Help clicked') },
     { id: 'divider', label: '-', disabled: true },
-    {
-      id: 'help',
-      label: 'Help Center',
-      icon: <HelpIcon />,
-      onClick: () => console.log('Help clicked'),
-    },
     { id: 'logout', label: 'Logout', onClick: () => console.log('Logout clicked') },
   ];
 
@@ -319,9 +304,9 @@ const MenuDemo: React.FC = () => {
       <p>This demo showcases the various configurations and capabilities of the Menu component.</p>
 
       <DemoSection $themeStyles={themeStyles}>
-        <Title $themeStyles={themeStyles}>Basic Menus</Title>
+        <Title $themeStyles={themeStyles}>Basic Menu</Title>
         <Description $themeStyles={themeStyles}>
-          Basic vertical and horizontal menus for navigation.
+          Simple menu with vertical and horizontal variants.
         </Description>
 
         <Row $themeStyles={themeStyles}>
@@ -341,59 +326,11 @@ const MenuDemo: React.FC = () => {
             <CodeBlock $themeStyles={themeStyles}>{`<Menu
   items={horizontalMenuItems}
   variant="horizontal"
-  bordered={true}
 />`}</CodeBlock>
 
             <Menu items={horizontalMenuItems} variant="horizontal" bordered={true} />
           </Column>
         </Row>
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <Title $themeStyles={themeStyles}>Menu Variations</Title>
-        <Description $themeStyles={themeStyles}>
-          Different variations and styles of menus.
-        </Description>
-
-        <Row $themeStyles={themeStyles}>
-          <Column $themeStyles={themeStyles}>
-            <ExampleTitle $themeStyles={themeStyles}>With Dividers</ExampleTitle>
-            <CodeBlock $themeStyles={themeStyles}>{`<Menu
-  items={verticalMenuItems}
-  variant="vertical"
-  dividers={true}
-  showIcons={true}
-/>`}</CodeBlock>
-
-            <Menu
-              items={verticalMenuItems}
-              variant="vertical"
-              dividers={true}
-              showIcons={true}
-              bordered={true}
-            />
-          </Column>
-
-          <Column $themeStyles={themeStyles}>
-            <ExampleTitle $themeStyles={themeStyles}>Compact Size</ExampleTitle>
-            <CodeBlock $themeStyles={themeStyles}>{`<Menu
-  items={verticalMenuItems}
-  variant="vertical"
-  size="small"
-  compact={true}
-  showIcons={true}
-/>`}</CodeBlock>
-
-            <Menu
-              items={verticalMenuItems}
-              variant="vertical"
-              size="small"
-              compact={true}
-              showIcons={true}
-              bordered={true}
-            />
-          </Column>
-        </Row>
 
         <Row $themeStyles={themeStyles}>
           <Column $themeStyles={themeStyles}>
@@ -496,111 +433,3 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     </DemoContainer>
   );
 };
-
-export default MenuDemo;
-
-        </Row>
-
-        <Row $themeStyles={themeStyles}>
-          <Column $themeStyles={themeStyles}>
-            <ExampleTitle $themeStyles={themeStyles}>Without Icons</ExampleTitle>
-            <CodeBlock $themeStyles={themeStyles}>{`<Menu
-  items={verticalMenuItems}
-  variant="vertical"
-  showIcons={false}
-/>`}</CodeBlock>
-
-            <Menu items={verticalMenuItems} variant="vertical" showIcons={false} bordered={true} />
-          </Column>
-
-          <Column $themeStyles={themeStyles}>
-            <ExampleTitle $themeStyles={themeStyles}>Large Size</ExampleTitle>
-            <CodeBlock $themeStyles={themeStyles}>{`<Menu
-  items={horizontalMenuItems}
-  variant="horizontal"
-  size="large"
-/>`}</CodeBlock>
-
-            <Menu items={horizontalMenuItems} variant="horizontal" size="large" bordered={true} />
-          </Column>
-        </Row>
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <Title $themeStyles={themeStyles}>Dropdown Menu</Title>
-        <Description $themeStyles={themeStyles}>Menu displayed as a dropdown on click.</Description>
-
-        <DropdownContainer $themeStyles={themeStyles}>
-          <DropdownButton
-            $themeStyles={themeStyles}
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            User Menu
-            <span style={{ fontSize: '10px', marginLeft: '4px' }}>▼</span>
-          </DropdownButton>
-
-          {isDropdownOpen && (
-            <div style={{ position: 'absolute', zIndex: 100, marginTop: '4px' }}>
-              <Menu
-                items={dropdownMenuItems}
-                variant="dropdown"
-                showIcons={true}
-                closeOnClick={true}
-                onOpenChange={isOpen => setIsDropdownOpen(isOpen)}
-              />
-            </div>
-          )}
-        </DropdownContainer>
-
-        <CodeBlock $themeStyles={themeStyles}>{`// State for dropdown
-const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-// Toggle dropdown
-<button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-  User Menu
-</button>
-
-// Show menu when open
-{isDropdownOpen && (
-  <Menu
-    items={dropdownMenuItems}
-    variant="dropdown"
-    showIcons={true}
-    closeOnClick={true}
-  />
-)}`}</CodeBlock>
-      </DemoSection>
-
-      <DemoSection $themeStyles={themeStyles}>
-        <Title $themeStyles={themeStyles}>Nested Menus</Title>
-        <Description $themeStyles={themeStyles}>
-          Hierarchical menu structure with submenu items.
-        </Description>
-
-        <Menu items={nestedMenuItems} variant="horizontal" bordered={true} />
-
-        <CodeBlock $themeStyles={themeStyles}>{`const nestedMenuItems = [
-  { id: 'file', label: 'File', subItems: [
-    { id: 'new', label: 'New', subItems: [
-      { id: 'document', label: 'Document' },
-      { id: 'spreadsheet', label: 'Spreadsheet' },
-      ...
-    ]},
-    { id: 'open', label: 'Open' },
-    ...
-  ]},
-  { id: 'edit', label: 'Edit', subItems: [...] },
-  ...
-];
-
-<Menu
-  items={nestedMenuItems}
-  variant="horizontal"
-  bordered={true}
-/>`}</CodeBlock>
-      </DemoSection>
-    </DemoContainer>
-  );
-};
-
-export default MenuDemo;

@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { DirectThemeProvider } from '../../../core/theme/DirectThemeProvider';
 import { BarChart, LineChart, PieChart, DonutChart } from '../Chart';
 import { defaultTheme } from '../../../core/theme/theme-persistence';
+import { ThemeConfig } from '../../../core/theme/consolidated-types';
 
 // Mock data for testing
 const mockData = [
@@ -14,7 +15,7 @@ const mockData = [
 // Test wrapper with theme provider
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <DirectThemeProvider theme={defaultTheme}>
+    <DirectThemeProvider initialTheme={defaultTheme}>
       {component}
     </DirectThemeProvider>
   );
@@ -76,13 +77,15 @@ describe('Chart Components', () => {
     });
 
     it('applies different variants correctly', () => {
-      const { rerender } = renderWithTheme(
-        <BarChart data={mockData} variant="outlined" />
+      const { rerender } = render(
+        <DirectThemeProvider initialTheme={defaultTheme}>
+          <BarChart data={mockData} variant="outlined" />
+        </DirectThemeProvider>
       );
       expect(screen.getByRole('img')).toHaveStyle({ border: expect.any(String) });
 
       rerender(
-        <DirectThemeProvider theme={defaultTheme}>
+        <DirectThemeProvider initialTheme={defaultTheme}>
           <BarChart data={mockData} variant="filled" />
         </DirectThemeProvider>
       );
@@ -98,14 +101,16 @@ describe('Chart Components', () => {
     });
 
     it('applies size variations correctly', () => {
-      const { rerender } = renderWithTheme(
-        <BarChart data={mockData} size="small" />
+      const { rerender } = render(
+        <DirectThemeProvider initialTheme={defaultTheme}>
+          <BarChart data={mockData} size="small" />
+        </DirectThemeProvider>
       );
       const chart = screen.getByRole('img');
       expect(chart).toHaveStyle({ padding: expect.stringContaining('sm') });
 
       rerender(
-        <DirectThemeProvider theme={defaultTheme}>
+        <DirectThemeProvider initialTheme={defaultTheme}>
           <BarChart data={mockData} size="large" />
         </DirectThemeProvider>
       );
@@ -205,27 +210,57 @@ describe('Chart Components', () => {
   });
 
   describe('Theme Integration', () => {
-    it('applies theme colors correctly', () => {
-      renderWithTheme(<BarChart data={mockData} />);
-      const chart = screen.getByRole('img');
-      expect(chart).toHaveStyle({
-        backgroundColor: defaultTheme.colors.background.paper,
-      });
-    });
+    const mockTheme: ThemeConfig = {
+      ...defaultTheme,
+      colors: {
+        ...defaultTheme.colors,
+        background: '#f5f5f5',
+        surface: '#ffffff'
+      },
+      transitions: {
+        ...defaultTheme.transitions,
+        duration: {
+          fast: '100ms',
+          normal: '200ms',
+          slow: '300ms'
+        }
+      },
+      typography: {
+        ...defaultTheme.typography
+      }
+    };
 
-    it('uses theme typography', () => {
-      renderWithTheme(<BarChart data={mockData} title="Test" />);
-      const title = screen.getByText('Test');
-      expect(title).toHaveStyle({
-        fontFamily: defaultTheme.typography.fontFamily,
+    it('uses theme background colors', () => {
+      render(
+        <DirectThemeProvider initialTheme={mockTheme}>
+          <BarChart data={mockData} />
+        </DirectThemeProvider>
+      );
+      expect(screen.getByRole('img')).toHaveStyle({ 
+        backgroundColor: mockTheme.colors.surface 
       });
     });
 
     it('applies theme transitions', () => {
-      renderWithTheme(<BarChart data={mockData} />);
-      const chart = screen.getByRole('img');
-      expect(chart).toHaveStyle({
-        transition: expect.stringContaining(defaultTheme.animation.duration.medium),
+      render(
+        <DirectThemeProvider initialTheme={mockTheme}>
+          <BarChart data={mockData} />
+        </DirectThemeProvider>
+      );
+      expect(screen.getByRole('img')).toHaveStyle({ 
+        transition: expect.stringContaining(mockTheme.transitions.duration.normal)
+      });
+    });
+
+    it('uses theme typography', () => {
+      render(
+        <DirectThemeProvider initialTheme={mockTheme}>
+          <BarChart data={mockData} title="Test" />
+        </DirectThemeProvider>
+      );
+      const title = screen.getByText('Test');
+      expect(title).toHaveStyle({
+        fontFamily: mockTheme.typography.fontFamily.base
       });
     });
   });

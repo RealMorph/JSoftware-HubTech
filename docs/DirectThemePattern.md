@@ -162,36 +162,48 @@ const MyComponent: React.FC = () => {
 };
 ```
 
-## Migration from Old Pattern
+## Migration Guide
 
-If you're migrating from the old theme utilities:
+When implementing the DirectTheme pattern:
 
-1. Replace imports:
-```diff
-- import { getThemeValue } from '../../core/theme/theme-utils';
-+ import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+1. Use the DirectTheme hook:
+```tsx
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 ```
 
-2. Replace theme access:
-```diff
-- const color = getThemeValue(theme, 'colors.primary');
-+ const { getColor } = useDirectTheme();
-+ const color = getColor('primary');
+2. Define your theme styles interface:
+```tsx
+interface ThemeStyles {
+  colors: {
+    text: string;
+  };
+}
 ```
 
-3. Update styled components:
-```diff
-- const StyledComponent = styled.div`
--   color: ${props => getThemeValue(props.theme, 'colors.text')};
-- `;
-+ interface ThemeStyles {
-+   colors: {
-+     text: string;
-+   };
-+ }
-+ const StyledComponent = styled.div<{ $themeStyles: ThemeStyles }>`
-+   color: ${({ $themeStyles }) => $themeStyles.colors.text};
-+ `;
+3. Create your styled component:
+```tsx
+const StyledComponent = styled.div<{ $themeStyles: ThemeStyles }>`
+  color: ${({ $themeStyles }) => $themeStyles.colors.text};
+`;
+```
+
+4. Implement the component:
+```tsx
+const MyComponent: React.FC = () => {
+  const { getColor } = useDirectTheme();
+  
+  const themeStyles: ThemeStyles = {
+    colors: {
+      text: getColor('text.primary'),
+    },
+  };
+
+  return (
+    <StyledComponent $themeStyles={themeStyles}>
+      Content
+    </StyledComponent>
+  );
+};
 ```
 
 ## Type Safety

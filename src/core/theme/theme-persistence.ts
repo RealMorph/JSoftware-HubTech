@@ -15,10 +15,13 @@ import {
   ShadowConfig,
   ThemeColors,
 } from './consolidated-types';
-import { useLocalStorage } from '@/core/hooks/useLocalStorage';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { themeDefaults } from './theme-defaults';
 
 // Re-export these types explicitly to ensure consistency across the codebase
-export { ThemeConfig, ThemeManager, ThemeState, ShadowConfig, ThemeColors };
+export { ThemeConfig };
+
+type ThemeSubscriber = (theme: ThemeConfig) => void;
 
 // This interface should be implemented with your actual database client
 export interface ThemeDatabase {
@@ -35,9 +38,50 @@ export interface ThemeDatabase {
 }
 
 export class ThemeService {
-  constructor(private db: ThemeDatabase) {}
+  private currentTheme: ThemeConfig;
+  private subscribers: ThemeSubscriber[];
 
-  async getThemeById(id: string): Promise<ThemeConfig | null> {
+  constructor(private db: ThemeDatabase) {
+    this.currentTheme = themeDefaults;
+    this.subscribers = [];
+  }
+
+  setTheme(theme: ThemeConfig): void {
+    this.currentTheme = theme;
+    this.subscribers.forEach(subscriber => subscriber(theme));
+  }
+
+  getTheme(): ThemeConfig {
+    return this.currentTheme;
+  }
+
+  getDefaultTheme(): ThemeConfig {
+    return themeDefaults;
+  }
+
+  getDarkTheme(): ThemeConfig {
+    return {
+      ...themeDefaults,
+      colors: {
+        ...themeDefaults.colors,
+        text: {
+          primary: '#ffffff',
+          secondary: '#e2e8f0',
+          disabled: '#718096',
+        },
+        background: '#1a202c',
+        surface: '#2d3748',
+        border: '#4a5568',
+      },
+    };
+  }
+
+  getLightTheme(): ThemeConfig {
+    return themeDefaults;
+  }
+
+  // Database operations
+  async findThemeById(id: string): Promise<ThemeConfig | null> {
     return this.db.findThemeById(id);
   }
 
@@ -45,7 +89,7 @@ export class ThemeService {
     return this.db.findAllThemes();
   }
 
-  async getDefaultTheme(): Promise<ThemeConfig | null> {
+  async findDefaultTheme(): Promise<ThemeConfig | null> {
     return this.db.findDefaultTheme();
   }
 
@@ -68,6 +112,16 @@ export class ThemeService {
 
   async setDefaultTheme(id: string): Promise<boolean> {
     return this.db.setDefaultTheme(id);
+  }
+
+  subscribe(subscriber: ThemeSubscriber): () => void {
+    this.subscribers.push(subscriber);
+    return () => {
+      const index = this.subscribers.indexOf(subscriber);
+      if (index > -1) {
+        this.subscribers.splice(index, 1);
+      }
+    };
   }
 }
 
