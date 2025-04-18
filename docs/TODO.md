@@ -231,22 +231,88 @@ This project follows a strictly modular, self-contained frontend architecture, f
   - [x] Create visibility hooks
 
 ### 10. Animation System
-- [ ] Framer Motion Integration
-  - [ ] Install and configure package
-  - [ ] Set up theme integration
-  - [ ] Configure default animations
-- [ ] Theme-aware Animation
-  - [ ] Define animation variants
-  - [ ] Map theme values to motion props
-  - [ ] Create reusable configs
-- [ ] Component Integration
-  - [ ] Add motion to existing components
-  - [ ] Create motion-enabled variants
-  - [ ] Implement shared layouts and gestures
-- [ ] Accessibility
-  - [ ] Ensure reduced motion support
-  - [ ] Test ARIA compatibility
-  - [ ] Implement focus management
+- [ ] Architecture Analysis & Solution Selection
+  - [ ] Evaluate Framer Motion integration feasibility
+    - [ ] Assess theme integration capabilities
+    - [ ] Evaluate bundle size impact and performance characteristics
+    - [ ] Test component composition patterns with existing architecture
+    - [ ] Verify SSR compatibility and hydration behavior
+  - [ ] Evaluate custom solution approach
+    - [ ] Assess CSS variables + CSS transitions approach for theme consistency
+    - [ ] Consider React Spring as lightweight alternative
+    - [ ] Evaluate CSS Animation API for simpler animations
+    - [ ] Analyze performance implications of each approach
+  - [ ] Document decision with benchmarks and examples
+    - [ ] Create comparison matrix of solutions
+    - [ ] Build POC implementations with key components
+    - [ ] Gather feedback from team
+
+- [ ] Core Animation Infrastructure
+  - [ ] Create AnimationProvider with motion preferences detection
+  - [ ] Implement animation configuration system integrated with ThemeConfig
+    - [ ] Define standard durations, easings, and variants in theme
+    - [ ] Create animation preset library (fade, slide, scale, etc.)
+    - [ ] Build animation composition utilities
+  - [ ] Develop animation hooks for consistent usage
+    - [ ] `useAnimationPreset` for standard animations
+    - [ ] `useMotionPreference` for accessibility
+    - [ ] `useAnimatedValue` for direct value animations
+  - [ ] Create animation testing utilities
+    - [ ] Jest matchers for animation assertions
+    - [ ] Visual regression test helpers
+
+- [ ] Component Animation Integration
+  - [ ] Implement HOCs for common animation patterns
+    - [ ] `withEntranceAnimation` for mount animations
+    - [ ] `withInteractionAnimation` for hover/focus states
+    - [ ] `withTransitionAnimation` for route changes
+  - [ ] Add animation capabilities to core components
+    - [ ] Button hover/active states
+    - [ ] Card entrance and hover effects
+    - [ ] Modal entrance/exit animations
+    - [ ] Drawer open/close animations
+    - [ ] Accordion expand/collapse
+    - [ ] Toast notifications
+  - [ ] Implement layout animations
+    - [ ] List item addition/removal
+    - [ ] Grid item reordering
+    - [ ] Tab panel transitions
+    - [ ] Route transitions
+
+- [ ] Advanced Animation Features
+  - [ ] Create gesture-based animations
+    - [ ] Swipe actions for mobile
+    - [ ] Drag and drop interfaces
+    - [ ] Pull to refresh
+  - [ ] Implement scroll-based animations
+    - [ ] Parallax effects
+    - [ ] Scroll-triggered reveals
+    - [ ] Sticky elements with transitions
+  - [ ] Add progress-based animations
+    - [ ] Multi-step forms with transitions
+    - [ ] Loading indicators with progress
+    - [ ] Charts with entrance animations
+
+- [ ] Performance Optimization
+  - [ ] Implement animation throttling for low-end devices
+  - [ ] Add will-change optimization management
+  - [ ] Create animation suspension during heavy operations
+  - [ ] Build animation batching for simultaneous animations
+
+- [ ] Accessibility Implementation
+  - [ ] Create robust reduced motion alternative animations
+  - [ ] Add prefers-reduced-motion media query support
+  - [ ] Implement user preference controls in settings
+  - [ ] Ensure all animations can be disabled
+  - [ ] Add focus management for animated components
+  - [ ] Verify ARIA compatibility with screen readers
+
+- [ ] Documentation & Examples
+  - [ ] Create animation guidelines document
+  - [ ] Build interactive examples in Storybook
+  - [ ] Document each animation hook and utility
+  - [ ] Create animation troubleshooting guide
+  - [ ] Add performance best practices
 
 ### 11. Telemetry System
 - [ ] Implement Posthog
