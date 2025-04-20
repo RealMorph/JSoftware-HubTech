@@ -1,6 +1,6 @@
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { LoginDto, RequestPasswordResetDto, ResetPasswordDto, VerifyTwoFactorDto, TwoFactorCodeVerificationDto, DisableTwoFactorDto, VerificationCodeDto, PhoneNumberDto, ChangePasswordDto, SecurityQuestionsDto, LoginHistoryQueryDto, ThemeModeDto, ThemeColorDto, LanguageDto, TimezoneDto, DateTimeFormatRequestDto, EmailNotificationPreferencesDto, PushNotificationPreferencesDto, SmsNotificationPreferencesDto, ThemeMode, ThemeColor, NotificationFrequencyDto, DashboardLayoutDto, DashboardWidgetsDto, WidgetDto } from './dto';
+import { LoginDto, RequestPasswordResetDto, ResetPasswordDto, VerifyTwoFactorDto, TwoFactorCodeVerificationDto, DisableTwoFactorDto, VerificationCodeDto, PhoneNumberDto, ChangePasswordDto, SecurityQuestionsDto, LoginHistoryQueryDto, ThemeModeDto, ThemeColorDto, LanguageDto, TimezoneDto, DateTimeFormatRequestDto, EmailNotificationPreferencesDto, PushNotificationPreferencesDto, SmsNotificationPreferencesDto, ThemeMode, ThemeColor, NotificationFrequencyDto, DashboardLayoutDto, DashboardWidgetsDto, WidgetDto, RefreshTokenDto } from './dto';
 import { PrivacySettingsDto, ApiKeyDto, SessionTimeoutDto } from './dto/security-settings.dto';
 export declare class AuthController {
     private readonly authService;
@@ -270,5 +270,12 @@ export declare class AuthController {
     }): Promise<{
         userId: any;
         permissions: any;
+    }>;
+    refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        expiresIn: number;
+        tokenType: string;
+        user: any;
     }>;
 }

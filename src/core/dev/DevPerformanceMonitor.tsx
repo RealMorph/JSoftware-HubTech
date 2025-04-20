@@ -190,11 +190,15 @@ export const DevPerformanceMonitor: React.FC<DevPerformanceMonitorProps> = ({
   useEffect(() => {
     if (!recordingActive) return;
     
-    // Store original hook to restore on cleanup
-    const reactDevTools = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-    const originalOnCommitFiberRoot = reactDevTools?.onCommitFiberRoot;
+    // Check if React DevTools hook exists before accessing it
+    // Using type assertion since the type is defined in global.d.ts
+    const reactDevTools = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
+    if (!reactDevTools) return;
     
-    if (reactDevTools && originalOnCommitFiberRoot) {
+    // Store original hook to restore on cleanup
+    const originalOnCommitFiberRoot = reactDevTools.onCommitFiberRoot;
+    
+    if (originalOnCommitFiberRoot) {
       reactDevTools.onCommitFiberRoot = (...args: any[]) => {
         const result = originalOnCommitFiberRoot.apply(reactDevTools, args);
         
@@ -740,8 +744,7 @@ const ClearButton = styled.button`
   }
 `;
 
-// Type declaration for Performance memory is now in global.d.ts
-// Custom PerformanceEntry interface for browser performance API
+// Custom performance entry interface for internal use
 interface CustomPerformanceEntry {
   entryType: string;
   name: string;

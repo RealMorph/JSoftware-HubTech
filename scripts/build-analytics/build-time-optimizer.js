@@ -9,7 +9,35 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const chalk = require('chalk');
-const prettyMs = require('pretty-ms');
+let prettyMs;
+
+try {
+  prettyMs = require('pretty-ms');
+} catch (error) {
+  console.warn('pretty-ms module not found, using fallback formatting function');
+}
+
+// Fallback function for formatting milliseconds
+function formatMs(ms) {
+  if (prettyMs && typeof prettyMs === 'function') {
+    return prettyMs(ms);
+  }
+  
+  // Simple fallback implementation
+  if (ms < 1000) {
+    return `${ms}ms`;
+  } else if (ms < 60000) {
+    return `${(ms / 1000).toFixed(1)}s`;
+  } else if (ms < 3600000) {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}m ${seconds}s`;
+  } else {
+    const hours = Math.floor(ms / 3600000);
+    const minutes = Math.floor((ms % 3600000) / 60000);
+    return `${hours}h ${minutes}m`;
+  }
+}
 
 // Constants
 const OUTPUT_DIR = path.resolve(__dirname, '../../dist');
@@ -440,12 +468,12 @@ function saveOptimizationReport(buildTimes, suggestions) {
     
     <div class="summary">
         <h2>Build Time Summary</h2>
-        <div class="timing"><strong>Total Build Time:</strong> ${prettyMs(buildTimes.total)}</div>
-        <div class="timing"><strong>TypeScript Compilation:</strong> ${prettyMs(buildTimes.typeScriptCompilation)} (${Math.round(buildTimes.typeScriptCompilation / buildTimes.total * 100)}%)</div>
-        <div class="timing"><strong>Vite Build:</strong> ${prettyMs(buildTimes.viteBuild)} (${Math.round(buildTimes.viteBuild / buildTimes.total * 100)}%)</div>
+        <div class="timing"><strong>Total Build Time:</strong> ${formatMs(buildTimes.total)}</div>
+        <div class="timing"><strong>TypeScript Compilation:</strong> ${formatMs(buildTimes.typeScriptCompilation)} (${Math.round(buildTimes.typeScriptCompilation / buildTimes.total * 100)}%)</div>
+        <div class="timing"><strong>Vite Build:</strong> ${formatMs(buildTimes.viteBuild)} (${Math.round(buildTimes.viteBuild / buildTimes.total * 100)}%)</div>
         
         <div class="potential-savings">
-            Potential Time Savings: ${prettyMs(suggestions.potentialTimeSavings)} (${Math.round(suggestions.potentialSavingsPercent * 100)}% reduction)
+            Potential Time Savings: ${formatMs(suggestions.potentialTimeSavings)} (${Math.round(suggestions.potentialSavingsPercent * 100)}% reduction)
         </div>
     </div>
     
@@ -471,17 +499,17 @@ function saveOptimizationReport(buildTimes, suggestions) {
         </tr>
         <tr>
             <td>TypeScript Compilation</td>
-            <td>${prettyMs(buildTimes.typeScriptCompilation)}</td>
+            <td>${formatMs(buildTimes.typeScriptCompilation)}</td>
             <td>${Math.round(buildTimes.typeScriptCompilation / buildTimes.total * 100)}%</td>
         </tr>
         <tr>
             <td>Vite Build</td>
-            <td>${prettyMs(buildTimes.viteBuild)}</td>
+            <td>${formatMs(buildTimes.viteBuild)}</td>
             <td>${Math.round(buildTimes.viteBuild / buildTimes.total * 100)}%</td>
         </tr>
         <tr>
             <td><strong>Total</strong></td>
-            <td><strong>${prettyMs(buildTimes.total)}</strong></td>
+            <td><strong>${formatMs(buildTimes.total)}</strong></td>
             <td>100%</td>
         </tr>
     </table>
@@ -539,15 +567,15 @@ async function runBuildTimeOptimization() {
   // Print summary to console
   console.log('\n');
   console.log(chalk.bold.green('=== Build Time Optimization Summary ==='));
-  console.log(chalk.cyan(`Total Build Time: ${prettyMs(buildTimes.total)}`));
-  console.log(chalk.cyan(`TypeScript Compilation: ${prettyMs(buildTimes.typeScriptCompilation)}`));
-  console.log(chalk.cyan(`Vite Build: ${prettyMs(buildTimes.viteBuild)}`));
+  console.log(chalk.cyan(`Total Build Time: ${formatMs(buildTimes.total)}`));
+  console.log(chalk.cyan(`TypeScript Compilation: ${formatMs(buildTimes.typeScriptCompilation)}`));
+  console.log(chalk.cyan(`Vite Build: ${formatMs(buildTimes.viteBuild)}`));
   console.log(chalk.cyan(`Found ${suggestions.all.length} potential optimizations`));
-  console.log(chalk.cyan(`Potential time savings: ${prettyMs(suggestions.potentialTimeSavings)} (${Math.round(suggestions.potentialSavingsPercent * 100)}% reduction)`));
+  console.log(chalk.cyan(`Potential time savings: ${formatMs(suggestions.potentialTimeSavings)} (${Math.round(suggestions.potentialSavingsPercent * 100)}% reduction)`));
   console.log(chalk.green(`\nDetailed report saved to: ${reportFile}`));
   console.log(chalk.yellow('To open the report, use:'));
   console.log(`start ${reportFile.replace(/\\/g, '\\\\')}`);
 }
 
 // Run the optimization
-runBuildTimeOptimization(); 
+runBuildTimeOptimization();

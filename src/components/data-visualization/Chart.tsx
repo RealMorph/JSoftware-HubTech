@@ -1,7 +1,7 @@
 import React, { useState, ElementType, useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
-import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useTheme } from '../../core/theme/ThemeContext';
+import { ThemeConfig } from '../../core/theme/consolidated-types';
 
 // Base styled component props interface
 interface StyledComponentProps {
@@ -110,102 +110,102 @@ interface ThemeStyles {
 }
 
 // Theme styles creation function with proper type handling
-const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
+const createThemeStyles = (theme: ReturnType<typeof useTheme>): ThemeStyles => ({
   colors: {
     primary: {
-      main: theme.getColor('primary.main'),
-      light: theme.getColor('primary.light'),
-      dark: theme.getColor('primary.dark'),
+      main: theme.colors.primary,
+      light: theme.colors.primary, // Adjust with proper light variant
+      dark: theme.colors.primary,  // Adjust with proper dark variant
     },
     secondary: {
-      main: theme.getColor('secondary.main'),
-      light: theme.getColor('secondary.light'),
+      main: theme.colors.secondary,
+      light: theme.colors.secondary, // Adjust with proper light variant
     },
     text: {
-      primary: theme.getColor('text.primary'),
-      secondary: theme.getColor('text.secondary'),
+      primary: theme.colors.text.primary,
+      secondary: theme.colors.text.secondary,
     },
     background: {
-      paper: theme.getColor('background.paper'),
-      default: theme.getColor('background.default'),
+      paper: theme.colors.surface,
+      default: theme.colors.background,
     },
     chart: {
-      axis: theme.getColor('border'),
-      grid: theme.getColor('border.light'),
-      tooltip: theme.getColor('background.paper'),
+      axis: theme.colors.border,
+      grid: theme.colors.border, // Adjust if there's a light variant
+      tooltip: theme.colors.surface,
       bar: {
-        default: theme.getColor('primary.main'),
-        hover: theme.getColor('primary.light'),
-        active: theme.getColor('primary.dark'),
+        default: theme.colors.primary,
+        hover: theme.colors.hover.background,
+        active: theme.colors.primary, // Adjust with proper active variant
       },
       line: {
-        default: theme.getColor('primary.main'),
-        hover: theme.getColor('primary.light'),
-        active: theme.getColor('primary.dark'),
+        default: theme.colors.primary,
+        hover: theme.colors.hover.background,
+        active: theme.colors.primary, // Adjust with proper active variant
       },
       point: {
-        default: theme.getColor('primary.main'),
-        hover: theme.getColor('primary.light'),
-        active: theme.getColor('primary.dark'),
+        default: theme.colors.primary,
+        hover: theme.colors.hover.background,
+        active: theme.colors.primary, // Adjust with proper active variant
       },
       pie: {
-        default: theme.getColor('primary.main'),
-        hover: theme.getColor('primary.light'),
-        active: theme.getColor('primary.dark'),
+        default: theme.colors.primary,
+        hover: theme.colors.hover.background,
+        active: theme.colors.primary, // Adjust with proper active variant
       },
     },
   },
   typography: {
-    fontFamily: theme.getTypography('fontFamily') as string,
+    fontFamily: theme.typography.fontFamily.base,
     fontSize: {
-      small: theme.getTypography('fontSize.small').toString(),
-      medium: theme.getTypography('fontSize.medium').toString(),
-      large: theme.getTypography('fontSize.large').toString(),
+      small: theme.typography.fontSize.sm,
+      medium: theme.typography.fontSize.md,
+      large: theme.typography.fontSize.lg,
     },
     fontWeight: {
-      regular: Number(theme.getTypography('fontWeight.regular')),
-      medium: Number(theme.getTypography('fontWeight.medium')),
-      bold: Number(theme.getTypography('fontWeight.bold')),
+      regular: theme.typography.fontWeight.normal,
+      medium: theme.typography.fontWeight.medium,
+      bold: theme.typography.fontWeight.bold,
     },
     lineHeight: {
-      small: Number(theme.getTypography('lineHeight.small')),
-      medium: Number(theme.getTypography('lineHeight.medium')),
-      large: Number(theme.getTypography('lineHeight.large')),
+      small: theme.typography.lineHeight.tight,
+      medium: theme.typography.lineHeight.normal,
+      large: theme.typography.lineHeight.relaxed,
     },
   },
   spacing: {
-    xs: theme.getSpacing('4'),
-    sm: theme.getSpacing('8'),
-    md: theme.getSpacing('16'),
-    lg: theme.getSpacing('24'),
-    xl: theme.getSpacing('32'),
+    xs: theme.spacing.xs,
+    sm: theme.spacing.sm,
+    md: theme.spacing.md,
+    lg: theme.spacing.lg,
+    xl: theme.spacing.xl,
   },
   borders: {
     radius: {
-      small: theme.getColor('border.radius.small', '4px'),
-      medium: theme.getColor('border.radius.medium', '8px'),
-      large: theme.getColor('border.radius.large', '12px'),
+      small: theme.borderRadius.sm,
+      medium: theme.borderRadius.md,
+      large: theme.borderRadius.lg,
     },
     width: {
-      thin: theme.getColor('border.width.thin', '1px'),
-      medium: theme.getColor('border.width.medium', '2px'),
-      thick: theme.getColor('border.width.thick', '3px'),
+      thin: '1px',
+      medium: '2px',
+      thick: '3px',
     },
   },
   shadows: {
-    tooltip: theme.getColor('shadow.medium', '0 2px 4px rgba(0,0,0,0.2)'),
-    legend: theme.getColor('shadow.small', '0 1px 2px rgba(0,0,0,0.1)'),
+    tooltip: theme.shadows.md,
+    legend: theme.shadows.sm,
   },
   animation: {
     duration: {
-      short: theme.getColor('animation.duration.short', '150ms'),
-      medium: theme.getColor('animation.duration.medium', '300ms'),
-      long: theme.getColor('animation.duration.long', '500ms'),
+      short: theme.animation.duration.short,
+      medium: theme.animation.duration.standard,
+      long: theme.animation.duration.long,
     },
     easing: {
-      easeInOut: theme.getColor('animation.easing.easeInOut', 'cubic-bezier(0.4, 0, 0.2, 1)'),
-      easeOut: theme.getColor('animation.easing.easeOut', 'cubic-bezier(0.0, 0, 0.2, 1)'),
-      easeIn: theme.getColor('animation.easing.easeIn', 'cubic-bezier(0.4, 0, 1, 1)'),
+      easeInOut: theme.animation.easing.easeInOut,
+      easeOut: theme.animation.easing.easeOut,
+      easeIn: theme.animation.easing.easeIn,
     },
   },
 });
@@ -216,6 +216,13 @@ export interface DataPoint {
   label: string;
   value: number;
   color?: string;
+}
+
+// Add interfaces for annotations
+interface Annotation {
+  pointIndex: number;
+  text: string;
+  position?: 'top' | 'right' | 'bottom' | 'left';
 }
 
 // Extended chart props with responsive and accessibility features
@@ -556,17 +563,13 @@ const LegendColor = styled.div<LegendColorProps>`
 `;
 
 // Helper functions
-const getDefaultColors = (theme: ReturnType<typeof useDirectTheme>): string[] => [
-  theme.getColor('primary.main'),
-  theme.getColor('secondary.main'),
-  theme.getColor('error.main'),
-  theme.getColor('warning.main'),
-  theme.getColor('success.main'),
-  theme.getColor('info.main'),
-  theme.getColor('primary.light'),
-  theme.getColor('secondary.light'),
-  theme.getColor('error.light'),
-  theme.getColor('warning.light'),
+const getDefaultColors = (theme: ReturnType<typeof useTheme>): string[] => [
+  theme.colors.primary,
+  theme.colors.secondary,
+  theme.colors.success,
+  theme.colors.info,
+  theme.colors.warning,
+  // Add more colors or generate them dynamically if needed
 ];
 
 /**
@@ -580,7 +583,7 @@ export const BarChart: React.FC<ChartProps> = ({
   showLegend = true,
   showTooltips = true,
   showValues = true,
-  colorScale = getDefaultColors(useDirectTheme()),
+  colorScale,
   onDataPointClick,
   maxValue,
   style,
@@ -612,8 +615,11 @@ export const BarChart: React.FC<ChartProps> = ({
     visible: false,
   });
 
-  const themeContext = useDirectTheme();
-  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
+  const theme = useTheme();
+  const defaultColorScale = useMemo(() => getDefaultColors(theme), [theme]);
+  const finalColorScale = colorScale || defaultColorScale;
+
+  const themeStyles = useMemo(() => createThemeStyles(theme), [theme]);
 
   // Mount animation
   React.useEffect(() => {
@@ -762,7 +768,7 @@ export const BarChart: React.FC<ChartProps> = ({
         <g>
           {data.map((point, i) => {
             const isActive = activePoint === point.id;
-            const color = point.color || colorScale[i % colorScale.length];
+            const color = point.color || finalColorScale[i % finalColorScale.length];
             const x = padding.left + i * (barWidth + barGap);
             const barHeight = (point.value / maxDataValue) * innerHeight;
             const y = chartHeight - padding.bottom - barHeight;
@@ -840,7 +846,7 @@ export const BarChart: React.FC<ChartProps> = ({
               }}
             >
               <LegendColor 
-                color={point.color || colorScale[i % colorScale.length]} 
+                color={point.color || finalColorScale[i % finalColorScale.length]} 
                 $themeStyles={themeStyles}
                 aria-hidden="true"
               />
@@ -859,312 +865,111 @@ export const BarChart: React.FC<ChartProps> = ({
   ) : chartContent;
 };
 
-/**
- * Line Chart component for visualizing data trends over a series
- */
-export const LineChart: React.FC<ChartProps> = ({
-  data,
-  width = '100%',
-  height = '400px',
-  title,
-  showLegend = true,
-  showTooltips = true,
-  showValues = false,
-  colorScale = getDefaultColors(useDirectTheme()),
-  onDataPointClick,
-  maxValue,
-  style,
-  // New props
-  responsive = true,
-  minHeight = '250px',
-  aspectRatio = 4/3,
-  ariaLabel,
-  ariaDescribedBy,
-  role = 'img',
-  variant = 'default',
-  size = 'medium',
-  interactive = true,
-  highlightOnHover = true,
-  animateOnMount = true,
-}) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [activePoint, setActivePoint] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [tooltip, setTooltip] = useState<{
-    content: string;
-    x: number;
-    y: number;
-    visible: boolean;
-  }>({
-    content: '',
-    x: 0,
-    y: 0,
-    visible: false,
-  });
-
-  const themeContext = useDirectTheme();
-  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
-
-  // Mount animation
-  React.useEffect(() => {
-    if (animateOnMount) {
-      const timer = setTimeout(() => setMounted(true), 100);
-      return () => clearTimeout(timer);
-    }
-    setMounted(true);
-  }, [animateOnMount]);
-
-  // Handle empty data
-  if (!data || data.length === 0) {
-    return (
-      <ChartContainer
-        width={width}
-        height={height}
-        ref={containerRef}
-        style={style}
-        $themeStyles={themeStyles}
-        $variant={variant}
-        $size={size}
-        $interactive={interactive}
-        $animateOnMount={mounted}
-        role="presentation"
-      >
-        <Title $themeStyles={themeStyles} $size={size}>No data to display</Title>
-      </ChartContainer>
-    );
+// Adding utility functions for trendline calculation
+const calculateTrendline = (data: DataPoint[]): { slope: number; intercept: number } => {
+  const n = data.length;
+  
+  // Calculate means
+  const xMean = (n - 1) / 2; // Using index as x values (0, 1, 2, ...)
+  const yMean = data.reduce((sum, point) => sum + point.value, 0) / n;
+  
+  // Calculate slope
+  let numerator = 0;
+  let denominator = 0;
+  
+  for (let i = 0; i < n; i++) {
+    numerator += (i - xMean) * (data[i].value - yMean);
+    denominator += Math.pow(i - xMean, 2);
   }
-
-  // Determine chart dimensions
-  const chartWidth = 800;
-  const chartHeight = 500;
-  const padding = { top: 40, right: 40, bottom: 60, left: 60 };
-  const innerWidth = chartWidth - padding.left - padding.right;
-  const innerHeight = chartHeight - padding.top - padding.bottom;
-
-  // Calculate scales
-  const maxDataValue = maxValue || Math.max(...data.map(d => d.value));
-
-  // Handle click on a data point
-  const handlePointClick = (pointId: string) => {
-    setActivePoint(activePoint === pointId ? null : pointId);
-    if (onDataPointClick) {
-      onDataPointClick(pointId);
-    }
-  };
-
-  // Show tooltip
-  const handleMouseOver = (content: string, event: React.MouseEvent) => {
-    if (showTooltips) {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setTooltip({
-          content,
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
-          visible: true,
-        });
-      }
-    }
-  };
-
-  // Hide tooltip
-  const handleMouseOut = () => {
-    if (showTooltips) {
-      setTooltip(prev => ({ ...prev, visible: false }));
-    }
-  };
-
-  // Generate line path
-  const generateLinePath = (): string => {
-    const points = data.map((point, i) => {
-      const x = padding.left + (i * innerWidth) / (data.length - 1);
-      const y = padding.top + innerHeight - (point.value / maxDataValue) * innerHeight;
-      return `${x},${y}`;
-    });
-
-    return `M ${points.join(' L ')}`;
-  };
-
-  const chartContent = (
-    <ChartContainer
-      width={width}
-      height={height}
-      ref={containerRef}
-      style={style}
-      $themeStyles={themeStyles}
-      $variant={variant}
-      $size={size}
-      $interactive={interactive}
-      $animateOnMount={mounted}
-      role={role}
-      aria-label={ariaLabel}
-      aria-describedby={ariaDescribedBy}
-    >
-      {title && <Title $themeStyles={themeStyles} $size={size}>{title}</Title>}
-
-      <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`} $themeStyles={themeStyles}>
-        {/* Y-axis */}
-        <AxisLine
-          x1={padding.left}
-          y1={padding.top}
-          x2={padding.left}
-          y2={chartHeight - padding.bottom}
-          $themeStyles={themeStyles}
-        />
-
-        {/* X-axis */}
-        <AxisLine
-          x1={padding.left}
-          y1={chartHeight - padding.bottom}
-          x2={chartWidth - padding.right}
-          y2={chartHeight - padding.bottom}
-          $themeStyles={themeStyles}
-        />
-
-        {/* Y-axis grid lines and labels */}
-        {[0, 0.25, 0.5, 0.75, 1].map((tick, i) => {
-          const yPos = padding.top + innerHeight - innerHeight * tick;
-          const value = Math.round(maxDataValue * tick);
-
-          return (
-            <g key={`y-tick-${i}`}>
-              <AxisLine
-                x1={padding.left - 5}
-                y1={yPos}
-                x2={padding.left}
-                y2={yPos}
-                $themeStyles={themeStyles}
-              />
-              <AxisLabel
-                x={padding.left - 20}
-                y={yPos + 5}
-                textAnchor="end"
-                $themeStyles={themeStyles}
-              >
-                {value}
-              </AxisLabel>
-              <AxisLine
-                x1={padding.left}
-                y1={yPos}
-                x2={chartWidth - padding.right}
-                y2={yPos}
-                stroke="#eee"
-                $themeStyles={themeStyles}
-              />
-            </g>
-          );
-        })}
-
-        {/* X-axis labels */}
-        {data.map((point, i) => {
-          const x = padding.left + (i * innerWidth) / (data.length - 1);
-
-          return (
-            <AxisLabel
-              key={`x-label-${i}`}
-              x={x}
-              y={chartHeight - padding.bottom + 20}
-              $themeStyles={themeStyles}
-            >
-              {point.label}
-            </AxisLabel>
-          );
-        })}
-
-        {/* Line */}
-        <LinePath d={generateLinePath()} stroke={colorScale[0]} $themeStyles={themeStyles} />
-
-        {/* Data points */}
-        {data.map((point, i) => {
-          const isActive = activePoint === point.id;
-          const color = point.color || colorScale[i % colorScale.length];
-          const x = padding.left + (i * innerWidth) / (data.length - 1);
-          const y = padding.top + innerHeight - (point.value / maxDataValue) * innerHeight;
-
-          return (
-            <g key={`point-${i}`}>
-              <LinePoint
-                cx={x}
-                cy={y}
-                r={5}
-                fill={color}
-                active={isActive}
-                onClick={() => handlePointClick(point.id)}
-                onMouseOver={e => handleMouseOver(`${point.label}: ${point.value}`, e)}
-                onMouseOut={handleMouseOut}
-                $themeStyles={themeStyles}
-              />
-
-              {showValues && (
-                <ValueLabel x={x} y={y - 15} $themeStyles={themeStyles}>
-                  {point.value}
-                </ValueLabel>
-              )}
-            </g>
-          );
-        })}
-      </ChartCanvas>
-
-      {/* Enhanced tooltip with ARIA live region */}
-      {tooltip.visible && (
-        <Tooltip
-          style={{
-            left: tooltip.x + 10,
-            top: tooltip.y + 10,
-          }}
-          $themeStyles={themeStyles}
-          role="tooltip"
-          aria-live="polite"
-        >
-          {tooltip.content}
-        </Tooltip>
-      )}
-
-      {/* Enhanced legend with keyboard navigation */}
-      {showLegend && (
-        <Legend 
-          $themeStyles={themeStyles}
-          role="list"
-          aria-label="Chart legend"
-        >
-          {data.map((point, i) => (
-            <LegendItem
-              key={`legend-${i}`}
-              onClick={() => handlePointClick(point.id)}
-              style={{ cursor: 'pointer' }}
-              $themeStyles={themeStyles}
-              role="listitem"
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handlePointClick(point.id);
-                }
-              }}
-            >
-              <LegendColor 
-                color={point.color || colorScale[i % colorScale.length]} 
-                $themeStyles={themeStyles}
-                aria-hidden="true"
-              />
-              <span>{point.label}</span>
-            </LegendItem>
-          ))}
-        </Legend>
-      )}
-    </ChartContainer>
-  );
-
-  return responsive ? (
-    <ResponsiveContainer aspectRatio={aspectRatio} style={{ minHeight }}>
-      {chartContent}
-    </ResponsiveContainer>
-  ) : chartContent;
+  
+  const slope = denominator !== 0 ? numerator / denominator : 0;
+  const intercept = yMean - slope * xMean;
+  
+  return { slope, intercept };
 };
 
-/**
- * Pie Chart component for visualizing proportional data
- */
-export const PieChart: React.FC<ChartProps> = ({
+// Add interfaces for drill-down pie chart
+interface HierarchicalDataPoint extends DataPoint {
+  children?: HierarchicalDataPoint[];
+}
+
+// Update ExtendedChartProps to include hierarchical data
+interface ExtendedChartProps extends ChartProps {
+  showTrendline?: boolean;
+  showForecast?: boolean;
+  forecastPeriods?: number;
+  annotations?: Annotation[];
+  timeRangeSelector?: boolean;
+  startTimeIndex?: number;
+  endTimeIndex?: number;
+  onTimeRangeChange?: (start: number, end: number) => void;
+  // Hierarchical data properties
+  hierarchicalData?: HierarchicalDataPoint[];
+  enableDrillDown?: boolean;
+  drillDownLevel?: number;
+  onDrillDown?: (pointId: string, level: number) => void;
+  breadcrumbs?: string[];
+  onBreadcrumbClick?: (level: number) => void;
+  // Multi-level comparison
+  comparisonData?: DataPoint[];
+  showComparison?: boolean;
+  comparisonLabel?: string;
+}
+
+// Update generateTrendlinePoints and generateForecastPoints functions to properly handle their arguments
+const generateTrendlinePoints = (
+  data: DataPoint[],
+  trendline: { slope: number; intercept: number },
+  chartDimensions: { innerWidth: number; innerHeight: number; padding: { top: number, right: number, bottom: number, left: number } },
+  maxDataValue: number
+): string => {
+  const { innerWidth, innerHeight, padding } = chartDimensions;
+  
+  // Calculate trendline points
+  const points = [];
+  for (let i = 0; i < data.length; i++) {
+    const x = padding.left + (i * innerWidth) / (data.length - 1);
+    const predictedValue = trendline.slope * i + trendline.intercept;
+    const y = padding.top + innerHeight - (predictedValue / maxDataValue) * innerHeight;
+    points.push(`${x},${y}`);
+  }
+  
+  return `M ${points.join(' L ')}`;
+};
+
+const generateForecastPoints = (
+  data: DataPoint[],
+  trendline: { slope: number; intercept: number },
+  forecastPeriods: number,
+  chartDimensions: { innerWidth: number; innerHeight: number; padding: { top: number, right: number, bottom: number, left: number } },
+  maxDataValue: number
+): string => {
+  const { innerWidth, innerHeight, padding } = chartDimensions;
+  
+  // Start from the last data point
+  const lastIndex = data.length - 1;
+  const pointWidth = innerWidth / (data.length - 1);
+  
+  // Calculate forecast points
+  const points = [];
+  const lastX = padding.left + lastIndex * pointWidth;
+  const lastY = padding.top + innerHeight - (data[lastIndex].value / maxDataValue) * innerHeight;
+  
+  points.push(`${lastX},${lastY}`);
+  
+  for (let i = 1; i <= forecastPeriods; i++) {
+    const index = lastIndex + i;
+    const x = padding.left + index * pointWidth;
+    const predictedValue = trendline.slope * index + trendline.intercept;
+    const y = padding.top + innerHeight - (predictedValue / maxDataValue) * innerHeight;
+    points.push(`${x},${y}`);
+  }
+  
+  return `M ${points.join(' L ')}`;
+};
+
+// Update PieChart to support hierarchical data and drill-down capabilities
+export const PieChart: React.FC<ExtendedChartProps> = ({
   data,
   width = '100%',
   height = '400px',
@@ -1172,7 +977,7 @@ export const PieChart: React.FC<ChartProps> = ({
   showLegend = true,
   showTooltips = true,
   showValues = true,
-  colorScale = getDefaultColors(useDirectTheme()),
+  colorScale,
   onDataPointClick,
   style,
   // New props
@@ -1187,6 +992,17 @@ export const PieChart: React.FC<ChartProps> = ({
   interactive = true,
   highlightOnHover = true,
   animateOnMount = true,
+  // Hierarchical data props
+  hierarchicalData,
+  enableDrillDown = false,
+  drillDownLevel = 0,
+  onDrillDown,
+  breadcrumbs = [],
+  onBreadcrumbClick,
+  // Multi-level comparison
+  comparisonData,
+  showComparison = false,
+  comparisonLabel = 'Comparison'
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [activeSlice, setActiveSlice] = useState<string | null>(null);
@@ -1202,9 +1018,39 @@ export const PieChart: React.FC<ChartProps> = ({
     y: 0,
     visible: false,
   });
+  
+  // State for drill-down current data
+  const [currentLevelData, setCurrentLevelData] = useState<DataPoint[]>(data);
+  
+  // Effect to update current level data when hierarchical data or drill-down level changes
+  React.useEffect(() => {
+    if (enableDrillDown && hierarchicalData) {
+      // Navigate to the current level
+      let currentData: HierarchicalDataPoint[] = hierarchicalData;
+      let currentLevel = 0;
+      
+      while (currentLevel < drillDownLevel && breadcrumbs && breadcrumbs.length > currentLevel) {
+        const parentId = breadcrumbs[currentLevel];
+        const parent = currentData.find(item => item.id === parentId);
+        
+        if (parent && parent.children) {
+          currentData = parent.children;
+          currentLevel++;
+        } else {
+          break;
+        }
+      }
+      
+      setCurrentLevelData(currentData);
+    } else {
+      setCurrentLevelData(data);
+    }
+  }, [hierarchicalData, drillDownLevel, breadcrumbs, enableDrillDown, data]);
 
-  const themeContext = useDirectTheme();
-  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
+  const theme = useTheme();
+  const defaultColorScale = useMemo(() => getDefaultColors(theme), [theme]);
+  const finalColorScale = colorScale || defaultColorScale;
+  const themeStyles = useMemo(() => createThemeStyles(theme), [theme]);
 
   // Mount animation
   React.useEffect(() => {
@@ -1216,7 +1062,7 @@ export const PieChart: React.FC<ChartProps> = ({
   }, [animateOnMount]);
 
   // Handle empty data
-  if (!data || data.length === 0) {
+  if (!currentLevelData || currentLevelData.length === 0) {
     return (
       <ChartContainer
         width={width}
@@ -1236,18 +1082,39 @@ export const PieChart: React.FC<ChartProps> = ({
   }
 
   // Calculate total for percentages
-  const total = data.reduce((sum, point) => sum + point.value, 0);
+  const total = currentLevelData.reduce((sum, point) => sum + point.value, 0);
+  const comparisonTotal = comparisonData ? comparisonData.reduce((sum, point) => sum + point.value, 0) : 0;
 
   // Determine chart dimensions
   const chartWidth = 800;
   const chartHeight = 500;
-  const radius = Math.min(chartWidth, chartHeight) / 3;
+  let radius = Math.min(chartWidth, chartHeight) / 3;
+  
+  // Reduce radius if comparison is active
+  if (showComparison && comparisonData) {
+    radius = radius * 0.8;
+  }
+  
   const centerX = chartWidth / 2;
   const centerY = chartHeight / 2;
 
   // Handle click on a slice
   const handleSliceClick = (pointId: string) => {
     setActiveSlice(activeSlice === pointId ? null : pointId);
+    
+    if (enableDrillDown && hierarchicalData) {
+      // Find the clicked item in the current level data
+      const hierarchicalItem = hierarchicalData.find(item => item.id === pointId);
+      
+      // If it has children, drill down
+      if (hierarchicalItem && hierarchicalItem.children && hierarchicalItem.children.length > 0) {
+        if (onDrillDown) {
+          onDrillDown(pointId, drillDownLevel + 1);
+        }
+        return;
+      }
+    }
+    
     if (onDataPointClick) {
       onDataPointClick(pointId);
     }
@@ -1275,42 +1142,67 @@ export const PieChart: React.FC<ChartProps> = ({
     }
   };
 
+  // Handle breadcrumb click for drill-down navigation
+  const handleBreadcrumbClick = (level: number) => {
+    if (onBreadcrumbClick) {
+      onBreadcrumbClick(level);
+    }
+  };
+
   // Generate pie slices
-  const generatePieSlices = () => {
+  const generatePieSlices = (
+    data: DataPoint[], 
+    total: number, 
+    radius: number,
+    startRadiusMultiplier = 1,
+    endRadiusMultiplier = 1,
+    isComparison = false
+  ) => {
     let startAngle = 0;
 
     return data.map((point, i) => {
       const isActive = activeSlice === point.id;
-      const color = point.color || colorScale[i % colorScale.length];
+      const color = point.color || finalColorScale[i % finalColorScale.length];
       const percentage = (point.value / total) * 100;
       const angle = (percentage / 100) * 2 * Math.PI;
       const endAngle = startAngle + angle;
+      
+      // Calculate inner and outer radius for concentric rings
+      const innerRadius = radius * startRadiusMultiplier;
+      const outerRadius = radius * endRadiusMultiplier;
 
       // Calculate path for slice
-      const x1 = centerX + radius * Math.cos(startAngle);
-      const y1 = centerY + radius * Math.sin(startAngle);
-      const x2 = centerX + radius * Math.cos(endAngle);
-      const y2 = centerY + radius * Math.sin(endAngle);
+      const xInner1 = centerX + innerRadius * Math.cos(startAngle);
+      const yInner1 = centerY + innerRadius * Math.sin(startAngle);
+      const xInner2 = centerX + innerRadius * Math.cos(endAngle);
+      const yInner2 = centerY + innerRadius * Math.sin(endAngle);
+      
+      const xOuter1 = centerX + outerRadius * Math.cos(startAngle);
+      const yOuter1 = centerY + outerRadius * Math.sin(startAngle);
+      const xOuter2 = centerX + outerRadius * Math.cos(endAngle);
+      const yOuter2 = centerY + outerRadius * Math.sin(endAngle);
 
       // Use the larger arc (> 180 degrees) if needed
       const largeArcFlag = angle > Math.PI ? 1 : 0;
 
-      // Create SVG path
+      // Create SVG path for concentric ring slice
       const path = `
-        M ${centerX} ${centerY}
-        L ${x1} ${y1}
-        A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}
+        M ${xInner1} ${yInner1}
+        L ${xOuter1} ${yOuter1}
+        A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${xOuter2} ${yOuter2}
+        L ${xInner2} ${yInner2}
+        A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${xInner1} ${yInner1}
         Z
       `;
 
       // Calculate label position
       const labelAngle = startAngle + angle / 2;
-      const labelRadius = radius * 0.7;
+      const labelRadius = outerRadius * 0.75;
       const labelX = centerX + labelRadius * Math.cos(labelAngle);
       const labelY = centerY + labelRadius * Math.sin(labelAngle);
 
       // Calculate outer point for percentage label
-      const percentLabelRadius = radius * 1.2;
+      const percentLabelRadius = outerRadius * 1.1;
       const percentX = centerX + percentLabelRadius * Math.cos(labelAngle);
       const percentY = centerY + percentLabelRadius * Math.sin(labelAngle);
 
@@ -1318,6 +1210,13 @@ export const PieChart: React.FC<ChartProps> = ({
       const transform = isActive
         ? `translate(${Math.cos(labelAngle) * 10} ${Math.sin(labelAngle) * 10})`
         : '';
+        
+      // Check if this item has children for drill-down
+      let hasChildren = false;
+      if (enableDrillDown && hierarchicalData) {
+        const hierarchicalItem = hierarchicalData.find(item => item.id === point.id);
+        hasChildren = !!(hierarchicalItem && hierarchicalItem.children && hierarchicalItem.children.length > 0);
+      }
 
       const slice = {
         id: point.id,
@@ -1332,6 +1231,8 @@ export const PieChart: React.FC<ChartProps> = ({
         label: point.label,
         value: point.value,
         isActive,
+        hasChildren,
+        isComparison
       };
 
       // Update start angle for next slice
@@ -1341,7 +1242,16 @@ export const PieChart: React.FC<ChartProps> = ({
     });
   };
 
-  const slices = generatePieSlices();
+  // Generate slices for primary data
+  const slices = generatePieSlices(currentLevelData, total, radius);
+  
+  // Generate slices for comparison data if available
+  const comparisonSlices = showComparison && comparisonData 
+    ? generatePieSlices(comparisonData, comparisonTotal, radius, 1.1, 1.3, true) 
+    : [];
+  
+  // Combine all slices
+  const allSlices = [...slices, ...comparisonSlices];
 
   const chartContent = (
     <ChartContainer
@@ -1359,35 +1269,90 @@ export const PieChart: React.FC<ChartProps> = ({
       aria-describedby={ariaDescribedBy}
     >
       {title && <Title $themeStyles={themeStyles} $size={size}>{title}</Title>}
+      
+      {/* Breadcrumbs for drill-down navigation */}
+      {enableDrillDown && breadcrumbs && breadcrumbs.length > 0 && (
+        <div 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            marginBottom: themeStyles.spacing.sm,
+            fontSize: themeStyles.typography.fontSize.small,
+          }}
+        >
+          <span 
+            style={{ cursor: 'pointer', color: themeStyles.colors.text.primary }}
+            onClick={() => handleBreadcrumbClick(0)}
+          >
+            Home
+          </span>
+          
+          {breadcrumbs.map((crumb, index) => {
+            // Find the item name from hierarchical data
+            let itemName = crumb;
+            let currentLevel = hierarchicalData;
+            
+            for (let i = 0; i <= index; i++) {
+              const item = currentLevel?.find(d => d.id === breadcrumbs[i]);
+              if (i === index && item) {
+                itemName = item.label;
+              } else if (item && item.children) {
+                currentLevel = item.children;
+              }
+            }
+            
+            return (
+              <React.Fragment key={`breadcrumb-${index}`}>
+                <span style={{ margin: `0 ${themeStyles.spacing.xs}` }}>/</span>
+                <span 
+                  style={{ 
+                    cursor: 'pointer', 
+                    color: index === breadcrumbs.length - 1 
+                      ? themeStyles.colors.text.secondary 
+                      : themeStyles.colors.text.primary 
+                  }}
+                  onClick={() => handleBreadcrumbClick(index + 1)}
+                >
+                  {itemName}
+                </span>
+              </React.Fragment>
+            );
+          })}
+        </div>
+      )}
 
       <ChartCanvas viewBox={`0 0 ${chartWidth} ${chartHeight}`} $themeStyles={themeStyles}>
         {/* Pie slices */}
-        {slices.map((slice, i) => (
+        {allSlices.map((slice, i) => (
           <g key={`slice-${i}`} transform={slice.transform}>
             <PieSlice
               d={slice.path}
               fill={slice.color}
               active={slice.isActive}
               onClick={() => handleSliceClick(slice.id)}
-              onMouseOver={e =>
-                handleMouseOver(
-                  `${slice.label}: ${slice.value} (${slice.percentage.toFixed(1)}%)`,
-                  e
-                )
-              }
+              onMouseOver={e => {
+                const content = slice.isComparison 
+                  ? `${comparisonLabel}: ${slice.label}: ${slice.value} (${slice.percentage.toFixed(1)}%)`
+                  : `${slice.label}: ${slice.value} (${slice.percentage.toFixed(1)}%)${slice.hasChildren ? ' (Click to drill down)' : ''}`;
+                handleMouseOver(content, e);
+              }}
               onMouseOut={handleMouseOut}
               $themeStyles={themeStyles}
+              style={{ 
+                cursor: slice.hasChildren ? 'pointer' : 'default',
+                opacity: slice.isComparison ? 0.7 : 1 
+              }}
             />
 
             {/* Value labels */}
-            {showValues && slice.percentage > 5 && (
+            {showValues && slice.percentage > 5 && !slice.isComparison && (
               <ValueLabel x={slice.labelX} y={slice.labelY} $themeStyles={themeStyles}>
                 {slice.percentage.toFixed(0)}%
               </ValueLabel>
             )}
 
             {/* Percentage labels */}
-            {showValues && slice.percentage <= 5 && (
+            {showValues && slice.percentage <= 5 && !slice.isComparison && (
               <g>
                 <line
                   x1={slice.labelX}
@@ -1401,6 +1366,18 @@ export const PieChart: React.FC<ChartProps> = ({
                   {slice.percentage.toFixed(1)}%
                 </ValueLabel>
               </g>
+            )}
+            
+            {/* Drill-down indicator */}
+            {slice.hasChildren && !slice.isComparison && (
+              <circle
+                cx={slice.labelX + 15}
+                cy={slice.labelY}
+                r={5}
+                fill={themeStyles.colors.background.paper}
+                stroke={slice.color}
+                strokeWidth="1.5"
+              />
             )}
           </g>
         ))}
@@ -1428,27 +1405,69 @@ export const PieChart: React.FC<ChartProps> = ({
           role="list"
           aria-label="Chart legend"
         >
-          {data.map((point, i) => (
+          {/* Primary data legend */}
+          {currentLevelData.map((point, i) => {
+            // Check if this item has children for drill-down
+            let hasChildren = false;
+            if (enableDrillDown && hierarchicalData) {
+              const hierarchicalItem = hierarchicalData.find(item => item.id === point.id);
+              hasChildren = !!(hierarchicalItem && hierarchicalItem.children && hierarchicalItem.children.length > 0);
+            }
+            
+            return (
+              <LegendItem
+                key={`legend-${i}`}
+                onClick={() => handleSliceClick(point.id)}
+                style={{ cursor: hasChildren ? 'pointer' : 'default' }}
+                $themeStyles={themeStyles}
+                role="listitem"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleSliceClick(point.id);
+                  }
+                }}
+              >
+                <LegendColor 
+                  color={point.color || finalColorScale[i % finalColorScale.length]} 
+                  $themeStyles={themeStyles}
+                  aria-hidden="true"
+                />
+                <span>
+                  {point.label} ({((point.value / total) * 100).toFixed(1)}%)
+                  {hasChildren && <span style={{ marginLeft: '5px', fontSize: '0.8em' }}>▶</span>}
+                </span>
+              </LegendItem>
+            );
+          })}
+          
+          {/* Comparison data legend separator */}
+          {showComparison && comparisonData && comparisonData.length > 0 && (
+            <div 
+              style={{ 
+                height: '1px', 
+                background: themeStyles.colors.chart.axis, 
+                margin: `${themeStyles.spacing.xs} 0`,
+                opacity: 0.5 
+              }} 
+            />
+          )}
+          
+          {/* Comparison data legend */}
+          {showComparison && comparisonData && comparisonData.map((point, i) => (
             <LegendItem
-              key={`legend-${i}`}
-              onClick={() => handleSliceClick(point.id)}
-              style={{ cursor: 'pointer' }}
+              key={`comparison-legend-${i}`}
+              style={{ cursor: 'default', opacity: 0.7 }}
               $themeStyles={themeStyles}
               role="listitem"
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSliceClick(point.id);
-                }
-              }}
             >
               <LegendColor 
-                color={point.color || colorScale[i % colorScale.length]} 
+                color={point.color || finalColorScale[i % finalColorScale.length]} 
                 $themeStyles={themeStyles}
                 aria-hidden="true"
               />
               <span>
-                {point.label} ({((point.value / total) * 100).toFixed(1)}%)
+                {comparisonLabel}: {point.label} ({((point.value / comparisonTotal) * 100).toFixed(1)}%)
               </span>
             </LegendItem>
           ))}
@@ -1469,14 +1488,14 @@ export const PieChart: React.FC<ChartProps> = ({
  */
 export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = props => {
   const { innerRadius = 0.6, ...otherProps } = props;
-  const themeContext = useDirectTheme();
-  const themeStyles = useMemo(() => createThemeStyles(themeContext), [themeContext]);
-
+  const theme = useTheme();
+  const defaultColorScale = useMemo(() => getDefaultColors(theme), [theme]);
+  const themeStyles = useMemo(() => createThemeStyles(theme), [theme]);
+  
   return (
     <ChartContainer
       width={props.width}
       height={props.height}
-      ref={React.useRef<HTMLDivElement>(null)}
       style={props.style}
       $themeStyles={themeStyles}
       $variant="outlined"
@@ -1488,7 +1507,10 @@ export const DonutChart: React.FC<ChartProps & { innerRadius?: number }> = props
         {props.title}
       </Title>}
 
-      <PieChart {...otherProps} />
+      <PieChart {...otherProps} data={props.data.map((item, index) => ({
+        ...item,
+        color: item.color || (props.colorScale ? props.colorScale[index % props.colorScale.length] : defaultColorScale[index % defaultColorScale.length]),
+      }))} />
 
       {/* Add a circle to create the donut hole */}
       <svg

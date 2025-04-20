@@ -308,4 +308,8 @@ const TimePickerDemo: React.FC = () => {
   );
 };
 
+// Add default export for lazy loading
+export default TimePickerDemo;
+
+// Export named component for any code that might be importing it by name
 export { TimePickerDemo };

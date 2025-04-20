@@ -1,4 +1,4 @@
-/**
+her/**
  * Theme Access Pattern Analyzer
  * 
  * This script scans the codebase for direct theme property access patterns

@@ -26,3 +26,7 @@ global.URL.revokeObjectURL = () => {};
 
 // Mock console.warn to avoid noise in tests
 global.console.warn = () => {};
+
+// Setup axe for accessibility testing
+const { toHaveNoViolations } = require('jest-axe');
+expect.extend(toHaveNoViolations);

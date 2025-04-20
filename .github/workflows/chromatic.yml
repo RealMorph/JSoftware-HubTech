@@ -1,0 +1,46 @@
+name: "Chromatic Visual Regression Tests"
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  chromatic-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required for Chromatic to detect changes properly
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          exitZeroOnChanges: true # Don't fail the build if there are visual changes
+          exitOnceUploaded: true # Exit with success once the build has been uploaded
+          onlyChanged: true # Only test components that have changed in the PR
+          storybookBuildDir: 'storybook-static'
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - name: Generate test summary
+        run: node scripts/visual-regression.js --summary-only
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: visual-regression-results
+          path: test-results/visual-regression-results.json 

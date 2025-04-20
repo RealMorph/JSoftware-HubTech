@@ -7,3 +7,5 @@ export { BreadcrumbsDemo } from './BreadcrumbsDemo';
 export { Pagination } from './Pagination';
 export { PaginationDemo } from './PaginationDemo';
 export { TabsDemo } from './TabsDemo';
+export * from './RadixSidebar';
+export * from './RadixSidebarDemo';

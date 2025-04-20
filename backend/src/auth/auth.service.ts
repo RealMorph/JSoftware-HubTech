@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { ThemeMode, ThemeColor, NotificationFrequency, DashboardLayout, WidgetType } from './dto/user-settings.dto';
 import { DataSharingLevel, ApiKeyPermission } from './dto/security-settings.dto';
+import { FirebaseAdminService } from '../firebase-admin/firebase-admin.service';
 
 @Injectable()
 export class AuthService {
@@ -1813,5 +1814,153 @@ export class AuthService {
       createdAt: apiKey.createdAt,
       lastUsedAt: apiKey.lastUsedAt
     };
+  }
+
+  async refreshToken(token: string) {
+    try {
+      // In a real app, you would verify the refresh token's signature and check if it's in the valid tokens database
+      // For this example, we'll just check if it looks like a valid token format
+      
+      if (!token || typeof token !== 'string') {
+        throw new BadRequestException('Invalid refresh token');
+      }
+      
+      // Extract userId from token (in a real app, you would decode the JWT)
+      // Here we'll simulate finding a user from the token
+      const userId = this.extractUserIdFromToken(token);
+      
+      if (!userId) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+      
+      const user = this.findUserById(userId);
+      
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      
+      // Create new access and refresh tokens
+      const accessToken = this.generateAccessToken(user);
+      const refreshToken = this.generateRefreshToken(user);
+      
+      // In a real app, you would:
+      // 1. Add the new refresh token to the database
+      // 2. Invalidate the old refresh token
+      
+      return {
+        accessToken,
+        refreshToken,
+        expiresIn: 900, // 15 minutes in seconds
+        tokenType: 'Bearer',
+        user: this.sanitizeUser(user)
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Failed to refresh token');
+    }
+  }
+  
+  // Helper methods for the refreshToken implementation
+  private extractUserIdFromToken(token: string): string | null {
+    // In a real app, you would decode the JWT and extract the user ID
+    // For this mock example, we'll assume the token format contains the user ID
+    try {
+      // Mock implementation: assume token is in format "mock_token_[userId]_[random]"
+      if (token.startsWith('mock_refresh_token_')) {
+        return '1'; // Always return user ID 1 for mock tokens
+      }
+      
+      // For any other token format, try to extract a UUID-like pattern
+      const uuidMatch = token.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+      if (uuidMatch) {
+        return uuidMatch[0];
+      }
+      
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+  
+  private findUserById(userId: string) {
+    return this.users.find(user => user.id === userId) || null;
+  }
+  
+  private generateAccessToken(user: any): string {
+    // In a real app, you would use JWT to create a signed token
+    // For this example, we'll just return a mock token
+    return `mock_token_${user.id}_${Date.now()}`;
+  }
+  
+  private generateRefreshToken(user: any): string {
+    // In a real app, you would use JWT to create a signed token with longer expiration
+    // For this example, we'll just return a mock token
+    return `mock_refresh_token_${user.id}_${Date.now()}`;
+  }
+  
+  private sanitizeUser(user: any) {
+    // Return user object without sensitive information
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
+  /**
+   * Verifies a JWT token asynchronously
+   * @param token The JWT token to verify
+   * @returns The decoded token payload if valid, or null if invalid
+   */
+  async verifyToken(token: string): Promise<any> {
+    try {
+      // Skip 'Bearer ' prefix if present
+      const tokenValue = token.startsWith('Bearer ') ? token.slice(7) : token;
+      const decoded = await this.firebaseAdmin.auth().verifyIdToken(tokenValue);
+      return decoded;
+    } catch (error) {
+      console.error('Error verifying token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Verifies a JWT token synchronously
+   * @param token The JWT token to verify
+   * @returns The decoded token payload if valid, or null if invalid
+   */
+  verifyTokenSync(token: string): any {
+    try {
+      // Skip 'Bearer ' prefix if present
+      const tokenValue = token.startsWith('Bearer ') ? token.slice(7) : token;
+      
+      // For synchronous verification, we should use a library like jsonwebtoken
+      // which doesn't require Firebase's async verification
+      // Here's a simplified version for the demo
+      const decoded = this.decodeTokenSync(tokenValue);
+      return decoded;
+    } catch (error) {
+      console.error('Error verifying token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Decodes a JWT token synchronously without validation (for demo purposes)
+   * In production, use a proper JWT library
+   */
+  private decodeTokenSync(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 } 

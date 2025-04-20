@@ -2,6 +2,12 @@ import React, { useState, forwardRef, useId, ChangeEvent, FocusEvent } from 'rea
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
+/**
+ * TextField Component
+ * 
+ * A flexible input component with various style variants and states.
+ */
+
 interface ThemeStyles {
   fontSize: string;
   fontFamily: string;
@@ -25,8 +31,8 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
   const { getColor, getTypography, getSpacing } = themeContext;
 
   return {
-    fontSize: getTypography('scale.base', '1rem').toString(),
-    fontFamily: getTypography('family', 'sans-serif').toString(),
+    fontSize: getTypography('scale.md', '1rem').toString(),
+    fontFamily: getTypography('fontFamily.base', 'system-ui, sans-serif').toString(),
     errorColor: getColor('error.500', '#ef4444').toString(),
     primaryColor: getColor('primary.500', '#3b82f6').toString(),
     grayColor400: getColor('gray.400', '#9ca3af').toString(),
@@ -38,9 +44,9 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
     grayColor500: getColor('gray.500', '#6b7280').toString(),
     typographyScaleSm: getTypography('scale.sm', '0.875rem').toString(),
     typographyScaleXs: getTypography('scale.xs', '0.75rem').toString(),
-    spacing4: getSpacing('4', '1rem').toString(),
+    spacing4: getSpacing('md', '1rem').toString(),
     textColorPrimary: getColor('text.primary', '#111827').toString(),
-    spacingXs: getSpacing('2', '0.5rem').toString(),
+    spacingXs: getSpacing('xs', '0.5rem').toString(),
   };
 }
 

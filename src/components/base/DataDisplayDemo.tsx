@@ -185,29 +185,29 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
       cardFlatBackground: getColor('gray.50', '#f5f5f5'),
     },
     spacing: {
-      page: getSpacing('6', '24px'),
-      section: getSpacing('12', '48px'),
-      component: getSpacing('6', '24px'),
-      item: getSpacing('4', '16px'),
-      sm: getSpacing('2', '8px'),
-      md: getSpacing('4', '16px'),
-      lg: getSpacing('6', '24px'),
+      page: getSpacing('lg', '24px'),
+      section: getSpacing('xl', '48px'),
+      component: getSpacing('lg', '24px'),
+      item: getSpacing('md', '16px'),
+      sm: getSpacing('sm', '8px'),
+      md: getSpacing('md', '16px'),
+      lg: getSpacing('lg', '24px'),
     },
     typography: {
       title: {
         fontSize: getTypography('fontSize.xl', '24px') as string,
         fontWeight: getTypography('fontWeight.bold', '700') as string,
-        marginBottom: getSpacing('8', '32px'),
+        marginBottom: getSpacing('lg', '32px'),
       },
       sectionTitle: {
         fontSize: getTypography('fontSize.lg', '18px') as string,
         fontWeight: getTypography('fontWeight.semibold', '600') as string,
-        marginBottom: getSpacing('4', '16px'),
+        marginBottom: getSpacing('md', '16px'),
       },
       componentTitle: {
         fontSize: getTypography('fontSize.md', '16px') as string,
         fontWeight: getTypography('fontWeight.medium', '500') as string,
-        marginBottom: getSpacing('2', '8px'),
+        marginBottom: getSpacing('sm', '8px'),
       },
     },
     borderRadius: getBorderRadius('md', '8px'),
@@ -536,4 +536,5 @@ export const DataDisplayDemo: React.FC = () => {
   );
 };
 
+// Add default export
 export default DataDisplayDemo;

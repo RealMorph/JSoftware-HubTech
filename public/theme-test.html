@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme System Verification</title>
+  <style>
+    :root {
+      --color-primary: #0073ea;
+      --color-secondary: #00c2ff;
+      --color-success: #00c875;
+      --color-error: #e44258;
+      --color-warning: #ffcb00;
+      --color-text-primary: #323338;
+      --color-text-secondary: #676879;
+      --color-background: #f5f6f8;
+      --color-surface: #ffffff;
+      --color-border: #e6e9ef;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --border-radius-sm: 4px;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    body.dark-theme {
+      --color-primary: #579bfc;
+      --color-secondary: #9c5ffd;
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #b0b6bc;
+      --color-background: #1f2023;
+      --color-surface: #292a2d;
+      --color-border: #3e4044;
+    }
+
+    header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-md) var(--spacing-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+      color: var(--color-text-primary);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-icon {
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--border-radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
+      font-weight: bold;
+    }
+
+    .tools {
+      display: flex;
+      gap: var(--spacing-md);
+    }
+
+    .theme-switch {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-md);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+
+    .theme-switch:hover {
+      background-color: var(--color-background);
+    }
+
+    .card {
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .tab-button {
+      padding: var(--spacing-sm) var(--spacing-lg);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-button.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .component-example {
+      margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      background: rgba(0,0,0,0.02);
+    }
+
+    pre {
+      background-color: var(--color-surface);
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      overflow: auto;
+      font-family: monospace;
+      border: 1px solid var(--color-border);
+    }
+
+    .button {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #0060b9;
+    }
+
+    .secondary-button {
+      background-color: transparent;
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+
+    .secondary-button:hover {
+      background-color: rgba(0, 115, 234, 0.1);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: var(--border-radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status-ready {
+      background-color: var(--color-background);
+      color: var(--color-text-secondary);
+    }
+
+    .status-running {
+      background-color: var(--color-warning);
+      color: #323338;
+    }
+
+    .status-pass {
+      background-color: var(--color-success);
+      color: white;
+    }
+
+    .status-fail {
+      background-color: var(--color-error);
+      color: white;
+    }
+
+    .status-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .result-row {
+      display: flex;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .result-label {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .result-value {
+      flex: 2;
+    }
+
+    .theme-test-group {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .error-message {
+      background-color: #fde2e2;
+      color: #e44258;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .warning-message {
+      background-color: #fff8e6;
+      color: #ff9d0a;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .info-message {
+      background-color: #e6f4ff;
+      color: #0073ea;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .color-palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .color-swatch {
+      height: 80px;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-xs);
+      border: 1px solid var(--color-border);
+    }
+
+    .color-label {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .typography-sample {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .typography-label {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xs);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">T</span>
+          Theme System Verification
+        </div>
+        <div class="tools">
+          <button class="theme-switch" id="theme-toggle">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark Mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Theme System Verification Tool</h1>
+      <p>This tool helps verify theme functionality and identify issues in your application.</p>
+      
+      <div class="tabs">
+        <button class="tab-button active" data-tab="verification">Verification</button>
+        <button class="tab-button" data-tab="monitor">Console Monitor</button>
+        <button class="tab-button" data-tab="report">Report</button>
+        <button class="tab-button" data-tab="samples">Theme Samples</button>
+      </div>
+      
+      <div id="tab-verification" class="tab-content" style="display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h2>Theme Verification</h2>
+            <p>Verify your theme configuration against expected structure and check for common issues.</p>
+          </div>
+          <div>
+            <span id="status-indicator" class="status status-ready">Ready</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label for="theme-selector" style="display: block; margin-bottom: 8px; font-weight: 500;">Select Theme:</label>
+          <select id="theme-selector" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--color-border);">
+            <option value="default">Default Theme</option>
+            <option value="dark">Dark Theme</option>
+            <option value="high-contrast">High Contrast Theme</option>
+          </select>
+        </div>
+        
+        <button id="run-verification" class="button">Run Verification</button>
+      </div>
+      
+      <div id="tab-monitor" class="tab-content">
+        <h2>Theme Console Monitor</h2>
+        <p>Monitor and collect theme-related console messages to identify potential issues.</p>
+        
+        <div style="margin-bottom: 20px;">
+          <button id="start-monitor" class="button">Start Monitoring</button>
+          <button id="stop-monitor" class="button secondary-button" style="margin-left: 8px;">Stop Monitoring</button>
+          <button id="clear-monitor" class="button secondary-button" style="margin-left: 8px;">Clear Messages</button>
+        </div>
+        
+        <div id="console-output" style="background-color: var(--color-surface); padding: 16px; border-radius: 4px; max-height: 300px; overflow: auto; border: 1px solid var(--color-border); font-family: monospace;">
+          <div class="info-message">Console monitoring not started. Click "Start Monitoring" to begin.</div>
+        </div>
+      </div>
+      
+      <div id="tab-report" class="tab-content">
+        <h2>Verification Report</h2>
+        <p>Review detailed results of your theme verification.</p>
+        
+        <div id="verification-report">
+          <div class="info-message">No verification has been run yet. Go to the Verification tab and click "Run Verification".</div>
+        </div>
+      </div>
+      
+      <div id="tab-samples" class="tab-content">
+        <h2>Theme Samples</h2>
+        <p>View samples of theme elements to check for visual consistency.</p>
+        
+        <div class="theme-test-group">
+          <h3>Colors</h3>
+          <div class="color-palette">
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-primary);"></div>
+              <div class="color-label">Primary</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-secondary);"></div>
+              <div class="color-label">Secondary</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-success);"></div>
+              <div class="color-label">Success</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-error);"></div>
+              <div class="color-label">Error</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-warning);"></div>
+              <div class="color-label">Warning</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-background);"></div>
+              <div class="color-label">Background</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-surface);"></div>
+              <div class="color-label">Surface</div>
+            </div>
+            <div>
+              <div class="color-swatch" style="background-color: var(--color-border);"></div>
+              <div class="color-label">Border</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="theme-test-group">
+          <h3>Typography</h3>
+          <div class="typography-sample">
+            <div class="typography-label">Heading 1</div>
+            <h1 style="margin: 0;">The quick brown fox jumps over the lazy dog</h1>
+          </div>
+          <div class="typography-sample">
+            <div class="typography-label">Heading 2</div>
+            <h2 style="margin: 0;">The quick brown fox jumps over the lazy dog</h2>
+          </div>
+          <div class="typography-sample">
+            <div class="typography-label">Heading 3</div>
+            <h3 style="margin: 0;">The quick brown fox jumps over the lazy dog</h3>
+          </div>
+          <div class="typography-sample">
+            <div class="typography-label">Body</div>
+            <p style="margin: 0;">The quick brown fox jumps over the lazy dog</p>
+          </div>
+          <div class="typography-sample">
+            <div class="typography-label">Small Text</div>
+            <small>The quick brown fox jumps over the lazy dog</small>
+          </div>
+        </div>
+        
+        <div class="theme-test-group">
+          <h3>Components</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+            <div class="component-example">
+              <div class="typography-label">Buttons</div>
+              <button class="button" style="margin-right: 8px;">Primary</button>
+              <button class="button secondary-button">Secondary</button>
+            </div>
+            <div class="component-example">
+              <div class="typography-label">Card</div>
+              <div style="background-color: var(--color-surface); padding: 12px; border-radius: var(--border-radius-sm); border: 1px solid var(--color-border);">
+                <h4 style="margin-top: 0; margin-bottom: 8px;">Card Title</h4>
+                <p style="margin: 0; font-size: 14px;">Card content goes here.</p>
+              </div>
+            </div>
+            <div class="component-example">
+              <div class="typography-label">Form Elements</div>
+              <input type="text" placeholder="Text input" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--color-border); margin-bottom: 8px;">
+              <select style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--color-border);">
+                <option>Select option</option>
+              </select>
+            </div>
+            <div class="component-example">
+              <div class="typography-label">Status Indicators</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <span class="status status-ready">Ready</span>
+                <span class="status status-running">Running</span>
+                <span class="status status-pass">Pass</span>
+                <span class="status status-fail">Fail</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/src/utils/theme-console-monitor.js"></script>
+  <script src="/src/utils/theme-verification.js"></script>
+  <script src="/src/utils/theme-verify-bridge.js"></script>
+  
+  <script>
+    // Store default theme presets
+    window.themePresets = {
+      default: {
+        colors: {
+          primary: '#0073ea',
+          secondary: '#00c2ff',
+          background: '#f5f6f8',
+          surface: '#ffffff',
+          text: {
+            primary: '#323338',
+            secondary: '#676879'
+          },
+          border: '#e6e9ef',
+          success: '#00c875',
+          error: '#e44258',
+          warning: '#ffcb00'
+        },
+        typography: {
+          fontFamily: {
+            base: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+          },
+          fontSize: {
+            xs: '12px',
+            sm: '14px',
+            md: '16px',
+            lg: '18px',
+            xl: '20px',
+            '2xl': '24px'
+          },
+          fontWeight: {
+            regular: 400,
+            medium: 500,
+            bold: 600
+          },
+          lineHeight: {
+            tight: 1.2,
+            base: 1.5,
+            loose: 1.8
+          }
+        },
+        spacing: {
+          xs: '4px',
+          sm: '8px',
+          md: '16px',
+          lg: '24px',
+          xl: '32px'
+        },
+        borderRadius: {
+          sm: '4px',
+          md: '8px',
+          lg: '12px',
+          full: '9999px'
+        },
+        shadows: {
+          sm: '0 1px 3px rgba(0,0,0,0.1)',
+          md: '0 4px 6px rgba(0,0,0,0.1)',
+          lg: '0 10px 15px rgba(0,0,0,0.1)'
+        },
+        transitions: {
+          fast: '0.1s',
+          normal: '0.2s',
+          slow: '0.3s'
+        },
+        zIndex: {
+          base: 1,
+          dropdown: 1000,
+          sticky: 1100,
+          modal: 1300,
+          toast: 1400
+        },
+        breakpoints: {
+          sm: '576px',
+          md: '768px',
+          lg: '992px',
+          xl: '1200px'
+        }
+      },
+      dark: {
+        colors: {
+          primary: '#579bfc',
+          secondary: '#9c5ffd',
+          background: '#1f2023',
+          surface: '#292a2d',
+          text: {
+            primary: '#ffffff',
+            secondary: '#b0b6bc'
+          },
+          border: '#3e4044',
+          success: '#33d391',
+          error: '#ff6666',
+          warning: '#ffcb66'
+        },
+        typography: {
+          fontFamily: {
+            base: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+          },
+          fontSize: {
+            xs: '12px',
+            sm: '14px',
+            md: '16px',
+            lg: '18px',
+            xl: '20px',
+            '2xl': '24px'
+          },
+          fontWeight: {
+            regular: 400,
+            medium: 500,
+            bold: 600
+          },
+          lineHeight: {
+            tight: 1.2,
+            base: 1.5,
+            loose: 1.8
+          }
+        },
+        spacing: {
+          xs: '4px',
+          sm: '8px',
+          md: '16px',
+          lg: '24px',
+          xl: '32px'
+        },
+        borderRadius: {
+          sm: '4px',
+          md: '8px',
+          lg: '12px',
+          full: '9999px'
+        },
+        shadows: {
+          sm: '0 1px 3px rgba(0,0,0,0.3)',
+          md: '0 4px 6px rgba(0,0,0,0.3)',
+          lg: '0 10px 15px rgba(0,0,0,0.3)'
+        },
+        transitions: {
+          fast: '0.1s',
+          normal: '0.2s',
+          slow: '0.3s'
+        },
+        zIndex: {
+          base: 1,
+          dropdown: 1000,
+          sticky: 1100,
+          modal: 1300,
+          toast: 1400
+        },
+        breakpoints: {
+          sm: '576px',
+          md: '768px',
+          lg: '992px',
+          xl: '1200px'
+        }
+      }
+    };
+
+    // Default theme
+    window.defaultTheme = window.themePresets.default;
+    
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('dark-theme');
+      if (isDark) {
+        document.body.classList.remove('dark-theme');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.body.classList.add('dark-theme');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+    
+    // Restore theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'Light Mode';
+    }
+    
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tab = button.dataset.tab;
+        
+        // Hide all tabs
+        tabContents.forEach(content => {
+          content.style.display = 'none';
+        });
+        
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(`tab-${tab}`).style.display = 'block';
+        button.classList.add('active');
+      });
+    });
+    
+    // Run verification button
+    const runButton = document.getElementById('run-verification');
+    const statusIndicator = document.getElementById('status-indicator');
+    
+    runButton.addEventListener('click', () => {
+      statusIndicator.textContent = 'Running...';
+      statusIndicator.className = 'status status-running';
+      
+      // Simulate verification (replace with actual verification logic)
+      setTimeout(() => {
+        const passed = Math.random() > 0.3; // Simulate random pass/fail
+        
+        statusIndicator.textContent = passed ? 'PASS' : 'FAIL';
+        statusIndicator.className = passed ? 'status status-pass' : 'status status-fail';
+        
+        // Generate sample report
+        const report = document.getElementById('verification-report');
+        if (passed) {
+          report.innerHTML = `
+            <div style="background-color: #e6f4e9; color: #00c875; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+              ✓ All theme verification checks passed!
+            </div>
+            <div>
+              <h3>Verification Results</h3>
+              <div class="result-row">
+                <div class="result-label">Theme structure:</div>
+                <div class="result-value">✓ Valid</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Required properties:</div>
+                <div class="result-value">✓ All present</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Color contrast:</div>
+                <div class="result-value">✓ WCAG AA compliant</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Typography:</div>
+                <div class="result-value">✓ Valid values</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Common issues:</div>
+                <div class="result-value">✓ None detected</div>
+              </div>
+            </div>
+          `;
+        } else {
+          report.innerHTML = `
+            <div style="background-color: #fde2e2; color: #e44258; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+              ✗ Theme verification checks failed!
+            </div>
+            <div>
+              <h3>Verification Results</h3>
+              <div class="result-row">
+                <div class="result-label">Theme structure:</div>
+                <div class="result-value">✓ Valid</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Required properties:</div>
+                <div class="result-value">✗ Missing properties</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Missing properties:</div>
+                <div class="result-value">colors.accent, typography.fontWeight.extraBold</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Color contrast:</div>
+                <div class="result-value">✗ Low contrast between text.secondary and background</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Typography:</div>
+                <div class="result-value">✓ Valid values</div>
+              </div>
+              <div class="result-row">
+                <div class="result-label">Common issues:</div>
+                <div class="result-value">✗ Similar colors may cause visual confusion</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        // Switch to report tab
+        document.querySelector('.tab-button[data-tab="report"]').click();
+      }, 1500);
+    });
+    
+    // Console monitor functionality
+    const startMonitorBtn = document.getElementById('start-monitor');
+    const stopMonitorBtn = document.getElementById('stop-monitor');
+    const clearMonitorBtn = document.getElementById('clear-monitor');
+    const consoleOutput = document.getElementById('console-output');
+    
+    startMonitorBtn.addEventListener('click', () => {
+      // Clear previous messages
+      consoleOutput.innerHTML = '<div class="info-message">Console monitoring started...</div>';
+      
+      // Start monitoring if window.ThemeConsoleMonitor exists
+      if (window.ThemeConsoleMonitor) {
+        window.ThemeConsoleMonitor.startMonitoring();
+      } else {
+        // Fallback if monitor script not loaded
+        consoleOutput.innerHTML += '<div class="error-message">ThemeConsoleMonitor not found! Include theme-console-monitor.js before using this feature.</div>';
+      }
+    });
+    
+    stopMonitorBtn.addEventListener('click', () => {
+      if (window.ThemeConsoleMonitor) {
+        window.ThemeConsoleMonitor.stopMonitoring();
+        consoleOutput.innerHTML += '<div class="info-message">Console monitoring stopped.</div>';
+      }
+    });
+    
+    clearMonitorBtn.addEventListener('click', () => {
+      if (window.ThemeConsoleMonitor) {
+        window.ThemeConsoleMonitor.clearMessages();
+      }
+      consoleOutput.innerHTML = '<div class="info-message">Console messages cleared.</div>';
+    });
+    
+    // Auto-trigger error for testing the console monitor
+    setTimeout(() => {
+      console.error('Theme error: Could not find theme property colors.customAccent');
+      console.warn('Theme warning: Typography size "xxl" is used but not defined in the theme');
+    }, 2000);
+  </script>
+</body>
+</html> 

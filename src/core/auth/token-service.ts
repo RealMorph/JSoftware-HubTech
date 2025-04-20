@@ -61,6 +61,14 @@ export class TokenService {
     return Date.now() > parseInt(expiresAt, 10);
   }
   
+  static hasValidAccessToken(): boolean {
+    return !!this.getAccessToken() && !this.isTokenExpired();
+  }
+  
+  static hasValidRefreshToken(): boolean {
+    return !!this.getRefreshToken();
+  }
+  
   private static getExpirationFromToken(token: string): number | null {
     try {
       const decoded = jwtDecode<DecodedToken>(token);

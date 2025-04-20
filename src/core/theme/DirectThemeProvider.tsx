@@ -12,7 +12,7 @@ import { generateCssVariables } from './css-variables';
 import { applyTheme } from './theme-system';
 import { ThemeService, useThemeService, inMemoryThemeService } from './theme-context';
 import { ThemeServiceProvider } from './ThemeServiceProvider';
-import { spacingScale } from './spacing';
+import { spacingScale, getSpacing as getSpacingUtil } from './spacing';
 import { themeDefaults } from './theme-defaults';
 
 // Context types
@@ -27,7 +27,7 @@ export interface DirectThemeContextType {
   // Direct theme utility functions
   getColor: (path: string, fallback?: string) => string;
   getTypography: (path: string, fallback?: string | number) => string | number;
-  getSpacing: (key: keyof SpacingConfig, fallback?: string) => string;
+  getSpacing: (key: keyof SpacingConfig | string | number, fallback?: string) => string;
   getBorderRadius: (key: keyof BorderRadiusConfig, fallback?: string) => string;
   getShadow: (key: keyof ShadowConfig, fallback?: string) => string;
   getTransition: (key: string, fallback?: string) => string;
@@ -201,19 +201,28 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
   }, [theme]);
 
   const toggleDarkMode = () => {
-    setTheme(currentTheme => ({
-      ...currentTheme,
-      colors: {
-        ...currentTheme.colors,
-        background: currentTheme.colors.background === '#FFFFFF' ? '#000000' : '#FFFFFF',
-        text: typeof currentTheme.colors.text === 'object'
-          ? {
-              ...currentTheme.colors.text,
-              primary: currentTheme.colors.text.primary === '#000000' ? '#FFFFFF' : '#000000',
-            }
-          : currentTheme.colors.text === '#000000' ? '#FFFFFF' : '#000000',
-      },
-    }));
+    setTheme(currentTheme => {
+      // Always ensure text is an object to maintain type compatibility
+      const textColors = typeof currentTheme.colors.text === 'object' 
+        ? { 
+            ...currentTheme.colors.text,
+            primary: currentTheme.colors.text.primary === '#000000' ? '#FFFFFF' : '#000000' 
+          }
+        : { 
+            primary: '#FFFFFF', // Default if converting from string
+            secondary: '#CCCCCC',
+            disabled: '#999999'
+          };
+      
+      return {
+        ...currentTheme,
+        colors: {
+          ...currentTheme.colors,
+          background: currentTheme.colors.background === '#FFFFFF' ? '#000000' : '#FFFFFF',
+          text: textColors
+        }
+      };
+    });
   };
 
   const contextValue: DirectThemeContextType = {
@@ -236,7 +245,14 @@ export const DirectThemeProvider: React.FC<DirectThemeProviderProps> = ({
       }
       return value || fallback || '';
     },
-    getSpacing: (key, fallback) => theme.spacing[key] || fallback || '',
+    getSpacing: (key, fallback) => {
+      if (hasKey(theme.spacing, key)) {
+        return theme.spacing[key as keyof SpacingConfig] || fallback || '';
+      }
+      // Use the utility function for numeric keys
+      const utilResult = getSpacingUtil(key);
+      return utilResult || fallback || '';
+    },
     getBorderRadius: (key, fallback) => theme.borderRadius[key] || fallback || '',
     getShadow: (key, fallback) => theme.shadows[key] || fallback || '',
     getTransition: (key, fallback) => {

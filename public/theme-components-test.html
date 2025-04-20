@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Components Test Page</title>
+  <style>
+    :root {
+      --color-primary: #0073ea;
+      --color-secondary: #00c2ff;
+      --color-background: #f5f6f8;
+      --color-surface: #ffffff;
+      --color-text-primary: #323338;
+      --color-text-secondary: #676879;
+      --color-border: #e6e9ef;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --border-radius-sm: 4px;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+    }
+
+    body.dark-theme {
+      --color-primary: #579bfc;
+      --color-secondary: #9c5ffd;
+      --color-background: #1f2023;
+      --color-surface: #292a2d;
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #b0b6bc;
+      --color-border: #3e4044;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .theme-switch {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 14px;
+    }
+
+    .theme-switch:hover {
+      background-color: var(--color-background);
+    }
+
+    .card {
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .component-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    h1, h2, h3 {
+      color: var(--color-text-primary);
+    }
+
+    h2 {
+      margin-top: 0;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--spacing-sm);
+    }
+
+    .button {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .button:hover {
+      background-color: #0060b9;
+    }
+
+    .secondary-button {
+      background-color: transparent;
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+
+    .secondary-button:hover {
+      background-color: rgba(0, 115, 234, 0.1);
+    }
+
+    .input {
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .color-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .color-swatch {
+      height: 80px;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .color-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .color-value {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      font-family: monospace;
+    }
+
+    .typography-sample {
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .typography-label {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .console-output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      font-family: monospace;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-top: var(--spacing-md);
+      height: 200px;
+      overflow: auto;
+    }
+
+    .log {
+      color: #d4d4d4;
+      margin: 4px 0;
+    }
+
+    .warn {
+      color: #ff9d00;
+      margin: 4px 0;
+    }
+
+    .error {
+      color: #f14c4c;
+      margin: a4px 0;
+    }
+
+    .spacing-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    .spacing-box {
+      height: 40px;
+      background-color: var(--color-primary);
+      border-radius: var(--border-radius-sm);
+    }
+
+    .spacing-label {
+      font-size: 12px;
+      margin-top: var(--spacing-xs);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Theme Components Test Page</h1>
+      <button id="theme-toggle" class="theme-switch">
+        <span id="theme-icon">🌙</span>
+        <span>Toggle Theme</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="component-section">
+        <h2>Theme Colors</h2>
+        <div class="color-grid">
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-primary);"></div>
+            <div class="color-name">Primary</div>
+            <div class="color-value" id="primary-value">--color-primary</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-secondary);"></div>
+            <div class="color-name">Secondary</div>
+            <div class="color-value" id="secondary-value">--color-secondary</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-background);"></div>
+            <div class="color-name">Background</div>
+            <div class="color-value" id="background-value">--color-background</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-surface);"></div>
+            <div class="color-name">Surface</div>
+            <div class="color-value" id="surface-value">--color-surface</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-text-primary);"></div>
+            <div class="color-name">Text Primary</div>
+            <div class="color-value" id="text-primary-value">--color-text-primary</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-text-secondary);"></div>
+            <div class="color-name">Text Secondary</div>
+            <div class="color-value" id="text-secondary-value">--color-text-secondary</div>
+          </div>
+          <div class="color-item">
+            <div class="color-swatch" style="background-color: var(--color-border);"></div>
+            <div class="color-name">Border</div>
+            <div class="color-value" id="border-value">--color-border</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-section">
+        <h2>Typography</h2>
+        <div class="typography-sample">
+          <div class="typography-label">Heading 1</div>
+          <h1 style="margin: 0;">The quick brown fox jumps over the lazy dog</h1>
+        </div>
+        <div class="typography-sample">
+          <div class="typography-label">Heading 2</div>
+          <h2 style="margin: 0;">The quick brown fox jumps over the lazy dog</h2>
+        </div>
+        <div class="typography-sample">
+          <div class="typography-label">Heading 3</div>
+          <h3 style="margin: 0;">The quick brown fox jumps over the lazy dog</h3>
+        </div>
+        <div class="typography-sample">
+          <div class="typography-label">Body Text</div>
+          <p>The quick brown fox jumps over the lazy dog. This is a paragraph with some additional text to demonstrate how body text appears with the current theme settings.</p>
+        </div>
+        <div class="typography-sample">
+          <div class="typography-label">Small Text</div>
+          <small>The quick brown fox jumps over the lazy dog</small>
+        </div>
+      </div>
+
+      <div class="component-section">
+        <h2>Spacings</h2>
+        <div class="spacing-grid">
+          <div>
+            <div class="spacing-box" style="width: var(--spacing-xs);"></div>
+            <div class="spacing-label">XS</div>
+          </div>
+          <div>
+            <div class="spacing-box" style="width: var(--spacing-sm);"></div>
+            <div class="spacing-label">SM</div>
+          </div>
+          <div>
+            <div class="spacing-box" style="width: var(--spacing-md);"></div>
+            <div class="spacing-label">MD</div>
+          </div>
+          <div>
+            <div class="spacing-box" style="width: var(--spacing-lg);"></div>
+            <div class="spacing-label">LG</div>
+          </div>
+          <div>
+            <div class="spacing-box" style="width: var(--spacing-xl);"></div>
+            <div class="spacing-label">XL</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-section">
+        <h2>Component Examples</h2>
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
+          <button class="button">Primary Button</button>
+          <button class="button secondary-button">Secondary Button</button>
+        </div>
+        <div style="margin-bottom: var(--spacing-lg);">
+          <label style="display: block; margin-bottom: var(--spacing-xs);">Text Input</label>
+          <input type="text" class="input" placeholder="Enter some text...">
+        </div>
+        <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: var(--spacing-xs);">Select</label>
+            <select class="input">
+              <option>Option 1</option>
+              <option>Option 2</option>
+              <option>Option 3</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: var(--spacing-xs);">Checkbox</label>
+            <div style="display: flex; align-items: center;">
+              <input type="checkbox" id="checkbox1" style="margin-right: var(--spacing-xs);">
+              <label for="checkbox1">Check me</label>
+            </div>
+          </div>
+        </div>
+        <div style="background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); padding: var(--spacing-md);">
+          <h3 style="margin-top: 0;">Card Component</h3>
+          <p>This is a sample card with some content to demonstrate how cards look with the current theme.</p>
+          <button class="button">Action</button>
+        </div>
+      </div>
+
+      <div class="component-section">
+        <h2>Console Monitor</h2>
+        <p>The section below demonstrates theme-related console messages that are captured by the ThemeConsoleMonitor.</p>
+        <div>
+          <button id="generate-log" class="button">Generate Log</button>
+          <button id="generate-warning" class="button secondary-button" style="margin-left: var(--spacing-sm);">Generate Warning</button>
+          <button id="generate-error" class="button secondary-button" style="margin-left: var(--spacing-sm);">Generate Error</button>
+          <button id="clear-console" class="button secondary-button" style="margin-left: var(--spacing-sm);">Clear Console</button>
+        </div>
+        <div class="console-output" id="console-output"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      
+      if (document.body.classList.contains('dark-theme')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme-components-mode', 'dark');
+      } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme-components-mode', 'light');
+      }
+      
+      updateColorValues();
+    });
+    
+    // Restore theme from localStorage
+    if (localStorage.getItem('theme-components-mode') === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeIcon.textContent = '☀️';
+    }
+    
+    // Get computed color values
+    function updateColorValues() {
+      setTimeout(() => {
+        const computedStyle = getComputedStyle(document.documentElement);
+        
+        document.getElementById('primary-value').textContent = computedStyle.getPropertyValue('--color-primary').trim();
+        document.getElementById('secondary-value').textContent = computedStyle.getPropertyValue('--color-secondary').trim();
+        document.getElementById('background-value').textContent = computedStyle.getPropertyValue('--color-background').trim();
+        document.getElementById('surface-value').textContent = computedStyle.getPropertyValue('--color-surface').trim();
+        document.getElementById('text-primary-value').textContent = computedStyle.getPropertyValue('--color-text-primary').trim();
+        document.getElementById('text-secondary-value').textContent = computedStyle.getPropertyValue('--color-text-secondary').trim();
+        document.getElementById('border-value').textContent = computedStyle.getPropertyValue('--color-border').trim();
+      }, 0);
+    }
+    
+    // Initialize color values
+    updateColorValues();
+    
+    // Console output simulation
+    const consoleOutput = document.getElementById('console-output');
+    const generateLog = document.getElementById('generate-log');
+    const generateWarning = document.getElementById('generate-warning');
+    const generateError = document.getElementById('generate-error');
+    const clearConsole = document.getElementById('clear-console');
+    
+    generateLog.addEventListener('click', () => {
+      console.log('Theme: Using default theme configuration');
+      appendToConsole('Theme: Using default theme configuration', 'log');
+    });
+    
+    generateWarning.addEventListener('click', () => {
+      console.warn('Theme: Property "colors.accent" is not defined in the theme');
+      appendToConsole('Theme: Property "colors.accent" is not defined in the theme', 'warn');
+    });
+    
+    generateError.addEventListener('click', () => {
+      console.error('Theme: Cannot read property "primary" of undefined');
+      appendToConsole('Theme: Cannot read property "primary" of undefined', 'error');
+    });
+    
+    clearConsole.addEventListener('click', () => {
+      consoleOutput.innerHTML = '';
+    });
+    
+    function appendToConsole(message, type) {
+      const line = document.createElement('div');
+      line.classList.add(type);
+      line.textContent = `${new Date().toLocaleTimeString()} [${type.toUpperCase()}] ${message}`;
+      consoleOutput.appendChild(line);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+    
+    // Simulate initial console message
+    appendToConsole('Theme components test page loaded', 'log');
+  </script>
+</body>
+</html> 

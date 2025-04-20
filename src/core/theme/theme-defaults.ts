@@ -18,6 +18,14 @@ export const themeDefaults: ThemeConfig = {
       primary: '#323338',
       secondary: '#676879',
     },
+    hover: {
+      background: 'rgba(0, 0, 0, 0.04)',
+      border: '#0073ea',
+    },
+    focus: {
+      border: '#0073ea',
+      shadow: '0 0 0 2px rgba(0, 115, 234, 0.25)',
+    },
     private: {
       buttonBg: '#0073ea',
       buttonHover: '#0060b9',

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Web Engine Platform</title>
+  <style>
+    :root {
+      --primary-color: #3f51b5;
+      --secondary-color: #f50057;
+      --background-color: #f5f5f5;
+      --text-color: #333;
+      --error-color: #f44336;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 2rem;
+      color: var(--error-color);
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      margin: 0.5rem;
+    }
+
+    .btn:hover {
+      background-color: #303f9f;
+    }
+
+    .btn-outlined {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    .btn-outlined:hover {
+      background-color: rgba(63, 81, 181, 0.1);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      max-width: 100%;
+    }
+
+    footer {
+      padding: 1rem;
+      background-color: #333;
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .cached-data {
+      margin-top: 2rem;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Web Engine Platform</h2>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <svg class="offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 8.98C20.93 5.9 16.69 4 12 4S3.07 5.9 0 8.98L12 21 24 8.98zM2.92 9.07C5.51 7.08 8.67 6 12 6s6.49 1.08 9.08 3.07l-1.43 1.43C17.5 8.94 14.86 8 12 8s-5.5.94-7.65 2.5L2.92 9.07z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path fill="currentColor" d="M21.19 21.19L2.81 2.81 1.39 4.22 4.17 7C2.1 8.9 1 12.79 1 13.5c0 1.38 1.12 2.5 2.5 2.5.17 0 .34-.02.51-.05L9.82 21H12l-8.89-9.55C3.56 10.63 4.87 10 6.5 10c.5 0 .95.11 1.37.29l1.47 1.47C8.07 11.3 6.99 11 6 11c-2.62 0-4.7 3.33-4.96 3.94C1.01 14.97 1 15 1 15c0 1.1.9 2 2 2 .97 0 1.79-.71 1.95-1.67l1.6 1.6C4.39 18.01 3 19.65 3 21.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-1.01-.6-1.88-1.47-2.27l1.53-1.53L12 22.5l-1.53-1.53 3.92-3.92L16.92 18H17c2.76 0 5-2.24 5-5 0-1.07-.34-2.07-.92-2.89l1.35 1.35L21.19 21.19z"/>
+      </svg>
+      
+      <h1>You're Offline</h1>
+      <p>It seems you're currently offline. Don't worry! You can still access some features that have been cached for offline use.</p>
+      
+      <div class="actions">
+        <button class="btn" id="reload-btn">Try Again</button>
+        <a href="/" class="btn btn-outlined">Go to Homepage</a>
+      </div>
+
+      <div class="cached-data" id="cached-content">
+        <!-- Dynamically populated with available cached content -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Web Engine Platform. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if we're online and reload the page when the connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+
+    // Handle reload button click
+    document.getElementById('reload-btn').addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    // Try to load cached content if available
+    async function loadCachedContent() {
+      try {
+        const cacheNames = await caches.keys();
+        const cachedContent = document.getElementById('cached-content');
+        
+        if (cacheNames.length > 0) {
+          let html = '<h3>Available Cached Content</h3><ul>';
+          
+          for (const cacheName of cacheNames) {
+            const cache = await caches.open(cacheName);
+            const keys = await cache.keys();
+            
+            if (keys.length > 0) {
+              html += `<li><strong>${cacheName}</strong>: ${keys.length} items</li>`;
+            }
+          }
+          
+          html += '</ul>';
+          cachedContent.innerHTML = html;
+        } else {
+          cachedContent.innerHTML = '<p>No cached content available.</p>';
+        }
+      } catch (error) {
+        console.error('Failed to load cached content:', error);
+      }
+    }
+    
+    // Load cached content on page load
+    window.addEventListener('load', loadCachedContent);
+  </script>
+</body>
+</html> 

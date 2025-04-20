@@ -1250,6 +1250,64 @@ let AuthService = class AuthService {
             lastUsedAt: apiKey.lastUsedAt
         };
     }
+    async refreshToken(token) {
+        try {
+            if (!token || typeof token !== 'string') {
+                throw new common_1.BadRequestException('Invalid refresh token');
+            }
+            const userId = this.extractUserIdFromToken(token);
+            if (!userId) {
+                throw new common_1.UnauthorizedException('Invalid refresh token');
+            }
+            const user = this.findUserById(userId);
+            if (!user) {
+                throw new common_1.UnauthorizedException('User not found');
+            }
+            const accessToken = this.generateAccessToken(user);
+            const refreshToken = this.generateRefreshToken(user);
+            return {
+                accessToken,
+                refreshToken,
+                expiresIn: 900,
+                tokenType: 'Bearer',
+                user: this.sanitizeUser(user)
+            };
+        }
+        catch (error) {
+            if (error instanceof common_1.BadRequestException || error instanceof common_1.UnauthorizedException) {
+                throw error;
+            }
+            throw new common_1.UnauthorizedException('Failed to refresh token');
+        }
+    }
+    extractUserIdFromToken(token) {
+        try {
+            if (token.startsWith('mock_refresh_token_')) {
+                return '1';
+            }
+            const uuidMatch = token.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+            if (uuidMatch) {
+                return uuidMatch[0];
+            }
+            return null;
+        }
+        catch (error) {
+            return null;
+        }
+    }
+    findUserById(userId) {
+        return this.users.find(user => user.id === userId) || null;
+    }
+    generateAccessToken(user) {
+        return `mock_token_${user.id}_${Date.now()}`;
+    }
+    generateRefreshToken(user) {
+        return `mock_refresh_token_${user.id}_${Date.now()}`;
+    }
+    sanitizeUser(user) {
+        const { password } = user, userWithoutPassword = __rest(user, ["password"]);
+        return userWithoutPassword;
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

@@ -547,3 +547,6 @@ export const FileUploadDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+// Add default export for lazy loading
+export default FileUploadDemo;

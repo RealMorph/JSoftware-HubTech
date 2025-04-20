@@ -3,6 +3,23 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../core/theme/DirectThemeProvider';
 import { AuthService } from '../core/auth/auth-service';
+import { useAuth } from '../core/auth/AuthProvider';
+import { LoginCredentials } from '../core/auth/auth-service';
+import { 
+  Container, 
+  Logo, 
+  LoginCard, 
+  Title, 
+  Subtitle, 
+  Form, 
+  InputLabel, 
+  Input, 
+  Button, 
+  ErrorMessage, 
+  HelpSection,
+  StyledLink,
+  HelpText
+} from './styles/LoginStyles';
 
 interface ThemeStyles {
   colors: {
@@ -47,160 +64,6 @@ interface ThemeStyles {
   };
 }
 
-const createThemeStyles = (theme: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
-  colors: {
-    primary: theme.getColor('primary'),
-    error: theme.getColor('error'),
-    background: theme.getColor('background'),
-    text: {
-      primary: theme.getColor('text.primary'),
-      secondary: theme.getColor('text.secondary'),
-    },
-    border: theme.getColor('border'),
-    buttonBg: theme.getColor('private.buttonBg'),
-    buttonHover: theme.getColor('private.buttonHover'),
-    googleButton: theme.getColor('private.googleButton'),
-  },
-  spacing: {
-    xs: theme.getSpacing('xs'),
-    sm: theme.getSpacing('sm'),
-    md: theme.getSpacing('md'),
-    lg: theme.getSpacing('lg'),
-  },
-  borderRadius: {
-    sm: theme.getBorderRadius('sm'),
-    md: theme.getBorderRadius('md'),
-  },
-  typography: {
-    fontFamily: String(theme.getTypography('fontFamily.base')),
-    fontSize: {
-      sm: String(theme.getTypography('fontSize.sm')),
-      md: String(theme.getTypography('fontSize.md')),
-      lg: String(theme.getTypography('fontSize.lg')),
-    },
-    fontWeight: {
-      normal: Number(theme.getTypography('fontWeight.normal')),
-      medium: Number(theme.getTypography('fontWeight.medium')),
-      semibold: Number(theme.getTypography('fontWeight.semibold')),
-    },
-  },
-  shadows: {
-    input: String(theme.getShadow('input')),
-    button: String(theme.getShadow('button')),
-  },
-});
-
-const Container = styled.div<{ $themeStyles: ThemeStyles }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: ${props => props.$themeStyles.colors.background};
-  font-family: ${props => props.$themeStyles.typography.fontFamily};
-`;
-
-const Logo = styled.div`
-  margin-bottom: 32px;
-  img {
-    height: 36px;
-  }
-`;
-
-const LoginCard = styled.div<{ $themeStyles: ThemeStyles }>`
-  background-color: ${props => props.$themeStyles.colors.background};
-  padding: ${props => props.$themeStyles.spacing.lg};
-  width: 100%;
-  max-width: 400px;
-`;
-
-const Title = styled.h1<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.text.primary};
-  font-size: 32px;
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.semibold};
-  margin-bottom: 8px;
-  text-align: center;
-`;
-
-const Subtitle = styled.div<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.text.secondary};
-  font-size: ${props => props.$themeStyles.typography.fontSize.md};
-  text-align: center;
-  margin-bottom: ${props => props.$themeStyles.spacing.lg};
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const InputLabel = styled.div<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.text.primary};
-  font-size: ${props => props.$themeStyles.typography.fontSize.sm};
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
-  margin-bottom: 4px;
-`;
-
-const Input = styled.input<{ $themeStyles: ThemeStyles }>`
-  padding: 8px 16px;
-  border: 1px solid ${props => props.$themeStyles.colors.border};
-  border-radius: ${props => props.$themeStyles.borderRadius.md};
-  font-size: ${props => props.$themeStyles.typography.fontSize.md};
-  width: 100%;
-  height: 40px;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: ${props => props.$themeStyles.colors.primary};
-    box-shadow: ${props => props.$themeStyles.shadows.input};
-  }
-
-  &::placeholder {
-    color: ${props => props.$themeStyles.colors.text.secondary};
-  }
-`;
-
-const Button = styled.button<{ $themeStyles: ThemeStyles; $variant?: 'primary' | 'google' }>`
-  padding: 8px 16px;
-  background-color: ${props => 
-    props.$variant === 'google' 
-      ? props.$themeStyles.colors.googleButton 
-      : props.$themeStyles.colors.buttonBg};
-  color: ${props => 
-    props.$variant === 'google' 
-      ? props.$themeStyles.colors.text.primary 
-      : 'white'};
-  border: 1px solid ${props => 
-    props.$variant === 'google' 
-      ? props.$themeStyles.colors.border 
-      : 'transparent'};
-  border-radius: ${props => props.$themeStyles.borderRadius.md};
-  font-size: ${props => props.$themeStyles.typography.fontSize.md};
-  font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
-  height: 40px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: ${props => props.$themeStyles.shadows.button};
-
-  &:hover {
-    background-color: ${props => 
-      props.$variant === 'google' 
-        ? props.$themeStyles.colors.background 
-        : props.$themeStyles.colors.buttonHover};
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 const Divider = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
@@ -225,67 +88,78 @@ const Divider = styled.div<{ $themeStyles: ThemeStyles }>`
   }
 `;
 
-const ErrorMessage = styled.div<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.error};
-  font-size: ${props => props.$themeStyles.typography.fontSize.sm};
-  text-align: center;
-  margin-top: ${props => props.$themeStyles.spacing.sm};
-  padding: 8px;
-  border-radius: ${props => props.$themeStyles.borderRadius.sm};
-  background-color: ${props => `${props.$themeStyles.colors.error}10`};
-`;
-
-const HelpSection = styled.div<{ $themeStyles: ThemeStyles }>`
-  margin-top: ${props => props.$themeStyles.spacing.md};
-  text-align: center;
-`;
-
-const StyledLink = styled.a<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.primary};
-  text-decoration: none;
-  display: block;
-  margin-bottom: ${props => props.$themeStyles.spacing.sm};
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const HelpText = styled.div<{ $themeStyles: ThemeStyles }>`
-  color: ${props => props.$themeStyles.colors.text.secondary};
-`;
-
 const LoginPage: React.FC = () => {
   const theme = useDirectTheme();
-  const themeStyles = createThemeStyles(theme);
+  const themeStyles = {
+    colors: {
+      primary: theme.getColor('primary'),
+      error: theme.getColor('error'),
+      background: theme.getColor('background'),
+      text: {
+        primary: theme.getColor('text.primary'),
+        secondary: theme.getColor('text.secondary'),
+      },
+      border: theme.getColor('border'),
+      buttonBg: theme.getColor('private.buttonBg'),
+      buttonHover: theme.getColor('private.buttonHover'),
+      googleButton: theme.getColor('private.googleButton'),
+    },
+    spacing: {
+      xs: theme.getSpacing('xs'),
+      sm: theme.getSpacing('sm'),
+      md: theme.getSpacing('md'),
+      lg: theme.getSpacing('lg'),
+    },
+    borderRadius: {
+      sm: theme.getBorderRadius('sm'),
+      md: theme.getBorderRadius('md'),
+    },
+    typography: {
+      fontFamily: String(theme.getTypography('fontFamily.base')),
+      fontSize: {
+        sm: String(theme.getTypography('fontSize.sm')),
+        md: String(theme.getTypography('fontSize.md')),
+        lg: String(theme.getTypography('fontSize.lg')),
+      },
+      fontWeight: {
+        normal: Number(theme.getTypography('fontWeight.normal')),
+        medium: Number(theme.getTypography('fontWeight.medium')),
+        semibold: Number(theme.getTypography('fontWeight.semibold')),
+      },
+    },
+    shadows: {
+      input: String(theme.getShadow('input')),
+      button: String(theme.getShadow('button')),
+    },
+  };
   const navigate = useNavigate();
   const location = useLocation();
-  const [username, setUsername] = useState('');
+  const { login, isLoading } = useAuth();
+  
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const authService = new AuthService();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     try {
-      const response = await authService.login({
-        username,
-        password
-      });
+      const credentials: LoginCredentials = {
+        email,
+        password,
+        rememberMe
+      };
+      
+      await login(credentials);
 
       // Get the redirect path from location state or default to '/'
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (err) {
-      setError('Invalid username or password');
+      setError('Invalid email or password');
       console.error('Login error:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -308,12 +182,12 @@ const LoginPage: React.FC = () => {
           )}
           
           <div>
-            <InputLabel $themeStyles={themeStyles}>Username</InputLabel>
+            <InputLabel $themeStyles={themeStyles}>Email</InputLabel>
             <Input
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               $themeStyles={themeStyles}
             />
@@ -330,22 +204,35 @@ const LoginPage: React.FC = () => {
               $themeStyles={themeStyles}
             />
           </div>
+          
+          <div>
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe">Remember me</label>
+          </div>
 
           <Button 
             type="submit" 
-            disabled={loading}
+            disabled={isLoading}
             $themeStyles={themeStyles}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
         </Form>
       </LoginCard>
       <HelpSection $themeStyles={themeStyles}>
-        <StyledLink href="/login" $themeStyles={themeStyles}>
-          Login to another account
+        <StyledLink href="/register" $themeStyles={themeStyles}>
+          Create an account
+        </StyledLink>
+        <StyledLink href="/forgot-password" $themeStyles={themeStyles}>
+          Forgot your password?
         </StyledLink>
         <HelpText $themeStyles={themeStyles}>
-          Can't log in? <StyledLink as="a" href="/help" $themeStyles={themeStyles}>Visit our help center</StyledLink>
+          Need help? <StyledLink as="a" href="/help" $themeStyles={themeStyles}>Visit our help center</StyledLink>
         </HelpText>
       </HelpSection>
     </Container>

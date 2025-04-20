@@ -468,4 +468,8 @@ const DatePickerDemo: React.FC = () => {
   );
 };
 
+// Add default export for lazy loading
+export default DatePickerDemo;
+
+// Change from const to export const to maintain existing exports
 export { DatePickerDemo };

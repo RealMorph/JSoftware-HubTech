@@ -50,6 +50,15 @@ export interface ThemeColors {
   text: {
     primary: string;
     secondary: string;
+    disabled: string;
+  };
+  hover: {
+    background: string;
+    border: string;
+  };
+  focus: {
+    border: string;
+    shadow: string;
   };
   private: {
     buttonBg: string;
@@ -183,14 +192,54 @@ export interface ZIndexConfig {
 // Animation related types
 export interface AnimationConfig {
   duration: {
+    shortest: string;
+    shorter: string;
     short: string;
+    standard: string;
     medium: string;
     long: string;
+    longer: string;
+    longest: string;
   };
   easing: {
     easeInOut: string;
     easeIn: string;
     easeOut: string;
+    sharp: string;
+    elastic: string;
+    bounce: string;
+    cubic: string;
+  };
+  variants: {
+    fade: {
+      in: object;
+      out: object;
+    };
+    slide: {
+      up: object;
+      down: object;
+      left: object;
+      right: object;
+    };
+    scale: {
+      in: object;
+      out: object;
+    };
+    rotate: {
+      in: object;
+      out: object;
+    };
+  };
+  // Motion preferences
+  motionSafe: {
+    enabled: boolean;
+    reducedIntensity: boolean;
+  };
+  // Performance settings
+  performance: {
+    highPerformance: boolean;
+    willChangeEnabled: boolean;
+    gpuRenderingEnabled: boolean;
   };
 }
 

@@ -37,6 +37,10 @@ export interface BreadcrumbsProps {
   pathMap?: Record<string, string>;
   /** CSS class name */
   className?: string;
+  /** Whether to enable responsive collapsing on small screens */
+  responsiveCollapse?: boolean;
+  /** Custom collapse text for responsive mode */
+  collapseText?: string;
 }
 
 // Define theme style interface
@@ -204,6 +208,7 @@ const BreadcrumbItem = styled.li<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
   margin-right: ${({ $themeStyles }) => $themeStyles.spacing.item};
+  white-space: nowrap;
 `;
 
 const IconContainer = styled.span<{ $themeStyles: ThemeStyles }>`
@@ -254,29 +259,60 @@ const Separator = styled.span<{ $themeStyles: ThemeStyles }>`
   user-select: none;
 `;
 
-const CollapseButton = styled.button<{ $themeStyles: ThemeStyles }>`
+const EllipsisItem = styled.li<{ $themeStyles: ThemeStyles; $visible: boolean }>`
+  display: ${({ $visible }) => ($visible ? 'flex' : 'none')};
+  align-items: center;
+  margin: 0 ${({ $themeStyles }) => $themeStyles.spacing.item};
+`;
+
+const EllipsisButton = styled.button<{ $themeStyles: ThemeStyles }>`
   background: none;
   border: none;
-  padding: 0 ${({ $themeStyles }) => $themeStyles.spacing.element.padding};
-  margin: 0 ${({ $themeStyles }) => $themeStyles.spacing.icon};
   color: ${({ $themeStyles }) => $themeStyles.colors.primary.main};
-  font-family: inherit;
-  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
-  line-height: ${({ $themeStyles }) => $themeStyles.typography.lineHeight.normal};
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: all ${({ $themeStyles }) => $themeStyles.animation.duration.normal} ${({ $themeStyles }) => $themeStyles.animation.easing.easeInOut};
-
+  justify-content: center;
+  padding: 0 ${({ $themeStyles }) => $themeStyles.spacing.element.padding};
+  height: ${({ $themeStyles }) => $themeStyles.spacing.element.height};
+  border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.small};
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
+  
   &:hover {
-    color: ${({ $themeStyles }) => $themeStyles.colors.primary.light};
-    text-decoration: underline;
+    background-color: ${({ $themeStyles }) => $themeStyles.colors.primary.light + '10'};
+    transform: scale(${({ $themeStyles }) => $themeStyles.animation.hover.scale});
   }
-
+  
   &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 ${({ $themeStyles }) => $themeStyles.borders.focus.width} ${({ $themeStyles }) => $themeStyles.borders.focus.color};
-    border-radius: ${({ $themeStyles }) => $themeStyles.borders.radius.small};
+  }
+`;
+
+const CollapsibleContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+  @media (max-width: 768px) {
+    position: relative;
+    overflow: hidden;
+  }
+`;
+
+const CollapseButton = styled.button<{ $themeStyles: ThemeStyles; $isCollapsed: boolean }>`
+  display: none;
+  background: none;
+  border: none;
+  color: ${({ $themeStyles }) => $themeStyles.colors.primary.main};
+  cursor: pointer;
+  padding: 0;
+  font-size: ${({ $themeStyles }) => $themeStyles.typography.size.small};
+  margin-left: ${({ $themeStyles }) => $themeStyles.spacing.item};
+  
+  @media (max-width: 768px) {
+    display: ${({ $isCollapsed }) => ($isCollapsed ? 'inline-flex' : 'none')};
+    align-items: center;
+  }
+  
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
@@ -294,12 +330,16 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   homePath = '/',
   pathMap = {},
   className,
+  responsiveCollapse = true,
+  collapseText = 'Show path',
 }) => {
   const themeContext = useDirectTheme();
   const themeStyles = createThemeStyles(themeContext);
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [items, setItems] = useState<BreadcrumbItem[]>([]);
+  const [mobileCollapsed, setMobileCollapsed] = useState(responsiveCollapse);
 
   // Generate breadcrumbs from the current route
   useEffect(() => {
@@ -337,16 +377,81 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   // Check if we need to collapse items
   useEffect(() => {
     setCollapsed(items.length > maxItems);
-  }, [items, maxItems]);
+    // Reset expanded state when items change
+    setExpanded(false);
+    // Reset mobile collapsed state when items change
+    setMobileCollapsed(responsiveCollapse);
+  }, [items, maxItems, responsiveCollapse]);
+
+  // Toggle expanded state
+  const handleToggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  // Toggle mobile collapsed state
+  const handleToggleMobileCollapse = () => {
+    setMobileCollapsed(!mobileCollapsed);
+  };
+
+  // Render custom separator
+  const renderSeparator = () => {
+    if (typeof separator === 'string') {
+      return <Separator $themeStyles={themeStyles}>{separator}</Separator>;
+    }
+    return <>{separator}</>;
+  };
 
   // Handle rendering of collapsed items
   const renderItems = () => {
-    return items.map((item, index) => (
-      <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
-        {index > 0 && <Separator $themeStyles={themeStyles}>/</Separator>}
-        {renderItem(item)}
-      </BreadcrumbItem>
-    ));
+    // If we have few items or expanded state is true, show all items
+    if (!collapsed || expanded) {
+      return items.map((item, index) => (
+        <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
+          {index > 0 && renderSeparator()}
+          {renderItem(item)}
+        </BreadcrumbItem>
+      ));
+    }
+
+    // Otherwise, show collapsed view
+    const itemsToShow = [];
+
+    // Add first {itemsBeforeCollapse} items
+    for (let i = 0; i < Math.min(itemsBeforeCollapse, items.length); i++) {
+      const item = items[i];
+      itemsToShow.push(
+        <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
+          {i > 0 && renderSeparator()}
+          {renderItem(item)}
+        </BreadcrumbItem>
+      );
+    }
+
+    // Add ellipsis if there are collapsed items
+    if (items.length > itemsBeforeCollapse + itemsAfterCollapse) {
+      itemsToShow.push(
+        <EllipsisItem key="ellipsis" $themeStyles={themeStyles} $visible={true}>
+          {renderSeparator()}
+          <EllipsisButton onClick={handleToggleExpand} $themeStyles={themeStyles} aria-label="Show all breadcrumbs">
+            •••
+          </EllipsisButton>
+        </EllipsisItem>
+      );
+    }
+
+    // Add last {itemsAfterCollapse} items
+    const startIndex = Math.max(itemsBeforeCollapse, items.length - itemsAfterCollapse);
+    for (let i = startIndex; i < items.length; i++) {
+      const item = items[i];
+      itemsToShow.push(
+        <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
+          {renderSeparator()}
+          {renderItem(item)}
+        </BreadcrumbItem>
+      );
+    }
+
+    return itemsToShow;
   };
 
   // Render individual item as link or text
@@ -377,9 +482,49 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     );
   };
 
+  // Render responsive collapsed view
+  const renderResponsiveItems = () => {
+    if (!mobileCollapsed || items.length <= 2) {
+      return renderItems();
+    }
+
+    // In responsive collapsed mode, show only first and last items
+    const firstItem = items[0];
+    const lastItem = items[items.length - 1];
+
+    return (
+      <>
+        <BreadcrumbItem key={firstItem.path} $themeStyles={themeStyles}>
+          {renderItem(firstItem)}
+        </BreadcrumbItem>
+        <EllipsisItem key="ellipsis" $themeStyles={themeStyles} $visible={true}>
+          {renderSeparator()}
+          <EllipsisButton onClick={handleToggleMobileCollapse} $themeStyles={themeStyles} aria-label="Show all breadcrumbs">
+            •••
+          </EllipsisButton>
+        </EllipsisItem>
+        <BreadcrumbItem key={lastItem.path} $themeStyles={themeStyles}>
+          {renderSeparator()}
+          {renderItem(lastItem)}
+        </BreadcrumbItem>
+      </>
+    );
+  };
+
   return (
     <BreadcrumbsContainer $themeStyles={themeStyles} className={className} aria-label="Breadcrumb">
-      <BreadcrumbList>{renderItems()}</BreadcrumbList>
+      <CollapsibleContainer $themeStyles={themeStyles}>
+        <BreadcrumbList>
+          {responsiveCollapse ? renderResponsiveItems() : renderItems()}
+        </BreadcrumbList>
+        <CollapseButton 
+          onClick={handleToggleMobileCollapse} 
+          $themeStyles={themeStyles} 
+          $isCollapsed={mobileCollapsed && items.length > 2}
+        >
+          {collapseText}
+        </CollapseButton>
+      </CollapsibleContainer>
     </BreadcrumbsContainer>
   );
 };

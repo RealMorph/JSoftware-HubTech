@@ -261,3 +261,6 @@ export const CardDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+// Add default export for lazy loading
+export default CardDemo;

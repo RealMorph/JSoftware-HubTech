@@ -1,0 +1,143 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
+import { Button } from '../components/base/Button';
+
+<Meta title="Components/Button/MDX" component={Button} />
+
+# Button Component
+
+The Button component is a versatile interactive element used for triggering actions.
+It supports different variants, sizes, and states to match various UI requirements.
+
+<ArgsTable of={Button} />
+
+## Variants
+
+Buttons come in several visual variants to represent different levels of emphasis.
+
+### Primary Button
+
+The primary button is used for the main action in a section or page.
+
+<Canvas>
+  <Story name="Primary">
+    <Button variant="primary">Primary Button</Button>
+  </Story>
+</Canvas>
+
+### Secondary Button
+
+Secondary buttons are used for alternative actions that are not the primary focus.
+
+<Canvas>
+  <Story name="Secondary">
+    <Button variant="secondary">Secondary Button</Button>
+  </Story>
+</Canvas>
+
+### Accent Button
+
+Accent buttons highlight important actions that are not the primary action.
+
+<Canvas>
+  <Story name="Accent">
+    <Button variant="accent">Accent Button</Button>
+  </Story>
+</Canvas>
+
+### Ghost Button
+
+Ghost buttons are used for less prominent actions.
+
+<Canvas>
+  <Story name="Ghost">
+    <Button variant="ghost">Ghost Button</Button>
+  </Story>
+</Canvas>
+
+## Sizes
+
+Buttons come in three sizes to accommodate different UI needs.
+
+<Canvas>
+  <Story name="Sizes">
+    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+    </div>
+  </Story>
+</Canvas>
+
+## Button States
+
+Buttons can have different states to represent loading or disabled conditions.
+
+### Loading State
+
+<Canvas>
+  <Story name="Loading">
+    <Button loading>Loading Button</Button>
+  </Story>
+</Canvas>
+
+### Disabled State
+
+<Canvas>
+  <Story name="Disabled">
+    <Button disabled>Disabled Button</Button>
+  </Story>
+</Canvas>
+
+## Full Width Button
+
+Buttons can take up 100% of their container width.
+
+<Canvas>
+  <Story name="Full Width">
+    <Button fullWidth>Full Width Button</Button>
+  </Story>
+</Canvas>
+
+## Design Guidelines
+
+- Use primary buttons for main actions
+- Use secondary buttons for alternative actions
+- Use ghost buttons for less prominent actions
+- Keep button text concise and action-oriented
+- Limit the number of primary buttons on a page
+- Maintain consistent button usage patterns across the application
+
+## Accessibility
+
+- Buttons use proper contrast ratios for all variants
+- Focus states are clearly visible
+- Loading states prevent multiple submissions
+- Compatible with keyboard navigation
+- Works properly with screen readers
+
+## Theme Integration
+
+The Button component uses the following theme tokens:
+
+- **Colors**: primary, primaryDark, accent, accentDark, text.primary
+- **Typography**: fontSize.sm, fontSize.base, fontSize.lg, fontWeight.medium
+- **Spacing**: spacing.2, spacing.3, spacing.4, spacing.6, spacing.8
+- **BorderRadius**: borderRadius.md
+- **Transitions**: transitions.normal
+- **Shadows**: shadow.sm
+
+### Customizing Button Appearance
+
+To customize the button appearance, you can override theme tokens in your theme configuration.
+
+```jsx
+// Example of customizing button colors
+const theme = {
+  colors: {
+    primary: '#0062CC',    // Primary button background
+    primaryDark: '#004C9E', // Primary button hover background
+    accent: '#8B5CF6',     // Accent button background
+    accentDark: '#7C3AED'  // Accent button hover background
+  }
+}
+``` 

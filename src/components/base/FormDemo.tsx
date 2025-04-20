@@ -406,3 +406,5 @@ export const FormDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+export default FormDemo;

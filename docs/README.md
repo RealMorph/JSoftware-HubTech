@@ -1,36 +1,52 @@
-# Modular Frontend Documentation
+# Project Documentation
 
-This directory contains comprehensive documentation for the Modular Frontend Architecture project.
+This directory contains all documentation for the Modular Frontend project.
 
 ## Documentation Structure
 
-- **Core Systems**
-  - [Theme System](theme/TODO-theme.md)
-  - [Tab Management](tabs/TODO-tabs.md)
-  - [State Management](state/TODO-state.md)
-  - [Build System](build/TODO-build.md)
+The documentation is organized into the following sections:
 
-- **Frontend Foundation**
-  - [UI Components](components/TODO-components.md)
-  - [Component Architecture](components/TODO-architecture.md)
-  - [Layout System](layout/TODO-layout.md)
-  - [Routing](routing/TODO-routing.md)
-  - [API Integration](api/TODO-api.md)
+### General Documentation
+- `README.md` - This file
+- `TODO.md` - Main project task tracking and roadmap
+- `consolidated-todos.md` - Consolidated list of all outstanding TODOs from various subsystems
+- `ui-enhancements.md` - Strategy for implementing modern UI styling
 
-- **Backend Integration**
-  - [API Endpoints](backend/api/TODO-api.md)
-  - [Authentication](backend/auth/TODO-auth.md)
-  - [Data Models](backend/models/TODO-models.md)
-  - [Services](backend/services/TODO-services.md)
+### System-Specific Documentation
+Each major system has its own directory with relevant documentation:
+- `components/` - Component library documentation
+- `theme/` - Theme system documentation
+- `routing/` - Routing system documentation
+- `tabs/` - Tab management system documentation
+- `api/` - API integration documentation
 
-- **Development & Operations**
-  - [Setup Guide](development/setup.md)
-  - [Code Style](development/style-guide.md)
-  - [Testing Strategy](development/testing.md)
-  - [Deployment Guides](deployment/README.md)
+### TODO Files
+Each major system may have a specific TODO file:
+- `TODO.md` - Main project TODO list (high-level overview)
+- `consolidated-todos.md` - Consolidated list of all TODOs from all systems
+- `components/TODO-components.md` - Component-specific TODOs
+- `theme/TODO-theme.md` - Theme system TODOs
+- `routing/TODO-routing.md` - Routing system TODOs
+- `tabs/TODO-tabs.md` - Tab management TODOs
 
-- **Integration Guides**
-  - [Tab and Theme Integration](integration/tab-theme-integration.md)
+> **Note:** To simplify task tracking, all active TODOs have been consolidated in the `consolidated-todos.md` file, which should be the primary reference for outstanding tasks.
+
+## Documentation Conventions
+
+- Markdown files use kebab-case for filenames
+- Each system directory contains system-specific documentation
+- Integration documentation between systems is stored in the `integration/` directory
+- Code examples should use syntax highlighting
+- Screenshots and diagrams should be stored in the `assets/` directory
+
+## Contributing to Documentation
+
+When contributing to the documentation:
+1. Follow the existing structure and conventions
+2. Update the consolidated TODOs file when adding/completing tasks
+3. Cross-reference related documentation when appropriate
+4. Include code examples where helpful
+5. Keep documentation up-to-date with code changes
 
 ## Project Overview
 

@@ -14,6 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RefreshTokenDto = void 0;
 __exportStar(require("./login.dto"), exports);
 __exportStar(require("./request-password-reset.dto"), exports);
 __exportStar(require("./reset-password.dto"), exports);
@@ -22,4 +23,7 @@ __exportStar(require("./verification.dto"), exports);
 __exportStar(require("./profile-security.dto"), exports);
 __exportStar(require("./security-settings.dto"), exports);
 __exportStar(require("./user-settings.dto"), exports);
+class RefreshTokenDto {
+}
+exports.RefreshTokenDto = RefreshTokenDto;
 //# sourceMappingURL=index.js.map

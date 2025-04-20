@@ -106,8 +106,14 @@ export const semanticSpacing = {
 };
 
 // Function to get spacing value
-export const getSpacing = (key: keyof typeof spacingScale): string => {
-  return spacingScale[key];
+export const getSpacing = (key: string | number | keyof typeof spacingScale): string => {
+  if (typeof key === 'string' || typeof key === 'number') {
+    const stringKey = String(key);
+    if (stringKey in spacingScale) {
+      return spacingScale[stringKey as keyof typeof spacingScale];
+    }
+  }
+  return spacingScale['4']; // Default fallback to 16px (4 x base unit)
 };
 
 // Function to get semantic spacing

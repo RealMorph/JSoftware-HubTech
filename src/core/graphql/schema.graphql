@@ -1,0 +1,262 @@
+"""
+This is a GraphQL schema that represents our data model.
+Even if we're not using a GraphQL server yet, this helps document our data structure.
+"""
+
+type User {
+  id: ID!
+  email: String!
+  displayName: String
+  photoURL: String
+  createdAt: Float!
+  updatedAt: Float!
+  emailVerified: Boolean!
+  roles: [String!]!
+  phoneNumber: String
+  customFields: JSON
+}
+
+type UserProfile {
+  id: ID!
+  userId: ID!
+  displayName: String
+  photoURL: String
+  firstName: String
+  lastName: String
+  title: String
+  company: String
+  phoneNumber: String
+  address: Address
+  timezone: String
+  language: String
+  createdAt: Float!
+  updatedAt: Float!
+  notificationPreferences: NotificationPreferences
+  customFields: JSON
+}
+
+type NotificationPreferences {
+  email: Boolean!
+  sms: Boolean!
+  pushNotifications: Boolean!
+  marketing: Boolean!
+}
+
+type Address {
+  street: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
+}
+
+type Contact {
+  id: ID!
+  ownerId: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  company: ContactCompany
+  jobTitle: String
+  address: Address
+  tags: [String!]!
+  links: [ContactLink!]
+  notes: String
+  status: ContactStatus!
+  source: String
+  lastContacted: Float
+  createdAt: Float!
+  updatedAt: Float!
+}
+
+enum ContactStatus {
+  LEAD
+  CUSTOMER
+  INACTIVE
+}
+
+type ContactCompany {
+  id: ID
+  name: String!
+  website: String
+  industry: String
+  size: String
+  notes: String
+}
+
+type ContactLink {
+  platform: String!
+  url: String!
+}
+
+type ContactActivity {
+  id: ID!
+  contactId: ID!
+  userId: ID!
+  type: ContactActivityType!
+  title: String!
+  description: String
+  timestamp: Float!
+  metadata: JSON
+}
+
+enum ContactActivityType {
+  CALL
+  EMAIL
+  MEETING
+  TASK
+  NOTE
+}
+
+type Deal {
+  id: ID!
+  ownerId: ID!
+  contactId: ID!
+  name: String!
+  description: String
+  stage: DealStage!
+  amount: Float!
+  currency: String!
+  probability: Float!
+  priority: DealPriority!
+  expectedCloseDate: Float
+  actualCloseDate: Float
+  createdAt: Float!
+  updatedAt: Float!
+  tags: [String!]!
+  customFields: JSON
+}
+
+enum DealStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum DealPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+type DealActivity {
+  id: ID!
+  dealId: ID!
+  userId: ID!
+  type: DealActivityType!
+  title: String!
+  description: String
+  previousValue: JSON
+  newValue: JSON
+  timestamp: Float!
+  metadata: JSON
+}
+
+enum DealActivityType {
+  NOTE
+  STAGE_CHANGE
+  AMOUNT_CHANGE
+  TASK
+  FILE
+}
+
+type DealTask {
+  id: ID!
+  dealId: ID!
+  assignedTo: ID!
+  title: String!
+  description: String
+  dueDate: Float!
+  isCompleted: Boolean!
+  completedAt: Float
+  priority: DealPriority!
+  createdAt: Float!
+  updatedAt: Float!
+}
+
+type DealPipeline {
+  id: ID!
+  name: String!
+  description: String
+  stages: [PipelineStage!]!
+  createdAt: Float!
+  updatedAt: Float!
+}
+
+type PipelineStage {
+  id: ID!
+  name: String!
+  order: Int!
+}
+
+type Subscription {
+  id: ID!
+  userId: ID!
+  customerId: String!
+  status: SubscriptionStatus!
+  planId: String!
+  planName: String!
+  amount: Float!
+  currency: String!
+  interval: SubscriptionInterval!
+  currentPeriodStart: Float!
+  currentPeriodEnd: Float!
+  cancelAtPeriodEnd: Boolean!
+  canceledAt: Float
+  createdAt: Float!
+  updatedAt: Float!
+  metadata: JSON
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  TRIAL
+}
+
+enum SubscriptionInterval {
+  MONTH
+  YEAR
+}
+
+type ActivityLog {
+  id: ID!
+  type: ActivityType!
+  userId: ID!
+  timestamp: Float!
+  entityId: ID
+  entityType: EntityType
+  data: JSON
+}
+
+enum ActivityType {
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  CONTACT_DELETED
+  DEAL_CREATED
+  DEAL_UPDATED
+  DEAL_DELETED
+  TASK_CREATED
+  TASK_COMPLETED
+  PAYMENT_RECEIVED
+  USER_LOGIN
+  SUBSCRIPTION_UPDATED
+}
+
+enum EntityType {
+  CONTACT
+  DEAL
+  TASK
+  PAYMENT
+  USER
+  SUBSCRIPTION
+}
+
+# Custom scalar type for arbitrary JSON
+scalar JSON 

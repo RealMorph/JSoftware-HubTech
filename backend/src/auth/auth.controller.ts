@@ -26,7 +26,8 @@ import {
   NotificationFrequencyDto,
   DashboardLayoutDto,
   DashboardWidgetsDto,
-  WidgetDto
+  WidgetDto,
+  RefreshTokenDto
 } from './dto';
 import { PrivacySettingsDto, ApiKeyDto, SessionTimeoutDto } from './dto/security-settings.dto';
 import { ApiKeyPermission } from './dto/security-settings.dto';
@@ -354,5 +355,10 @@ export class AuthController {
     const permissions = body.requiredPermissions?.map(p => p as ApiKeyPermission) || [];
     
     return this.authService.validateApiKey(body.key, permissions);
+  }
+
+  @Post('refresh')
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto.refreshToken);
   }
 } 

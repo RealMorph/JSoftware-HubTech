@@ -318,4 +318,16 @@ export declare class AuthService {
         createdAt: any;
         lastUsedAt: any;
     }>;
+    refreshToken(token: string): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        expiresIn: number;
+        tokenType: string;
+        user: any;
+    }>;
+    private extractUserIdFromToken;
+    private findUserById;
+    private generateAccessToken;
+    private generateRefreshToken;
+    private sanitizeUser;
 }

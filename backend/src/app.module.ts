@@ -6,6 +6,7 @@ import { ApiModule } from './api/api.module';
 import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter';
 import { APP_GUARD } from '@nestjs/core';
 import { AppCacheModule } from './cache/cache.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AppCacheModule } from './cache/cache.module';
     SubscriptionModule, 
     ApiModule,
     AppCacheModule,
+    WebsocketModule,
     RateLimiterModule.register({
       keyPrefix: 'global',
       points: 100,

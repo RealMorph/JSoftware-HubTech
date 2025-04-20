@@ -1,0 +1,414 @@
+{
+  "timestamp": "2025-04-19T23:44:49.887Z",
+  "summary": {
+    "numPassedTests": 0,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTotalTests": 0,
+    "success": false,
+    "startTime": 1745106271738,
+    "endTime": 1745106289887,
+    "executionTime": 18149
+  },
+  "testResults": [
+    {
+      "testFilePath": "src\\core\\theme\\examples\\__tests__\\RouteThemeExample.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\components\\__tests__\\CustomTabStyles.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\Form.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\DirectThemeProvider.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\DatePicker.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\components\\__tests__\\TabContainer.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\ThemeCssVariables.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\components\\__tests__\\TabList.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\TextField.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\Chart.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\theme-integration.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\TextFieldDemo.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\components\\__tests__\\TabAnimations.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\ThemeResponsive.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\DirectThemeStyled.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\components\\__tests__\\ThemeManager.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\Button.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\components\\__tests__\\ThemePreview.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\feedback\\__tests__\\ModalDemo.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\DataGrid.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\List.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\Map.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\TimePicker.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\Select.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\Table.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\Charts.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\theme-context.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\theme-persistence.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\components\\__tests__\\Button.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\Button.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\navigation\\__tests__\\Tabs.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\feedback\\__tests__\\ProgressDemo.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Panel.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\Card.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Flex.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\base\\__tests__\\DataDisplayDemo.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Grid.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\LineChart.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\data-visualization\\__tests__\\DataGridTheme.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Container.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\__tests__\\tab-manager.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Spacing.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\components\\__tests__\\TabConnector.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\hooks\\__tests__\\useTabMessaging.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\database-schema.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\colorPalette.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\getSpacingValue.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\tabs\\hooks\\__tests__\\useTabState.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\typography.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\layout\\__tests__\\Box.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\ButtonDemo.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\breakpoints.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\state\\__tests__\\state-manager.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\spacing.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\palette-generator.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\core\\theme\\__tests__\\theme-export-import.test.ts",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    },
+    {
+      "testFilePath": "src\\components\\navigation\\__tests__\\Breadcrumbs.test.tsx",
+      "testResults": [],
+      "numFailingTests": 0,
+      "numPassingTests": 0,
+      "numPendingTests": 0
+    }
+  ]
+}

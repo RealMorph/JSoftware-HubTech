@@ -6,3 +6,6 @@ export * from './verification.dto';
 export * from './profile-security.dto';
 export * from './security-settings.dto';
 export * from './user-settings.dto';
+export declare class RefreshTokenDto {
+    refreshToken: string;
+}

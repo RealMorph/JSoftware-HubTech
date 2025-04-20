@@ -99,3 +99,6 @@ export const ButtonDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+// Add default export for lazy loading
+export default ButtonDemo;

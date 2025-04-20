@@ -319,3 +319,6 @@ export const DataVisualizationDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+// Add default export for lazy loading
+export default DataVisualizationDemo;

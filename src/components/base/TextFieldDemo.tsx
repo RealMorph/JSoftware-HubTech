@@ -187,3 +187,6 @@ export const TextFieldDemo: React.FC = () => {
     </div>
   );
 };
+
+// Add default export for lazy loading
+export default TextFieldDemo;

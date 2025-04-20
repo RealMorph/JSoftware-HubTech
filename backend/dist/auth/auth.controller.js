@@ -150,6 +150,9 @@ let AuthController = class AuthController {
         const permissions = ((_a = body.requiredPermissions) === null || _a === void 0 ? void 0 : _a.map(p => p)) || [];
         return this.authService.validateApiKey(body.key, permissions);
     }
+    refreshToken(refreshTokenDto) {
+        return this.authService.refreshToken(refreshTokenDto.refreshToken);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -470,6 +473,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "validateApiKey", null);
+__decorate([
+    (0, common_1.Post)('refresh'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dto_1.RefreshTokenDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "refreshToken", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

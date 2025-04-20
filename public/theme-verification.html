@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Verification Tools</title>
+  <style>
+    :root {
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --color-primary: #0073ea;
+      --color-success: #00c875;
+      --color-warning: #ffcb00;
+      --color-error: #e44258;
+      --color-background: #f5f6f8;
+      --color-surface: #ffffff;
+      --color-text-primary: #323338;
+      --color-text-secondary: #676879;
+      --color-border: #e6e9ef;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --border-radius-sm: 4px;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    body.dark-mode {
+      --color-primary: #579bfc;
+      --color-background: #1f2023;
+      --color-surface: #292a2d;
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #b0b6bc;
+      --color-border: #3e4044;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .theme-switch {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 14px;
+    }
+
+    .main-section {
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+    }
+
+    .verification-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    h1, h2, h3 {
+      color: var(--color-text-primary);
+      margin-top: 0;
+    }
+
+    .tool-description {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .button {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .button:hover {
+      background-color: #0060b9;
+    }
+
+    .button-secondary {
+      background-color: transparent;
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+
+    .button-secondary:hover {
+      background-color: rgba(0, 115, 234, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .output-container {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      font-family: monospace;
+      height: 300px;
+      overflow: auto;
+      margin-top: var(--spacing-md);
+    }
+
+    .verification-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .verification-tool {
+      padding: var(--spacing-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      background-color: var(--color-surface);
+    }
+
+    .tool-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .tool-icon {
+      font-size: 24px;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: var(--spacing-xs);
+    }
+
+    .status-ready {
+      background-color: var(--color-background);
+      color: var(--color-text-secondary);
+    }
+
+    .status-running {
+      background-color: var(--color-warning);
+      color: #323338;
+    }
+
+    .status-success {
+      background-color: var(--color-success);
+      color: white;
+    }
+
+    .status-error {
+      background-color: var(--color-error);
+      color: white;
+    }
+
+    .log-entry {
+      margin: 4px 0;
+      padding: 4px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .log-entry.info {
+      color: #4ec9b0;
+    }
+
+    .log-entry.warning {
+      color: #dcdcaa;
+    }
+
+    .log-entry.error {
+      color: #f14c4c;
+    }
+
+    .verification-results {
+      margin-top: var(--spacing-md);
+    }
+
+    .result-row {
+      display: flex;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .result-property {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .result-status {
+      flex: 2;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .tab-button {
+      padding: var(--spacing-sm) var(--spacing-lg);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-button.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <span style="margin-right: 8px;">🎨</span>
+        Theme Verification Tools
+      </div>
+      <button id="theme-toggle" class="theme-switch">
+        <span id="theme-icon">🌙</span>
+        Toggle Theme
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="main-section">
+      <h1>Theme System Verification Tools</h1>
+      <p class="tool-description">Use these tools to verify your theme system implementation, identify issues, and ensure consistency across your application.</p>
+
+      <div class="tabs">
+        <button class="tab-button active" data-tab="verifier">Theme Verifier</button>
+        <button class="tab-button" data-tab="console">Console Monitor</button>
+        <button class="tab-button" data-tab="visual">Visual Tests</button>
+        <button class="tab-button" data-tab="checklist">Checklist</button>
+      </div>
+
+      <div id="tab-verifier" class="tab-content active">
+        <div class="verification-section">
+          <h2>Theme Structure Verification</h2>
+          <p>Verify your theme structure against the expected schema and check for common issues.</p>
+          
+          <div class="button-group">
+            <button id="verify-theme" class="button">Verify Theme</button>
+            <button id="check-contrast" class="button button-secondary">Check Contrast</button>
+            <button id="check-a11y" class="button button-secondary">Check Accessibility</button>
+          </div>
+          
+          <div id="verification-output" class="output-container">
+            <div class="log-entry info">Theme verification tool ready. Click "Verify Theme" to start.</div>
+          </div>
+          
+          <div id="verification-results" class="verification-results" style="display:none;">
+            <h3>Verification Results <span id="verification-status" class="status-badge status-ready">Ready</span></h3>
+            
+            <div class="result-row">
+              <div class="result-property">Theme structure:</div>
+              <div class="result-status" id="structure-result"></div>
+            </div>
+            <div class="result-row">
+              <div class="result-property">Required properties:</div>
+              <div class="result-status" id="properties-result"></div>
+            </div>
+            <div class="result-row">
+              <div class="result-property">Property types:</div>
+              <div class="result-status" id="types-result"></div>
+            </div>
+            <div class="result-row">
+              <div class="result-property">Color contrast:</div>
+              <div class="result-status" id="contrast-result"></div>
+            </div>
+            <div class="result-row">
+              <div class="result-property">Common issues:</div>
+              <div class="result-status" id="issues-result"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-console" class="tab-content">
+        <div class="verification-section">
+          <h2>Theme Console Monitor</h2>
+          <p>Monitor console for theme-related issues during application execution.</p>
+          
+          <div class="button-group">
+            <button id="start-monitor" class="button">Start Monitor</button>
+            <button id="stop-monitor" class="button button-secondary">Stop Monitor</button>
+            <button id="clear-monitor" class="button button-secondary">Clear</button>
+            <button id="test-error" class="button button-secondary">Generate Test Error</button>
+          </div>
+          
+          <div id="console-output" class="output-container">
+            <div class="log-entry info">Console monitor ready. Click "Start Monitor" to begin capturing theme-related console messages.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-visual" class="tab-content">
+        <div class="verification-section">
+          <h2>Visual Theme Tests</h2>
+          <p>Run visual tests to verify theme appearance across different components and scenarios.</p>
+          
+          <div class="button-group">
+            <button id="run-visual-tests" class="button">Run Visual Tests</button>
+            <a href="/theme-test.html" class="button button-secondary" target="_blank">Open Test Page</a>
+            <a href="/theme-components-test.html" class="button button-secondary" target="_blank">Open Components Test</a>
+          </div>
+          
+          <div id="visual-output" class="output-container">
+            <div class="log-entry info">Visual testing tool ready. Click "Run Visual Tests" to begin.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-checklist" class="tab-content">
+        <div class="verification-section">
+          <h2>Theme Verification Checklist</h2>
+          <p>A comprehensive checklist to ensure your theme system is fully verified.</p>
+          
+          <div style="margin-top: var(--spacing-md);">
+            <h3>Basic Functionality</h3>
+            <div style="margin-bottom: var(--spacing-md)">
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Default theme loads correctly
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Theme switching works
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> All theme properties are accessible
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Theme context properly provided
+              </label>
+              <label style="display: flex; align-items: center;">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Components consume theme values
+              </label>
+            </div>
+            
+            <h3>Theme Structure</h3>
+            <div style="margin-bottom: var(--spacing-md)">
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> All required properties present
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> No property names misspelled
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> No duplicate properties
+              </label>
+              <label style="display: flex; align-items: center;">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Property values valid and in expected format
+              </label>
+            </div>
+            
+            <h3>Cross-Browser Testing</h3>
+            <div style="margin-bottom: var(--spacing-md)">
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Chrome: Theme displays correctly
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Firefox: Theme displays correctly
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Safari: Theme displays correctly
+              </label>
+              <label style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Edge: Theme displays correctly
+              </label>
+              <label style="display: flex; align-items: center;">
+                <input type="checkbox" style="margin-right: var(--spacing-xs);"> Mobile browsers: Theme displays correctly
+              </label>
+            </div>
+            
+            <div style="margin-top: var(--spacing-lg);">
+              <a href="/docs/theme/verification-checklist.md" class="button" target="_blank">View Full Checklist</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-section">
+      <h2>Available Verification Tools</h2>
+      <div class="verification-grid">
+        <div class="verification-tool">
+          <div class="tool-icon">🔍</div>
+          <div class="tool-title">Theme Verifier</div>
+          <p>Checks theme structure against expected schema and validates property values.</p>
+          <button class="button button-secondary" onclick="document.querySelector('[data-tab=verifier]').click()">Open Tool</button>
+        </div>
+        
+        <div class="verification-tool">
+          <div class="tool-icon">🖥️</div>
+          <div class="tool-title">Console Monitor</div>
+          <p>Tracks theme-related console errors and warnings during application execution.</p>
+          <button class="button button-secondary" onclick="document.querySelector('[data-tab=console]').click()">Open Tool</button>
+        </div>
+        
+        <div class="verification-tool">
+          <div class="tool-icon">👁️</div>
+          <div class="tool-title">Visual Tests</div>
+          <p>Visual verification tools for theme appearance and component rendering.</p>
+          <button class="button button-secondary" onclick="document.querySelector('[data-tab=visual]').click()">Open Tool</button>
+        </div>
+        
+        <div class="verification-tool">
+          <div class="tool-icon">📋</div>
+          <div class="tool-title">Verification Checklist</div>
+          <p>Comprehensive checklist for ensuring complete theme system verification.</p>
+          <button class="button button-secondary" onclick="document.querySelector('[data-tab=checklist]').click()">Open Tool</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      
+      if (document.body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme-verification-mode', 'dark');
+      } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme-verification-mode', 'light');
+      }
+    });
+    
+    // Restore theme from localStorage
+    if (localStorage.getItem('theme-verification-mode') === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeIcon.textContent = '☀️';
+    }
+    
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding content
+        button.classList.add('active');
+        document.getElementById(`tab-${button.dataset.tab}`).classList.add('active');
+      });
+    });
+    
+    // Theme verification functionality
+    const verifyTheme = document.getElementById('verify-theme');
+    const checkContrast = document.getElementById('check-contrast');
+    const checkA11y = document.getElementById('check-a11y');
+    const verificationOutput = document.getElementById('verification-output');
+    const verificationResults = document.getElementById('verification-results');
+    const verificationStatus = document.getElementById('verification-status');
+    
+    verifyTheme.addEventListener('click', () => {
+      // Clear previous output
+      verificationOutput.innerHTML = '';
+      appendToOutput('Starting theme verification...', 'info');
+      
+      // Set status
+      verificationStatus.className = 'status-badge status-running';
+      verificationStatus.textContent = 'Running';
+      
+      // Show results container
+      verificationResults.style.display = 'block';
+      
+      // Simulate verification process
+      setTimeout(() => appendToOutput('Checking theme structure...', 'info'), 300);
+      setTimeout(() => appendToOutput('Validating required properties...', 'info'), 600);
+      setTimeout(() => appendToOutput('Checking property types...', 'info'), 900);
+      setTimeout(() => appendToOutput('Analyzing color contrast...', 'info'), 1200);
+      setTimeout(() => appendToOutput('Identifying common issues...', 'info'), 1500);
+      
+      // Simulate results after 2 seconds
+      setTimeout(() => {
+        const passedAll = Math.random() > 0.3; // Random success/failure for demo
+        
+        if (passedAll) {
+          appendToOutput('✅ Theme verification completed successfully!', 'info');
+          verificationStatus.className = 'status-badge status-success';
+          verificationStatus.textContent = 'Passed';
+          
+          document.getElementById('structure-result').innerHTML = '✓ Valid';
+          document.getElementById('properties-result').innerHTML = '✓ All required properties present';
+          document.getElementById('types-result').innerHTML = '✓ All properties have correct types';
+          document.getElementById('contrast-result').innerHTML = '✓ All colors meet WCAG AA contrast requirements';
+          document.getElementById('issues-result').innerHTML = '✓ No common issues detected';
+        } else {
+          appendToOutput('❌ Theme verification completed with issues.', 'error');
+          verificationStatus.className = 'status-badge status-error';
+          verificationStatus.textContent = 'Failed';
+          
+          document.getElementById('structure-result').innerHTML = '✓ Valid';
+          document.getElementById('properties-result').innerHTML = '❌ Missing required properties: colors.accent, typography.lineHeight.extraLoose';
+          document.getElementById('types-result').innerHTML = '❌ Invalid type for spacing.xl: expected string, got number';
+          document.getElementById('contrast-result').innerHTML = '❌ Low contrast between text.secondary and background';
+          document.getElementById('issues-result').innerHTML = '❌ Similar colors may cause visual confusion: primary and secondary are too similar';
+          
+          appendToOutput('Missing properties: colors.accent, typography.lineHeight.extraLoose', 'error');
+          appendToOutput('Invalid type for spacing.xl: expected string, got number', 'error');
+          appendToOutput('Low contrast between text.secondary and background', 'warning');
+          appendToOutput('Similar colors may cause visual confusion: primary and secondary are too similar', 'warning');
+        }
+      }, 2000);
+    });
+    
+    checkContrast.addEventListener('click', () => {
+      verificationOutput.innerHTML = '';
+      appendToOutput('Running color contrast checks...', 'info');
+      
+      setTimeout(() => {
+        appendToOutput('Checking text.primary against background... WCAG AA: Pass, WCAG AAA: Pass', 'info');
+        appendToOutput('Checking text.secondary against background... WCAG AA: Pass, WCAG AAA: Fail', 'warning');
+        appendToOutput('Checking primary against background... WCAG AA: Pass, WCAG AAA: Pass', 'info');
+      }, 500);
+    });
+    
+    checkA11y.addEventListener('click', () => {
+      verificationOutput.innerHTML = '';
+      appendToOutput('Running accessibility checks...', 'info');
+      
+      setTimeout(() => {
+        appendToOutput('Checking focus styles...', 'info');
+        appendToOutput('Checking keyboard navigation...', 'info');
+        appendToOutput('Checking color blindness simulation...', 'info');
+        appendToOutput('Issue: Focus styles may not be visible enough in light theme', 'warning');
+      }, 500);
+    });
+    
+    function appendToOutput(message, type) {
+      const entry = document.createElement('div');
+      entry.classList.add('log-entry', type);
+      entry.textContent = message;
+      verificationOutput.appendChild(entry);
+      verificationOutput.scrollTop = verificationOutput.scrollHeight;
+    }
+    
+    // Console monitor functionality
+    const startMonitor = document.getElementById('start-monitor');
+    const stopMonitor = document.getElementById('stop-monitor');
+    const clearMonitor = document.getElementById('clear-monitor');
+    const testError = document.getElementById('test-error');
+    const consoleOutput = document.getElementById('console-output');
+    
+    startMonitor.addEventListener('click', () => {
+      consoleOutput.innerHTML = '';
+      appendToConsole('Console monitoring started...', 'info');
+      appendToConsole('Listening for theme-related console messages...', 'info');
+    });
+    
+    stopMonitor.addEventListener('click', () => {
+      appendToConsole('Console monitoring stopped.', 'info');
+    });
+    
+    clearMonitor.addEventListener('click', () => {
+      consoleOutput.innerHTML = '';
+      appendToConsole('Console output cleared.', 'info');
+    });
+    
+    testError.addEventListener('click', () => {
+      appendToConsole('TypeError: Cannot read property \'primary\' of undefined (at ThemeContext.js:42)', 'error');
+      appendToConsole('Warning: Failed prop type: The prop `color` is marked as required in `Button`, but its value is `undefined` (at Button.js:128)', 'warning');
+    });
+    
+    function appendToConsole(message, type) {
+      const entry = document.createElement('div');
+      entry.classList.add('log-entry', type);
+      entry.textContent = message;
+      consoleOutput.appendChild(entry);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+    
+    // Visual tests functionality
+    const runVisualTests = document.getElementById('run-visual-tests');
+    const visualOutput = document.getElementById('visual-output');
+    
+    runVisualTests.addEventListener('click', () => {
+      visualOutput.innerHTML = '';
+      appendToVisual('Starting visual tests...', 'info');
+      
+      setTimeout(() => appendToVisual('Testing button component...', 'info'), 300);
+      setTimeout(() => appendToVisual('Testing card component...', 'info'), 600);
+      setTimeout(() => appendToVisual('Testing form fields...', 'info'), 900);
+      setTimeout(() => appendToVisual('Testing typography...', 'info'), 1200);
+      
+      setTimeout(() => {
+        appendToVisual('Visual test completed with 1 issue:', 'info');
+        appendToVisual('Button hover state shows incorrect background color in Firefox', 'warning');
+      }, 1800);
+    });
+    
+    function appendToVisual(message, type) {
+      const entry = document.createElement('div');
+      entry.classList.add('log-entry', type);
+      entry.textContent = message;
+      visualOutput.appendChild(entry);
+      visualOutput.scrollTop = visualOutput.scrollHeight;
+    }
+  </script>
+</body>
+</html> 

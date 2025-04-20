@@ -1,0 +1,1032 @@
+openapi: 3.1.0
+info:
+  title: Web Engine Platform API
+  description: |
+    API Documentation for the Web Engine Platform. 
+    This API provides access to all features of the platform, including user management, content management, analytics, and more.
+  version: 1.0.0
+  contact:
+    name: Web Engine Platform Support
+    email: support@webengineplatform.com
+    url: https://webengineplatform.com/support
+  license:
+    name: Proprietary
+    url: https://webengineplatform.com/terms
+
+servers:
+  - url: https://api.webengineplatform.com/api/v1
+    description: Production API Server
+  - url: https://staging-api.webengineplatform.com/api/v1
+    description: Staging API Server
+  - url: https://dev-api.webengineplatform.com/api/v1
+    description: Development API Server
+
+tags:
+  - name: Authentication
+    description: User authentication operations
+  - name: Users
+    description: User management operations
+  - name: Projects
+    description: Project management operations
+  - name: Content
+    description: Content management operations
+  - name: Analytics
+    description: Analytics and reporting operations
+  - name: Settings
+    description: Application settings operations
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate a user and return access and refresh tokens
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: User registration
+      description: Register a new user account
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh tokens
+      description: Get new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Tokens refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Revoke the user's refresh token
+      operationId: logout
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '204':
+          description: Logged out successfully
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/password-reset:
+    post:
+      tags:
+        - Authentication
+      summary: Request password reset
+      description: Send a password reset email to the user
+      operationId: requestPasswordReset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '204':
+          description: Password reset email sent
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/password-reset/{token}:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password
+      description: Reset user password using reset token
+      operationId: resetPassword
+      parameters:
+        - name: token
+          in: path
+          description: Password reset token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Get the current user's profile information
+      operationId: getUserProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update the current user's profile information
+      operationId: updateUserProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: List projects
+      description: Get a list of all projects accessible to the current user
+      operationId: listProjects
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          description: Filter by project status
+          schema:
+            type: string
+            enum: [active, archived, draft]
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectList'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Projects
+      summary: Create project
+      description: Create a new project
+      operationId: createProject
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /projects/{projectId}:
+    get:
+      tags:
+        - Projects
+      summary: Get project
+      description: Get details of a specific project
+      operationId: getProject
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - Projects
+      summary: Update project
+      description: Update a specific project
+      operationId: updateProject
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Projects
+      summary: Delete project
+      description: Delete a specific project
+      operationId: deleteProject
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Project deleted successfully
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /analytics/performance:
+    get:
+      tags:
+        - Analytics
+      summary: Get performance metrics
+      description: Retrieve performance metrics for the application
+      operationId: getPerformanceMetrics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date for metrics (ISO 8601)
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: End date for metrics (ISO 8601)
+          schema:
+            type: string
+            format: date
+        - name: metrics
+          in: query
+          description: Specific metrics to retrieve
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [lcp, fid, cls, ttfb, fcp]
+      responses:
+        '200':
+          description: Performance metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceMetrics'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: Password123!
+        rememberMe:
+          type: boolean
+          default: false
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: Password123!
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        companyName:
+          type: string
+          example: Acme Inc
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    LogoutRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        allDevices:
+          type: boolean
+          default: false
+          description: Whether to log out from all devices
+
+    PasswordResetRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+
+    PasswordResetConfirmRequest:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          format: password
+          example: NewPassword123!
+
+    AuthResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - user
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresIn:
+          type: integer
+          description: Access token expiry time in seconds
+          example: 900
+        tokenType:
+          type: string
+          example: Bearer
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        companyName:
+          type: string
+          example: Acme Inc
+        avatar:
+          type: string
+          format: uri
+          example: https://api.webengineplatform.com/avatars/123.jpg
+        role:
+          type: string
+          enum: [user, admin, editor]
+          example: user
+        permissions:
+          type: array
+          items:
+            type: string
+          example: ["read:projects", "write:projects"]
+        lastLogin:
+          type: string
+          format: date-time
+          example: 2023-01-01T12:00:00Z
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-01-01T00:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-01-01T12:00:00Z
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        companyName:
+          type: string
+          example: Acme Inc
+        avatar:
+          type: string
+          format: uri
+          example: https://api.webengineplatform.com/avatars/123.jpg
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - status
+        - createdBy
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: My Awesome Project
+        description:
+          type: string
+          example: This is a description of my awesome project
+        status:
+          type: string
+          enum: [active, archived, draft]
+          example: active
+        settings:
+          type: object
+          additionalProperties: true
+          example:
+            theme: dark
+            notifications: true
+        createdBy:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        team:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                format: uuid
+              role:
+                type: string
+                enum: [owner, editor, viewer]
+              email:
+                type: string
+                format: email
+              name:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-01-01T00:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-01-01T12:00:00Z
+
+    ProjectList:
+      type: object
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: My Awesome Project
+        description:
+          type: string
+          example: This is a description of my awesome project
+        status:
+          type: string
+          enum: [active, archived, draft]
+          default: active
+        settings:
+          type: object
+          additionalProperties: true
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My Updated Project
+        description:
+          type: string
+          example: This is an updated description
+        status:
+          type: string
+          enum: [active, archived, draft]
+        settings:
+          type: object
+          additionalProperties: true
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        timeRange:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date
+            endDate:
+              type: string
+              format: date
+        metrics:
+          type: object
+          properties:
+            lcp:
+              type: object
+              properties:
+                average:
+                  type: number
+                  format: float
+                p75:
+                  type: number
+                  format: float
+                p95:
+                  type: number
+                  format: float
+                trend:
+                  type: string
+                  enum: [improving, stable, degrading]
+            fid:
+              type: object
+              properties:
+                average:
+                  type: number
+                  format: float
+                p75:
+                  type: number
+                  format: float
+                p95:
+                  type: number
+                  format: float
+                trend:
+                  type: string
+                  enum: [improving, stable, degrading]
+            cls:
+              type: object
+              properties:
+                average:
+                  type: number
+                  format: float
+                p75:
+                  type: number
+                  format: float
+                p95:
+                  type: number
+                  format: float
+                trend:
+                  type: string
+                  enum: [improving, stable, degrading]
+            ttfb:
+              type: object
+              properties:
+                average:
+                  type: number
+                  format: float
+                p75:
+                  type: number
+                  format: float
+                p95:
+                  type: number
+                  format: float
+                trend:
+                  type: string
+                  enum: [improving, stable, degrading]
+            fcp:
+              type: object
+              properties:
+                average:
+                  type: number
+                  format: float
+                p75:
+                  type: number
+                  format: float
+                p95:
+                  type: number
+                  format: float
+                trend:
+                  type: string
+                  enum: [improving, stable, degrading]
+        timeSeries:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              lcp:
+                type: number
+              fid:
+                type: number
+              cls:
+                type: number
+              ttfb:
+                type: number
+              fcp:
+                type: number
+
+    PaginationMeta:
+      type: object
+      required:
+        - totalItems
+        - itemsPerPage
+        - currentPage
+        - totalPages
+      properties:
+        totalItems:
+          type: integer
+          example: 100
+        itemsPerPage:
+          type: integer
+          example: 20
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 5
+
+    Error:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          example: 400
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: The request contains invalid parameters
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+          example:
+            - field: email
+              message: Must be a valid email address
+        timestamp:
+          type: string
+          format: date-time
+          example: 2023-01-01T12:00:00Z
+        path:
+          type: string
+          example: /api/v1/users
+        requestId:
+          type: string
+          example: req_12345abcde 

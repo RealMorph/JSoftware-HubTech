@@ -306,3 +306,6 @@ export const ListDemo: React.FC = () => {
     </DemoContainer>
   );
 };
+
+// Add default export for lazy loading
+export default ListDemo;

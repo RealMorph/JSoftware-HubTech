@@ -1,0 +1,12 @@
+export * from './firebase-config';
+export { FirebaseAuthService, ExtendedUser } from './firebase-auth-service';
+export { FirestoreService } from './firebase-db-service';
+export { FirebaseStorageService } from './firebase-storage-service';
+export { FirebaseAnalyticsService } from './firebase-analytics-service';
+export { UserProfileService } from './user-profile-service';
+export { DataAccessPatterns } from './data-access-patterns';
+export { StripePaymentService } from './stripe-payment-service';
+export { RoleManagementService } from './role-management-service';
+export { ContactService } from './contact-service';
+export { DealService } from './deal-service';
+export { WebSocketService } from './websocket-service'; 

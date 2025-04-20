@@ -32,3 +32,6 @@ yarn-error.log*
 *.log
 *.tmp
 ~$* 
+node_modules
+
+*storybook.log

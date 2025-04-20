@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["cypress", "node", "@cypress-audit/lighthouse", "cypress-axe"],
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "../cypress.config.ts",
+    "../cypress/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ]
+} 

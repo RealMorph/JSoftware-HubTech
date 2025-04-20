@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
@@ -18,6 +18,7 @@ export interface TabsProps {
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
   className?: string;
+  responsive?: boolean;
 }
 
 // Define theme style interface
@@ -145,14 +146,37 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
 // Styled Components
 const TabsContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${props => (props.fullWidth ? '100%' : 'auto')};
+  position: relative;
 `;
 
-const TabsList = styled.div<{ variant: TabsProps['variant']; $themeStyles: ThemeStyles }>`
+const TabsList = styled.div<{ variant: TabsProps['variant']; $themeStyles: ThemeStyles; responsive?: boolean }>`
   display: flex;
   gap: ${props => props.$themeStyles.spacing.medium.x};
   border-bottom: ${props =>
     props.variant === 'underline' ? `1px solid ${props.$themeStyles.colors.border.main}` : 'none'};
   margin-bottom: ${props => props.$themeStyles.spacing.content};
+  overflow-x: ${props => props.responsive ? 'auto' : 'visible'};
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: ${props => props.$themeStyles.colors.border.main};
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    gap: ${props => props.$themeStyles.spacing.small.x};
+    ${props => props.responsive && `
+      flex-wrap: nowrap;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    `}
+  }
 `;
 
 const TabButton = styled.button<{
@@ -237,9 +261,71 @@ const TabContent = styled.div<{ $themeStyles: ThemeStyles }>`
   border-radius: ${props => props.$themeStyles.borderRadius.md};
 `;
 
+const OverflowButton = styled.button<{ $themeStyles: ThemeStyles }>`
+  display: none;
+  background: ${props => props.$themeStyles.colors.background.paper};
+  border: 1px solid ${props => props.$themeStyles.colors.border.main};
+  border-radius: ${props => props.$themeStyles.borderRadius.md};
+  padding: ${props => `${props.$themeStyles.spacing.small.y} ${props.$themeStyles.spacing.small.x}`};
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 5;
+  align-items: center;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+  
+  &:hover, &:focus {
+    background: ${props => props.$themeStyles.colors.background.hover};
+    outline: none;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid ${props => props.$themeStyles.colors.primary.main};
+    outline-offset: 2px;
+  }
+`;
+
+const OverflowMenu = styled.div<{ isOpen: boolean; $themeStyles: ThemeStyles }>`
+  display: ${props => props.isOpen ? 'block' : 'none'};
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: ${props => props.$themeStyles.colors.background.paper};
+  border: 1px solid ${props => props.$themeStyles.colors.border.main};
+  border-radius: ${props => props.$themeStyles.borderRadius.md};
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+  min-width: 150px;
+  max-height: 300px;
+  overflow-y: auto;
+`;
+
+const OverflowMenuItem = styled.button<{ active: boolean; $themeStyles: ThemeStyles }>`
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: ${props => `${props.$themeStyles.spacing.medium.y} ${props.$themeStyles.spacing.medium.x}`};
+  background: ${props => props.active ? props.$themeStyles.colors.background.active : 'transparent'};
+  border: none;
+  cursor: pointer;
+  color: ${props => props.active ? props.$themeStyles.colors.primary.main : props.$themeStyles.colors.text.primary};
+  font-weight: ${props => props.active ? props.$themeStyles.typography.weights.semibold : props.$themeStyles.typography.weights.normal};
+  
+  &:hover, &:focus {
+    background: ${props => props.$themeStyles.colors.background.hover};
+    outline: none;
+  }
+`;
+
 /**
  * Tabs component for displaying content in a tabbed interface.
  * Supports different variants (default, pills, underline) and sizes.
+ * Enhanced with responsive behavior for mobile devices.
  */
 export const Tabs: React.FC<TabsProps> = ({
   tabs,
@@ -249,19 +335,68 @@ export const Tabs: React.FC<TabsProps> = ({
   size = 'medium',
   fullWidth = false,
   className,
+  responsive = true,
 }) => {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
+  const [isOverflowMenuOpen, setIsOverflowMenuOpen] = useState(false);
   const themeContext = useDirectTheme();
   const themeStyles = createThemeStyles(themeContext);
-
+  const tabsListRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Handle tab change
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     onChange?.(tabId);
+    setIsOverflowMenuOpen(false);
+    
+    // Scroll the active tab into view
+    if (responsive && tabsListRef.current) {
+      const tabElement = tabsListRef.current.querySelector(`[data-tab-id="${tabId}"]`) as HTMLElement;
+      if (tabElement) {
+        const containerWidth = tabsListRef.current.offsetWidth;
+        const tabLeft = tabElement.offsetLeft;
+        const tabWidth = tabElement.offsetWidth;
+        
+        if (tabLeft < tabsListRef.current.scrollLeft) {
+          // Tab is to the left of the visible area
+          tabsListRef.current.scrollLeft = tabLeft;
+        } else if (tabLeft + tabWidth > tabsListRef.current.scrollLeft + containerWidth) {
+          // Tab is to the right of the visible area
+          tabsListRef.current.scrollLeft = tabLeft + tabWidth - containerWidth;
+        }
+      }
+    }
+  };
+  
+  // Close overflow menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOverflowMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Toggle overflow menu
+  const toggleOverflowMenu = () => {
+    setIsOverflowMenuOpen(!isOverflowMenuOpen);
   };
 
   return (
-    <TabsContainer className={className} fullWidth={fullWidth}>
-      <TabsList variant={variant} $themeStyles={themeStyles}>
+    <TabsContainer className={className} fullWidth={fullWidth} ref={containerRef}>
+      <TabsList 
+        variant={variant} 
+        $themeStyles={themeStyles}
+        responsive={responsive}
+        ref={tabsListRef}
+        role="tablist"
+      >
         {tabs.map(tab => (
           <TabButton
             key={tab.id}
@@ -275,11 +410,41 @@ export const Tabs: React.FC<TabsProps> = ({
             aria-controls={`tabpanel-${tab.id}`}
             id={`tab-${tab.id}`}
             $themeStyles={themeStyles}
+            data-tab-id={tab.id}
           >
             {tab.label}
           </TabButton>
         ))}
       </TabsList>
+      
+      {responsive && (
+        <>
+          <OverflowButton 
+            onClick={toggleOverflowMenu} 
+            $themeStyles={themeStyles}
+            aria-label="More tabs"
+            aria-expanded={isOverflowMenuOpen}
+            aria-haspopup="true"
+          >
+            •••
+          </OverflowButton>
+          
+          <OverflowMenu isOpen={isOverflowMenuOpen} $themeStyles={themeStyles} role="menu">
+            {tabs.map(tab => (
+              <OverflowMenuItem
+                key={tab.id}
+                active={activeTab === tab.id}
+                $themeStyles={themeStyles}
+                onClick={() => !tab.disabled && handleTabChange(tab.id)}
+                disabled={tab.disabled}
+                role="menuitem"
+              >
+                {tab.label}
+              </OverflowMenuItem>
+            ))}
+          </OverflowMenu>
+        </>
+      )}
 
       {tabs.map(tab => (
         <TabContent

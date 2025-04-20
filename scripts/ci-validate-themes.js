@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 // Configuration
 const config = {
   strict: process.env.THEME_VALIDATION_STRICT === 'true',
-  reportDir: process.env.REPORT_DIR || 'reports',
+  reportDir: process.env.REPORT_DIR || 'reports',                                                                                                                                                                                                                                                                                                                                                                             CGn
   failOnError: process.env.FAIL_ON_ERROR !== 'false', // Default to true
   githubOutput: process.env.GITHUB_OUTPUT // GitHub Actions output file
 };

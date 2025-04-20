@@ -12,3 +12,7 @@ export { Panel, PanelHeader, PanelBody, PanelFooter } from './Panel';
 
 // Container component
 export { Container } from './Container';
+
+// Application Layout
+export { AppLayout } from './AppLayout';
+export type { AppLayoutProps } from './AppLayout';

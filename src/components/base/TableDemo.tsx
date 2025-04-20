@@ -329,3 +329,6 @@ export const TableDemo: React.FC = () => {
     </div>
   );
 };
+
+// Add default export for lazy loading
+export default TableDemo;

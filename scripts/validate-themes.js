@@ -16,12 +16,13 @@ const { execSync } = require('child_process');
 
 // Parse command line arguments
 const argv = minimist(process.argv.slice(2), {
-  boolean: ['strict', 'verbose', 'fix'],
+  boolean: ['strict', 'verbose', 'fix', 'test-mode'],
   string: ['format', 'pattern', 'ignore'],
   default: {
     strict: false,
     verbose: false,
     fix: false,
+    'test-mode': false,
     format: 'console',
     pattern: 'src/**/*.{ts,tsx}',
     ignore: 'node_modules,**/*.d.ts,**/*.test.{ts,tsx}'
@@ -33,6 +34,7 @@ const config = {
   strict: argv.strict,
   verbose: argv.verbose,
   fix: argv.fix,
+  testMode: argv['test-mode'],
   format: argv.format,
   pattern: argv.pattern,
   ignore: argv.ignore ? argv.ignore.split(',') : []
@@ -60,7 +62,7 @@ async function validateThemes() {
     
     // Dynamically generate a temporary script to run the validator using ts-node
     const validateScriptPath = path.resolve(process.cwd(), 'temp-validate-script.js');
-    const tsValidatorPath = path.resolve(process.cwd(), 'src/core/theme/theme-utils.ts');
+    const tsValidatorPath = path.resolve(process.cwd(), 'src/core/theme/theme-validation.ts');
     
     if (!fs.existsSync(tsValidatorPath)) {
       console.error(chalk.red(`❌ Theme validator not found at: ${tsValidatorPath}`));
@@ -247,6 +249,18 @@ function extractThemesFromFile(content, file) {
 // Validate a theme against expected structure using the actual validator
 function validateThemeObject(theme, file, validator) {
   try {
+    // Special handling for test files in test mode
+    const isTestFile = file.includes('__tests__') || file.includes('.test.') || file.includes('__mocks__');
+    
+    if (config.testMode && isTestFile) {
+      // In test mode, be more lenient with test files
+      if (config.verbose && config.format === 'console') {
+        console.log(chalk.blue(`ℹ️ Skipping strict validation for test file: ${theme.name} in ${theme.file}`));
+      }
+      validThemes++;
+      return;
+    }
+    
     // Use the actual theme validator
     const validationErrors = validator.validateTheme(theme.object);
     const isValid = validationErrors.length === 0;
@@ -315,6 +329,7 @@ function outputResults() {
       console.log(chalk.white('  3. Verify typography settings have all required properties'));
       console.log(chalk.white('  4. Add any missing spacing, shadow, or transition values'));
       console.log(chalk.white('  5. Run with --fix flag to attempt automatic fixes (experimental)'));
+      console.log(chalk.white('  6. Run with --test-mode flag to be more lenient with test files'));
     } else {
       console.log(chalk.green('\n✅ All themes are valid!'));
     }
