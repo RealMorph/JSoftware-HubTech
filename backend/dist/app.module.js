@@ -15,6 +15,7 @@ const api_module_1 = require("./api/api.module");
 const nestjs_rate_limiter_1 = require("nestjs-rate-limiter");
 const core_1 = require("@nestjs/core");
 const cache_module_1 = require("./cache/cache.module");
+const websocket_module_1 = require("./websocket/websocket.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,6 +27,7 @@ exports.AppModule = AppModule = __decorate([
             subscription_module_1.SubscriptionModule,
             api_module_1.ApiModule,
             cache_module_1.AppCacheModule,
+            websocket_module_1.WebsocketModule,
             nestjs_rate_limiter_1.RateLimiterModule.register({
                 keyPrefix: 'global',
                 points: 100,

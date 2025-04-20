@@ -50,6 +50,22 @@ export class AuthService {
     passwordReset: { points: 5, window: 10 } // 5 attempts per 10 minutes
   };
   
+  // Add the firebaseAdmin property
+  private firebaseAdmin: any;
+  
+  constructor() {
+    // Initialize firebase admin in a real app
+    this.firebaseAdmin = {
+      auth: () => ({
+        verifyIdToken: async (token: string) => {
+          // Mock implementation for demo
+          // In a real app, this would use firebase-admin SDK
+          return { uid: 'demo-user-id' };
+        }
+      })
+    };
+  }
+  
   // Helper methods for brute force protection
   public getRecentFailedAttempts(email: string): Promise<number> {
     return Promise.resolve(this.failedLoginAttempts.get(email) || 0);

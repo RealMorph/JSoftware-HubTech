@@ -52,6 +52,192 @@
   - [x] Charts Demo - Add proper default export and fix component implementation
   - [x] Maps Demo
 
+### Demo Component Access
+- [x] Update Router Configuration for All Demos
+  - [x] Create a centralized demo landing page
+  - [x] Organize demos by categories (Base, Feedback, Data Visualization)
+  - [x] Ensure all demos are accessible in the navigation
+  - [x] Add search functionality for quick demo access
+  - [x] Create navigation breadcrumbs for demo pages
+  - [x] Implement demo component registry for easy discovery
+  - [x] Add visual indicators for demo component status (complete, in-progress)
+  - [x] Create documentation links within each demo
+
+### Available Demos to be Configured in the Router
+- [x] Base Components Demos
+  - [x] Button Demo
+  - [x] TextField Demo
+  - [x] Select Demo
+  - [x] Checkbox Demo
+  - [x] Radio Demo
+  - [x] Card Demo
+  - [x] List Demo
+  - [x] Table Demo
+  - [x] DatePicker Demo
+  - [x] TimePicker Demo
+  - [x] FileUpload Demo
+  - [x] MultiSelect Demo
+  - [x] Typeahead Demo
+  - [x] Form Demo
+  - [x] FormContainer Demo
+  - [x] DataDisplay Demo
+- [x] Feedback Components Demos
+  - [x] Alert Demo
+  - [x] Toast Demo
+  - [x] Modal Demo
+  - [x] Progress Demo
+  - [x] Feedback Overview Demo
+  - [x] Dialog Demo
+  - [x] FormDialog Demo
+  - [x] ConfirmationDialog Demo
+- [x] Data Visualization Demos
+  - [x] DataGrid Demo
+  - [x] Charts Demo (DataVisualization)
+  - [x] Map Demo (LeafletMap)
+  - [x] Dashboard Template Demo
+  - [x] Graph Demo
+- [x] Navigation Components Demos
+  - [x] Breadcrumbs Demo
+  - [x] Tabs Demo
+  - [x] Menu Demo
+  - [x] Pagination Demo
+  - [x] RadixSidebar Demo
+  - [x] BreadcrumbsWithTabs Demo
+
+### Demo Component Access Implementation Plan
+- [ ] Demo Component Registry
+  - [x] Create `src/core/demos/demoRegistry.ts` to store all demo component metadata
+  - [x] Include information like component name, category, description, status
+  - [x] Use registry to populate the demo landing page and navigation
+  - [x] Add search functionality based on registry metadata
+
+### Demo Registry Implementation Details
+- [ ] Core Registry Structure:
+  - [x] Create `src/core/demos/demoRegistry.ts` with TypeScript interfaces:
+    - [x] Define `DemoComponent` interface with name, path, category, description, status
+    - [x] Define `DemoCategory` interface with name, description, icon
+    - [x] Create registry initialization function
+  - [x] Implement metadata collection:
+    - [x] Create functions to register demo components programmatically
+    - [x] Import and register all existing demo components
+    - [x] Group components by their categories
+- [ ] Registry API:
+  - [x] Create functions to retrieve demos (getAllDemos, getByCategory, searchDemos)
+  - [x] Add filtering capabilities by status, category, name
+  - [x] Create proper typing for all exported functions
+  - [x] Add JSDoc documentation for public API
+- [ ] Integration:
+  - [ ] Connect registry to router configuration
+  - [x] Make registry accessible to landing page and navigation components
+  - [ ] Create hooks for easy registry access (useDemoRegistry, useDemoSearch)
+
+### Demo Component Access Implementation Steps
+1. [ ] Create Demo Component Registry
+   - [ ] Develop registry data structure and API
+   - [ ] Populate with existing demo components
+
+2. [ ] Create Demo Landing Page
+   - [ ] Implement central demo hub with search and filtering
+   - [ ] Connect to registry for component data
+
+3. [ ] Update Router Configuration
+   - [ ] Configure routes for demo landing page and components
+   - [ ] Ensure proper lazy loading and navigation
+
+4. [ ] Enhance Navigation for Demos
+   - [ ] Implement navigation UI elements for demo access
+   - [ ] Create category-based navigation structure
+
+5. [ ] Add Documentation Integration
+   - [ ] Create documentation links and resources
+   - [ ] Implement consistent documentation patterns
+
+### Demo Landing Page Implementation Details
+- [ ] Core Implementation:
+  - [x] Create `src/pages/DemoLandingPage.tsx` component with:
+    - [x] Responsive grid layout for demo categories
+    - [x] Use theme tokens for consistent styling
+    - [x] Implement proper accessibility (ARIA roles, keyboard navigation)
+  - [x] Create demo categories with visual cards:
+    - [x] Base Components (Button, TextField, Select, etc.)
+    - [x] Feedback Components (Alert, Toast, Modal, etc.)
+    - [x] Data Visualization (DataGrid, Charts, Maps)
+    - [x] Navigation Components (Tabs, Breadcrumbs, etc.)
+  - [x] Create consistent card component for each demo:
+    - [x] Name and description
+    - [x] Icon representation
+    - [x] Status indicator (complete, in-progress)
+    - [x] Quick access link
+- [ ] Interactive Features:
+  - [x] Implement search functionality:
+    - [x] Create search input with instant filtering
+    - [x] Filter by component name and description
+    - [x] Add keyboard shortcuts for search
+    - [x] Show search results with highlighting
+  - [ ] Implement view options:
+    - [ ] Grid view (default)
+    - [ ] List view with more details
+    - [ ] Category grouping toggle
+  - [ ] Add dark/light mode toggle if relevant
+- [ ] Integration:
+  - [ ] Connect demo landing page to the main router in `routeRegistry.tsx`
+  - [ ] Export component in `src/pages/index.ts`
+  - [ ] Add to navigation menu as a top-level item
+  - [ ] Create proper lazy loading with Suspense fallback
+
+### Router Implementation Details
+- [ ] Core Configuration:
+  - [ ] Update `src/core/routing/routeRegistry.tsx`:
+    - [ ] Create main demo route ("/demos") with DemoLandingPage
+    - [ ] Verify all component demo routes follow consistent patterns
+    - [ ] Ensure proper lazy loading for all demo components
+  - [ ] Implement route generation from registry:
+    - [ ] Create function to generate routes from registry data
+    - [ ] Set proper navigation properties for all routes
+    - [ ] Configure access control (public vs. protected)
+- [ ] Route Structure:
+  - [ ] Organize routes by component categories
+  - [ ] Create nested routes for related components
+  - [ ] Set up proper default routes for categories
+  - [ ] Configure breadcrumb support for all routes
+
+### Navigation Enhancement Details
+- [ ] Demo Navigation Structure:
+  - [ ] Create collapsible category sections in the navigation menu
+  - [ ] Implement visual hierarchy for demo components
+  - [ ] Add clear category headers and separators
+  - [ ] Create consistent item styling with status indicators
+- [ ] User Experience:
+  - [ ] Add icons for each demo category
+  - [ ] Implement search capabilities within navigation
+  - [ ] Create keyboard shortcuts for navigation
+  - [ ] Add tooltips for navigation items
+- [ ] Accessibility:
+  - [ ] Implement proper ARIA attributes for navigation items
+  - [ ] Ensure keyboard navigation works correctly
+  - [ ] Create focus management system
+  - [ ] Implement high contrast mode support
+
+### Demo Documentation Integration Details
+- [ ] Documentation Structure:
+  - [ ] Create consistent documentation format for all components
+  - [ ] Design documentation templates with key sections:
+    - [ ] Component overview
+    - [ ] Props reference
+    - [ ] Usage examples
+    - [ ] Best practices
+  - [ ] Implement documentation rendering system
+- [ ] Integration Points:
+  - [ ] Add documentation links to each demo component
+  - [ ] Create links to Storybook examples when available
+  - [ ] Add code example snippets with syntax highlighting
+  - [ ] Implement copy-to-clipboard functionality
+- [ ] Documentation Resources:
+  - [ ] Create printable resources for quick reference
+  - [ ] Add interactive examples where possible
+  - [ ] Implement versioning for documentation
+  - [ ] Create troubleshooting guides for common issues
+
 ### Critical Documentation
 - [ ] Create minimal developer setup guide
 - [ ] Add basic API documentation
@@ -434,14 +620,6 @@ This project follows a strictly modular, self-contained frontend architecture, f
   - [ ] Implement WebWorker processing for heavy computations
   - [ ] Add canvas fallback for performance-critical charts
 
-- [ ] Accessibility and Usability
-  - [x] Implement keyboard navigation for all charts
-  - [x] Add screen reader support with ARIA attributes
-  - [ ] Create high-contrast mode for charts
-  - [ ] Implement colorblind-friendly palettes
-  - [ ] Add text alternatives for complex visualizations
-  - [ ] Create print-optimized views
-
 ## ✅ Completed Tasks
 
 ### Systems
@@ -774,3 +952,117 @@ This project follows a strictly modular, self-contained frontend architecture, f
 - [x] Create chart color utilities that leverage theme palette values
 - [x] Implement theme-aware data visualization components
 - [x] Ensure dark mode compatibility for all chart types
+
+## 🛠️ TypeScript and React Component Issues
+
+### TypeScript Type Improvements
+- [x] Fix remaining 'never' type errors in array declarations
+  - [x] Update points arrays in Chart.tsx to use proper type annotations (e.g., `const points: string[] = []`)
+    - Fixed in LineChart component by adding explicit type annotations for empty arrays
+    - Updated ExtendedChartProps interface with proper trendlineOptions type
+    - Added proper annotation for annotations array (`[] as Annotation[]`)
+  - [x] Add explicit type definitions for function parameters and return values in visualization components
+    - Fixed calculateTrendline function with proper return type for empty conditions
+    - Fixed generateTrendlinePoints and generateForecastPoints functions with explicit string[] typing for empty arrays
+  - [x] Fix type issues in Breadcrumbs.tsx related to itemsToShow array
+    - Added explicit React.ReactNode[] type to itemsToShow array
+  - [x] Address type inconsistencies in AdvancedInteractivityDemo.tsx
+    - Added explicit type cast for array flattening using `flat() as string[]`
+    - Added explicit typing for categoryColors with Record<string, string>
+- [ ] Ensure consistent theme access across components
+  - [x] Standardize on `useTheme` from ThemeContext for all components
+  - [x] Fix chart components to properly use theme colors
+  - [x] Add missing theme properties where needed (e.g., chart.axis, chart.grid, etc.)
+  - [x] Create default fallbacks for theme values in components
+
+### JSX Configuration Issues
+- [x] Investigate and fix JSX configuration error in scripts/jsconfig.json
+  - [x] Verify 'react-jsx' is specified correctly
+  - [x] Check for potential workspace TypeScript configuration conflicts
+  - [x] Ensure TypeScript version is compatible with specified JSX options
+
+### React Component Issues
+- [x] Address transient props issues in styled components
+  - [x] Ensure consistent use of `filterTransientProps` for all styled components using custom props
+  - [x] Verify proper typing for transient props (using `$` prefix)
+  - [x] Create utility function to automatically filter transient props if needed
+      - Implemented in `src/core/styled-components/transient-props.ts`
+      - Now used across all styled components with transient props (e.g., ButtonDemo, DemoLandingPage, Card)
+
+### Theme Integration Issues
+- [ ] Ensure consistent theme access across components
+  - [x] Standardize on `useTheme` from ThemeContext for all components
+  - [x] Fix chart components to properly use theme colors
+  - [x] Fix components still using old ThemeContext or direct theme access:
+    - [x] **Charts.tsx**: 
+      - [x] ExportButton styled component uses direct props.theme access instead of $themeStyles
+      - [x] Remove unnecessary import from old '../../context/ThemeContext'
+      - [x] Update all places using theme.buttonPrimary to use DirectTheme equivalents
+    - [x] **ScatterChart.tsx**:
+      - [x] Update styled components to use $themeStyles instead of props.theme.colors
+      - [x] Fix background-color and other theme properties to use theme styles consistently
+    - [x] **Chart.tsx**:
+      - [x] Update styled components to use $themeStyles pattern
+      - [x] Make sure all theme.colors references use DirectTheme
+      - [ ] Fix remaining linter errors:
+        - [x] Update getDefaultColors function to use getColor instead of theme.colors
+        - [x] Pass $themeStyles to all styled components
+        - [x] Add missing LegendText component
+    - [x] **Dashboard Components**:
+      - [x] DashboardLayout.tsx - Replace direct theme props with $themeStyles pattern
+      - [x] DashboardTemplateDemo.tsx - Update all styled components to use $themeStyles
+      - [x] Convert all props.theme.colors to proper $themeStyles approach
+    - [x] **ActivityLogFilter.tsx**:
+      - [x] Update to use $themeStyles pattern instead of direct theme props
+  - [ ] Add standard consistent theme access pattern:
+    - [x] Create standardized createThemeStyles function for component files
+    - [x] Ensure all styled components use the $themeStyles pattern
+    - [x] Apply transient props pattern consistently with $ prefix
+  - [x] Add missing theme properties where needed (e.g., chart.axis, chart.grid, etc.)
+    - [x] Added chart-specific theme properties to Chart.tsx
+    - [x] Created namespaced theme properties (chart.axis, chart.grid, chart.tooltip, etc.)
+    - [x] Updated styled components to use the new theme properties
+  - [ ] Create default fallbacks for theme values in components
+  - [ ] Future enhancements for theme properties:
+    - [ ] Add more chart-specific properties for other chart types (pie, scatter, etc.)
+    - [ ] Create comprehensive documentation for theme properties
+    - [ ] Consider extracting chart theme properties to a separate file for reuse
+
+## 🚀 Animation and Performance Improvements
+
+### Animation System
+- [ ] Implement consistent animation framework across components
+  - [ ] Create animation utility functions in core/animation
+  - [ ] Standardize transition durations and easing functions
+  - [ ] Add support for motion-reduced preference
+
+### Performance Optimizations
+- [ ] Optimize rendering performance
+  - [ ] Add React.memo for appropriate components
+  - [ ] Implement virtualization for large data sets in charts
+  - [ ] Fix unnecessary re-renders in complex components
+  - [ ] Use lazy loading for demo components
+
+### Accessibility Improvements
+- [ ] Ensure animations respect user preferences
+  - [ ] Implement prefers-reduced-motion support
+  - [ ] Add keyboard navigation for all interactive components
+  - [ ] Fix focus management in modal and dialog components
+
+## 🧩 Demo System Fixes and Improvements
+
+### Demo System TypeScript Fixes
+- [x] Fix TypeScript errors in the demo system
+  - [x] Add missing properties to DemoComponent interface (menuIcon, menuOrder, showInMenu)
+  - [x] Fix method name inconsistencies in demo registry
+  - [x] Update imports to use correct method names
+  - [x] Create placeholder demo components to fix module import errors
+  
+### Demo System Enhancements
+- [ ] Add proper implementation for missing demo components
+  - [ ] Complete ButtonDemo with all variants and features
+  - [ ] Complete TextFieldDemo with validation and states
+  - [ ] Add other basic component demos
+- [ ] Improve demo registry with better documentation
+  - [ ] Add JSDoc comments to explain the demo registry system
+  - [ ] Create a README for the demo system

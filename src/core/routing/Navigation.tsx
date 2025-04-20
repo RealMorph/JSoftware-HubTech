@@ -4,9 +4,15 @@ import styled from '@emotion/styled';
 import { getMenuItems } from './routeRegistry';
 import { useAuth } from '../auth/AuthProvider';
 import MobileDrawer from '../../components/navigation/MobileDrawer';
+import { filterTransientProps } from '../styled-components/transient-props';
+
+// Create filtered base components
+const FilteredNav = filterTransientProps(styled.nav``);
+const FilteredUl = filterTransientProps(styled.ul``);
+const FilteredLink = filterTransientProps(Link);
 
 // Styled components for navigation
-const NavContainer = styled.nav<{ $variant?: string }>`
+const NavContainer = styled(FilteredNav)<{ $variant?: string }>`
   background-color: ${({ theme }) => theme.colors.background};
   box-shadow: ${({ theme }) => theme.shadows.sm};
   padding: 0.5rem 1rem;
@@ -29,7 +35,7 @@ const LogoContainer = styled.div`
   align-items: center;
 `;
 
-const NavList = styled.ul<{ $isVisible?: boolean }>`
+const NavList = styled(FilteredUl)<{ $isVisible?: boolean }>`
   list-style-type: none;
   display: flex;
   padding: 0;
@@ -48,7 +54,7 @@ const NavItem = styled.li`
   }
 `;
 
-const NavLinkStyled = styled(Link)<{ $active: boolean }>`
+const NavLinkStyled = styled(FilteredLink)<{ $active: boolean }>`
   color: ${({ theme, $active }) => 
     $active ? theme.colors.primary : theme.colors.text.secondary};
   text-decoration: none;
@@ -243,7 +249,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       <NavItem key={item.path}>
         <NavLinkStyled 
           to={item.path} 
-          $active={location.pathname === item.path}
+          $active={location.pathname === item.path ? true : false}
           aria-current={location.pathname === item.path ? 'page' : undefined}
           tabIndex={activeIndex === index ? 0 : -1}
           onFocus={() => setActiveIndex(index)}
@@ -300,7 +306,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               <li key={item.path} style={{ margin: '0.5rem 0' }}>
                 <NavLinkStyled 
                   to={item.path} 
-                  $active={location.pathname === item.path}
+                  $active={location.pathname === item.path ? true : false}
                   aria-current={location.pathname === item.path ? 'page' : undefined}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

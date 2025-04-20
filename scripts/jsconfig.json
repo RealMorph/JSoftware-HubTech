@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "checkJs": false,
-    "target": "es2018",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "jsx": "none",
-    "lib": ["es2018", "dom"]
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "lib": ["ES2022", "dom"]
   },
   "exclude": ["node_modules"]
 } 

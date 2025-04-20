@@ -286,8 +286,8 @@ const GraphContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   width: 100%;
   height: 100%;
   min-height: 400px;
-  background: ${props => props.$themeStyles.colors.background};
-  border: 1px solid ${props => props.$themeStyles.colors.surface};
+  background: ${props => props.$themeStyles.colors.surface};
+  border: 1px solid ${props => props.$themeStyles.colors.edge.default};
   border-radius: ${props => props.$themeStyles.borderRadius.lg};
   box-shadow: ${props => props.$themeStyles.shadows.md};
   padding: ${props => props.$themeStyles.spacing.md};
@@ -305,8 +305,9 @@ const Title = styled.h3<{ $themeStyles: ThemeStyles }>`
 const GraphCanvas = styled.svg`
   display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   min-height: 400px;
+  background: white;
 `;
 
 const Edge = styled.line<{ isActive: boolean; $themeStyles: ThemeStyles }>`
@@ -333,7 +334,7 @@ const EdgePath = styled.path<{ active: boolean; weight: number; $themeStyles: Th
 
 const NodeCircle = styled.circle<{ isActive: boolean; $themeStyles: ThemeStyles }>`
   fill: ${props => props.isActive ? props.$themeStyles.colors.node.active : props.$themeStyles.colors.node.default};
-  stroke: ${props => props.$themeStyles.colors.surface};
+  stroke: #ffffff;
   stroke-width: 2;
   cursor: pointer;
   transition: all ${props => props.$themeStyles.animation.duration.short} ${props => props.$themeStyles.animation.easing.easeInOut};
@@ -424,13 +425,13 @@ interface SimulationEdge extends GraphEdge {
 
 // Default physics parameters
 const DEFAULT_PHYSICS = {
-  gravity: 0.03,        // Reduced from 0.1
-  repulsion: 50,        // Reduced from 100
-  linkDistance: 120,    // Increased from 100
-  linkStrength: 0.2,    // Reduced from 0.5
-  friction: 0.95,       // Increased from 0.9
-  decay: 0.99,          // Added decay factor
-  centerForce: 0.05,    // Added center force
+  gravity: 0.01,        // Reduced gravity to prevent overcrowding
+  repulsion: 100,       // Increased repulsion to keep nodes apart
+  linkDistance: 120,    // Keep link distance the same
+  linkStrength: 0.1,    // Reduced link strength for more natural movement
+  friction: 0.9,        // Reduced friction to allow more movement
+  decay: 0.95,          // Lower decay to maintain some energy
+  centerForce: 0.03,    // Reduced center force
 };
 
 // Helper functions
@@ -591,8 +592,71 @@ export const Graph: React.FC<GraphProps> = ({
       simulationNodes.forEach(node => {
         if (isDragging && node.id === draggedNode) return;
 
-        // Apply forces (existing force calculations)
-        // ... 
+        // Reset forces
+        node.vx = node.vx || 0;
+        node.vy = node.vy || 0;
+
+        // Calculate forces
+        let fx = 0;
+        let fy = 0;
+
+        // Center force (pulls nodes toward center)
+        const centerX = dimensions.width / 2;
+        const centerY = dimensions.height / 2;
+        fx += (centerX - node.x) * physics.centerForce!;
+        fy += (centerY - node.y) * physics.centerForce!;
+
+        // Repulsion force (nodes repel each other)
+        simulationNodes.forEach(otherNode => {
+          if (node.id === otherNode.id) return;
+
+          const dx = node.x - otherNode.x;
+          const dy = node.y - otherNode.y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+          
+          // Avoid division by zero and limit max force
+          const force = Math.min(physics.repulsion! / (distance * distance), 10);
+          
+          fx += dx * force / distance;
+          fy += dy * force / distance;
+        });
+
+        // Link forces (edges pull connected nodes together)
+        simulationEdges.forEach(edge => {
+          if (edge.source === node.id && edge.targetNode) {
+            const targetNode = edge.targetNode;
+            const dx = node.x - targetNode.x;
+            const dy = node.y - targetNode.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            
+            // Distance from ideal length (based on linkDistance)
+            const displacement = distance - physics.linkDistance!;
+            const strength = -displacement * physics.linkStrength! / distance;
+            
+            fx += dx * strength;
+            fy += dy * strength;
+          } else if (edge.target === node.id && edge.sourceNode) {
+            const sourceNode = edge.sourceNode;
+            const dx = node.x - sourceNode.x;
+            const dy = node.y - sourceNode.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            
+            // Distance from ideal length (based on linkDistance)
+            const displacement = distance - physics.linkDistance!;
+            const strength = -displacement * physics.linkStrength! / distance;
+            
+            fx += dx * strength;
+            fy += dy * strength;
+          }
+        });
+
+        // Gravity force (pulls nodes toward center)
+        fx += -node.x * physics.gravity!;
+        fy += -node.y * physics.gravity!;
+
+        // Apply accumulated forces to velocity
+        node.vx += fx;
+        node.vy += fy;
 
         // Update position
         const oldX = node.x;

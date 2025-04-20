@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { FileUpload } from '../base/FileUpload';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import * as XLSX from 'xlsx';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
 
 // Interface for theme styles
 interface ThemeStyles {
@@ -23,6 +24,7 @@ interface ThemeStyles {
     inner: string;
     sm: string;
     xs: string;
+    md: string;
   };
   typography: {
     title: {
@@ -50,8 +52,20 @@ interface ThemeStyles {
   };
 }
 
+// Create filtered base components
+const FilteredDiv = filterTransientProps(styled.div``);
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredTable = filterTransientProps(styled.table``);
+const FilteredTHead = filterTransientProps(styled.thead``);
+const FilteredTr = filterTransientProps(styled.tr``);
+const FilteredTh = filterTransientProps(styled.th``);
+const FilteredTd = filterTransientProps(styled.td``);
+const FilteredH1 = filterTransientProps(styled.h1``);
+const FilteredH2 = filterTransientProps(styled.h2``);
+const FilteredP = filterTransientProps(styled.p``);
+
 // Styled components
-const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+const DemoContainer = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   max-width: 1200px;
   margin: 0 auto;
   padding: ${props => props.$themeStyles.spacing.page};
@@ -59,18 +73,18 @@ const DemoContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   background-color: ${props => props.$themeStyles.colors.background};
 `;
 
-const Title = styled.h1<{ $themeStyles: ThemeStyles }>`
+const Title = styled(FilteredH1)<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.section};
   font-size: ${props => props.$themeStyles.typography.title.fontSize};
   font-weight: ${props => props.$themeStyles.typography.title.fontWeight};
 `;
 
-const Description = styled.p<{ $themeStyles: ThemeStyles }>`
+const Description = styled(FilteredP)<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.section};
   line-height: 1.5;
 `;
 
-const Section = styled.div<{ $themeStyles: ThemeStyles }>`
+const Section = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.section};
   border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
   padding-bottom: ${props => props.$themeStyles.spacing.section};
@@ -80,36 +94,36 @@ const Section = styled.div<{ $themeStyles: ThemeStyles }>`
   }
 `;
 
-const SectionTitle = styled.h2<{ $themeStyles: ThemeStyles }>`
+const SectionTitle = styled(FilteredH2)<{ $themeStyles: ThemeStyles }>`
   margin-bottom: ${props => props.$themeStyles.spacing.item};
   font-size: ${props => props.$themeStyles.typography.heading.fontSize};
   font-weight: ${props => props.$themeStyles.typography.heading.fontWeight};
 `;
 
-const TableContainer = styled.div<{ $themeStyles: ThemeStyles }>`
+const TableContainer = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   overflow-x: auto;
   margin-top: ${props => props.$themeStyles.spacing.md};
   border: 1px solid ${props => props.$themeStyles.colors.border};
   border-radius: ${props => props.$themeStyles.borderRadius};
 `;
 
-const StyledTable = styled.table<{ $themeStyles: ThemeStyles }>`
+const StyledTable = styled(FilteredTable)<{ $themeStyles: ThemeStyles }>`
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
 `;
 
-const TableHead = styled.thead<{ $themeStyles: ThemeStyles }>`
+const TableHead = styled(FilteredTHead)<{ $themeStyles: ThemeStyles }>`
   background-color: ${props => props.$themeStyles.colors.secondary};
 `;
 
-const TableRow = styled.tr<{ $themeStyles: ThemeStyles; $isEven?: boolean }>`
+const TableRow = styled(FilteredTr)<{ $themeStyles: ThemeStyles; $isEven?: boolean }>`
   &:nth-of-type(even) {
     background-color: ${props => props.$themeStyles.colors.secondary}20;
   }
 `;
 
-const TableHeader = styled.th<{ $themeStyles: ThemeStyles }>`
+const TableHeader = styled(FilteredTh)<{ $themeStyles: ThemeStyles }>`
   padding: ${props => props.$themeStyles.spacing.sm};
   text-align: left;
   border-bottom: 2px solid ${props => props.$themeStyles.colors.border};
@@ -118,12 +132,12 @@ const TableHeader = styled.th<{ $themeStyles: ThemeStyles }>`
   background-color: ${props => props.$themeStyles.colors.secondary};
 `;
 
-const TableCell = styled.td<{ $themeStyles: ThemeStyles }>`
+const TableCell = styled(FilteredTd)<{ $themeStyles: ThemeStyles }>`
   padding: ${props => props.$themeStyles.spacing.sm};
   border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
 `;
 
-const InfoBox = styled.div<{ $themeStyles: ThemeStyles; $type?: 'info' | 'success' | 'error' }>`
+const InfoBox = styled(FilteredDiv)<{ $themeStyles: ThemeStyles; $type?: 'info' | 'success' | 'error' }>`
   padding: ${props => props.$themeStyles.spacing.sm};
   margin: ${props => props.$themeStyles.spacing.sm} 0;
   background-color: ${props => {
@@ -149,31 +163,32 @@ const InfoBox = styled.div<{ $themeStyles: ThemeStyles; $type?: 'info' | 'succes
   border-radius: ${props => props.$themeStyles.borderRadius};
 `;
 
-const MetadataGrid = styled.div<{ $themeStyles: ThemeStyles }>`
+const MetadataGrid = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: ${props => props.$themeStyles.spacing.sm};
   margin: ${props => props.$themeStyles.spacing.md} 0;
 `;
 
-const MetadataItem = styled.div<{ $themeStyles: ThemeStyles }>`
+const MetadataItem = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   padding: ${props => props.$themeStyles.spacing.sm};
   background-color: ${props => props.$themeStyles.colors.secondary}30;
   border-radius: ${props => props.$themeStyles.borderRadius};
 `;
 
-const MetadataLabel = styled.div<{ $themeStyles: ThemeStyles }>`
+const MetadataLabel = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
   font-size: 0.8rem;
   color: ${props => props.$themeStyles.colors.text}aa;
   margin-bottom: 4px;
 `;
 
-const MetadataValue = styled.div<{ $themeStyles: ThemeStyles }>`
+const MetadataValue = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   font-weight: ${props => props.$themeStyles.typography.fontWeight.medium};
 `;
 
-const Button = styled.button<{ $themeStyles: ThemeStyles; $variant?: 'primary' | 'success' | 'error' }>`
+// Button component
+const Button = styled(FilteredButton)<{ $themeStyles: ThemeStyles; $variant?: 'primary' | 'success' | 'error' }>`
   padding: ${props => `${props.$themeStyles.spacing.xs} ${props.$themeStyles.spacing.sm}`};
   background-color: ${props => props.$themeStyles.colors[props.$variant || 'primary']};
   color: white;
@@ -194,13 +209,15 @@ const Button = styled.button<{ $themeStyles: ThemeStyles; $variant?: 'primary' |
   }
 `;
 
-const Tabs = styled.div<{ $themeStyles: ThemeStyles }>`
+// Tabs container
+const Tabs = styled(FilteredDiv)<{ $themeStyles: ThemeStyles }>`
   display: flex;
   border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
   margin-bottom: ${props => props.$themeStyles.spacing.md};
 `;
 
-const Tab = styled.button<{ $themeStyles: ThemeStyles; $active: boolean }>`
+// Tab component
+const Tab = styled(FilteredButton)<{ $themeStyles: ThemeStyles; $active: boolean }>`
   padding: ${props => `${props.$themeStyles.spacing.sm} ${props.$themeStyles.spacing.md}`};
   background-color: ${props => props.$active ? props.$themeStyles.colors.background : props.$themeStyles.colors.secondary}30;
   color: ${props => props.$themeStyles.colors.text};
@@ -237,7 +254,7 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
       inner: getSpacing('3', '0.75rem'),
       sm: getSpacing('2', '0.5rem'),
       xs: getSpacing('1', '0.25rem'),
-      md: getSpacing('4', '1rem'), // Added md size
+      md: getSpacing('4', '1rem'),
     },
     typography: {
       title: {

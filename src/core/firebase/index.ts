@@ -1,5 +1,6 @@
 export * from './firebase-config';
-export { FirebaseAuthService, ExtendedUser } from './firebase-auth-service';
+export { FirebaseAuthService } from './firebase-auth-service';
+export type { ExtendedUser } from './firebase-auth-service';
 export { FirestoreService } from './firebase-db-service';
 export { FirebaseStorageService } from './firebase-storage-service';
 export { FirebaseAnalyticsService } from './firebase-analytics-service';

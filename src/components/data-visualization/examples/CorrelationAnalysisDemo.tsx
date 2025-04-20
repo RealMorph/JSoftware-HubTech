@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { useTheme } from '../../../core/theme/ThemeContext';
 import { createThemeStyles } from '../../../core/theme/utils/themeUtils';
+import { ScatterChart } from '../ScatterChart';
+import { filterTransientProps } from '../../../core/styled-components/transient-props';
 
 /**
  * Correlation Analysis Visualization Demo
@@ -25,29 +27,34 @@ const multivariableData = [
   { id: 10, product: 'Product J', sales: 175, advertising: 4400, satisfaction: 4.4, returns: 6 }
 ];
 
+// Create filtered base components
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredDiv = filterTransientProps(styled.div``);
+const FilteredSelect = filterTransientProps(styled.select``);
+
 // Styled components
-const DemoContainer = styled.div<{ $themeStyles: any }>`
+const DemoContainer = styled(FilteredDiv)<{ $themeStyles: any }>`
   padding: 24px;
   background-color: ${props => props.$themeStyles.colors.background.default};
   border-radius: ${props => props.$themeStyles.borders.radius.large};
   margin-bottom: 24px;
 `;
 
-const Title = styled.h2<{ $themeStyles: any }>`
+const Title = styled(FilteredDiv)<{ $themeStyles: any }>`
   font-size: ${props => props.$themeStyles.typography.fontSize.xl};
   font-weight: ${props => props.$themeStyles.typography.fontWeight.semibold};
   color: ${props => props.$themeStyles.colors.text.primary};
   margin-bottom: 16px;
 `;
 
-const Description = styled.p<{ $themeStyles: any }>`
+const Description = styled(FilteredDiv)<{ $themeStyles: any }>`
   font-size: ${props => props.$themeStyles.typography.fontSize.md};
   color: ${props => props.$themeStyles.colors.text.secondary};
   margin-bottom: 24px;
   line-height: 1.5;
 `;
 
-const VisualizationContainer = styled.div<{ $themeStyles: any }>`
+const VisualizationContainer = styled(FilteredDiv)<{ $themeStyles: any }>`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
@@ -58,7 +65,7 @@ const VisualizationContainer = styled.div<{ $themeStyles: any }>`
   }
 `;
 
-const ChartContainer = styled.div<{ $themeStyles: any }>`
+const ChartContainer = styled(FilteredDiv)<{ $themeStyles: any }>`
   position: relative;
   background-color: ${props => props.$themeStyles.colors.background.paper};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
@@ -68,14 +75,14 @@ const ChartContainer = styled.div<{ $themeStyles: any }>`
   height: 400px;
 `;
 
-const ControlsContainer = styled.div`
+const ControlsContainer = styled(FilteredDiv)`
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
   flex-wrap: wrap;
 `;
 
-const ButtonGroup = styled.div<{ $themeStyles: any }>`
+const ButtonGroup = styled(FilteredDiv)<{ $themeStyles: any }>`
   display: flex;
   gap: 8px;
   background-color: ${props => props.$themeStyles.colors.background.subtle};
@@ -83,7 +90,7 @@ const ButtonGroup = styled.div<{ $themeStyles: any }>`
   border-radius: ${props => props.$themeStyles.borders.radius.small};
 `;
 
-const Button = styled.button<{ $themeStyles: any, $active?: boolean }>`
+const Button = styled(FilteredButton)<{ $themeStyles: any, $active?: boolean }>`
   padding: 8px 12px;
   border: none;
   border-radius: ${props => props.$themeStyles.borders.radius.small};
@@ -105,7 +112,7 @@ const Button = styled.button<{ $themeStyles: any, $active?: boolean }>`
   }
 `;
 
-const Select = styled.select<{ $themeStyles: any }>`
+const Select = styled(FilteredSelect)<{ $themeStyles: any }>`
   padding: 8px 12px;
   border: 1px solid ${props => props.$themeStyles.colors.border.main};
   border-radius: ${props => props.$themeStyles.borders.radius.small};
@@ -120,7 +127,7 @@ const Select = styled.select<{ $themeStyles: any }>`
   }
 `;
 
-const CorrelationMatrix = styled.div<{ $themeStyles: any }>`
+const CorrelationMatrix = styled(FilteredDiv)<{ $themeStyles: any }>`
   display: grid;
   grid-template-columns: auto repeat(var(--columns), 1fr);
   grid-template-rows: auto repeat(var(--rows), 1fr);
@@ -130,7 +137,7 @@ const CorrelationMatrix = styled.div<{ $themeStyles: any }>`
   height: 100%;
 `;
 
-const MatrixCell = styled.div<{ $themeStyles: any, $value?: number, $isHeader?: boolean }>`
+const MatrixCell = styled(FilteredDiv)<{ $themeStyles: any, $value?: number, $isHeader?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,13 +160,13 @@ const MatrixCell = styled.div<{ $themeStyles: any, $value?: number, $isHeader?: 
   border: 1px solid ${props => props.$themeStyles.colors.border.light};
 `;
 
-const ScatterPlotContainer = styled.div`
+const ScatterPlotContainer = styled(FilteredDiv)`
   width: 100%;
   height: 100%;
   position: relative;
 `;
 
-const InfoPanel = styled.div<{ $themeStyles: any }>`
+const InfoPanel = styled(FilteredDiv)<{ $themeStyles: any }>`
   background-color: ${props => props.$themeStyles.colors.background.subtle};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
   padding: 16px;
@@ -167,7 +174,7 @@ const InfoPanel = styled.div<{ $themeStyles: any }>`
   font-size: ${props => props.$themeStyles.typography.fontSize.sm};
 `;
 
-const StatRow = styled.div`
+const StatRow = styled(FilteredDiv)`
   display: flex;
   justify-content: space-between;
   padding: 8px 0;

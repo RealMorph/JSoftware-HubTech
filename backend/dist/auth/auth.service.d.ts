@@ -27,6 +27,8 @@ export declare class AuthService {
     private readonly GLOBAL_RATE_LIMIT;
     private readonly GLOBAL_RATE_LIMIT_WINDOW_MINUTES;
     private readonly ROUTE_LIMITS;
+    private firebaseAdmin;
+    constructor();
     getRecentFailedAttempts(email: string): Promise<number>;
     recordFailedLoginAttempt(email: string): void;
     resetFailedLoginAttempts(email: string): void;
@@ -330,4 +332,7 @@ export declare class AuthService {
     private generateAccessToken;
     private generateRefreshToken;
     private sanitizeUser;
+    verifyToken(token: string): Promise<any>;
+    verifyTokenSync(token: string): any;
+    private decodeTokenSync;
 }

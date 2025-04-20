@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import styled from 'styled-components';
-import { LineChart } from '../Charts';
+import styled from '@emotion/styled';
+import { LineChart } from '../Chart';
 import { useTheme } from '../../../core/theme/ThemeContext';
 import { createThemeStyles } from '../../../core/theme/utils/themeUtils';
+import { filterTransientProps } from '../../../core/styled-components/transient-props';
 
 /**
  * Anomaly Detection Visualization Demo
@@ -26,6 +27,10 @@ const timeSeriesData = [
   { id: '11', label: 'Nov', value: 25 }, // Anomaly
   { id: '12', label: 'Dec', value: 72 },
 ];
+
+// Create filtered base components
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredDiv = filterTransientProps(styled.div``);
 
 // Styled components
 const DemoContainer = styled.div<{ $themeStyles: any }>`
@@ -67,7 +72,7 @@ const ControlsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const ButtonGroup = styled.div<{ $themeStyles: any }>`
+const ButtonGroup = styled(FilteredDiv)<{ $themeStyles: any }>`
   display: flex;
   gap: 8px;
   background-color: ${props => props.$themeStyles.colors.background.subtle};
@@ -75,7 +80,7 @@ const ButtonGroup = styled.div<{ $themeStyles: any }>`
   border-radius: ${props => props.$themeStyles.borders.radius.small};
 `;
 
-const Button = styled.button<{ $themeStyles: any, $active?: boolean }>`
+const Button = styled(FilteredButton)<{ $themeStyles: any, $active?: boolean }>`
   padding: 8px 12px;
   border: none;
   border-radius: ${props => props.$themeStyles.borders.radius.small};
@@ -97,7 +102,7 @@ const Button = styled.button<{ $themeStyles: any, $active?: boolean }>`
   }
 `;
 
-const InfoPanel = styled.div<{ $themeStyles: any }>`
+const InfoPanel = styled(FilteredDiv)<{ $themeStyles: any }>`
   background-color: ${props => props.$themeStyles.colors.background.subtle};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
   padding: 16px;

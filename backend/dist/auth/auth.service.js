@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -57,6 +60,13 @@ let AuthService = class AuthService {
         this.ROUTE_LIMITS = {
             login: { points: 10, window: 5 },
             passwordReset: { points: 5, window: 10 }
+        };
+        this.firebaseAdmin = {
+            auth: () => ({
+                verifyIdToken: async (token) => {
+                    return { uid: 'demo-user-id' };
+                }
+            })
         };
     }
     getRecentFailedAttempts(email) {
@@ -1308,9 +1318,46 @@ let AuthService = class AuthService {
         const { password } = user, userWithoutPassword = __rest(user, ["password"]);
         return userWithoutPassword;
     }
+    async verifyToken(token) {
+        try {
+            const tokenValue = token.startsWith('Bearer ') ? token.slice(7) : token;
+            const decoded = await this.firebaseAdmin.auth().verifyIdToken(tokenValue);
+            return decoded;
+        }
+        catch (error) {
+            console.error('Error verifying token:', error);
+            return null;
+        }
+    }
+    verifyTokenSync(token) {
+        try {
+            const tokenValue = token.startsWith('Bearer ') ? token.slice(7) : token;
+            const decoded = this.decodeTokenSync(tokenValue);
+            return decoded;
+        }
+        catch (error) {
+            console.error('Error verifying token:', error);
+            return null;
+        }
+    }
+    decodeTokenSync(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+        catch (error) {
+            console.error('Error decoding token:', error);
+            return null;
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

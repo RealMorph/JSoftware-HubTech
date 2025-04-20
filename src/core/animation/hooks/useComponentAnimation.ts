@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAnimation } from '../AnimationProvider';
 import { AnimationType, DirectionType, DurationType, EasingType } from '../types';
 
@@ -47,8 +47,10 @@ export interface ComponentAnimationProps {
   onAnimationComplete?: () => void;
 }
 
+export type AnimationState = 'initial' | 'animating' | 'complete';
+
 /**
- * Hook for adding animation capabilities to components
+ * Hook for applying animations to components
  */
 export function useComponentAnimation({
   isVisible = true,
@@ -61,23 +63,31 @@ export function useComponentAnimation({
   onAnimationComplete
 }: ComponentAnimationProps = {}) {
   const animation = useAnimation();
-  const [animationState, setAnimationState] = useState<'initial' | 'animating' | 'complete'>('initial');
+  const cleanupRef = useRef<{
+    timeoutId?: number;
+    animationFrameId?: number;
+    isMounted: boolean;
+  }>({ isMounted: true });
   
-  // Skip animation if disabled or reduced motion is preferred
+  // Determine if animation should run
   const shouldAnimate = !animationDisabled && 
                        animation.isMotionEnabled && 
                        !animation.isReducedMotion;
   
-  // Get animation properties from the animation system
-  const variantData = animation.getVariant(animationType, animationDirection);
+  // Get transition properties from the animation system
   const transitionProps = animation.getTransition(animationDuration, animationEasing);
   
-  // Initialize animation styles
-  const [styles, setStyles] = useState(() => {
-    // If not animating or not visible, return empty styles
-    if (!shouldAnimate || !isVisible) return {};
-    
-    // Return initial styles
+  // Get variant data based on animation type and direction
+  const variantData = animation.getVariant(animationType, animationDirection);
+  
+  // State to track the current animation state
+  const [animationState, setAnimationState] = useState<AnimationState>(
+    shouldAnimate && isVisible ? 'initial' : 'complete'
+  );
+  
+  // State to store the current styles
+  const [styles, setStyles] = useState<Record<string, string>>(() => {
+    // Set initial styles based on variant
     const initialStyles: Record<string, string> = {};
     Object.entries(variantData).forEach(([key, value]) => {
       if (!key.includes('_to')) {
@@ -87,9 +97,24 @@ export function useComponentAnimation({
     return initialStyles;
   });
   
+  // Cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      cleanupRef.current.isMounted = false;
+      
+      if (cleanupRef.current.timeoutId) {
+        clearTimeout(cleanupRef.current.timeoutId);
+      }
+      
+      if (cleanupRef.current.animationFrameId) {
+        cancelAnimationFrame(cleanupRef.current.animationFrameId);
+      }
+    };
+  }, []);
+  
   // Animation effect
   useEffect(() => {
-    if (!shouldAnimate || !isVisible) return;
+    if (!shouldAnimate || !isVisible || !cleanupRef.current.isMounted) return;
     
     // Set to initial state
     setAnimationState('initial');
@@ -119,9 +144,11 @@ export function useComponentAnimation({
     setStyles(initialStyles);
     
     // Start animation after a frame to ensure initial styles are applied
-    const animationFrame = requestAnimationFrame(() => {
+    cleanupRef.current.animationFrameId = requestAnimationFrame(() => {
       // Small delay to ensure initial styles are applied
-      setTimeout(() => {
+      cleanupRef.current.timeoutId = window.setTimeout(() => {
+        if (!cleanupRef.current.isMounted) return;
+        
         setAnimationState('animating');
         
         // Apply final styles
@@ -139,7 +166,9 @@ export function useComponentAnimation({
         const timeoutDuration = 
           parseFloat(transitionProps.duration) * 1000 + (animationDelay || 0) + 50;
         
-        const timeout = setTimeout(() => {
+        cleanupRef.current.timeoutId = window.setTimeout(() => {
+          if (!cleanupRef.current.isMounted) return;
+          
           setAnimationState('complete');
           // Remove will-change after animation completes
           if (animation.performance.willChangeEnabled) {
@@ -150,17 +179,23 @@ export function useComponentAnimation({
             onAnimationComplete();
           }
         }, timeoutDuration);
-        
-        return () => clearTimeout(timeout);
       }, animationDelay || 0);
     });
     
-    return () => cancelAnimationFrame(animationFrame);
+    return () => {
+      if (cleanupRef.current.timeoutId) {
+        clearTimeout(cleanupRef.current.timeoutId);
+      }
+      if (cleanupRef.current.animationFrameId) {
+        cancelAnimationFrame(cleanupRef.current.animationFrameId);
+      }
+    };
   }, [
     isVisible, 
     shouldAnimate, 
-    variantData, 
-    transitionProps, 
+    JSON.stringify(variantData), // Use stringified version to prevent unnecessary rerenders
+    transitionProps.duration, 
+    transitionProps.easing, 
     animationDelay, 
     animation.performance.willChangeEnabled,
     onAnimationComplete
@@ -168,7 +203,7 @@ export function useComponentAnimation({
   
   // Animation exit effect
   useEffect(() => {
-    if (!shouldAnimate || isVisible || animationState !== 'complete') return;
+    if (!shouldAnimate || isVisible || animationState !== 'complete' || !cleanupRef.current.isMounted) return;
     
     // Apply exit animation if component becomes invisible
     const exitDirection = animationDirection === 'in' ? 'out' : 'in';
@@ -182,7 +217,7 @@ export function useComponentAnimation({
     });
     
     setStyles(exitStyles);
-  }, [isVisible, shouldAnimate, animationType, animationDirection, animationState, styles, animation]);
+  }, [isVisible, shouldAnimate, animationType, animationDirection, animationState]);
   
   // Method to apply animation styles to element props
   const getAnimationProps = useCallback(() => {

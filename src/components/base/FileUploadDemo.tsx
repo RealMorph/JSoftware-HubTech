@@ -94,7 +94,7 @@ const RowContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   flex-wrap: wrap;
   gap: ${props => props.$themeStyles.spacing.inner};
 
-  ${ExampleContainer} {
+  & > div {
     flex: 1;
     min-width: 300px;
   }

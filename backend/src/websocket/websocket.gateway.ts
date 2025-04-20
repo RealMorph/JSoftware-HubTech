@@ -129,7 +129,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     const activity: ActivityLogMessage = {
       id: this.generateId(),
       userId,
-      timestamp: Date.now(),
+      timestamp: new Date(),
       ...payload,
     };
 

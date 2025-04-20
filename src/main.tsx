@@ -4,7 +4,7 @@ import App from './App';
 import { registerServiceWorker } from './utils/sw-register';
 
 // Check if production or development mode
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = import.meta.env.PROD;
 
 // Register service worker in production mode
 if (isProduction) {

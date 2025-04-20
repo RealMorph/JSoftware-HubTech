@@ -1,27 +1,83 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useTheme } from '../../core/theme/ThemeContext';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import DashboardLayout, { DashboardConfig } from './DashboardLayout';
 import { nanoid } from 'nanoid';
 
 // Import various widget components that can be added to the dashboard
 import { CorrelationAnalysisDemo } from '../data-visualization/examples/CorrelationAnalysisDemo';
 
+// Define theme style interface
+interface ThemeStyles {
+  fontSizeXl: string;
+  fontSizeMd: string;
+  textPrimary: string;
+  textSecondary: string;
+  borderRadiusSmall: string;
+  primaryMain: string;
+  primaryDark: string;
+  primaryLight: string;
+  primaryContrastText: string;
+  secondaryMain: string;
+  secondaryDark: string;
+  secondaryContrastText: string;
+  successLight: string;
+  successDark: string;
+  infoLight: string;
+  infoDark: string;
+  warningLight: string;
+  warningDark: string;
+  borderMain: string;
+  backgroundPaper: string;
+  backgroundSubtle: string;
+  textDisabled: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getBorderRadius } = themeContext;
+
+  return {
+    fontSizeXl: getTypography('fontSizes.xl', '1.5rem') as string,
+    fontSizeMd: getTypography('fontSizes.medium', '1rem') as string,
+    textPrimary: getColor('text.primary', '#333333'),
+    textSecondary: getColor('text.secondary', '#666666'),
+    textDisabled: getColor('text.disabled', '#999999'),
+    borderRadiusSmall: getBorderRadius('sm', '4px'),
+    primaryMain: getColor('primary.main', '#1976d2'),
+    primaryDark: getColor('primary.dark', '#115293'),
+    primaryLight: getColor('primary.light', '#4791db'),
+    primaryContrastText: getColor('primary.contrastText', '#ffffff'),
+    secondaryMain: getColor('secondary.main', '#dc004e'),
+    secondaryDark: getColor('secondary.dark', '#9a0036'),
+    secondaryContrastText: getColor('secondary.contrastText', '#ffffff'),
+    successLight: getColor('success.light', '#81c784'),
+    successDark: getColor('success.dark', '#388e3c'),
+    infoLight: getColor('info.light', '#64b5f6'),
+    infoDark: getColor('info.dark', '#1976d2'),
+    warningLight: getColor('warning.light', '#ffb74d'),
+    warningDark: getColor('warning.dark', '#f57c00'),
+    borderMain: getColor('border.main', '#e0e0e0'),
+    backgroundPaper: getColor('background.paper', '#ffffff'),
+    backgroundSubtle: getColor('background.subtle', '#f5f5f5'),
+  };
+}
+
 // Styled components for the demo
 const DemoContainer = styled.div`
   padding: 24px;
 `;
 
-const Title = styled.h1`
-  font-size: ${props => props.theme.typography.fontSize.xl};
+const Title = styled.h1<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.fontSizeXl};
   margin-bottom: 24px;
-  color: ${props => props.theme.colors.text.primary};
+  color: ${props => props.$themeStyles.textPrimary};
 `;
 
-const Description = styled.p`
-  font-size: ${props => props.theme.typography.fontSize.md};
+const Description = styled.p<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.fontSizeMd};
   margin-bottom: 32px;
-  color: ${props => props.theme.colors.text.secondary};
+  color: ${props => props.$themeStyles.textSecondary};
   max-width: 800px;
   line-height: 1.6;
 `;
@@ -33,27 +89,27 @@ const DashboardControls = styled.div`
   flex-wrap: wrap;
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ $themeStyles: ThemeStyles }>`
   padding: 10px 16px;
-  background-color: ${props => props.theme.colors.primary.main};
-  color: ${props => props.theme.colors.primary.contrastText};
+  background-color: ${props => props.$themeStyles.primaryMain};
+  color: ${props => props.$themeStyles.primaryContrastText};
   border: none;
-  border-radius: ${props => props.theme.borders.radius.small};
-  font-size: ${props => props.theme.typography.fontSize.md};
+  border-radius: ${props => props.$themeStyles.borderRadiusSmall};
+  font-size: ${props => props.$themeStyles.fontSizeMd};
   cursor: pointer;
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: ${props => props.theme.colors.primary.dark};
+    background-color: ${props => props.$themeStyles.primaryDark};
   }
 `;
 
-const WidgetButton = styled(Button)`
-  background-color: ${props => props.theme.colors.secondary.main};
-  color: ${props => props.theme.colors.secondary.contrastText};
+const WidgetButton = styled(Button)<{ $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$themeStyles.secondaryMain};
+  color: ${props => props.$themeStyles.secondaryContrastText};
   
   &:hover {
-    background-color: ${props => props.theme.colors.secondary.dark};
+    background-color: ${props => props.$themeStyles.secondaryDark};
   }
 `;
 
@@ -63,33 +119,34 @@ const SelectControl = styled.div`
   gap: 8px;
 `;
 
-const Select = styled.select`
+const Select = styled.select<{ $themeStyles: ThemeStyles }>`
   padding: 10px;
-  border: 1px solid ${props => props.theme.colors.border.main};
-  border-radius: ${props => props.theme.borders.radius.small};
-  font-size: ${props => props.theme.typography.fontSize.md};
-  color: ${props => props.theme.colors.text.primary};
-  background-color: ${props => props.theme.colors.background.paper};
+  border: 1px solid ${props => props.$themeStyles.borderMain};
+  border-radius: ${props => props.$themeStyles.borderRadiusSmall};
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+  color: ${props => props.$themeStyles.textPrimary};
+  background-color: ${props => props.$themeStyles.backgroundPaper};
 `;
 
-const Label = styled.label`
-  font-size: ${props => props.theme.typography.fontSize.md};
-  color: ${props => props.theme.colors.text.primary};
+const Label = styled.label<{ $themeStyles: ThemeStyles }>`
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+  color: ${props => props.$themeStyles.textPrimary};
 `;
 
 // Sample simple widget components
 const SimpleStatsWidget = () => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: theme.colors.text.primary }}>Key Metrics</h3>
+      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Key Metrics</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
         <div style={{ 
           padding: '16px', 
-          backgroundColor: theme.colors.success.light, 
-          borderRadius: theme.borders.radius.small,
-          color: theme.colors.success.dark
+          backgroundColor: themeStyles.successLight, 
+          borderRadius: themeStyles.borderRadiusSmall,
+          color: themeStyles.successDark
         }}>
           <div style={{ fontSize: '14px', marginBottom: '8px' }}>Revenue</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold' }}>$24,500</div>
@@ -97,9 +154,9 @@ const SimpleStatsWidget = () => {
         </div>
         <div style={{ 
           padding: '16px', 
-          backgroundColor: theme.colors.info.light, 
-          borderRadius: theme.borders.radius.small,
-          color: theme.colors.info.dark
+          backgroundColor: themeStyles.infoLight, 
+          borderRadius: themeStyles.borderRadiusSmall,
+          color: themeStyles.infoDark
         }}>
           <div style={{ fontSize: '14px', marginBottom: '8px' }}>Visitors</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold' }}>12,846</div>
@@ -107,9 +164,9 @@ const SimpleStatsWidget = () => {
         </div>
         <div style={{ 
           padding: '16px', 
-          backgroundColor: theme.colors.warning.light, 
-          borderRadius: theme.borders.radius.small,
-          color: theme.colors.warning.dark
+          backgroundColor: themeStyles.warningLight, 
+          borderRadius: themeStyles.borderRadiusSmall,
+          color: themeStyles.warningDark
         }}>
           <div style={{ fontSize: '14px', marginBottom: '8px' }}>Conversion</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold' }}>3.2%</div>
@@ -117,9 +174,9 @@ const SimpleStatsWidget = () => {
         </div>
         <div style={{ 
           padding: '16px', 
-          backgroundColor: theme.colors.primary.light, 
-          borderRadius: theme.borders.radius.small,
-          color: theme.colors.primary.dark
+          backgroundColor: themeStyles.primaryLight, 
+          borderRadius: themeStyles.borderRadiusSmall,
+          color: themeStyles.primaryDark
         }}>
           <div style={{ fontSize: '14px', marginBottom: '8px' }}>Orders</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold' }}>428</div>
@@ -131,7 +188,8 @@ const SimpleStatsWidget = () => {
 };
 
 const RecentActivitiesWidget = () => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const activities = [
     { id: 1, user: 'John Doe', action: 'Created a new project', time: '10 min ago' },
     { id: 2, user: 'Jane Smith', action: 'Updated account settings', time: '1 hour ago' },
@@ -142,7 +200,7 @@ const RecentActivitiesWidget = () => {
   
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: theme.colors.text.primary }}>Recent Activities</h3>
+      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Recent Activities</h3>
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -155,14 +213,14 @@ const RecentActivitiesWidget = () => {
             key={activity.id} 
             style={{ 
               padding: '12px', 
-              borderRadius: theme.borders.radius.small,
-              backgroundColor: theme.colors.background.subtle,
-              borderLeft: `4px solid ${theme.colors.primary.main}`
+              borderRadius: themeStyles.borderRadiusSmall,
+              backgroundColor: themeStyles.backgroundSubtle,
+              borderLeft: `4px solid ${themeStyles.primaryMain}`
             }}
           >
-            <div style={{ fontWeight: 'bold', color: theme.colors.text.primary }}>{activity.user}</div>
-            <div style={{ color: theme.colors.text.secondary }}>{activity.action}</div>
-            <div style={{ fontSize: '12px', color: theme.colors.text.disabled, marginTop: '4px' }}>{activity.time}</div>
+            <div style={{ fontWeight: 'bold', color: themeStyles.textPrimary }}>{activity.user}</div>
+            <div style={{ color: themeStyles.textSecondary }}>{activity.action}</div>
+            <div style={{ fontSize: '12px', color: themeStyles.textDisabled, marginTop: '4px' }}>{activity.time}</div>
           </div>
         ))}
       </div>
@@ -171,22 +229,23 @@ const RecentActivitiesWidget = () => {
 };
 
 const NotesWidget = () => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const [note, setNote] = useState('Add your notes here...');
   
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <h3 style={{ marginBottom: '16px', color: theme.colors.text.primary }}>Quick Notes</h3>
+      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Quick Notes</h3>
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
         style={{
           flex: 1,
           padding: '12px',
-          borderRadius: theme.borders.radius.small,
-          border: `1px solid ${theme.colors.border.main}`,
-          backgroundColor: theme.colors.background.paper,
-          color: theme.colors.text.primary,
+          borderRadius: themeStyles.borderRadiusSmall,
+          border: `1px solid ${themeStyles.borderMain}`,
+          backgroundColor: themeStyles.backgroundPaper,
+          color: themeStyles.textPrimary,
           resize: 'none',
           fontFamily: 'inherit',
           fontSize: '14px'
@@ -198,13 +257,14 @@ const NotesWidget = () => {
 
 // Sample tasks widget
 const TasksWidget = () => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const [tasks, setTasks] = useState([
     { id: 1, text: 'Review dashboard design', completed: true },
-    { id: 2, text: 'Implement responsive layouts', completed: false },
-    { id: 3, text: 'Add widget drag-and-drop', completed: false },
-    { id: 4, text: 'Create widget templates', completed: false },
-    { id: 5, text: 'Test dashboard persistence', completed: false },
+    { id: 2, text: 'Implement analytics widgets', completed: false },
+    { id: 3, text: 'Create responsive layouts', completed: false },
+    { id: 4, text: 'Fix drag and drop on mobile', completed: false },
+    { id: 5, text: 'Add widget configuration options', completed: false },
   ]);
   
   const toggleTask = (id: number) => {
@@ -215,7 +275,7 @@ const TasksWidget = () => {
   
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: theme.colors.text.primary }}>Project Tasks</h3>
+      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Project Tasks</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {tasks.map(task => (
           <div 
@@ -224,8 +284,8 @@ const TasksWidget = () => {
               display: 'flex', 
               alignItems: 'center', 
               padding: '12px',
-              borderRadius: theme.borders.radius.small,
-              backgroundColor: theme.colors.background.subtle,
+              borderRadius: themeStyles.borderRadiusSmall,
+              backgroundColor: themeStyles.backgroundSubtle,
             }}
           >
             <input 
@@ -235,7 +295,7 @@ const TasksWidget = () => {
               style={{ marginRight: '12px' }}
             />
             <span style={{ 
-              color: theme.colors.text.primary,
+              color: themeStyles.textPrimary,
               textDecoration: task.completed ? 'line-through' : 'none',
               opacity: task.completed ? 0.7 : 1
             }}>
@@ -363,7 +423,8 @@ const dashboardTemplates = {
 
 // Main demo component
 export const DashboardTemplateDemo: React.FC = () => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const [selectedTemplate, setSelectedTemplate] = useState('analytics');
   const [currentConfig, setCurrentConfig] = useState<DashboardConfig>(dashboardTemplates.analytics);
   const [isEditing, setIsEditing] = useState(false);
@@ -548,8 +609,8 @@ export const DashboardTemplateDemo: React.FC = () => {
   
   return (
     <DemoContainer>
-      <Title>Dashboard Templates</Title>
-      <Description>
+      <Title $themeStyles={themeStyles}>Dashboard Templates</Title>
+      <Description $themeStyles={themeStyles}>
         This demo showcases customizable dashboard templates with drag-and-drop functionality, 
         responsive layouts, and widget configuration. You can start with a template, add widgets, 
         and arrange them according to your needs. The dashboard configuration is persistent and can be saved.
@@ -557,8 +618,9 @@ export const DashboardTemplateDemo: React.FC = () => {
       
       <DashboardControls>
         <SelectControl>
-          <Label htmlFor="template-select">Template:</Label>
+          <Label $themeStyles={themeStyles} htmlFor="template-select">Template:</Label>
           <Select 
+            $themeStyles={themeStyles}
             id="template-select"
             value={selectedTemplate} 
             onChange={handleTemplateChange}
@@ -569,17 +631,17 @@ export const DashboardTemplateDemo: React.FC = () => {
           </Select>
         </SelectControl>
         
-        <Button onClick={toggleEditing}>
+        <Button $themeStyles={themeStyles} onClick={toggleEditing}>
           {isEditing ? 'Exit Edit Mode' : 'Enter Edit Mode'}
         </Button>
       </DashboardControls>
       
       {isEditing && (
         <DashboardControls>
-          <WidgetButton onClick={addStatsWidget}>Add Stats Widget</WidgetButton>
-          <WidgetButton onClick={addTasksWidget}>Add Tasks Widget</WidgetButton>
-          <WidgetButton onClick={addNotesWidget}>Add Notes Widget</WidgetButton>
-          <WidgetButton onClick={addCorrelationWidget}>Add Correlation Widget</WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addStatsWidget}>Add Stats Widget</WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addTasksWidget}>Add Tasks Widget</WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addNotesWidget}>Add Notes Widget</WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addCorrelationWidget}>Add Correlation Widget</WidgetButton>
         </DashboardControls>
       )}
       

@@ -2,16 +2,28 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 
+export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'accent' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   fullWidth?: boolean;
   loading?: boolean;
   disabled?: boolean;
 }
 
+interface StyledButtonProps {
+  $themeStyles: any;
+  $loading?: boolean;
+  $variant?: ButtonVariant;
+  $size?: ButtonSize;
+  fullWidth?: boolean;
+  disabled?: boolean;
+}
+
 // Use the styled function with theme access through props
-const StyledButton = styled.button<ButtonProps & { $themeStyles: any }>`
+const StyledButton = styled.button<StyledButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +35,7 @@ const StyledButton = styled.button<ButtonProps & { $themeStyles: any }>`
   color: ${props => props.$themeStyles.textColor};
   border: ${props => props.$themeStyles.border};
   transition: ${props => props.$themeStyles.transition};
-  cursor: ${props => (props.disabled || props.loading ? 'not-allowed' : 'pointer')};
+  cursor: ${props => (props.disabled || props.$loading ? 'not-allowed' : 'pointer')};
   width: ${props => (props.fullWidth ? '100%' : 'auto')};
   opacity: ${props => (props.disabled ? 0.6 : 1)};
   text-shadow: ${props => props.$themeStyles.textShadow};
@@ -48,6 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
+  loading,
   ...props
 }) => {
   // Use the direct theme hook to access theme utilities
@@ -122,9 +135,18 @@ export const Button: React.FC<ButtonProps> = ({
     focusBoxShadow: `0 0 0 3px ${getColor('primary', '#0062CC')}40`,
   };
 
+  // Filter out custom props to avoid DOM warnings
+  const { variant: _, size: __, loading: ___, ...htmlProps } = props;
+
   return (
-    <StyledButton $themeStyles={themeStyles} variant={variant} size={size} {...props}>
-      {props.loading ? <span>Loading...</span> : children}
+    <StyledButton 
+      $themeStyles={themeStyles} 
+      $loading={loading} 
+      $variant={variant as ButtonVariant} 
+      $size={size as ButtonSize} 
+      {...htmlProps}
+    >
+      {loading ? <span>Loading...</span> : children}
     </StyledButton>
   );
 };

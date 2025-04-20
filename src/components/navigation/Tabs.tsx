@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
 
 // Types
 export interface Tab {
@@ -143,17 +144,21 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
   };
 }
 
+// Create filtered base components
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredDiv = filterTransientProps(styled.div``);
+
 // Styled Components
 const TabsContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${props => (props.fullWidth ? '100%' : 'auto')};
   position: relative;
 `;
 
-const TabsList = styled.div<{ variant: TabsProps['variant']; $themeStyles: ThemeStyles; responsive?: boolean }>`
+const TabsList = styled(FilteredDiv)<{ $variant: TabsProps['variant']; $themeStyles: ThemeStyles; responsive?: boolean }>`
   display: flex;
   gap: ${props => props.$themeStyles.spacing.medium.x};
   border-bottom: ${props =>
-    props.variant === 'underline' ? `1px solid ${props.$themeStyles.colors.border.main}` : 'none'};
+    props.$variant === 'underline' ? `1px solid ${props.$themeStyles.colors.border.main}` : 'none'};
   margin-bottom: ${props => props.$themeStyles.spacing.content};
   overflow-x: ${props => props.responsive ? 'auto' : 'visible'};
   scrollbar-width: thin;
@@ -179,79 +184,79 @@ const TabsList = styled.div<{ variant: TabsProps['variant']; $themeStyles: Theme
   }
 `;
 
-const TabButton = styled.button<{
-  active: boolean;
-  variant: TabsProps['variant'];
-  size: TabsProps['size'];
+const TabButton = styled(FilteredButton)<{
+  $active: boolean;
+  $variant: TabsProps['variant'];
+  $size: TabsProps['size'];
   disabled?: boolean;
   $themeStyles: ThemeStyles;
 }>`
   padding: ${props => {
-    const spacing = props.$themeStyles.spacing[props.size || 'medium'];
+    const spacing = props.$themeStyles.spacing[props.$size || 'medium'];
     return `${spacing.y} ${spacing.x}`;
   }};
-  font-size: ${props => props.$themeStyles.typography.sizes[props.size || 'medium']};
+  font-size: ${props => props.$themeStyles.typography.sizes[props.$size || 'medium']};
   font-weight: ${props =>
-    props.active
+    props.$active
       ? props.$themeStyles.typography.weights.semibold
       : props.$themeStyles.typography.weights.normal};
   border: none;
   background: none;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-  opacity: ${props => (props.disabled ? 0.5 : 1)};
-  transition: all ${props => props.$themeStyles.transitions.default};
   color: ${props =>
     props.disabled
       ? props.$themeStyles.colors.text.disabled
-      : props.active
+      : props.$active
       ? props.$themeStyles.colors.text.primary
       : props.$themeStyles.colors.text.secondary};
-  border-radius: ${props =>
-    props.variant === 'pills'
-      ? props.$themeStyles.borderRadius.full
-      : props.$themeStyles.borderRadius.none};
+  transition: ${props => props.$themeStyles.transitions.default};
+  position: relative;
+  white-space: nowrap;
   background-color: ${props => {
     if (props.disabled) return 'transparent';
-    if (props.active) {
-      switch (props.variant) {
+    if (props.$active) {
+      switch (props.$variant) {
         case 'pills':
           return props.$themeStyles.colors.primary.main;
-        case 'underline':
-          return 'transparent';
         default:
-          return props.$themeStyles.colors.background.paper;
+          return 'transparent';
       }
     }
     return 'transparent';
   }};
   border-bottom: ${props => {
-    if (props.variant === 'underline' && props.active) {
+    if (props.$variant === 'underline' && props.$active) {
       return `2px solid ${props.$themeStyles.colors.primary.main}`;
     }
-    return 'none';
+    return props.$variant === 'underline' ? '2px solid transparent' : 'none';
   }};
-
+  border-radius: ${props => {
+    switch (props.$variant) {
+      case 'pills':
+        return props.$themeStyles.borderRadius.full;
+      default:
+        return props.$themeStyles.borderRadius.none;
+    }
+  }};
+  
   &:hover:not(:disabled) {
     color: ${props =>
-      props.active
+      props.$active
         ? props.$themeStyles.colors.primary.hover
         : props.$themeStyles.colors.primary.main};
     background-color: ${props => {
-      if (props.variant === 'pills') {
-        return props.active
+      if (props.$variant === 'pills') {
+        return props.$active
           ? props.$themeStyles.colors.primary.hover
           : props.$themeStyles.colors.background.hover;
       }
-      return 'transparent';
+      return props.$themeStyles.colors.background.hover;
     }};
   }
 
-  &:active:not(:disabled) {
-    color: ${props => props.$themeStyles.colors.primary.active};
-    background-color: ${props =>
-      props.variant === 'pills'
-        ? props.$themeStyles.colors.primary.active
-        : props.$themeStyles.colors.background.active};
+  &:focus-visible {
+    outline: 2px solid ${props => props.$themeStyles.colors.primary.main};
+    outline-offset: 2px;
   }
 `;
 
@@ -305,16 +310,16 @@ const OverflowMenu = styled.div<{ isOpen: boolean; $themeStyles: ThemeStyles }>`
   overflow-y: auto;
 `;
 
-const OverflowMenuItem = styled.button<{ active: boolean; $themeStyles: ThemeStyles }>`
+const OverflowMenuItem = styled(FilteredButton)<{ $active: boolean; $themeStyles: ThemeStyles }>`
   display: block;
   width: 100%;
   text-align: left;
   padding: ${props => `${props.$themeStyles.spacing.medium.y} ${props.$themeStyles.spacing.medium.x}`};
-  background: ${props => props.active ? props.$themeStyles.colors.background.active : 'transparent'};
+  background: ${props => props.$active ? props.$themeStyles.colors.background.active : 'transparent'};
   border: none;
   cursor: pointer;
-  color: ${props => props.active ? props.$themeStyles.colors.primary.main : props.$themeStyles.colors.text.primary};
-  font-weight: ${props => props.active ? props.$themeStyles.typography.weights.semibold : props.$themeStyles.typography.weights.normal};
+  color: ${props => props.$active ? props.$themeStyles.colors.primary.main : props.$themeStyles.colors.text.primary};
+  font-weight: ${props => props.$active ? props.$themeStyles.typography.weights.semibold : props.$themeStyles.typography.weights.normal};
   
   &:hover, &:focus {
     background: ${props => props.$themeStyles.colors.background.hover};
@@ -391,7 +396,7 @@ export const Tabs: React.FC<TabsProps> = ({
   return (
     <TabsContainer className={className} fullWidth={fullWidth} ref={containerRef}>
       <TabsList 
-        variant={variant} 
+        $variant={variant} 
         $themeStyles={themeStyles}
         responsive={responsive}
         ref={tabsListRef}
@@ -400,9 +405,9 @@ export const Tabs: React.FC<TabsProps> = ({
         {tabs.map(tab => (
           <TabButton
             key={tab.id}
-            active={activeTab === tab.id}
-            variant={variant}
-            size={size}
+            $active={activeTab === tab.id}
+            $variant={variant}
+            $size={size}
             disabled={tab.disabled}
             onClick={() => !tab.disabled && handleTabChange(tab.id)}
             role="tab"
@@ -433,7 +438,7 @@ export const Tabs: React.FC<TabsProps> = ({
             {tabs.map(tab => (
               <OverflowMenuItem
                 key={tab.id}
-                active={activeTab === tab.id}
+                $active={activeTab === tab.id}
                 $themeStyles={themeStyles}
                 onClick={() => !tab.disabled && handleTabChange(tab.id)}
                 disabled={tab.disabled}

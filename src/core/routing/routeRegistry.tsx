@@ -31,6 +31,7 @@ const FileUploadDemo = lazy(() => import('../../components/base/FileUploadDemo')
 const MultiSelectDemo = lazy(() => import('../../components/base/MultiSelectDemo'));
 const TypeaheadDemo = lazy(() => import('../../components/base/TypeaheadDemo'));
 const FormContainerDemo = lazy(() => import('../../components/base/FormContainerDemo'));
+const DataDisplayDemo = lazy(() => import('../../components/base/DataDisplayDemo'));
 
 // Feedback components demos
 const AlertDemo = lazy(() => import('../../components/feedback/AlertDemo'));
@@ -38,12 +39,37 @@ const ToastDemo = lazy(() => import('../../components/feedback/ToastDemo'));
 const ModalDemo = lazy(() => import('../../components/feedback/ModalDemo'));
 const ProgressDemo = lazy(() => import('../../components/feedback/ProgressDemo'));
 const FeedbackDemo = lazy(() => import('../../components/feedback/FeedbackDemo'));
+const DialogDemo = lazy(() => import('../../components/feedback/DialogDemo'));
+const FormDialogDemo = lazy(() => Promise.resolve({ 
+  default: () => <div>Form Dialog Demo - Component being developed</div> 
+}));
+const ConfirmationDialogDemo = lazy(() => import('../../components/feedback/ConfirmationDialogDemo'));
 
 // Data visualization demos
 const DataGridDemo = lazy(() => import('../../components/data-visualization/DataGridDemo'));
 const DataVisualizationDemo = lazy(() => import('../../components/data-visualization/DataVisualizationDemo'));
 const LeafletMapDemo = lazy(() => import('../../components/data-visualization/LeafletMapDemo'));
 const DashboardTemplateDemo = lazy(() => import('../../components/dashboard/DashboardTemplateDemo'));
+const GraphDemo = lazy(() => import('../../components/data-visualization/GraphDemo'));
+
+// Navigation component demos
+const BreadcrumbsDemo = lazy(() => Promise.resolve({ 
+  default: () => <div>Breadcrumbs Demo - Component being developed</div> 
+}));
+const TabsDemo = lazy(() => import('../../components/navigation/TabsDemo'));
+const MenuDemo = lazy(() => Promise.resolve({ 
+  default: () => <div>Menu Demo - Component being developed</div> 
+}));
+const PaginationDemo = lazy(() => import('../../components/navigation/PaginationDemo'));
+const RadixSidebarDemo = lazy(() => Promise.resolve({ 
+  default: () => <div>Sidebar Demo - Component being developed</div> 
+}));
+const BreadcrumbsWithTabsDemo = lazy(() => Promise.resolve({ 
+  default: () => <div>Breadcrumbs with Tabs Demo - Component being developed</div> 
+}));
+
+// Demo Landing Page
+const DemoLandingPage = lazy(() => import('../../pages/DemoLandingPage'));
 
 // Create placeholders for components that don't exist yet
 const DashboardView = lazy(() => Promise.resolve({ 
@@ -118,10 +144,24 @@ export const publicRoutes: RouteDefinition[] = [
   createRedirectRoute('/', '/dashboard')
 ];
 
+// Demo Landing Page Route
+export const demoLandingRoute: RouteDefinition = createPublicRoute({
+  path: '/demos',
+  element: wrapWithSuspense(<DemoLandingPage />),
+  title: 'Component Demos',
+  showInMenu: true,
+  menuOrder: 50,
+  menuIcon: 'code',
+  menuCategory: 'Demos'
+});
+
 // Demo routes organized by category
 export const demoRoutes: RouteDefinition[] = [
+  // Demo Landing Page
+  demoLandingRoute,
+  
   // Base Components Demos
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/button',
     element: wrapWithSuspense(<ButtonDemo />),
     title: 'Button Demo',
@@ -130,7 +170,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'smart_button',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/textfield',
     element: wrapWithSuspense(<TextFieldDemo />),
     title: 'TextField Demo',
@@ -139,7 +179,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'text_fields',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/select',
     element: wrapWithSuspense(<SelectDemo />),
     title: 'Select Demo',
@@ -148,7 +188,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'expand_more',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/checkbox',
     element: wrapWithSuspense(<CheckboxDemo />),
     title: 'Checkbox Demo',
@@ -157,7 +197,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'check_box',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/radio',
     element: wrapWithSuspense(<RadioDemo />),
     title: 'Radio Demo',
@@ -166,7 +206,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'radio_button_checked',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/card',
     element: wrapWithSuspense(<CardDemo />),
     title: 'Card Demo',
@@ -175,7 +215,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'view_agenda',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/list',
     element: wrapWithSuspense(<ListDemo />),
     title: 'List Demo',
@@ -184,7 +224,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'list',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/table',
     element: wrapWithSuspense(<TableDemo />),
     title: 'Table Demo',
@@ -193,7 +233,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'table_chart',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/datepicker',
     element: wrapWithSuspense(<DatePickerDemo />),
     title: 'DatePicker Demo',
@@ -202,7 +242,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'calendar_today',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/timepicker',
     element: wrapWithSuspense(<TimePickerDemo />),
     title: 'TimePicker Demo',
@@ -211,7 +251,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'access_time',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/fileupload',
     element: wrapWithSuspense(<FileUploadDemo />),
     title: 'FileUpload Demo',
@@ -220,7 +260,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'upload_file',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/multiselect',
     element: wrapWithSuspense(<MultiSelectDemo />),
     title: 'MultiSelect Demo',
@@ -229,7 +269,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'checklist',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/typeahead',
     element: wrapWithSuspense(<TypeaheadDemo />),
     title: 'Typeahead Demo',
@@ -238,7 +278,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'search',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/form',
     element: wrapWithSuspense(<FormDemo />),
     title: 'Form Demo',
@@ -247,7 +287,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'description',
     menuCategory: 'Base Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/base/formcontainer',
     element: wrapWithSuspense(<FormContainerDemo />),
     title: 'Form Container Demo',
@@ -256,9 +296,18 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'dynamic_form',
     menuCategory: 'Base Components'
   }),
+  createPublicRoute({
+    path: '/demos/base/datadisplay',
+    element: wrapWithSuspense(<DataDisplayDemo />),
+    title: 'Data Display Demo',
+    showInMenu: true,
+    menuOrder: 115,
+    menuIcon: 'data_array',
+    menuCategory: 'Base Components'
+  }),
   
   // Feedback Components Demos
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/feedback/alert',
     element: wrapWithSuspense(<AlertDemo />),
     title: 'Alert Demo',
@@ -267,7 +316,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'announcement',
     menuCategory: 'Feedback Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/feedback/toast',
     element: wrapWithSuspense(<ToastDemo />),
     title: 'Toast Demo',
@@ -276,7 +325,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'notification_important',
     menuCategory: 'Feedback Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/feedback/modal',
     element: wrapWithSuspense(<ModalDemo />),
     title: 'Modal Demo',
@@ -285,7 +334,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'add_box',
     menuCategory: 'Feedback Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/feedback/progress',
     element: wrapWithSuspense(<ProgressDemo />),
     title: 'Progress Demo',
@@ -294,7 +343,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'hourglass_top',
     menuCategory: 'Feedback Components'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/feedback/all',
     element: wrapWithSuspense(<FeedbackDemo />),
     title: 'Feedback Overview',
@@ -303,9 +352,36 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'feedback',
     menuCategory: 'Feedback Components'
   }),
+  createPublicRoute({
+    path: '/demos/feedback/dialog',
+    element: wrapWithSuspense(<DialogDemo />),
+    title: 'Dialog Demo',
+    showInMenu: true,
+    menuOrder: 205,
+    menuIcon: 'question_answer',
+    menuCategory: 'Feedback Components'
+  }),
+  createPublicRoute({
+    path: '/demos/feedback/form-dialog',
+    element: wrapWithSuspense(<FormDialogDemo />),
+    title: 'Form Dialog Demo',
+    showInMenu: true,
+    menuOrder: 206,
+    menuIcon: 'edit_note',
+    menuCategory: 'Feedback Components'
+  }),
+  createPublicRoute({
+    path: '/demos/feedback/confirmation-dialog',
+    element: wrapWithSuspense(<ConfirmationDialogDemo />),
+    title: 'Confirmation Dialog Demo',
+    showInMenu: true,
+    menuOrder: 207,
+    menuIcon: 'check_circle',
+    menuCategory: 'Feedback Components'
+  }),
   
   // Data Visualization Demos
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/data-viz/datagrid',
     element: wrapWithSuspense(<DataGridDemo />),
     title: 'DataGrid Demo',
@@ -314,7 +390,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'grid_on',
     menuCategory: 'Data Visualization'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/data-viz/charts',
     element: wrapWithSuspense(<DataVisualizationDemo />),
     title: 'Charts Demo',
@@ -323,7 +399,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'bar_chart',
     menuCategory: 'Data Visualization'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/data-viz/maps',
     element: wrapWithSuspense(<LeafletMapDemo />),
     title: 'Maps Demo',
@@ -332,7 +408,7 @@ export const demoRoutes: RouteDefinition[] = [
     menuIcon: 'map',
     menuCategory: 'Data Visualization'
   }),
-  createProtectedRoute({
+  createPublicRoute({
     path: '/demos/data-viz/dashboard',
     element: wrapWithSuspense(<DashboardTemplateDemo />),
     title: 'Dashboard Templates',
@@ -340,6 +416,71 @@ export const demoRoutes: RouteDefinition[] = [
     menuOrder: 303,
     menuIcon: 'dashboard',
     menuCategory: 'Data Visualization'
+  }),
+  createPublicRoute({
+    path: '/demos/data-viz/graph',
+    element: wrapWithSuspense(<GraphDemo />),
+    title: 'Graph Demo',
+    showInMenu: true,
+    menuOrder: 304,
+    menuIcon: 'share',
+    menuCategory: 'Data Visualization'
+  }),
+  
+  // Navigation Component Demos
+  createPublicRoute({
+    path: '/demos/navigation/breadcrumbs',
+    element: wrapWithSuspense(<BreadcrumbsDemo />),
+    title: 'Breadcrumbs Demo',
+    showInMenu: true,
+    menuOrder: 400,
+    menuIcon: 'breadcrumb',
+    menuCategory: 'Navigation Components'
+  }),
+  createPublicRoute({
+    path: '/demos/navigation/tabs',
+    element: wrapWithSuspense(<TabsDemo />),
+    title: 'Tabs Demo',
+    showInMenu: true,
+    menuOrder: 401,
+    menuIcon: 'tab',
+    menuCategory: 'Navigation Components'
+  }),
+  createPublicRoute({
+    path: '/demos/navigation/menu',
+    element: wrapWithSuspense(<MenuDemo />),
+    title: 'Menu Demo',
+    showInMenu: true,
+    menuOrder: 402,
+    menuIcon: 'menu',
+    menuCategory: 'Navigation Components'
+  }),
+  createPublicRoute({
+    path: '/demos/navigation/pagination',
+    element: wrapWithSuspense(<PaginationDemo />),
+    title: 'Pagination Demo',
+    showInMenu: true,
+    menuOrder: 403,
+    menuIcon: 'last_page',
+    menuCategory: 'Navigation Components'
+  }),
+  createPublicRoute({
+    path: '/demos/navigation/sidebar',
+    element: wrapWithSuspense(<RadixSidebarDemo />),
+    title: 'Sidebar Demo',
+    showInMenu: true,
+    menuOrder: 404,
+    menuIcon: 'vertical_split',
+    menuCategory: 'Navigation Components'
+  }),
+  createPublicRoute({
+    path: '/demos/navigation/breadcrumbs-tabs',
+    element: wrapWithSuspense(<BreadcrumbsWithTabsDemo />),
+    title: 'Breadcrumbs with Tabs Demo',
+    showInMenu: true,
+    menuOrder: 405,
+    menuIcon: 'view_comfy',
+    menuCategory: 'Navigation Components'
   })
 ];
 

@@ -146,6 +146,7 @@
     "@types/leaflet": "^1.9.17",
     "@types/react": "^19.1.0",
     "@types/styled-components": "^5.1.34",
+    "@types/xlsx": "^0.0.35",
     "axios": "^1.8.4",
     "file-saver": "^2.0.5",
     "firebase": "^11.6.0",
@@ -172,7 +173,8 @@
     "recharts": "^2.15.2",
     "redux-persist": "^6.0.0",
     "styled-components": "^6.1.17",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

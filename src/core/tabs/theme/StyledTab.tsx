@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '../../theme';
+import { ThemeConfig } from '../../theme/theme-persistence';
 import { TabStyleOptions, TabThemeExtension } from './tab-theme-extension';
 import { getTabStyles, getTabAnimations, useTabTheme } from './useTabTheme';
-import { ThemeConfig } from '../../theme/theme-persistence';
 import { css } from '@emotion/react';
+import { filterTransientProps } from '../../styled-components/transient-props';
+
+// Create filtered base components
+const FilteredDiv = filterTransientProps(styled.div``);
 
 // Extend Emotion's Theme type
 declare module '@emotion/react' {
@@ -48,15 +51,15 @@ export const StyledTabContainer = styled.div<TabContainerProps>`
  * Styled tab component
  */
 interface StyledTabProps {
-  active?: boolean;
-  disabled?: boolean;
+  $active?: boolean;
+  $disabled?: boolean;
   styles?: Partial<TabStyleOptions>;
   variant?: 'default' | 'pill' | 'underlined';
   tabShape?: 'rectangle' | 'rounded' | 'pill' | 'underlined';
   separatorStyle?: 'none' | 'line' | 'dot' | 'space';
 }
 
-export const StyledTab = styled.div<StyledTabProps>`
+export const StyledTab = styled(FilteredDiv)<StyledTabProps>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,8 +74,8 @@ export const StyledTab = styled.div<StyledTabProps>`
   font-weight: ${props => props.styles?.fontWeight || 400};
   text-transform: ${props => props.styles?.textTransform || 'none'};
   box-shadow: ${props => props.styles?.shadow || 'none'};
-  opacity: ${props => (props.disabled ? 0.5 : props.styles?.opacity || 1)};
-  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${props => (props.$disabled ? 0.5 : props.styles?.opacity || 1)};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
@@ -93,14 +96,14 @@ export const StyledTab = styled.div<StyledTabProps>`
     props.tabShape === 'pill' &&
     `
     padding: 0 16px;
-    background-color: ${props.active ? '#0052CC' : '#F0F5FA'};
-    color: ${props.active ? '#FFFFFF' : '#2C3E50'};
-    border: 1px solid ${props.active ? '#0047B3' : '#C7D4E2'};
-    font-weight: ${props.active ? '600' : '400'};
-    box-shadow: ${props.active ? '0 2px 4px rgba(0, 82, 204, 0.2)' : 'none'};
+    background-color: ${props.$active ? '#0052CC' : '#F0F5FA'};
+    color: ${props.$active ? '#FFFFFF' : '#2C3E50'};
+    border: 1px solid ${props.$active ? '#0047B3' : '#C7D4E2'};
+    font-weight: ${props.$active ? '600' : '400'};
+    box-shadow: ${props.$active ? '0 2px 4px rgba(0, 82, 204, 0.2)' : 'none'};
     
     ${
-      !props.active
+      !props.$active
         ? `
       &:hover {
         background-color: #D2DFE9;
@@ -114,7 +117,7 @@ export const StyledTab = styled.div<StyledTabProps>`
 
   // Active state styles  
   ${props =>
-    props.active &&
+    props.$active &&
     `
     background-color: ${props.theme?.currentTheme?.colors?.gray?.[50] || '#fff'};
     font-weight: 600;
@@ -180,7 +183,7 @@ export const StyledTab = styled.div<StyledTabProps>`
 
   &:hover:not(:disabled) {
     background-color: ${props => {
-      if (props.active) {
+      if (props.$active) {
         if (props.tabShape === 'pill') {
           return '#0047B3';
         }
@@ -252,8 +255,8 @@ export const Tab: React.FC<TabProps> = ({
 
   return (
     <StyledTab
-      active={active}
-      disabled={disabled}
+      $active={active}
+      $disabled={disabled}
       styles={tabStyles}
       tabShape={tabShape || tabStyles.tabShape}
       separatorStyle={separatorStyle}

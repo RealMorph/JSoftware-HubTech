@@ -8,6 +8,7 @@ import {
   useFeatureValue 
 } from '../../core/feature-flags';
 import { useDirectTheme, DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
 
 // Styled components
 const DemoContainer = styled.div`
@@ -57,42 +58,13 @@ const SectionDescription = styled.p`
   color: #666666; /* Will be set dynamically */
 `;
 
-const FeatureCard = styled.div<{ $enabled?: boolean }>`
-  padding: 16px;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  background-color: ${props => props.$enabled ? '#e8f5e9' : '#ffebee'}; /* Will be set dynamically */
-  border-left: 4px solid ${props => props.$enabled ? '#4caf50' : '#f44336'}; /* Will be set dynamically */
-`;
+// Create filtered base components
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredDiv = filterTransientProps(styled.div``);
+const FilteredSpan = filterTransientProps(styled.span``);
 
-const FeatureTitle = styled.h3`
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const FeatureStatus = styled.span<{ $enabled?: boolean }>`
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: bold;
-  background-color: ${props => props.$enabled ? '#4caf50' : '#f44336'}; /* Will be set dynamically */
-  color: white;
-`;
-
-const VariantDisplay = styled.div<{ $variant: string }>`
-  padding: 12px;
-  margin-top: 16px;
-  border-radius: 6px;
-  background-color: #f5f5f5; /* Will be set dynamically */
-  border: 1px solid #9e9e9e; /* Will be set dynamically */
-`;
-
-const FeatureToggle = styled.button<{ $active?: boolean }>`
+// Use filtered components for all styled components with transient props
+const FeatureToggle = styled(FilteredButton)<{ $active?: boolean }>`
   background-color: ${props => props.$active ? '#2196f3' : '#f5f5f5'}; /* Will be set dynamically */
   color: ${props => props.$active ? 'white' : '#333333'}; /* Will be set dynamically */
   border: 1px solid ${props => props.$active ? '#2196f3' : '#9e9e9e'}; /* Will be set dynamically */
@@ -107,6 +79,41 @@ const FeatureToggle = styled.button<{ $active?: boolean }>`
     background-color: ${props => props.$active ? '#1976d2' : '#9e9e9e'}; /* Will be set dynamically */
     color: white;
   }
+`;
+
+const FeatureCard = styled(FilteredDiv)<{ $enabled?: boolean }>`
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: ${props => props.$enabled ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)'};
+`;
+
+const FeatureTitle = styled.h3`
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const FeatureStatus = styled(FilteredSpan)<{ $enabled?: boolean }>`
+  display: inline-block;
+  padding: 4px 8px;
+  margin-left: 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background-color: ${props => props.$enabled ? '#2ecc71' : '#e74c3c'};
+  color: white;
+`;
+
+const VariantDisplay = styled(FilteredDiv)<{ $variant: string }>`
+  padding: 16px;
+  border-radius: 6px;
+  background-color: rgba(46, 204, 113, 0.1);
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
 `;
 
 // Manual override for demo purposes
@@ -307,8 +314,7 @@ export const FeatureFlagDemo: React.FC = () => {
           <FeatureVariant
             featureKey="demo.buttonColor"
             defaultValue={buttonColorVariant}
-          >
-            {(value) => {
+            children={(value) => {
               switch(value) {
                 case 'primary':
                   return (
@@ -341,7 +347,7 @@ export const FeatureFlagDemo: React.FC = () => {
                   return <p>Unknown button variant</p>;
               }
             }}
-          </FeatureVariant>
+          />
         </FeatureCard>
       </Section>
       

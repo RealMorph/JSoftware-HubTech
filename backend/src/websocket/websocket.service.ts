@@ -181,6 +181,61 @@ export class WebsocketService {
   }
 
   /**
+   * Alias for getConnectedClientsCount() to match controller usage
+   */
+  getClientCount(): number {
+    return this.getConnectedClientsCount();
+  }
+
+  /**
+   * Get clients for a specific user ID
+   * @param userId The user ID
+   * @returns An array of client IDs
+   */
+  getClientsByUserId(userId: string): string[] {
+    const clients = this.userToClientsMap.get(userId);
+    return clients ? Array.from(clients) : [];
+  }
+
+  /**
+   * Broadcast an activity message
+   * @param message The activity message without id and timestamp
+   * @returns The complete activity message with id and timestamp
+   */
+  broadcastActivity(message: Omit<ActivityLogMessage, 'id' | 'timestamp'>): ActivityLogMessage {
+    const fullMessage: ActivityLogMessage = {
+      id: uuidv4(),
+      timestamp: new Date(),
+      ...message,
+    };
+    
+    this.broadcastActivityLog(fullMessage);
+    return fullMessage;
+  }
+
+  /**
+   * Send activity log to specified rooms
+   * @param activity The activity log message
+   * @param rooms Optional array of room names to send to
+   */
+  sendActivityLog(activity: ActivityLogMessage, rooms?: string[]): void {
+    if (!this.server) {
+      this.logger.error('WebSocket server not initialized');
+      return;
+    }
+    
+    if (rooms && rooms.length > 0) {
+      // Send to specific rooms
+      for (const room of rooms) {
+        this.server.to(room).emit('activity', activity);
+      }
+    } else {
+      // Broadcast to entity and user rooms by default
+      this.broadcastActivityLog(activity);
+    }
+  }
+
+  /**
    * Get the number of connected users
    * @returns The number of unique connected users
    */

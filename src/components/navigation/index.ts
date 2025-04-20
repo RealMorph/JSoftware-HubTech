@@ -5,7 +5,7 @@ export { Menu, MenuItem } from './Menu';
 export { Breadcrumbs } from './Breadcrumbs';
 export { BreadcrumbsDemo } from './BreadcrumbsDemo';
 export { Pagination } from './Pagination';
-export { PaginationDemo } from './PaginationDemo';
+export { default as PaginationDemo } from './PaginationDemo';
 export { TabsDemo } from './TabsDemo';
 export * from './RadixSidebar';
 export * from './RadixSidebarDemo';

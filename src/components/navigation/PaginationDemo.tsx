@@ -391,4 +391,4 @@ const PaginationDemo: React.FC = () => {
   );
 };
 
-export { PaginationDemo };
+export default PaginationDemo;

@@ -1,7 +1,28 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ActivityType } from '../../core/firebase/websocket-service';
-import { Button, TextField, Select, DatePicker } from '../ui';
+import { Button, TextField, Select, DatePicker } from '../../components/base';
 import styled from 'styled-components';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+
+// Define theme style interface
+interface ThemeStyles {
+  backgroundSecondary: string;
+  textPrimary: string;
+  borderRadius: string;
+  fontSizeMedium: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getBorderRadius } = themeContext;
+
+  return {
+    backgroundSecondary: getColor('background.secondary', '#f5f5f5'),
+    textPrimary: getColor('text.primary', '#333333'),
+    borderRadius: getBorderRadius('md', '4px'),
+    fontSizeMedium: getTypography('fontSizes.medium', '1rem') as string,
+  };
+}
 
 export interface ActivityFilterOptions {
   types?: ActivityType[];
@@ -41,14 +62,14 @@ const entityTypeOptions = [
   { value: 'subscription', label: 'Subscription' },
 ];
 
-const FilterContainer = styled.div`
+const FilterContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 16px;
   padding: 16px;
-  background-color: ${props => props.theme.colors.background.secondary};
-  border-radius: ${props => props.theme.borderRadius.medium};
+  background-color: ${props => props.$themeStyles.backgroundSecondary};
+  border-radius: ${props => props.$themeStyles.borderRadius};
 `;
 
 const FilterSection = styled.div`
@@ -63,17 +84,19 @@ const FilterActions = styled.div`
   margin-top: 8px;
 `;
 
-const FilterTitle = styled.h3`
+const FilterTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
   margin: 0 0 16px 0;
-  font-size: ${props => props.theme.typography.fontSizes.medium};
-  color: ${props => props.theme.colors.text.primary};
+  font-size: ${props => props.$themeStyles.fontSizeMedium};
+  color: ${props => props.$themeStyles.textPrimary};
 `;
 
 export const ActivityLogFilter: React.FC<ActivityLogFilterProps> = ({
   onFilterChange,
   className = '',
-  initialFilters = {},
+  initialFilters = {} as ActivityFilterOptions,
 }) => {
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const [filters, setFilters] = useState<ActivityFilterOptions>(initialFilters);
   const [searchInput, setSearchInput] = useState(initialFilters.searchTerm || '');
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -161,7 +184,7 @@ export const ActivityLogFilter: React.FC<ActivityLogFilterProps> = ({
   }, [searchInput, filters.searchTerm, applySearch]);
 
   return (
-    <FilterContainer className={className}>
+    <FilterContainer className={className} $themeStyles={themeStyles}>
       <FilterSection>
         <TextField
           label="Search Activities"
@@ -191,31 +214,29 @@ export const ActivityLogFilter: React.FC<ActivityLogFilterProps> = ({
       {showAdvanced && (
         <>
           <FilterSection>
-            <FilterTitle>Activity Types</FilterTitle>
+            <FilterTitle $themeStyles={themeStyles}>Activity Types</FilterTitle>
             <Select
               isMulti
               options={activityTypeOptions}
               value={filters.types || []}
               onChange={handleTypeChange}
               placeholder="Select activity types..."
-              fullWidth
             />
           </FilterSection>
 
           <FilterSection>
-            <FilterTitle>Entity Type</FilterTitle>
+            <FilterTitle $themeStyles={themeStyles}>Entity Type</FilterTitle>
             <Select
               options={entityTypeOptions}
               value={filters.entityType || ''}
               onChange={handleEntityTypeChange}
               placeholder="Select entity type..."
               isClearable
-              fullWidth
             />
           </FilterSection>
 
           <FilterSection>
-            <FilterTitle>Entity ID</FilterTitle>
+            <FilterTitle $themeStyles={themeStyles}>Entity ID</FilterTitle>
             <TextField
               value={filters.entityId || ''}
               onChange={handleEntityIdChange}
@@ -225,21 +246,19 @@ export const ActivityLogFilter: React.FC<ActivityLogFilterProps> = ({
           </FilterSection>
 
           <FilterSection>
-            <FilterTitle>Date Range</FilterTitle>
+            <FilterTitle $themeStyles={themeStyles}>Date Range</FilterTitle>
             <div style={{ display: 'flex', gap: '8px' }}>
               <DatePicker
                 label="From"
                 selected={filters.dateFrom}
                 onChange={handleDateFromChange}
                 maxDate={filters.dateTo}
-                placeholderText="Start date"
               />
               <DatePicker
                 label="To"
                 selected={filters.dateTo}
                 onChange={handleDateToChange}
                 minDate={filters.dateFrom}
-                placeholderText="End date"
               />
             </div>
           </FilterSection>

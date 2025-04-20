@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Link, useLocation } from 'react-router-dom';
 import { useDirectTheme, DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
 import { Theme as DirectTheme } from '../../core/theme/types';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
 
 // Types
 export interface BreadcrumbItem {
@@ -189,8 +190,15 @@ const createThemeStyles = (theme: DirectThemeContextType): ThemeStyles => ({
   },
 });
 
+// Create filtered base components
+const FilteredSpan = filterTransientProps(styled.span``);
+const FilteredLi = filterTransientProps(styled.li``);
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredNav = filterTransientProps(styled.nav``);
+const FilteredLink = filterTransientProps(styled(Link)``);
+
 // Styled components
-const BreadcrumbsContainer = styled.nav<{ $themeStyles: ThemeStyles }>`
+const BreadcrumbsContainer = styled(FilteredNav)<{ $themeStyles: ThemeStyles }>`
   padding: ${({ $themeStyles }) => `${$themeStyles.spacing.container.vertical} ${$themeStyles.spacing.container.horizontal}`};
   font-family: ${({ $themeStyles }) => $themeStyles.typography.family};
 `;
@@ -204,7 +212,7 @@ const BreadcrumbList = styled.ol`
   flex-wrap: wrap;
 `;
 
-const BreadcrumbItem = styled.li<{ $themeStyles: ThemeStyles }>`
+const BreadcrumbItem = styled(FilteredLi)<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
   margin-right: ${({ $themeStyles }) => $themeStyles.spacing.item};
@@ -218,7 +226,7 @@ const IconContainer = styled.span<{ $themeStyles: ThemeStyles }>`
   color: ${({ $themeStyles }) => $themeStyles.colors.icon.secondary};
 `;
 
-const BreadcrumbLink = styled(Link)<{ $themeStyles: ThemeStyles }>`
+const BreadcrumbLink = styled(FilteredLink)<{ $themeStyles: ThemeStyles }>`
   color: ${({ $themeStyles }) => $themeStyles.colors.text.primary};
   font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
   font-weight: ${({ $themeStyles }) => $themeStyles.typography.weight.normal};
@@ -242,10 +250,10 @@ const BreadcrumbLink = styled(Link)<{ $themeStyles: ThemeStyles }>`
   }
 `;
 
-const BreadcrumbText = styled.span<{ $themeStyles: ThemeStyles; active: boolean }>`
-  color: ${({ $themeStyles, active }) => active ? $themeStyles.colors.primary.main : $themeStyles.colors.text.primary};
+const BreadcrumbText = styled(FilteredSpan)<{ $themeStyles: ThemeStyles; $active: boolean }>`
+  color: ${({ $themeStyles, $active }) => $active ? $themeStyles.colors.primary.main : $themeStyles.colors.text.primary};
   font-size: ${({ $themeStyles }) => $themeStyles.typography.size.base};
-  font-weight: ${({ $themeStyles, active }) => active ? $themeStyles.typography.weight.medium : $themeStyles.typography.weight.normal};
+  font-weight: ${({ $themeStyles, $active }) => $active ? $themeStyles.typography.weight.medium : $themeStyles.typography.weight.normal};
   line-height: ${({ $themeStyles }) => $themeStyles.typography.lineHeight.normal};
   display: flex;
   align-items: center;
@@ -259,13 +267,13 @@ const Separator = styled.span<{ $themeStyles: ThemeStyles }>`
   user-select: none;
 `;
 
-const EllipsisItem = styled.li<{ $themeStyles: ThemeStyles; $visible: boolean }>`
+const EllipsisItem = styled(FilteredLi)<{ $themeStyles: ThemeStyles; $visible: boolean }>`
   display: ${({ $visible }) => ($visible ? 'flex' : 'none')};
   align-items: center;
   margin: 0 ${({ $themeStyles }) => $themeStyles.spacing.item};
 `;
 
-const EllipsisButton = styled.button<{ $themeStyles: ThemeStyles }>`
+const EllipsisButton = styled(FilteredButton)<{ $themeStyles: ThemeStyles }>`
   background: none;
   border: none;
   color: ${({ $themeStyles }) => $themeStyles.colors.primary.main};
@@ -296,7 +304,7 @@ const CollapsibleContainer = styled.div<{ $themeStyles: ThemeStyles }>`
   }
 `;
 
-const CollapseButton = styled.button<{ $themeStyles: ThemeStyles; $isCollapsed: boolean }>`
+const CollapseButton = styled(FilteredButton)<{ $themeStyles: ThemeStyles; $isCollapsed: boolean }>`
   display: none;
   background: none;
   border: none;
@@ -401,10 +409,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     return <>{separator}</>;
   };
 
-  // Handle rendering of collapsed items
+  // Render items with collapsing if needed
   const renderItems = () => {
-    // If we have few items or expanded state is true, show all items
-    if (!collapsed || expanded) {
+    // If fully expanded or within maxItems limit, show all items
+    if (expanded || (items && items.length <= maxItems)) {
       return items.map((item, index) => (
         <BreadcrumbItem key={item.path} $themeStyles={themeStyles}>
           {index > 0 && renderSeparator()}
@@ -414,7 +422,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     }
 
     // Otherwise, show collapsed view
-    const itemsToShow = [];
+    const itemsToShow: React.ReactNode[] = [];
 
     // Add first {itemsBeforeCollapse} items
     for (let i = 0; i < Math.min(itemsBeforeCollapse, items.length); i++) {
@@ -465,7 +473,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
 
     if (item.active) {
       return (
-        <BreadcrumbText $themeStyles={themeStyles} active={true}>
+        <BreadcrumbText $themeStyles={themeStyles} $active={true}>
           {content}
         </BreadcrumbText>
       );
@@ -475,7 +483,6 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       <BreadcrumbLink
         $themeStyles={themeStyles}
         to={item.path}
-        aria-current={item.active ? 'page' : undefined}
       >
         {content}
       </BreadcrumbLink>

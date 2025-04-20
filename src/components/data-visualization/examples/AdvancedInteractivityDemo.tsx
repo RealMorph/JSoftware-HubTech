@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import styled from 'styled-components';
+import React, { useState, useMemo, useCallback } from 'react';
+import styled from '@emotion/styled';
 import { BarChart, LineChart, PieChart } from '../Charts';
 import { CrossChartInteractionProvider, useCrossChartInteraction, LinkedBrushing, ChartContextMenu } from '../interactions';
 import { useTheme } from '../../../core/theme/ThemeContext';
 import { createThemeStyles } from '../../../core/theme/utils/themeUtils';
+import { filterTransientProps } from '../../../core/styled-components/transient-props';
 
 /**
  * Advanced Interactivity Demo
@@ -54,36 +55,40 @@ const scatterData = [
   { id: 'p12', label: 'Product 12', x: 8, y: 5, category: 'Books' },
 ];
 
-// Styled components
-const DemoContainer = styled.div<{ $themeStyles: any }>`
+// Create filtered base components
+const FilteredButton = filterTransientProps(styled.button``);
+const FilteredDiv = filterTransientProps(styled.div``);
+
+// Styled components with filtered transient props
+const DemoContainer = styled(FilteredDiv)<{ $themeStyles: any }>`
   padding: 24px;
   background-color: ${props => props.$themeStyles.colors.background.default};
   border-radius: ${props => props.$themeStyles.borders.radius.large};
   margin-bottom: 24px;
 `;
 
-const Title = styled.h2<{ $themeStyles: any }>`
+const Title = styled(FilteredDiv)<{ $themeStyles: any }>`
   font-size: ${props => props.$themeStyles.typography.fontSize.xl};
   font-weight: ${props => props.$themeStyles.typography.fontWeight.semibold};
   color: ${props => props.$themeStyles.colors.text.primary};
   margin-bottom: 16px;
 `;
 
-const Description = styled.p<{ $themeStyles: any }>`
+const Description = styled(FilteredDiv)<{ $themeStyles: any }>`
   font-size: ${props => props.$themeStyles.typography.fontSize.md};
   color: ${props => props.$themeStyles.colors.text.secondary};
   margin-bottom: 24px;
   line-height: 1.5;
 `;
 
-const ChartsGrid = styled.div`
+const ChartsGrid = styled(FilteredDiv)`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   margin-bottom: 24px;
 `;
 
-const ChartContainer = styled.div<{ $themeStyles: any }>`
+const ChartContainer = styled(FilteredDiv)<{ $themeStyles: any }>`
   position: relative;
   background-color: ${props => props.$themeStyles.colors.background.paper};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
@@ -93,21 +98,21 @@ const ChartContainer = styled.div<{ $themeStyles: any }>`
   height: 300px;
 `;
 
-const InfoPanel = styled.div<{ $themeStyles: any }>`
+const InfoPanel = styled(FilteredDiv)<{ $themeStyles: any }>`
   background-color: ${props => props.$themeStyles.colors.background.subtle};
   border-radius: ${props => props.$themeStyles.borders.radius.medium};
   padding: 16px;
   margin-bottom: 24px;
 `;
 
-const ControlsContainer = styled.div`
+const ControlsContainer = styled(FilteredDiv)`
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
   flex-wrap: wrap;
 `;
 
-const ButtonGroup = styled.div<{ $themeStyles: any }>`
+const ButtonGroup = styled(FilteredDiv)<{ $themeStyles: any }>`
   display: flex;
   gap: 8px;
   background-color: ${props => props.$themeStyles.colors.background.subtle};
@@ -115,7 +120,7 @@ const ButtonGroup = styled.div<{ $themeStyles: any }>`
   border-radius: ${props => props.$themeStyles.borders.radius.small};
 `;
 
-const Button = styled.button<{ $themeStyles: any, $active?: boolean }>`
+const Button = styled(FilteredButton)<{ $themeStyles: any, $active?: boolean }>`
   padding: 8px 12px;
   border: none;
   border-radius: ${props => props.$themeStyles.borders.radius.small};
@@ -482,10 +487,29 @@ const ScatterPlot = ({
   yLabel = 'Y',
   title,
   onPointClick,
-  highlightedPoints = []
+  highlightedPoints = [] as string[]
 }) => {
   const theme = useTheme();
-  const themeStyles = createThemeStyles(theme);
+  const themeStyles = useMemo(() => {
+    const baseStyles = createThemeStyles(theme);
+    // Add custom chart values
+    return {
+      ...baseStyles,
+      colors: {
+        ...baseStyles.colors,
+        chart: {
+          axis: '#888888',
+          grid: '#eeeeee',
+          tooltip: 'rgba(0, 0, 0, 0.7)',
+          point: {
+            default: baseStyles.colors.primary.main,
+            hover: baseStyles.colors.primary.light,
+            active: baseStyles.colors.primary.dark,
+          }
+        }
+      }
+    };
+  }, [theme]);
   
   // Calculate dimensions and margins
   const margin = { top: 40, right: 30, bottom: 50, left: 60 };
@@ -512,14 +536,21 @@ const ScatterPlot = ({
   // Get category colors
   const categories = [...new Set(data.map(d => d.category))];
   const categoryColors = useMemo(() => {
-    const colors = {};
+    const colors: Record<string, string> = {};
     categories.forEach((category, i) => {
-      // Different color for each category
-      const hue = (i * 360) / categories.length;
-      colors[category] = `hsl(${hue}, 70%, 50%)`;
+      if (typeof category === 'string') {
+        const hue = (i * 360) / categories.length;
+        colors[category] = `hsl(${hue}, 70%, 50%)`;
+      }
     });
     return colors;
   }, [categories]);
+  
+  // Get highlighted points
+  const activeHighlights = useMemo(() => {
+    const allHighlights = highlightedPoints;
+    return allHighlights;
+  }, [highlightedPoints]);
   
   return (
     <div style={{ width, height, position: 'relative' }}>
@@ -647,7 +678,9 @@ const ScatterPlot = ({
         
         {/* Data points */}
         {data.map((point, i) => {
-          const isHighlighted = highlightedPoints.includes(point.id);
+          const isHighlighted = Array.isArray(activeHighlights) && 
+            point.id !== undefined && 
+            activeHighlights.includes(point.id as string);
           return (
             <g key={`point-${i}`}>
               <circle
@@ -657,7 +690,7 @@ const ScatterPlot = ({
                 fill={categoryColors[point.category] || themeStyles.colors.chart.point.default}
                 stroke={isHighlighted ? themeStyles.colors.chart.point.active : "white"}
                 strokeWidth={isHighlighted ? 2 : 1}
-                opacity={highlightedPoints.length > 0 ? (isHighlighted ? 1 : 0.4) : 0.8}
+                opacity={activeHighlights.length > 0 ? (isHighlighted ? 1 : 0.4) : 0.8}
                 cursor="pointer"
                 onClick={() => onPointClick(point.id)}
               />
@@ -729,8 +762,8 @@ const InteractiveScatterPlot = ({ data, chartId }: { data: any[]; chartId: strin
   }, [state.selections, chartId, data]);
   
   // Get highlighted points
-  const highlightedPoints = useMemo(() => {
-    const allHighlights = state.highlights.map(h => h.pointIds).flat();
+  const activeHighlights = useMemo(() => {
+    const allHighlights = state.highlights.map(h => h.pointIds).flat() as string[];
     return allHighlights;
   }, [state.highlights]);
   
@@ -820,7 +853,7 @@ const InteractiveScatterPlot = ({ data, chartId }: { data: any[]; chartId: strin
         xLabel="Price Index"
         yLabel="Satisfaction Score"
         onPointClick={handleDataPointClick}
-        highlightedPoints={highlightedPoints}
+        highlightedPoints={activeHighlights}
       />
       
       <ChartContextMenu 

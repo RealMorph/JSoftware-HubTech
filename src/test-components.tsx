@@ -4,7 +4,7 @@ import { ThemeProvider } from './core/theme/theme-context';
 import { inMemoryThemeService } from './core/theme/theme-persistence';
 import { Card, CardContent, CardHeader } from './components/base/Card';
 import { Form, FormValues, ValidationErrors, TouchedFields, useForm } from './components/base/Form';
-import { TextField } from './components/base/TextField';
+import TextField from './components/base/TextField';
 import { Button } from './components/base/Button';
 import { List, ListItem } from './components/base/List';
 import {

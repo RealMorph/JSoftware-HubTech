@@ -1,378 +1,248 @@
-import React from 'react';
+/**
+ * Card Component
+ * 
+ * A versatile card component with customizable variants, hover effects,
+ * and accessibility features.
+ */
+
+import React, { forwardRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
-import { ThemeConfig } from '../../core/theme/theme-persistence';
+import { useTheme } from '../../core/theme/ThemeContext';
+import { createThemeStyles } from '../../core/theme/utils/themeUtils';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
+import { ThemeStyles, StyledComponentProps } from '../../core/theme/types';
 
-// Theme styles interface
-interface ThemeStyles {
-  borderRadius: string;
-  shadows: {
-    none: string;
-    sm: string;
-    base: string;
-    lg: string;
-  };
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    background: {
-      primary: string;
-    };
-    text: {
-      primary: string;
-      secondary: string;
-    };
-    border: {
-      primary: string;
-    };
-  };
-  typography: {
-    family: {
-      primary: string;
-    };
-    scale: {
-      sm: string;
-      lg: string;
-    };
-    weights: {
-      semibold: string;
-    };
-  };
-  spacing: {
-    1: string;
-    4: string;
-  };
+// Define card variants
+export enum CardVariant {
+  ELEVATED = 'elevated',
+  OUTLINED = 'outlined',
+  FLAT = 'flat',
+  INTERACTIVE = 'interactive'
 }
 
-// Function to create theme styles from themeContext
-const createThemeStyles = (themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles => ({
-  borderRadius: themeContext.getBorderRadius('base'),
-  shadows: {
-    none: 'none',
-    sm: themeContext.getShadow('sm'),
-    base: themeContext.getShadow('base'),
-    lg: themeContext.getShadow('lg'),
-  },
-  colors: {
-    primary: themeContext.getColor('primary'),
-    secondary: themeContext.getColor('secondary'),
-    accent: themeContext.getColor('accent') || themeContext.getColor('primary'),
-    background: {
-      primary: themeContext.getColor('background.primary'),
-    },
-    text: {
-      primary: themeContext.getColor('text.primary'),
-      secondary: themeContext.getColor('text.secondary'),
-    },
-    border: {
-      primary: themeContext.getColor('border.primary'),
-    },
-  },
-  typography: {
-    family: {
-      primary: themeContext.getTypography('family.primary'),
-    },
-    scale: {
-      sm: themeContext.getTypography('scale.sm'),
-      lg: themeContext.getTypography('scale.lg'),
-    },
-    weights: {
-      semibold: themeContext.getTypography('weights.semibold'),
-    },
-  },
-  spacing: {
-    1: themeContext.getSpacing('1'),
-    4: themeContext.getSpacing('4'),
-  },
-});
-
-export interface CardProps {
-  /** Main content of the card */
-  children: React.ReactNode;
-  /** Optional title for the card */
-  title?: React.ReactNode;
-  /** Optional subtitle for the card */
-  subtitle?: React.ReactNode;
-  /** Optional content for the card header, replaces title and subtitle */
-  header?: React.ReactNode;
-  /** Optional footer content for the card */
-  footer?: React.ReactNode;
-  /** Optional image to display at the top of the card */
-  coverImage?: string;
-  /** Alt text for the cover image */
-  coverImageAlt?: string;
-  /** Optional elevation level (shadow depth) */
-  elevation?: 0 | 1 | 2 | 3;
-  /** Optional background color variant */
-  variant?: 'default' | 'primary' | 'secondary' | 'accent';
-  /** Whether the card should take up the full width of its container */
-  fullWidth?: boolean;
-  /** Whether the card is clickable */
+// Props for the Card component
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Visual style variant of the card
+   * @default CardVariant.ELEVATED
+   */
+  variant?: CardVariant;
+  
+  /**
+   * Whether to apply hover effects
+   * @default false
+   */
+  hoverable?: boolean;
+  
+  /**
+   * Whether the entire card should be clickable
+   * @default false
+   */
   clickable?: boolean;
-  /** Callback when the card is clicked */
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  /** Additional class name */
+  
+  /**
+   * Whether to add a subtle border to the card
+   * @default false for ELEVATED, true for others
+   */
+  bordered?: boolean;
+  
+  /**
+   * Whether to add a focus ring when the card is focused
+   * Only applies when the card is clickable
+   * @default true
+   */
+  focusVisible?: boolean;
+  
+  /**
+   * Content to render inside the card
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Optional click handler for the card
+   */
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  
+  /**
+   * Additional class name
+   */
   className?: string;
-  /** Optional styles */
-  style?: React.CSSProperties;
+  
+  /**
+   * Removes all padding from the card
+   * @default false
+   */
+  noPadding?: boolean;
+  
+  /**
+   * Compact mode with less padding
+   * @default false
+   */
+  compact?: boolean;
+  
+  /**
+   * Data test ID for testing
+   */
+  "data-testid"?: string;
 }
 
-const getElevationShadow = (elevation: number, themeStyles: ThemeStyles) => {
-  switch (elevation) {
-    case 0:
-      return themeStyles.shadows.none;
-    case 1:
-      return themeStyles.shadows.sm;
-    case 2:
-      return themeStyles.shadows.base;
-    case 3:
-      return themeStyles.shadows.lg;
-    default:
-      return themeStyles.shadows.base;
-  }
-};
+interface StyledCardProps extends StyledComponentProps {
+  $variant: CardVariant;
+  $hoverable: boolean;
+  $clickable: boolean;
+  $bordered: boolean;
+  $noPadding: boolean;
+  $compact: boolean;
+  $active: boolean;
+}
 
-const getVariantColors = (variant: string, themeStyles: ThemeStyles) => {
-  switch (variant) {
-    case 'primary':
-      return {
-        bg: themeStyles.colors.primary,
-        text: '#fff',
-      };
-    case 'secondary':
-      return {
-        bg: themeStyles.colors.secondary,
-        text: '#fff',
-      };
-    case 'accent':
-      return {
-        bg: themeStyles.colors.accent,
-        text: '#fff',
-      };
-    default:
-      return {
-        bg: themeStyles.colors.background.primary,
-        text: themeStyles.colors.text.primary,
-      };
-  }
-};
-
-const StyledCard = styled.div<
-  Omit<
-    CardProps,
-    'children' | 'title' | 'subtitle' | 'header' | 'footer' | 'coverImage' | 'coverImageAlt'
-  > & { $themeStyles: ThemeStyles }
->`
-  display: flex;
-  flex-direction: column;
-  border-radius: ${props => props.$themeStyles.borderRadius};
-  overflow: hidden;
-  width: ${props => (props.fullWidth ? '100%' : 'auto')};
-  box-shadow: ${props => getElevationShadow(props.elevation || 1, props.$themeStyles)};
-  background-color: ${props => getVariantColors(props.variant || 'default', props.$themeStyles).bg};
-  color: ${props => getVariantColors(props.variant || 'default', props.$themeStyles).text};
-  font-family: ${props => props.$themeStyles.typography.family.primary};
-  transition: all 0.3s ease;
-
-  ${props =>
-    props.clickable &&
-    `
-    cursor: pointer;
+const cardVariantStyles = {
+  [CardVariant.ELEVATED]: (styles: ThemeStyles) => `
+    background-color: ${styles.colors.background.paper};
+    box-shadow: ${styles.shadows.card};
+  `,
+  [CardVariant.OUTLINED]: (styles: ThemeStyles) => `
+    background-color: ${styles.colors.background.paper};
+    border: 1px solid ${styles.colors.border.main};
+  `,
+  [CardVariant.FLAT]: (styles: ThemeStyles) => `
+    background-color: ${styles.colors.background.subtle};
+  `,
+  [CardVariant.INTERACTIVE]: (styles: ThemeStyles) => `
+    background-color: ${styles.colors.background.paper};
+    box-shadow: ${styles.shadows.card};
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     
     &:hover {
-      box-shadow: ${getElevationShadow(Math.min((props.elevation || 1) + 1, 3), props.$themeStyles)};
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: ${styles.shadows.card};
     }
+  `
+};
+
+// Define the styled component
+const StyledCard = styled(filterTransientProps(styled.div``))<StyledCardProps>`
+  position: relative;
+  border-radius: ${props => props.$themeStyles.borders.radius.medium};
+  padding: ${props => 
+    props.$noPadding 
+      ? '0' 
+      : props.$compact 
+        ? props.$themeStyles.spacing.sm 
+        : props.$themeStyles.spacing.md
+  };
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  
+  ${props => cardVariantStyles[props.$variant](props.$themeStyles)}
+  
+  ${props => props.$bordered && props.$variant !== CardVariant.OUTLINED && `
+    border: 1px solid ${props.$themeStyles.colors.border.main};
+  `}
+  
+  ${props => props.$hoverable && `
+    &:hover {
+      box-shadow: ${props.$themeStyles.shadows.card};
+      ${props.$variant === CardVariant.OUTLINED ? `border-color: ${props.$themeStyles.colors.primary.main};` : ''}
+    }
+  `}
+  
+  ${props => props.$clickable && `
+    cursor: pointer;
+    user-select: none;
     
     &:active {
-      transform: translateY(0);
+      transform: translateY(1px);
+      box-shadow: ${props.$variant === CardVariant.ELEVATED || props.$variant === CardVariant.INTERACTIVE 
+        ? props.$themeStyles.shadows.card
+        : 'none'
+      };
     }
+    
+    &:focus-visible {
+      outline: none;
+      ${!props.$active ? `box-shadow: 0 0 0 2px ${props.$themeStyles.colors.primary.main};` : ''}
+    }
+  `}
+  
+  ${props => props.$active && `
+    box-shadow: 0 0 0 2px ${props.$themeStyles.colors.primary.main};
   `}
 `;
 
-const CardHeader = styled.div<{ variant?: string; $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  border-bottom: 1px solid ${props => props.$themeStyles.colors.border.primary};
-`;
-
-const CardTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
-  margin: 0;
-  font-size: ${props => props.$themeStyles.typography.scale.lg};
-  font-weight: ${props => props.$themeStyles.typography.weights.semibold};
-`;
-
-const CardSubtitle = styled.div<{ $themeStyles: ThemeStyles }>`
-  font-size: ${props => props.$themeStyles.typography.scale.sm};
-  color: ${props => props.$themeStyles.colors.text.secondary};
-  margin-top: ${props => props.$themeStyles.spacing[1]};
-`;
-
-const CardContent = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  flex: 1;
-`;
-
-const CardFooter = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  border-top: 1px solid ${props => props.$themeStyles.colors.border.primary};
-`;
-
-const CardImage = styled.img`
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-`;
-
 /**
- * Card component for displaying content in a contained format
+ * Card component for containing related content and actions
  */
-export const Card: React.FC<CardProps> = ({
-  children,
-  title,
-  subtitle,
-  header,
-  footer,
-  coverImage,
-  coverImageAlt = 'Card image',
-  elevation = 1,
-  variant = 'default',
-  fullWidth = false,
-  clickable = false,
-  onClick,
-  className,
-  style,
-}) => {
-  const isClickable = clickable || !!onClick;
-  const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
-
-  return (
-    <StyledCard
-      elevation={elevation}
-      variant={variant}
-      fullWidth={fullWidth}
-      clickable={isClickable}
-      onClick={isClickable ? onClick : undefined}
-      className={className}
-      style={style}
-      $themeStyles={themeStyles}
-    >
-      {coverImage && <CardImage src={coverImage} alt={coverImageAlt} />}
-
-      {header ? (
-        <CardHeader variant={variant} $themeStyles={themeStyles}>
-          {header}
-        </CardHeader>
-      ) : (
-        (title || subtitle) && (
-          <CardHeader variant={variant} $themeStyles={themeStyles}>
-            {title && <CardTitle $themeStyles={themeStyles}>{title}</CardTitle>}
-            {subtitle && <CardSubtitle $themeStyles={themeStyles}>{subtitle}</CardSubtitle>}
-          </CardHeader>
-        )
-      )}
-
-      <CardContent $themeStyles={themeStyles}>{children}</CardContent>
-
-      {footer && <CardFooter $themeStyles={themeStyles}>{footer}</CardFooter>}
-    </StyledCard>
-  );
-};
-
-    }
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  (
+    {
+      variant = CardVariant.ELEVATED,
+      hoverable = false,
+      clickable = false,
+      bordered,
+      focusVisible = true,
+      children,
+      onClick,
+      className,
+      noPadding = false,
+      compact = false,
+      ...rest
+    }, 
+    ref
+  ) => {
+    // Default bordered based on variant if not specified
+    const isBordered = bordered ?? (variant !== CardVariant.ELEVATED);
     
-    &:active {
-      transform: translateY(0);
-    }
-  `}
-`;
+    // For focus/active state tracking
+    const [isActive, setIsActive] = useState(false);
+    
+    // Access theme
+    const theme = useTheme();
+    const themeStyles = createThemeStyles(theme);
+    
+    // Event handlers for accessible keyboard interaction
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (clickable && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        onClick?.(event as unknown as React.MouseEvent<HTMLDivElement>);
+      }
+    };
+    
+    const handleFocus = () => {
+      if (focusVisible && clickable) {
+        setIsActive(true);
+      }
+    };
+    
+    const handleBlur = () => {
+      setIsActive(false);
+    };
+    
+    return (
+      <StyledCard
+        ref={ref}
+        $themeStyles={themeStyles}
+        $variant={variant}
+        $hoverable={hoverable}
+        $clickable={clickable}
+        $bordered={isBordered}
+        $noPadding={noPadding}
+        $compact={compact}
+        $active={isActive}
+        onClick={clickable ? onClick : undefined}
+        onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        tabIndex={clickable ? 0 : undefined}
+        role={clickable ? 'button' : undefined}
+        className={className}
+        {...rest}
+      >
+        {children}
+      </StyledCard>
+    );
+  }
+);
 
-const CardHeader = styled.div<{ variant?: string; $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  border-bottom: 1px solid ${props => props.$themeStyles.colors.border.primary};
-`;
+Card.displayName = 'Card';
 
-const CardTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
-  margin: 0;
-  font-size: ${props => props.$themeStyles.typography.scale.lg};
-  font-weight: ${props => props.$themeStyles.typography.weights.semibold};
-`;
-
-const CardSubtitle = styled.div<{ $themeStyles: ThemeStyles }>`
-  font-size: ${props => props.$themeStyles.typography.scale.sm};
-  color: ${props => props.$themeStyles.colors.text.secondary};
-  margin-top: ${props => props.$themeStyles.spacing[1]};
-`;
-
-const CardContent = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  flex: 1;
-`;
-
-const CardFooter = styled.div<{ $themeStyles: ThemeStyles }>`
-  padding: ${props => props.$themeStyles.spacing[4]};
-  border-top: 1px solid ${props => props.$themeStyles.colors.border.primary};
-`;
-
-const CardImage = styled.img`
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-`;
-
-/**
- * Card component for displaying content in a contained format
- */
-export const Card: React.FC<CardProps> = ({
-  children,
-  title,
-  subtitle,
-  header,
-  footer,
-  coverImage,
-  coverImageAlt = 'Card image',
-  elevation = 1,
-  variant = 'default',
-  fullWidth = false,
-  clickable = false,
-  onClick,
-  className,
-  style,
-}) => {
-  const isClickable = clickable || !!onClick;
-  const themeContext = useDirectTheme();
-  const themeStyles = createThemeStyles(themeContext);
-
-  return (
-    <StyledCard
-      elevation={elevation}
-      variant={variant}
-      fullWidth={fullWidth}
-      clickable={isClickable}
-      onClick={isClickable ? onClick : undefined}
-      className={className}
-      style={style}
-      $themeStyles={themeStyles}
-    >
-      {coverImage && <CardImage src={coverImage} alt={coverImageAlt} />}
-
-      {header ? (
-        <CardHeader variant={variant} $themeStyles={themeStyles}>
-          {header}
-        </CardHeader>
-      ) : (
-        (title || subtitle) && (
-          <CardHeader variant={variant} $themeStyles={themeStyles}>
-            {title && <CardTitle $themeStyles={themeStyles}>{title}</CardTitle>}
-            {subtitle && <CardSubtitle $themeStyles={themeStyles}>{subtitle}</CardSubtitle>}
-          </CardHeader>
-        )
-      )}
-
-      <CardContent $themeStyles={themeStyles}>{children}</CardContent>
-
-      {footer && <CardFooter $themeStyles={themeStyles}>{footer}</CardFooter>}
-    </StyledCard>
-  );
-};
+export default Card;

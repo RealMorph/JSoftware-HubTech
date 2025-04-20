@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
 import { useState } from 'react';
-import { TextField } from './TextField';
+import TextField from './TextField';
 export const TextFieldDemo = () => {
   const [values, setValues] = useState({
     standard: '',

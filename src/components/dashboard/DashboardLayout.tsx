@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTheme } from '../../core/theme/ThemeContext';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -8,6 +8,52 @@ import { nanoid } from 'nanoid';
 
 // Width provider enhances the ResponsiveGridLayout with width detection
 const ResponsiveGridLayout = WidthProvider(Responsive);
+
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  backgroundPaper: string;
+  backgroundSubtle: string;
+  borderRadius: string;
+  shadowCard: string;
+  shadowElevated: string;
+  textColor: string;
+  textSecondaryColor: string;
+  textDisabledColor: string;
+  borderLight: string;
+  primaryMainColor: string;
+  primaryDarkColor: string;
+  primaryContrastText: string;
+  actionDisabledColor: string;
+  fontSize: string;
+  fontSizeMd: string;
+  fontWeightMedium: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getBorderRadius, getShadow } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    backgroundPaper: getColor('background.paper', '#ffffff'),
+    backgroundSubtle: getColor('background.subtle', '#f5f5f5'),
+    borderRadius: getBorderRadius('md', '4px'),
+    shadowCard: getShadow('md', '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'),
+    shadowElevated: getShadow('lg', '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'),
+    textColor: getColor('text.primary', '#333333'),
+    textSecondaryColor: getColor('text.secondary', '#666666'),
+    textDisabledColor: getColor('text.disabled', '#9e9e9e'),
+    borderLight: getColor('border.light', '#e0e0e0'),
+    primaryMainColor: getColor('primary.main', '#3366CC'),
+    primaryDarkColor: getColor('primary.dark', '#254e9c'),
+    primaryContrastText: getColor('primary.contrastText', '#ffffff'),
+    actionDisabledColor: getColor('action.disabled', '#9e9e9e'),
+    fontSize: getTypography('fontSize.sm', '0.875rem') as string,
+    fontSizeMd: getTypography('fontSize.md', '1rem') as string,
+    fontWeightMedium: getTypography('fontWeight.medium', '500') as string,
+  };
+}
 
 // Types for dashboard items and layout
 export interface DashboardItem {
@@ -78,10 +124,10 @@ const DashboardContainer = styled.div`
   overflow: hidden;
 `;
 
-const WidgetContainer = styled.div<{ $isEditing: boolean }>`
-  background-color: ${props => props.theme.colors.background.paper};
-  border-radius: ${props => props.theme.borders.radius.medium};
-  box-shadow: ${props => props.theme.shadows.card};
+const WidgetContainer = styled.div<{ $isEditing: boolean; $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$themeStyles.backgroundPaper};
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  box-shadow: ${props => props.$themeStyles.shadowCard};
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -89,25 +135,25 @@ const WidgetContainer = styled.div<{ $isEditing: boolean }>`
   transition: box-shadow 0.2s ease-in-out;
   
   ${props => props.$isEditing && `
-    box-shadow: ${props.theme.shadows.elevated};
+    box-shadow: ${props.$themeStyles.shadowElevated};
     cursor: move;
   `}
 `;
 
-const WidgetHeader = styled.div`
+const WidgetHeader = styled.div<{ $themeStyles: ThemeStyles }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background-color: ${props => props.theme.colors.background.subtle};
-  border-bottom: 1px solid ${props => props.theme.colors.border.light};
+  background-color: ${props => props.$themeStyles.backgroundSubtle};
+  border-bottom: 1px solid ${props => props.$themeStyles.borderLight};
 `;
 
-const WidgetTitle = styled.h3`
+const WidgetTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
   margin: 0;
-  font-size: ${props => props.theme.typography.fontSize.md};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  color: ${props => props.theme.colors.text.primary};
+  font-size: ${props => props.$themeStyles.fontSizeMd};
+  font-weight: ${props => props.$themeStyles.fontWeightMedium};
+  color: ${props => props.$themeStyles.textColor};
 `;
 
 const WidgetContent = styled.div`
@@ -122,19 +168,19 @@ const WidgetControls = styled.div`
   gap: 8px;
 `;
 
-const ControlButton = styled.button`
+const ControlButton = styled.button<{ $themeStyles: ThemeStyles }>`
   background: none;
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: ${props => props.theme.colors.text.secondary};
+  color: ${props => props.$themeStyles.textSecondaryColor};
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
 
   &:hover {
-    color: ${props => props.theme.colors.text.primary};
+    color: ${props => props.$themeStyles.textColor};
   }
 `;
 
@@ -145,27 +191,21 @@ const DashboardControls = styled.div`
   gap: 8px;
 `;
 
-const DashboardButton = styled.button`
+const DashboardButton = styled.button<{ $themeStyles: ThemeStyles; disabled?: boolean }>`
   padding: 8px 16px;
-  background-color: ${props => props.theme.colors.primary.main};
-  color: ${props => props.theme.colors.primary.contrastText};
+  background-color: ${props => props.disabled ? props.$themeStyles.actionDisabledColor : props.$themeStyles.primaryMainColor};
+  color: ${props => props.disabled ? props.$themeStyles.textDisabledColor : props.$themeStyles.primaryContrastText};
   border: none;
-  border-radius: ${props => props.theme.borders.radius.small};
-  font-size: ${props => props.theme.typography.fontSize.sm};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  cursor: pointer;
+  border-radius: ${props => props.$themeStyles.borderRadius};
+  font-size: ${props => props.$themeStyles.fontSize};
+  font-weight: ${props => props.$themeStyles.fontWeightMedium};
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   display: flex;
   align-items: center;
   gap: 8px;
   
   &:hover {
-    background-color: ${props => props.theme.colors.primary.dark};
-  }
-  
-  &:disabled {
-    background-color: ${props => props.theme.colors.action.disabled};
-    color: ${props => props.theme.colors.text.disabled};
-    cursor: not-allowed;
+    background-color: ${props => props.disabled ? props.$themeStyles.actionDisabledColor : props.$themeStyles.primaryDarkColor};
   }
 `;
 
@@ -192,7 +232,8 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
   editable = false,
   className
 }) => {
-  const theme = useTheme();
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
   const [isEditing, setIsEditing] = useState(editable);
   const [currentConfig, setCurrentConfig] = useState<DashboardConfig>(() => {
     if (initialConfig) {
@@ -333,22 +374,23 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
   
   return (
     <DashboardContainer className={className}>
-      {isEditing && (
+      {editable && (
         <DashboardControls>
-          <DashboardButton onClick={handleSaveConfig}>
-            <span>Save Layout</span>
+          <DashboardButton 
+            onClick={toggleEditMode} 
+            $themeStyles={themeStyles}
+          >
+            {isEditing ? 'Save Layout' : 'Edit Layout'}
           </DashboardButton>
-          <DashboardButton onClick={toggleEditMode}>
-            <span>Finish Editing</span>
-          </DashboardButton>
-        </DashboardControls>
-      )}
-      
-      {!isEditing && editable && (
-        <DashboardControls>
-          <DashboardButton onClick={toggleEditMode}>
-            <span>Edit Dashboard</span>
-          </DashboardButton>
+          
+          {isEditing && (
+            <DashboardButton 
+              onClick={handleSaveConfig} 
+              $themeStyles={themeStyles}
+            >
+              Save Dashboard
+            </DashboardButton>
+          )}
         </DashboardControls>
       )}
       
@@ -358,36 +400,36 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
         breakpoints={breakpoints}
         cols={cols}
         rowHeight={rowHeight}
-        margin={[16, 16]}
-        containerPadding={[16, 16]}
-        onLayoutChange={handleLayoutChange}
         isDraggable={isEditing}
         isResizable={isEditing}
+        onLayoutChange={handleLayoutChange}
         draggableHandle=".widget-header"
-        useCSSTransforms
       >
-        {Object.entries(currentConfig.items).map(([id, item]) => (
-          <div key={id}>
-            <WidgetContainer $isEditing={isEditing}>
-              <WidgetHeader className="widget-header">
-                <WidgetTitle>{item.title}</WidgetTitle>
-                {isEditing && (
-                  <WidgetControls>
-                    <ControlButton
-                      onClick={() => removeWidget(id)}
-                      title="Remove widget"
-                    >
-                      ×
-                    </ControlButton>
-                  </WidgetControls>
-                )}
-              </WidgetHeader>
-              <WidgetContent>
-                {item.component}
-              </WidgetContent>
-            </WidgetContainer>
-          </div>
-        ))}
+        {Object.entries(currentConfig.items).map(([id, item]) => {
+          const typedItem = item as DashboardItem;
+          return (
+            <div key={id}>
+              <WidgetContainer $isEditing={isEditing} $themeStyles={themeStyles}>
+                <WidgetHeader className="widget-header" $themeStyles={themeStyles}>
+                  <WidgetTitle $themeStyles={themeStyles}>{typedItem.title}</WidgetTitle>
+                  {isEditing && (
+                    <WidgetControls>
+                      <ControlButton 
+                        onClick={() => removeWidget(id)} 
+                        $themeStyles={themeStyles}
+                      >
+                        ✕
+                      </ControlButton>
+                    </WidgetControls>
+                  )}
+                </WidgetHeader>
+                <WidgetContent>
+                  {typedItem.component}
+                </WidgetContent>
+              </WidgetContainer>
+            </div>
+          );
+        })}
       </ResponsiveGridLayout>
     </DashboardContainer>
   );

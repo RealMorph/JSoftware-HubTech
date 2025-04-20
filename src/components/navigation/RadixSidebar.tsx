@@ -4,6 +4,16 @@ import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { useDirectTheme, DirectThemeContextType } from '../../core/theme/DirectThemeProvider';
 import { useMediaQuery } from '../../core/hooks/useMediaQuery';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
+
+// Create filtered base components
+const FilteredDiv = filterTransientProps(styled.div``);
+const FilteredSpan = filterTransientProps(styled.span``);
+const FilteredUl = filterTransientProps(styled.ul``);
+const FilteredNavMenuLink = filterTransientProps(NavigationMenu.Link);
+const FilteredNavMenuTrigger = filterTransientProps(NavigationMenu.Trigger);
+const FilteredNavMenuContent = filterTransientProps(NavigationMenu.Content);
+const FilteredCollapsibleContent = filterTransientProps(Collapsible.Content);
 
 // Types
 export interface SidebarMenuItem {
@@ -134,7 +144,7 @@ const createThemeStyles = (theme: DirectThemeContextType): ThemeStyles => ({
 });
 
 // Styled components
-const SidebarContainer = styled.div<{
+const SidebarContainer = styled(FilteredDiv)<{
   $themeStyles: ThemeStyles;
   $width: string;
   $collapsedWidth: string;
@@ -160,7 +170,7 @@ const SidebarContainer = styled.div<{
   overflow-x: hidden;
 `;
 
-const SidebarHeader = styled.div<{
+const SidebarHeader = styled(FilteredDiv)<{
   $themeStyles: ThemeStyles;
   $isCollapsed: boolean;
 }>`
@@ -172,7 +182,7 @@ const SidebarHeader = styled.div<{
   border-bottom: 1px solid ${props => props.$themeStyles.colors.border};
 `;
 
-const SidebarTitle = styled.div<{
+const SidebarTitle = styled(FilteredDiv)<{
   $themeStyles: ThemeStyles;
   $isCollapsed: boolean;
 }>`
@@ -184,7 +194,7 @@ const SidebarTitle = styled.div<{
   text-overflow: ellipsis;
 `;
 
-const SidebarContent = styled.div<{
+const SidebarContent = styled(FilteredDiv)<{
   $themeStyles: ThemeStyles;
 }>`
   flex: 1;
@@ -192,7 +202,7 @@ const SidebarContent = styled.div<{
   overflow-y: auto;
 `;
 
-const SidebarFooter = styled.div<{
+const SidebarFooter = styled(FilteredDiv)<{
   $themeStyles: ThemeStyles;
   $isCollapsed: boolean;
 }>`
@@ -240,7 +250,7 @@ const NavMenuItem = styled(NavigationMenu.Item)`
   width: 100%;
 `;
 
-const NavMenuLink = styled(NavigationMenu.Link)<{
+const NavMenuLink = styled(FilteredNavMenuLink)<{
   $active?: boolean;
   $disabled?: boolean;
   $themeStyles: ThemeStyles;
@@ -271,7 +281,7 @@ const NavMenuLink = styled(NavigationMenu.Link)<{
   }
 `;
 
-const NavMenuTrigger = styled(NavigationMenu.Trigger)<{
+const NavMenuTrigger = styled(FilteredNavMenuTrigger)<{
   $active?: boolean;
   $disabled?: boolean;
   $themeStyles: ThemeStyles;
@@ -307,7 +317,7 @@ const NavMenuTrigger = styled(NavigationMenu.Trigger)<{
   }
 `;
 
-const NavMenuContent = styled(NavigationMenu.Content)<{
+const NavMenuContent = styled(FilteredNavMenuContent)<{
   $themeStyles: ThemeStyles;
 }>`
   animation-duration: ${props => props.$themeStyles.transitions.normal};
@@ -336,7 +346,7 @@ const CollapsibleRoot = styled(Collapsible.Root)`
   width: 100%;
 `;
 
-const CollapsibleContent = styled(Collapsible.Content)<{
+const CollapsibleContent = styled(FilteredCollapsibleContent)<{
   $themeStyles: ThemeStyles;
 }>`
   overflow: hidden;
@@ -360,7 +370,7 @@ const CollapsibleContent = styled(Collapsible.Content)<{
   }
 `;
 
-const IconWrapper = styled.span<{
+const IconWrapper = styled(FilteredSpan)<{
   $themeStyles: ThemeStyles;
   $active?: boolean;
   $disabled?: boolean;
@@ -378,7 +388,7 @@ const IconWrapper = styled.span<{
   }};
 `;
 
-const ChevronIcon = styled.span<{
+const ChevronIcon = styled(FilteredSpan)<{
   $isOpen?: boolean;
   $themeStyles: ThemeStyles;
 }>`
@@ -388,7 +398,7 @@ const ChevronIcon = styled.span<{
   align-items: center;
 `;
 
-const NestedItemsList = styled.ul<{
+const NestedItemsList = styled(FilteredUl)<{
   $themeStyles: ThemeStyles;
   $isCollapsed: boolean;
 }>`
@@ -405,7 +415,7 @@ const NestedItem = styled.li`
   width: 100%;
 `;
 
-const Overlay = styled.div<{
+const Overlay = styled(FilteredDiv)<{
   $isVisible: boolean;
   $themeStyles: ThemeStyles;
 }>`

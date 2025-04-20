@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { DirectThemeProvider } from './core/theme/DirectThemeProvider';
 import { defaultTheme } from './core/theme/theme-persistence';
+import AnimationProvider from './core/animation/AnimationProvider';
 import AppRouter from './Router';
 import { app } from './core/firebase';
 import { AuthProvider } from './core/hooks/useAuth';
@@ -31,16 +32,18 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <DirectThemeProvider initialTheme={defaultTheme}>
-        <NetworkStatusProvider>
-          <AuthProvider>
-            <QueryProvider>
-              <div data-testid="app-root">
-                <AppRouter />
-                <OfflineNotification />
-              </div>
-            </QueryProvider>
-          </AuthProvider>
-        </NetworkStatusProvider>
+        <AnimationProvider>
+          <NetworkStatusProvider>
+            <AuthProvider>
+              <QueryProvider>
+                <div data-testid="app-root">
+                  <AppRouter />
+                  <OfflineNotification />
+                </div>
+              </QueryProvider>
+            </AuthProvider>
+          </NetworkStatusProvider>
+        </AnimationProvider>
       </DirectThemeProvider>
     </ErrorBoundary>
   );
