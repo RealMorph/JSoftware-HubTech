@@ -65,13 +65,16 @@ function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): The
 
 // Styled components for the demo
 const DemoContainer = styled.div`
-  padding: 24px;
+  padding: 32px;
+  background-color: #f9fafc;
+  min-height: calc(100vh - 64px);
 `;
 
 const Title = styled.h1<{ $themeStyles: ThemeStyles }>`
   font-size: ${props => props.$themeStyles.fontSizeXl};
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   color: ${props => props.$themeStyles.textPrimary};
+  font-weight: 700;
 `;
 
 const Description = styled.p<{ $themeStyles: ThemeStyles }>`
@@ -83,10 +86,15 @@ const Description = styled.p<{ $themeStyles: ThemeStyles }>`
 `;
 
 const DashboardControls = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 `;
 
 const Button = styled.button<{ $themeStyles: ThemeStyles }>`
@@ -97,40 +105,63 @@ const Button = styled.button<{ $themeStyles: ThemeStyles }>`
   border-radius: ${props => props.$themeStyles.borderRadiusSmall};
   font-size: ${props => props.$themeStyles.fontSizeMd};
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   
   &:hover {
     background-color: ${props => props.$themeStyles.primaryDark};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const WidgetButton = styled(Button)<{ $themeStyles: ThemeStyles }>`
-  background-color: ${props => props.$themeStyles.secondaryMain};
-  color: ${props => props.$themeStyles.secondaryContrastText};
+  background-color: white;
+  color: ${props => props.$themeStyles.textPrimary};
+  border: 1px solid ${props => props.$themeStyles.borderMain};
   
   &:hover {
-    background-color: ${props => props.$themeStyles.secondaryDark};
+    background-color: ${props => props.$themeStyles.backgroundSubtle};
+    color: ${props => props.$themeStyles.primaryMain};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 `;
 
 const SelectControl = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 `;
 
 const Select = styled.select<{ $themeStyles: ThemeStyles }>`
-  padding: 10px;
+  padding: 10px 14px;
   border: 1px solid ${props => props.$themeStyles.borderMain};
   border-radius: ${props => props.$themeStyles.borderRadiusSmall};
   font-size: ${props => props.$themeStyles.fontSizeMd};
   color: ${props => props.$themeStyles.textPrimary};
   background-color: ${props => props.$themeStyles.backgroundPaper};
+  cursor: pointer;
+  min-width: 180px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+  
+  &:focus {
+    outline: none;
+    border-color: ${props => props.$themeStyles.primaryMain};
+    box-shadow: 0 0 0 3px ${props => props.$themeStyles.primaryLight};
+  }
 `;
 
 const Label = styled.label<{ $themeStyles: ThemeStyles }>`
   font-size: ${props => props.$themeStyles.fontSizeMd};
   color: ${props => props.$themeStyles.textPrimary};
+  font-weight: 500;
 `;
 
 // Sample simple widget components
@@ -140,117 +171,585 @@ const SimpleStatsWidget = () => {
   
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Key Metrics</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <h3 style={{ 
+        marginBottom: '20px', 
+        color: themeStyles.textPrimary,
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <span style={{ 
+          backgroundColor: themeStyles.primaryLight, 
+          color: themeStyles.primaryDark,
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px'
+        }}>
+          📊
+        </span>
+        Key Metrics
+      </h3>
+      
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: '1fr 1fr', 
+        gap: '20px',
+        marginBottom: '16px' 
+      }}>
         <div style={{ 
-          padding: '16px', 
+          padding: '20px', 
           backgroundColor: themeStyles.successLight, 
           borderRadius: themeStyles.borderRadiusSmall,
-          color: themeStyles.successDark
+          color: themeStyles.successDark,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.2s ease',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ fontSize: '14px', marginBottom: '8px' }}>Revenue</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold' }}>$24,500</div>
-          <div style={{ fontSize: '12px', marginTop: '8px' }}>+15% vs last month</div>
+          <div style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '12px',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            fontSize: '14px'
+          }}>
+            💰
+          </div>
+          <div style={{ fontSize: '14px', marginBottom: '8px', fontWeight: 'bold' }}>Revenue</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '12px' }}>$24,500</div>
+          <div style={{ 
+            fontSize: '13px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            width: 'fit-content'
+          }}>
+            <span style={{ fontSize: '12px' }}>↗</span> +15% vs last month
+          </div>
         </div>
+        
         <div style={{ 
-          padding: '16px', 
+          padding: '20px', 
           backgroundColor: themeStyles.infoLight, 
           borderRadius: themeStyles.borderRadiusSmall,
-          color: themeStyles.infoDark
+          color: themeStyles.infoDark,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.2s ease',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ fontSize: '14px', marginBottom: '8px' }}>Visitors</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold' }}>12,846</div>
-          <div style={{ fontSize: '12px', marginTop: '8px' }}>+8% vs last month</div>
+          <div style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '12px',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            fontSize: '14px'
+          }}>
+            👥
+          </div>
+          <div style={{ fontSize: '14px', marginBottom: '8px', fontWeight: 'bold' }}>Visitors</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '12px' }}>12,846</div>
+          <div style={{ 
+            fontSize: '13px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            width: 'fit-content'
+          }}>
+            <span style={{ fontSize: '12px' }}>↗</span> +8% vs last month
+          </div>
         </div>
+        
         <div style={{ 
-          padding: '16px', 
+          padding: '20px', 
           backgroundColor: themeStyles.warningLight, 
           borderRadius: themeStyles.borderRadiusSmall,
-          color: themeStyles.warningDark
+          color: themeStyles.warningDark,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.2s ease',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ fontSize: '14px', marginBottom: '8px' }}>Conversion</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold' }}>3.2%</div>
-          <div style={{ fontSize: '12px', marginTop: '8px' }}>+0.5% vs last month</div>
+          <div style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '12px',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            fontSize: '14px'
+          }}>
+            📈
+          </div>
+          <div style={{ fontSize: '14px', marginBottom: '8px', fontWeight: 'bold' }}>Conversion</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '12px' }}>3.2%</div>
+          <div style={{ 
+            fontSize: '13px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            width: 'fit-content'
+          }}>
+            <span style={{ fontSize: '12px' }}>↗</span> +0.5% vs last month
+          </div>
         </div>
+        
         <div style={{ 
-          padding: '16px', 
-          backgroundColor: themeStyles.primaryLight, 
+          padding: '20px', 
+          backgroundColor: '#e9eeff', 
           borderRadius: themeStyles.borderRadiusSmall,
-          color: themeStyles.primaryDark
+          color: '#2d4379',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.2s ease',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ fontSize: '14px', marginBottom: '8px' }}>Orders</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold' }}>428</div>
-          <div style={{ fontSize: '12px', marginTop: '8px' }}>+12% vs last month</div>
+          <div style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '12px',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            fontSize: '14px'
+          }}>
+            📱
+          </div>
+          <div style={{ fontSize: '14px', marginBottom: '8px', fontWeight: 'bold' }}>App Users</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '12px' }}>3,452</div>
+          <div style={{ 
+            fontSize: '13px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            width: 'fit-content'
+          }}>
+            <span style={{ fontSize: '12px' }}>↗</span> +12% vs last month
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
+// Recent activities widget
 const RecentActivitiesWidget = () => {
   const theme = useDirectTheme();
   const themeStyles = createThemeStyles(theme);
+  
   const activities = [
-    { id: 1, user: 'John Doe', action: 'Created a new project', time: '10 min ago' },
-    { id: 2, user: 'Jane Smith', action: 'Updated account settings', time: '1 hour ago' },
-    { id: 3, user: 'Robert Johnson', action: 'Completed task #142', time: '2 hours ago' },
-    { id: 4, user: 'Lisa Anderson', action: 'Submitted a new report', time: '4 hours ago' },
-    { id: 5, user: 'Michael Chen', action: 'Uploaded new files', time: '5 hours ago' },
+    {
+      id: 1,
+      user: 'Sarah Johnson',
+      action: 'updated the analytics dashboard design',
+      time: '15 minutes ago',
+      icon: '🎨',
+      iconColor: '#e3f2fd',
+      avatar: 'SJ'
+    },
+    {
+      id: 2,
+      user: 'Michael Chen',
+      action: 'added new chart components to the library',
+      time: '2 hours ago',
+      icon: '📊',
+      iconColor: '#f1f8e9',
+      avatar: 'MC'
+    },
+    {
+      id: 3,
+      user: 'Alex Rodriguez',
+      action: 'fixed responsive layout issues on mobile view',
+      time: '5 hours ago',
+      icon: '📱',
+      iconColor: '#e8eaf6',
+      avatar: 'AR'
+    },
+    {
+      id: 4,
+      user: 'Lindsay Park',
+      action: 'merged pull request for new data visualization features',
+      time: 'Yesterday',
+      icon: '🔄',
+      iconColor: '#fff3e0',
+      avatar: 'LP'
+    },
+    {
+      id: 5,
+      user: 'Jordan Smith',
+      action: 'commented on the widget drag-and-drop implementation',
+      time: 'Yesterday',
+      icon: '💬',
+      iconColor: '#e0f2f1',
+      avatar: 'JS'
+    }
   ];
+  
+  // Generate random background color for avatar
+  const getAvatarColor = (initials) => {
+    const colors = [
+      '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5',
+      '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50',
+      '#8bc34a', '#cddc39', '#ffc107', '#ff9800', '#ff5722'
+    ];
+    
+    // Use first character of initials to select a color
+    const charCode = initials.charCodeAt(0);
+    return colors[charCode % colors.length];
+  };
   
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Recent Activities</h3>
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '12px', 
-        maxHeight: '300px', 
-        overflowY: 'auto' 
+      <h3 style={{ 
+        marginBottom: '20px', 
+        color: themeStyles.textPrimary,
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }}>
-        {activities.map(activity => (
+        <span style={{ 
+          backgroundColor: themeStyles.primaryLight, 
+          color: themeStyles.primaryDark,
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px'
+        }}>
+          ⏱
+        </span>
+        Recent Activities
+      </h3>
+      
+      <div style={{ 
+        backgroundColor: themeStyles.backgroundPaper,
+        borderRadius: themeStyles.borderRadiusSmall,
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+        border: '1px solid ' + themeStyles.borderMain
+      }}>
+        {activities.map((activity, index) => (
           <div 
-            key={activity.id} 
-            style={{ 
-              padding: '12px', 
-              borderRadius: themeStyles.borderRadiusSmall,
-              backgroundColor: themeStyles.backgroundSubtle,
-              borderLeft: `4px solid ${themeStyles.primaryMain}`
+            key={activity.id}
+            style={{
+              display: 'flex',
+              padding: '16px',
+              borderBottom: index !== activities.length - 1 ? '1px solid ' + themeStyles.borderMain : 'none',
+              transition: 'background-color 0.2s ease',
+              gap: '16px',
+              alignItems: 'flex-start'
             }}
           >
-            <div style={{ fontWeight: 'bold', color: themeStyles.textPrimary }}>{activity.user}</div>
-            <div style={{ color: themeStyles.textSecondary }}>{activity.action}</div>
-            <div style={{ fontSize: '12px', color: themeStyles.textDisabled, marginTop: '4px' }}>{activity.time}</div>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              backgroundColor: getAvatarColor(activity.avatar),
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: '500',
+              fontSize: '14px',
+              flexShrink: 0
+            }}>
+              {activity.avatar}
+            </div>
+            
+            <div style={{ flex: 1 }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '6px'
+              }}>
+                <div style={{
+                  color: themeStyles.textPrimary,
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}>
+                  {activity.user}
+                </div>
+                <div style={{
+                  color: themeStyles.textSecondary,
+                  fontSize: '12px'
+                }}>
+                  {activity.time}
+                </div>
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <div style={{
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '50%',
+                  backgroundColor: activity.iconColor,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px'
+                }}>
+                  {activity.icon}
+                </div>
+                <div style={{
+                  color: themeStyles.textSecondary,
+                  fontSize: '14px'
+                }}>
+                  {activity.action}
+                </div>
+              </div>
+            </div>
           </div>
         ))}
+      </div>
+      
+      <div style={{ 
+        marginTop: '16px',
+        textAlign: 'center'
+      }}>
+        <button style={{
+          background: 'none',
+          border: 'none',
+          padding: '8px 16px',
+          color: themeStyles.primaryMain,
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          margin: '0 auto'
+        }}>
+          View All Activities
+          <span style={{ fontSize: '16px' }}>→</span>
+        </button>
       </div>
     </div>
   );
 };
 
+// Notes widget
 const NotesWidget = () => {
   const theme = useDirectTheme();
   const themeStyles = createThemeStyles(theme);
-  const [note, setNote] = useState('Add your notes here...');
+  const [notes, setNotes] = useState([
+    { id: 1, text: 'Schedule team meeting to review dashboard requirements', date: 'Oct 25', color: '#e1f5fe' },
+    { id: 2, text: 'Research visualization libraries for advanced charts', date: 'Oct 27', color: '#fff8e1' },
+    { id: 3, text: 'Implement dark mode for dashboard components', date: 'Oct 30', color: '#f3e5f5' },
+  ]);
+  
+  const [newNote, setNewNote] = useState('');
+  
+  const addNote = () => {
+    if (newNote.trim() === '') return;
+    
+    const colors = ['#e1f5fe', '#fff8e1', '#f3e5f5', '#e8f5e9', '#e8eaf6'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
+    setNotes([
+      ...notes, 
+      { 
+        id: Date.now(), 
+        text: newNote.trim(), 
+        date: dateStr,
+        color: randomColor
+      }
+    ]);
+    setNewNote('');
+  };
   
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Quick Notes</h3>
-      <textarea
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        style={{
-          flex: 1,
-          padding: '12px',
-          borderRadius: themeStyles.borderRadiusSmall,
-          border: `1px solid ${themeStyles.borderMain}`,
-          backgroundColor: themeStyles.backgroundPaper,
-          color: themeStyles.textPrimary,
-          resize: 'none',
-          fontFamily: 'inherit',
+    <div>
+      <h3 style={{ 
+        marginBottom: '20px', 
+        color: themeStyles.textPrimary,
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <span style={{ 
+          backgroundColor: themeStyles.primaryLight, 
+          color: themeStyles.primaryDark,
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           fontSize: '14px'
-        }}
-      />
+        }}>
+          📝
+        </span>
+        Quick Notes
+      </h3>
+      
+      <div style={{ 
+        display: 'grid', 
+        gap: '16px', 
+        gridTemplateColumns: '1fr 1fr', 
+        marginBottom: '16px' 
+      }}>
+        {notes.map(note => (
+          <div 
+            key={note.id} 
+            style={{ 
+              padding: '16px',
+              backgroundColor: note.color,
+              borderRadius: themeStyles.borderRadiusSmall,
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+              position: 'relative',
+              overflow: 'hidden',
+              minHeight: '120px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div style={{ 
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              color: 'rgba(0, 0, 0, 0.3)',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}>
+              {note.date}
+            </div>
+            
+            <p style={{ 
+              margin: '0',
+              marginTop: '18px',
+              color: 'rgba(0, 0, 0, 0.7)',
+              fontSize: '14px',
+              lineHeight: '1.4',
+              wordBreak: 'break-word',
+              flex: 1
+            }}>
+              {note.text}
+            </p>
+            
+            <div style={{ 
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginTop: '12px'
+            }}>
+              <div style={{ 
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                cursor: 'pointer',
+                color: 'rgba(0, 0, 0, 0.5)'
+              }}>
+                ✏️
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div style={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+      }}>
+        <textarea 
+          placeholder="Add a new note..." 
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          style={{
+            padding: '12px',
+            borderRadius: themeStyles.borderRadiusSmall,
+            border: '1px solid ' + themeStyles.borderMain,
+            resize: 'none',
+            minHeight: '80px',
+            fontSize: '14px',
+            color: themeStyles.textPrimary,
+            backgroundColor: themeStyles.backgroundPaper,
+            outline: 'none',
+            fontFamily: 'inherit'
+          }}
+        />
+        
+        <button 
+          onClick={addNote}
+          disabled={newNote.trim() === ''}
+          style={{
+            padding: '10px 16px',
+            backgroundColor: themeStyles.primaryMain,
+            color: themeStyles.primaryContrastText,
+            border: 'none',
+            borderRadius: themeStyles.borderRadiusSmall,
+            cursor: newNote.trim() === '' ? 'not-allowed' : 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            opacity: newNote.trim() === '' ? 0.7 : 1,
+            transition: 'all 0.2s ease',
+            alignSelf: 'flex-end'
+          }}
+        >
+          Add Note
+        </button>
+      </div>
     </div>
   );
 };
@@ -260,11 +759,11 @@ const TasksWidget = () => {
   const theme = useDirectTheme();
   const themeStyles = createThemeStyles(theme);
   const [tasks, setTasks] = useState([
-    { id: 1, text: 'Review dashboard design', completed: true },
-    { id: 2, text: 'Implement analytics widgets', completed: false },
-    { id: 3, text: 'Create responsive layouts', completed: false },
-    { id: 4, text: 'Fix drag and drop on mobile', completed: false },
-    { id: 5, text: 'Add widget configuration options', completed: false },
+    { id: 1, text: 'Review dashboard design', completed: true, priority: 'high', dueDate: '2023-10-30' },
+    { id: 2, text: 'Implement analytics widgets', completed: false, priority: 'high', dueDate: '2023-11-02' },
+    { id: 3, text: 'Create responsive layouts', completed: false, priority: 'medium', dueDate: '2023-11-05' },
+    { id: 4, text: 'Fix drag and drop on mobile', completed: false, priority: 'low', dueDate: '2023-11-10' },
+    { id: 5, text: 'Add widget configuration options', completed: false, priority: 'medium', dueDate: '2023-11-12' },
   ]);
   
   const toggleTask = (id: number) => {
@@ -273,36 +772,177 @@ const TasksWidget = () => {
     ));
   };
   
+  // Get priority color
+  const getPriorityColor = (priority: string) => {
+    switch(priority) {
+      case 'high': return '#f44336';
+      case 'medium': return '#ff9800';
+      case 'low': return '#4caf50';
+      default: return '#757575';
+    }
+  };
+  
+  // Format the due date
+  const formatDueDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+  };
+  
   return (
     <div>
-      <h3 style={{ marginBottom: '16px', color: themeStyles.textPrimary }}>Project Tasks</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {tasks.map(task => (
+      <h3 style={{ 
+        marginBottom: '20px', 
+        color: themeStyles.textPrimary,
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <span style={{ 
+          backgroundColor: themeStyles.primaryLight, 
+          color: themeStyles.primaryDark,
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px'
+        }}>
+          ✓
+        </span>
+        Project Tasks
+      </h3>
+      
+      <div style={{ 
+        backgroundColor: themeStyles.backgroundPaper,
+        borderRadius: themeStyles.borderRadiusSmall,
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+        border: '1px solid ' + themeStyles.borderMain
+      }}>
+        {tasks.map((task, index) => (
           <div 
             key={task.id} 
             style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              padding: '12px',
-              borderRadius: themeStyles.borderRadiusSmall,
-              backgroundColor: themeStyles.backgroundSubtle,
+              justifyContent: 'space-between',
+              padding: '14px 16px',
+              borderBottom: index !== tasks.length - 1 ? '1px solid ' + themeStyles.borderMain : 'none',
+              backgroundColor: task.completed ? 'rgba(0, 0, 0, 0.02)' : 'transparent',
+              transition: 'background-color 0.2s ease',
             }}
           >
-            <input 
-              type="checkbox" 
-              checked={task.completed} 
-              onChange={() => toggleTask(task.id)}
-              style={{ marginRight: '12px' }}
-            />
-            <span style={{ 
-              color: themeStyles.textPrimary,
-              textDecoration: task.completed ? 'line-through' : 'none',
-              opacity: task.completed ? 0.7 : 1
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              flex: 1
             }}>
-              {task.text}
-            </span>
+              <div 
+                onClick={() => toggleTask(task.id)} 
+                style={{ 
+                  width: '20px', 
+                  height: '20px', 
+                  borderRadius: '4px',
+                  border: task.completed 
+                    ? '1px solid ' + themeStyles.primaryMain
+                    : '1px solid ' + themeStyles.borderMain,
+                  backgroundColor: task.completed ? themeStyles.primaryMain : 'transparent',
+                  marginRight: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: '12px',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {task.completed && '✓'}
+              </div>
+              
+              <div style={{ flex: 1 }}>
+                <div style={{ 
+                  color: themeStyles.textPrimary,
+                  textDecoration: task.completed ? 'line-through' : 'none',
+                  opacity: task.completed ? 0.6 : 1,
+                  fontWeight: 500,
+                  marginBottom: '4px',
+                  fontSize: '14px'
+                }}>
+                  {task.text}
+                </div>
+                
+                <div style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '12px',
+                  color: themeStyles.textSecondary
+                }}>
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <span style={{ 
+                      width: '8px', 
+                      height: '8px', 
+                      borderRadius: '50%',
+                      backgroundColor: getPriorityColor(task.priority)
+                    }} />
+                    <span style={{ textTransform: 'capitalize' }}>{task.priority}</span>
+                  </div>
+                  
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <span style={{ fontSize: '11px' }}>📅</span>
+                    <span>{formatDueDate(task.dueDate)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '28px',
+              height: '28px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              color: themeStyles.textSecondary,
+              transition: 'all 0.2s ease',
+              fontSize: '16px'
+            }}>
+              ⋮
+            </div>
           </div>
         ))}
+      </div>
+      
+      <div style={{ 
+        marginTop: '16px',
+        padding: '12px',
+        backgroundColor: 'rgba(0, 0, 0, 0.02)',
+        borderRadius: themeStyles.borderRadiusSmall,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        color: themeStyles.primaryMain,
+        fontWeight: 500,
+        fontSize: '14px',
+        border: '1px dashed ' + themeStyles.borderMain
+      }}>
+        <span style={{ fontSize: '16px' }}>+</span>
+        Add New Task
       </div>
     </div>
   );
@@ -611,14 +1251,13 @@ export const DashboardTemplateDemo: React.FC = () => {
     <DemoContainer>
       <Title $themeStyles={themeStyles}>Dashboard Templates</Title>
       <Description $themeStyles={themeStyles}>
-        This demo showcases customizable dashboard templates with drag-and-drop functionality, 
-        responsive layouts, and widget configuration. You can start with a template, add widgets, 
-        and arrange them according to your needs. The dashboard configuration is persistent and can be saved.
+        Interactive dashboard templates with drag-and-drop functionality, responsive layouts, and customizable widgets.
+        Choose a template, add widgets, and arrange them to create your perfect dashboard.
       </Description>
       
       <DashboardControls>
         <SelectControl>
-          <Label $themeStyles={themeStyles} htmlFor="template-select">Template:</Label>
+          <Label $themeStyles={themeStyles} htmlFor="template-select">Template</Label>
           <Select 
             $themeStyles={themeStyles}
             id="template-select"
@@ -632,16 +1271,25 @@ export const DashboardTemplateDemo: React.FC = () => {
         </SelectControl>
         
         <Button $themeStyles={themeStyles} onClick={toggleEditing}>
-          {isEditing ? 'Exit Edit Mode' : 'Enter Edit Mode'}
+          <span>{isEditing ? '✓' : '✏️'}</span>
+          {isEditing ? 'Save Layout' : 'Edit Dashboard'}
         </Button>
       </DashboardControls>
       
       {isEditing && (
         <DashboardControls>
-          <WidgetButton $themeStyles={themeStyles} onClick={addStatsWidget}>Add Stats Widget</WidgetButton>
-          <WidgetButton $themeStyles={themeStyles} onClick={addTasksWidget}>Add Tasks Widget</WidgetButton>
-          <WidgetButton $themeStyles={themeStyles} onClick={addNotesWidget}>Add Notes Widget</WidgetButton>
-          <WidgetButton $themeStyles={themeStyles} onClick={addCorrelationWidget}>Add Correlation Widget</WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addStatsWidget}>
+            <span>📊</span> Add Stats Widget
+          </WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addTasksWidget}>
+            <span>✓</span> Add Tasks Widget
+          </WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addNotesWidget}>
+            <span>📝</span> Add Notes Widget
+          </WidgetButton>
+          <WidgetButton $themeStyles={themeStyles} onClick={addCorrelationWidget}>
+            <span>📈</span> Add Correlation Widget
+          </WidgetButton>
         </DashboardControls>
       )}
       

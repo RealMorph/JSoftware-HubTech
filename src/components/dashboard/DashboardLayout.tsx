@@ -117,82 +117,94 @@ interface DashboardProps {
   className?: string;
 }
 
-// Styled components for dashboard
+// Styled components
 const DashboardContainer = styled.div`
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+`;
+
+const DashboardControls = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 `;
 
 const WidgetContainer = styled.div<{ $isEditing: boolean; $themeStyles: ThemeStyles }>`
+  height: 100%;
   background-color: ${props => props.$themeStyles.backgroundPaper};
   border-radius: ${props => props.$themeStyles.borderRadius};
-  box-shadow: ${props => props.$themeStyles.shadowCard};
-  overflow: hidden;
+  box-shadow: ${props => 
+    props.$isEditing 
+      ? `0 0 0 2px ${props.$themeStyles.primaryMainColor}, 0 4px 16px rgba(0, 0, 0, 0.1)` 
+      : props.$themeStyles.shadowCard
+  };
   display: flex;
   flex-direction: column;
-  height: 100%;
-  transition: box-shadow 0.2s ease-in-out;
-  
-  ${props => props.$isEditing && `
-    box-shadow: ${props.$themeStyles.shadowElevated};
-    cursor: move;
-  `}
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: ${props => 
+      props.$isEditing 
+        ? `0 0 0 2px ${props.$themeStyles.primaryMainColor}, 0 8px 24px rgba(0, 0, 0, 0.15)` 
+        : props.$themeStyles.shadowElevated
+    };
+    ${props => props.$isEditing && 'transform: translateY(-2px);'}
+  }
 `;
 
 const WidgetHeader = styled.div<{ $themeStyles: ThemeStyles }>`
+  padding: 16px;
+  border-bottom: 1px solid ${props => props.$themeStyles.borderLight};
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
   background-color: ${props => props.$themeStyles.backgroundSubtle};
-  border-bottom: 1px solid ${props => props.$themeStyles.borderLight};
 `;
 
 const WidgetTitle = styled.h3<{ $themeStyles: ThemeStyles }>`
   margin: 0;
-  font-size: ${props => props.$themeStyles.fontSizeMd};
-  font-weight: ${props => props.$themeStyles.fontWeightMedium};
+  font-size: 16px;
+  font-weight: 600;
   color: ${props => props.$themeStyles.textColor};
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const WidgetContent = styled.div`
-  flex: 1;
   padding: 16px;
+  flex: 1;
   overflow: auto;
 `;
 
 const WidgetControls = styled.div`
   display: flex;
-  align-items: center;
   gap: 8px;
 `;
 
 const ControlButton = styled.button<{ $themeStyles: ThemeStyles }>`
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: ${props => props.$themeStyles.textSecondaryColor};
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-
+  border: none;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: ${props => props.$themeStyles.textSecondaryColor};
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  
   &:hover {
-    color: ${props => props.$themeStyles.textColor};
+    background-color: rgba(0, 0, 0, 0.08);
+    color: ${props => props.$themeStyles.primaryMainColor};
   }
 `;
 
-const DashboardControls = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px;
-  gap: 8px;
-`;
-
 const DashboardButton = styled.button<{ $themeStyles: ThemeStyles; disabled?: boolean }>`
-  padding: 8px 16px;
+  padding: 10px 16px;
   background-color: ${props => props.disabled ? props.$themeStyles.actionDisabledColor : props.$themeStyles.primaryMainColor};
   color: ${props => props.disabled ? props.$themeStyles.textDisabledColor : props.$themeStyles.primaryContrastText};
   border: none;
@@ -203,9 +215,11 @@ const DashboardButton = styled.button<{ $themeStyles: ThemeStyles; disabled?: bo
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.2s ease;
   
   &:hover {
     background-color: ${props => props.disabled ? props.$themeStyles.actionDisabledColor : props.$themeStyles.primaryDarkColor};
+    box-shadow: ${props => props.disabled ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)'};
   }
 `;
 
@@ -380,6 +394,7 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
             onClick={toggleEditMode} 
             $themeStyles={themeStyles}
           >
+            <span>{isEditing ? '✓' : '✏️'}</span>
             {isEditing ? 'Save Layout' : 'Edit Layout'}
           </DashboardButton>
           
@@ -388,6 +403,7 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
               onClick={handleSaveConfig} 
               $themeStyles={themeStyles}
             >
+              <span>💾</span>
               Save Dashboard
             </DashboardButton>
           )}
@@ -404,6 +420,8 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
         isResizable={isEditing}
         onLayoutChange={handleLayoutChange}
         draggableHandle=".widget-header"
+        margin={[20, 20]}
+        containerPadding={[0, 0]}
       >
         {Object.entries(currentConfig.items).map(([id, item]) => {
           const typedItem = item as DashboardItem;
@@ -417,6 +435,7 @@ export const DashboardLayout: React.FC<DashboardProps> = ({
                       <ControlButton 
                         onClick={() => removeWidget(id)} 
                         $themeStyles={themeStyles}
+                        title="Remove widget"
                       >
                         ✕
                       </ControlButton>
