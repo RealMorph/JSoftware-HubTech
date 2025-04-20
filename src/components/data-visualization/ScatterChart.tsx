@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import { useTheme } from '../../core/theme/ThemeContext';
+import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { filterTransientProps } from '../../core/styled-components/transient-props';
 
 // Interface for data points
 export interface ScatterPoint {
@@ -13,6 +14,7 @@ export interface ScatterPoint {
   category?: string;
   // Add additional properties for dimensionality reduction
   originalDimensions?: number[];
+  centeredDimensions?: number[];
 }
 
 // Interface for cluster data
@@ -23,6 +25,50 @@ interface Cluster {
   count: number;
   points: ScatterPoint[];
   color?: string;
+}
+
+// Define theme style interface
+interface ThemeStyles {
+  backgroundColor: string;
+  textColor: string;
+  textSecondaryColor: string;
+  foregroundColor: string;
+  surfaceColor: string;
+  primaryColor: string;
+  secondaryColor: string;
+  successColor: string;
+  warningColor: string;
+  errorColor: string;
+  infoColor: string;
+  hoverBackgroundColor: string;
+  borderColor: string;
+  fontSize: string;
+  smallFontSize: string;
+  shadow: string;
+}
+
+// Function to create ThemeStyles from DirectThemeProvider
+function createThemeStyles(themeContext: ReturnType<typeof useDirectTheme>): ThemeStyles {
+  const { getColor, getTypography, getShadow } = themeContext;
+
+  return {
+    backgroundColor: getColor('background', '#ffffff'),
+    textColor: getColor('text.primary', '#333333'),
+    textSecondaryColor: getColor('text.secondary', '#666666'),
+    foregroundColor: getColor('foreground', '#ffffff'),
+    surfaceColor: getColor('surface', '#ffffff'),
+    primaryColor: getColor('primary', '#3366CC'),
+    secondaryColor: getColor('secondary', '#DC3912'),
+    successColor: getColor('success', '#4caf50'),
+    warningColor: getColor('warning', '#ff9800'),
+    errorColor: getColor('error', '#f44336'),
+    infoColor: getColor('info', '#2196f3'),
+    hoverBackgroundColor: getColor('hover.background', '#f5f5f5'),
+    borderColor: getColor('border', '#e0e0e0'),
+    fontSize: getTypography('fontSize.sm', '0.875rem') as string,
+    smallFontSize: getTypography('fontSize.xs', '0.75rem') as string,
+    shadow: getShadow('sm', '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'),
+  };
 }
 
 // Props interface
@@ -58,22 +104,8 @@ export interface ScatterChartProps {
   dimensions?: number;
 }
 
-// Define theme style interface
-interface ThemeStyles {
-  backgroundColor: string;
-  textColor: string;
-  textSecondaryColor: string;
-  foregroundColor: string;
-  axisColor: string;
-  gridColor: string;
-  fontSize: string;
-  labelFontSize: string;
-  shadow: string;
-  primary: string;
-  secondary: string;
-  accent: string;
-  highlight: string;
-}
+// Create filtered base component
+const FilteredButton = filterTransientProps(styled.button``);
 
 // Styled components
 const ChartContainer = styled.div<{ width: string; height: string; $themeStyles: ThemeStyles }>`
@@ -130,11 +162,11 @@ const LegendColor = styled.div<{ color: string }>`
 
 const Tooltip = styled.div<{ $themeStyles: ThemeStyles }>`
   position: absolute;
-  background-color: ${props => props.$themeStyles.foregroundColor};
+  background-color: ${props => props.$themeStyles.surfaceColor};
   color: ${props => props.$themeStyles.textColor};
   padding: 0.5rem;
   border-radius: 0.25rem;
-  font-size: ${props => props.$themeStyles.labelFontSize};
+  font-size: ${props => props.$themeStyles.smallFontSize};
   pointer-events: none;
   z-index: 10;
   box-shadow: ${props => props.$themeStyles.shadow};
@@ -144,7 +176,7 @@ const Tooltip = styled.div<{ $themeStyles: ThemeStyles }>`
 
 const AxisLabel = styled.text<{ $themeStyles: ThemeStyles }>`
   fill: ${props => props.$themeStyles.textSecondaryColor};
-  font-size: ${props => props.$themeStyles.labelFontSize};
+  font-size: ${props => props.$themeStyles.smallFontSize};
   text-anchor: middle;
 `;
 
@@ -159,8 +191,8 @@ const ClusterCircle = styled.circle`
 `;
 
 const ClusterCounter = styled.text<{ $themeStyles: ThemeStyles }>`
-  fill: ${props => props.$themeStyles.foregroundColor};
-  font-size: ${props => props.$themeStyles.labelFontSize};
+  fill: ${props => props.$themeStyles.surfaceColor};
+  font-size: ${props => props.$themeStyles.smallFontSize};
   text-anchor: middle;
   dominant-baseline: middle;
   font-weight: bold;
@@ -175,39 +207,21 @@ const DimensionControls = styled.div`
   justify-content: center;
 `;
 
-const ControlButton = styled.button<{ $themeStyles: ThemeStyles; $active?: boolean }>`
-  background-color: ${props => props.$active ? props.$themeStyles.primary : props.$themeStyles.foregroundColor};
-  color: ${props => props.$active ? 'white' : props.$themeStyles.textColor};
-  border: 1px solid ${props => props.$themeStyles.axisColor};
+// Styled components with transient props
+const ControlButton = styled(FilteredButton)<{ $active?: boolean; $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$active ? props.$themeStyles.primaryColor : props.$themeStyles.surfaceColor};
+  color: ${props => props.$active ? props.$themeStyles.backgroundColor : props.$themeStyles.textColor};
+  border: 1px solid ${props => props.$themeStyles.borderColor};
   border-radius: 0.25rem;
   padding: 0.25rem 0.5rem;
-  font-size: ${props => props.$themeStyles.labelFontSize};
+  font-size: ${props => props.$themeStyles.smallFontSize};
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background-color: ${props => props.$active ? props.$themeStyles.primary : props.$themeStyles.highlight};
+    background-color: ${props => props.$active ? props.$themeStyles.primaryColor : props.$themeStyles.hoverBackgroundColor};
   }
 `;
-
-// Function to create ThemeStyles from ThemeContext
-function createThemeStyles(theme: ReturnType<typeof useTheme>): ThemeStyles {
-  return {
-    backgroundColor: theme.colors.background,
-    textColor: theme.colors.text.primary,
-    textSecondaryColor: theme.colors.text.secondary,
-    foregroundColor: theme.colors.surface,
-    axisColor: theme.colors.border,
-    gridColor: theme.colors.hover.background,
-    fontSize: theme.typography.fontSize.sm,
-    labelFontSize: theme.typography.fontSize.xs,
-    shadow: theme.shadows.sm,
-    primary: theme.colors.primary,
-    secondary: theme.colors.secondary,
-    accent: theme.colors.info,
-    highlight: theme.colors.hover.background
-  };
-}
 
 // Calculate linear regression
 function calculateRegressionLine(data: ScatterPoint[]): { slope: number; intercept: number } {
@@ -332,45 +346,41 @@ function clusterPoints(
 
 // Simple PCA implementation for 2D projection
 function performPCA(data: ScatterPoint[], dimensions: number = 2): ScatterPoint[] {
-  if (!data || data.length === 0 || !data[0].originalDimensions) {
-    return data;
+  if (data.length === 0) return [];
+  
+  // Skip PCA if there's no originalDimensions provided
+  const hasOriginalDimensions = data.some(p => p.originalDimensions && p.originalDimensions.length > 0);
+  if (!hasOriginalDimensions) return data;
+  
+  // Extract original dimensions
+  const originalData: number[][] = data.map(point => point.originalDimensions || [0, 0]);
+  
+  // Calculate mean for each dimension
+  const means: number[] = [];
+  for (let dim = 0; dim < originalData[0].length; dim++) {
+    const values = originalData.map(point => point[dim]);
+    means[dim] = values.reduce((sum, val) => sum + val, 0) / values.length;
   }
   
-  // This is a very simplified PCA implementation
-  // For a real application, you would use a proper PCA library
-  
-  // 1. Center the data (mean = 0)
-  const originalDims = data[0].originalDimensions.length;
-  const means = new Array(originalDims).fill(0);
-  
-  // Calculate means
-  data.forEach(point => {
-    if (point.originalDimensions) {
-      point.originalDimensions.forEach((val, i) => {
-        means[i] += val;
-      });
-    }
-  });
-  
-  means.forEach((_, i) => {
-    means[i] /= data.length;
-  });
-  
-  // Center data
-  const centeredData = data.map(point => {
+  // Center the data (subtract mean)
+  const centeredData = data.map((point, i) => {
     if (!point.originalDimensions) return point;
+    
+    const centeredDims: number[] = point.originalDimensions.map((val, dim) => val - means[dim]);
     
     return {
       ...point,
-      centeredDimensions: point.originalDimensions.map((val, i) => val - means[i])
+      centeredDimensions: centeredDims
     };
   });
   
-  // 2. For simplicity, we'll just use the first two dimensions as projection
-  // In a real implementation, you'd calculate the covariance matrix and eigenvectors
+  // In a real implementation, we would now compute the covariance matrix,
+  // find eigenvalues and eigenvectors, and project the data.
+  // For simplicity, we'll just use the first two centered dimensions.
   
   return centeredData.map(point => {
-    if (!point.centeredDimensions) return point;
+    // If this point doesn't have the necessary data, return it unchanged
+    if (!point.originalDimensions || !point.centeredDimensions) return point;
     
     // Project to 2D - in a real implementation this would use eigenvectors
     return {
@@ -428,8 +438,8 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
   // State for dimension reduction method
   const [currentDimMethod, setCurrentDimMethod] = useState(dimensionReductionMethod);
 
-  const theme = useTheme();
-  const themeStyles = useMemo(() => createThemeStyles(theme), [theme]);
+  const theme = useDirectTheme();
+  const themeStyles = createThemeStyles(theme);
 
   // Apply dimensionality reduction if needed
   const processedData = useMemo(() => {
@@ -558,12 +568,12 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
     }
     
     return [
-      theme.colors.primary,
-      theme.colors.secondary,
-      theme.colors.success,
-      theme.colors.warning,
-      theme.colors.error,
-      theme.colors.info
+      themeStyles.primaryColor,
+      themeStyles.secondaryColor,
+      themeStyles.successColor,
+      themeStyles.warningColor,
+      themeStyles.errorColor,
+      themeStyles.infoColor
     ];
   };
 
@@ -590,24 +600,49 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
     return minSize + normalizedSize * (maxSize - minSize);
   };
 
+  // Fix the categoryColors calculation to use themeStyles
+  const categoryColors = useMemo(() => {
+    // Create a properly typed record
+    const result: Record<string, string> = {};
+    
+    if (!data || data.length === 0) return result;
+    
+    // Get all unique categories
+    const categories = Array.from(new Set(data.filter(p => p.category).map(p => p.category as string)));
+    const colors = colorScale || getDefaultColors();
+    
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+      if (category) {
+        // Explicitly cast category to string to ensure it can be used as an index
+        result[category as string] = colors[i % colors.length] || themeStyles.primaryColor;
+      }
+    }
+    
+    return result;
+  }, [data, colorScale, getDefaultColors, themeStyles.primaryColor]);
+
   // Function to determine point color
   const getPointColor = (point: ScatterPoint, index: number) => {
+    // If the point has a color, use it
     if (point.color) {
       return point.color;
     }
     
-    const colors = getDefaultColors();
-    
-    if (point.category) {
-      const categoryIndex = categories.indexOf(point.category);
-      if (categoryIndex >= 0) {
-        return colors[categoryIndex % colors.length];
-      }
+    // If the point has a category and there are color categories defined
+    if (point.category && Object.prototype.hasOwnProperty.call(categoryColors, point.category)) {
+      return categoryColors[point.category];
     }
     
-    return colors[index % colors.length];
+    // Otherwise use the color scale or default colors
+    if (getDefaultColors() && getDefaultColors().length > 0) {
+      return getDefaultColors()[index % getDefaultColors().length];
+    }
+    
+    // Fallback to a default color
+    return themeStyles.primaryColor;
   };
-  
+
   // Determine if we should cluster based on data density
   const shouldCluster = enableClustering && processedData.length > clusterThreshold;
   
@@ -619,6 +654,39 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
   // Calculate regression line
   const regression = calculateRegressionLine(processedData);
   
+  // Update defaultColors to use themeStyles
+  const defaultColors = useMemo(() => {
+    if (colorScale) return colorScale;
+    
+    // Default color palette
+    return [
+      themeStyles.primaryColor,
+      '#F06292',
+      '#4DB6AC',
+      '#FFB74D',
+      '#64B5F6',
+      '#E57373',
+      '#9575CD',
+      '#4FC3F7',
+      '#81C784'
+    ];
+  }, [colorScale, themeStyles.primaryColor]);
+
+  // Fix xAxis, yAxis, etc. to use themeStyles
+  const xAxis = {
+    tickSize: 5,
+    tickColor: themeStyles.borderColor,
+    lineColor: themeStyles.borderColor,
+    textColor: themeStyles.textSecondaryColor,
+  };
+
+  const yAxis = {
+    tickSize: 5,
+    tickColor: themeStyles.borderColor,
+    lineColor: themeStyles.borderColor,
+    textColor: themeStyles.textSecondaryColor,
+  };
+
   return (
     <ChartContainer
       ref={chartRef}
@@ -633,25 +701,18 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
       {data[0]?.originalDimensions && (
         <DimensionControls>
           <ControlButton 
-            $themeStyles={themeStyles} 
             $active={currentDimMethod === 'none'}
             onClick={() => setCurrentDimMethod('none')}
+            $themeStyles={themeStyles}
           >
             Raw Data
           </ControlButton>
           <ControlButton 
-            $themeStyles={themeStyles} 
             $active={currentDimMethod === 'pca'}
             onClick={() => setCurrentDimMethod('pca')}
+            $themeStyles={themeStyles}
           >
             PCA
-          </ControlButton>
-          <ControlButton 
-            $themeStyles={themeStyles} 
-            $active={currentDimMethod === 'tsne'}
-            onClick={() => setCurrentDimMethod('tsne')}
-          >
-            t-SNE
           </ControlButton>
         </DimensionControls>
       )}
@@ -669,7 +730,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                 y1={y}
                 x2={MARGIN.left + innerWidth}
                 y2={y}
-                stroke={themeStyles.gridColor}
+                stroke={themeStyles.borderColor}
                 strokeWidth="1"
               />
             );
@@ -685,7 +746,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                 y1={MARGIN.top}
                 x2={x}
                 y2={MARGIN.top + innerHeight}
-                stroke={themeStyles.gridColor}
+                stroke={themeStyles.borderColor}
                 strokeWidth="1"
               />
             );
@@ -700,7 +761,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
             y1={MARGIN.top + innerHeight}
             x2={MARGIN.left + innerWidth}
             y2={MARGIN.top + innerHeight}
-            stroke={themeStyles.axisColor}
+            stroke={themeStyles.borderColor}
             strokeWidth="2"
           />
 
@@ -710,7 +771,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
             y1={MARGIN.top}
             x2={MARGIN.left}
             y2={MARGIN.top + innerHeight}
-            stroke={themeStyles.axisColor}
+            stroke={themeStyles.borderColor}
             strokeWidth="2"
           />
 
@@ -725,14 +786,14 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                   y1={MARGIN.top + innerHeight}
                   x2={x}
                   y2={MARGIN.top + innerHeight + 5}
-                  stroke={themeStyles.axisColor}
+                  stroke={themeStyles.borderColor}
                   strokeWidth="2"
                 />
                 <text
                   x={x}
                   y={MARGIN.top + innerHeight + 20}
                   fill={themeStyles.textSecondaryColor}
-                  fontSize={themeStyles.labelFontSize}
+                  fontSize={themeStyles.smallFontSize}
                   textAnchor="middle"
                 >
                   {value.toFixed(1)}
@@ -752,14 +813,14 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                   y1={y}
                   x2={MARGIN.left}
                   y2={y}
-                  stroke={themeStyles.axisColor}
+                  stroke={themeStyles.borderColor}
                   strokeWidth="2"
                 />
                 <text
                   x={MARGIN.left - 10}
                   y={y}
                   fill={themeStyles.textSecondaryColor}
-                  fontSize={themeStyles.labelFontSize}
+                  fontSize={themeStyles.smallFontSize}
                   textAnchor="end"
                   dominantBaseline="middle"
                 >
@@ -780,8 +841,8 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
           <AxisLabel
             x={MARGIN.left - 40}
             y={MARGIN.top + innerHeight / 2}
-            $themeStyles={themeStyles}
             style={{ transform: 'rotate(-90deg)', transformOrigin: `${MARGIN.left - 40}px ${MARGIN.top + innerHeight / 2}px` }}
+            $themeStyles={themeStyles}
           >
             {yAxisTitle}
           </AxisLabel>
@@ -796,7 +857,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               y1={MARGIN.top}
               x2={xScale(midX)}
               y2={MARGIN.top + innerHeight}
-              stroke={themeStyles.axisColor}
+              stroke={themeStyles.borderColor}
               strokeWidth="1"
               strokeDasharray="5,5"
             />
@@ -807,7 +868,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               y1={yScale(midY)}
               x2={MARGIN.left + innerWidth}
               y2={yScale(midY)}
-              stroke={themeStyles.axisColor}
+              stroke={themeStyles.borderColor}
               strokeWidth="1"
               strokeDasharray="5,5"
             />
@@ -819,6 +880,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               fill={themeStyles.textSecondaryColor}
               fontSize={themeStyles.fontSize}
               textAnchor="middle"
+              $themeStyles={themeStyles}
             >
               {quadrantLabels[0]}
             </text>
@@ -828,6 +890,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               fill={themeStyles.textSecondaryColor}
               fontSize={themeStyles.fontSize}
               textAnchor="middle"
+              $themeStyles={themeStyles}
             >
               {quadrantLabels[1]}
             </text>
@@ -837,6 +900,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               fill={themeStyles.textSecondaryColor}
               fontSize={themeStyles.fontSize}
               textAnchor="middle"
+              $themeStyles={themeStyles}
             >
               {quadrantLabels[2]}
             </text>
@@ -846,6 +910,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
               fill={themeStyles.textSecondaryColor}
               fontSize={themeStyles.fontSize}
               textAnchor="middle"
+              $themeStyles={themeStyles}
             >
               {quadrantLabels[3]}
             </text>
@@ -859,7 +924,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
             y1={yScale(regression.slope * xDomain[0] + regression.intercept)}
             x2={xScale(xDomain[1])}
             y2={yScale(regression.slope * xDomain[1] + regression.intercept)}
-            stroke={themeStyles.accent}
+            stroke={themeStyles.infoColor}
             strokeWidth="2"
             strokeDasharray="5,5"
           />
@@ -876,7 +941,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                   cy={yScale(cluster.y)}
                   r={Math.max(10, Math.min(30, 10 + cluster.count))}
                   fill={cluster.color || getPointColor(cluster.points[0], i)}
-                  stroke={themeStyles.foregroundColor}
+                  stroke={themeStyles.surfaceColor}
                   strokeWidth="1"
                   onClick={() => cluster.points.forEach(p => handlePointClick(p.id))}
                   onMouseEnter={e => handleClusterMouseEnter(e, cluster)}
@@ -902,7 +967,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                 cy={yScale(point.y)}
                 r={getPointSize(point.size)}
                 fill={getPointColor(point, i)}
-                stroke={themeStyles.foregroundColor}
+                stroke={themeStyles.surfaceColor}
                 strokeWidth="1"
                 opacity="0.7"
                 cursor="pointer"
@@ -920,7 +985,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
         <Legend>
           {categories.map((category, i) => (
             <LegendItem key={`legend-${i}`}>
-              <LegendColor color={getDefaultColors()[i % getDefaultColors().length]} />
+              <LegendColor color={getPointColor(processedData[i], i)} />
               <span>{category}</span>
             </LegendItem>
           ))}
@@ -934,7 +999,7 @@ export const ScatterChart: React.FC<ScatterChartProps> = ({
                   y1="6"
                   x2="20"
                   y2="6"
-                  stroke={themeStyles.accent}
+                  stroke={themeStyles.infoColor}
                   strokeWidth="2"
                   strokeDasharray="5,5"
                 />

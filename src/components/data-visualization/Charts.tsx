@@ -2,7 +2,6 @@ import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
 import { saveAs } from 'file-saver';
-import { useTheme } from '../../context/ThemeContext';
 
 // Data types
 export interface DataPoint {
@@ -20,6 +19,32 @@ export interface DataPoint {
 export interface HierarchicalDataPoint extends DataPoint {
   children?: HierarchicalDataPoint[];
   parentId?: string;
+}
+
+// Define MultilevelDataset interface for DonutChart
+export interface MultilevelDataset {
+  id: string;
+  label: string;
+  data: DataPoint[];
+  radius?: number;
+  innerRadius?: number;
+  color?: string;
+  showLabels?: boolean;
+  // Add slices property to fix TypeScript error
+  slices?: Array<{
+    path: string;
+    color: string;
+    percentage: number;
+    value: number;
+    label: string;
+    id: string;
+    datasetId: string;
+    datasetLabel: string;
+    midAngle: number;
+    labelX: number;
+    labelY: number;
+    showLabel: boolean;
+  }>;
 }
 
 // Threshold indicator for metrics
@@ -154,17 +179,19 @@ const ExportMenu = styled.div`
   z-index: 100;
 `;
 
-const ExportButton = styled.button`
-  background-color: ${props => props.theme.buttonPrimary || '#f0f0f0'};
+const ExportButton = styled.button<{ $themeStyles: ThemeStyles }>`
+  background-color: ${props => props.$themeStyles.foregroundColor || '#f0f0f0'};
   border: none;
   border-radius: 4px;
   padding: 6px 12px;
   font-size: 12px;
   cursor: pointer;
   margin-left: 5px;
+  color: ${props => props.$themeStyles.textColor};
 
   &:hover {
-    background-color: ${props => props.theme.buttonHover || '#e0e0e0'};
+    background-color: ${props => props.$themeStyles.textSecondaryColor || '#e0e0e0'};
+    color: ${props => props.$themeStyles.backgroundColor};
   }
 `;
 
@@ -580,14 +607,14 @@ export const BarChart: React.FC<ChartProps> = ({
 
       {/* Export controls */}
       <ExportMenu>
-        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)}>
+        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)} $themeStyles={themeStyles}>
           Export
         </ExportButton>
         {showExportMenu && (
           <>
-            <ExportButton onClick={() => exportToPNG(chartRef)}>PNG</ExportButton>
-            <ExportButton onClick={() => exportToSVG(chartRef)}>SVG</ExportButton>
-            <ExportButton onClick={() => exportToCSV(data)}>CSV</ExportButton>
+            <ExportButton onClick={() => exportToPNG(chartRef)} $themeStyles={themeStyles}>PNG</ExportButton>
+            <ExportButton onClick={() => exportToSVG(chartRef)} $themeStyles={themeStyles}>SVG</ExportButton>
+            <ExportButton onClick={() => exportToCSV(data)} $themeStyles={themeStyles}>CSV</ExportButton>
           </>
         )}
       </ExportMenu>
@@ -1071,14 +1098,14 @@ export const LineChart: React.FC<ChartProps & {
       
       {/* Export Menu */}
       <ExportMenu>
-        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)}>
+        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)} $themeStyles={themeStyles}>
           Export
         </ExportButton>
         {showExportMenu && (
           <>
-            <ExportButton onClick={handleExportSVG}>SVG</ExportButton>
-            <ExportButton onClick={handleExportPNG}>PNG</ExportButton>
-            <ExportButton onClick={handleExportCSV}>CSV</ExportButton>
+            <ExportButton onClick={handleExportSVG} $themeStyles={themeStyles}>SVG</ExportButton>
+            <ExportButton onClick={handleExportPNG} $themeStyles={themeStyles}>PNG</ExportButton>
+            <ExportButton onClick={handleExportCSV} $themeStyles={themeStyles}>CSV</ExportButton>
           </>
         )}
       </ExportMenu>
@@ -1187,7 +1214,7 @@ export const LineChart: React.FC<ChartProps & {
             fill="none"
             stroke={trendlineOptions.color || '#FF5722'}
             strokeWidth={trendlineOptions.strokeWidth || 2}
-            strokeDasharray={getDashArray(trendlineOptions.lineStyle || 'dashed')}
+            strokeDasharray={getDashArray(trendlineOptions.lineStyle as 'solid' | 'dashed' | 'dotted')}
           />
         )}
         
@@ -1198,7 +1225,7 @@ export const LineChart: React.FC<ChartProps & {
             fill="none"
             stroke={forecastOptions.color || '#9C27B0'}
             strokeWidth="2"
-            strokeDasharray={getDashArray(forecastOptions.lineStyle || 'dashed')}
+            strokeDasharray={getDashArray(forecastOptions.lineStyle as 'solid' | 'dashed' | 'dotted')}
           />
         )}
 
@@ -1660,7 +1687,7 @@ export const PieChart: React.FC<ChartProps & {
       // For drill-down visual cue
       hasDrillDown: enableDrillDown && hierarchicalData && 
         currentData.find(d => d.id === item.id && 
-          (d as HierarchicalDataPoint).children?.length > 0) !== undefined
+          ((d as HierarchicalDataPoint).children && (d as HierarchicalDataPoint).children!.length > 0)) !== undefined
     };
 
     startAngle = endAngle;
@@ -1679,14 +1706,14 @@ export const PieChart: React.FC<ChartProps & {
       
       {/* Export Menu */}
       <ExportMenu>
-        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)}>
+        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)} $themeStyles={themeStyles}>
           Export
         </ExportButton>
         {showExportMenu && (
           <>
-            <ExportButton onClick={handleExportSVG}>SVG</ExportButton>
-            <ExportButton onClick={handleExportPNG}>PNG</ExportButton>
-            <ExportButton onClick={handleExportCSV}>CSV</ExportButton>
+            <ExportButton onClick={handleExportSVG} $themeStyles={themeStyles}>SVG</ExportButton>
+            <ExportButton onClick={handleExportPNG} $themeStyles={themeStyles}>PNG</ExportButton>
+            <ExportButton onClick={handleExportCSV} $themeStyles={themeStyles}>CSV</ExportButton>
           </>
         )}
       </ExportMenu>
@@ -1813,7 +1840,7 @@ export const PieChart: React.FC<ChartProps & {
                 {d.label}
                 {enableDrillDown && hierarchicalData && 
                   currentData.find(item => item.id === d.id && 
-                    (item as HierarchicalDataPoint).children?.length > 0) && ' →'}
+                    ((item as HierarchicalDataPoint).children && (item as HierarchicalDataPoint).children!.length > 0)) && ' →'}
               </span>
             </LegendItem>
           ))}
@@ -1843,7 +1870,7 @@ export const DonutChart: React.FC<ChartProps & {
   style,
   innerRadius = 0.6,
   // New props
-  multilevelData = [],
+  multilevelData = [] as MultilevelDataset[],
   showMultilevel = false
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -1873,8 +1900,8 @@ export const DonutChart: React.FC<ChartProps & {
 
   const handleExportCSV = useCallback(() => {
     // Export all datasets for multilevel charts
-    if (showMultilevel && multilevelData.length > 0) {
-      const combinedData = multilevelData.flatMap(dataset => 
+    if (showMultilevel && (multilevelData as MultilevelDataset[]).length > 0) {
+      const combinedData = (multilevelData as MultilevelDataset[]).flatMap(dataset => 
         dataset.data.map(d => ({
           ...d,
           dataset: dataset.label
@@ -1931,7 +1958,7 @@ export const DonutChart: React.FC<ChartProps & {
   }, []);
 
   // Basic validation
-  if (showMultilevel && (!multilevelData || multilevelData.length === 0)) {
+  if (showMultilevel && (!multilevelData || (multilevelData as MultilevelDataset[]).length === 0)) {
     return (
       <ChartContainer width={width} height={height} $themeStyles={themeStyles} style={style}>
         {title && <Title $themeStyles={themeStyles}>{title}</Title>}
@@ -1965,10 +1992,10 @@ export const DonutChart: React.FC<ChartProps & {
   
   // Create a consistent color mapping for categories across datasets
   const createCategoryColorMap = () => {
-    if (!showMultilevel || multilevelData.length === 0) return {};
+    if (!showMultilevel || (multilevelData as MultilevelDataset[]).length === 0) return {};
     
     const allCategories = new Set<string>();
-    multilevelData.forEach(dataset => {
+    (multilevelData as MultilevelDataset[]).forEach(dataset => {
       dataset.data.forEach(item => {
         allCategories.add(item.label);
       });
@@ -2001,11 +2028,11 @@ export const DonutChart: React.FC<ChartProps & {
       const outerY2 = centerY + radius * Math.sin(endAngle);
       
       // Calculate inner points
-      const innerRadius = radius * innerRadius;
-      const innerX1 = centerX + innerRadius * Math.cos(startAngle);
-      const innerY1 = centerY + innerRadius * Math.sin(startAngle);
-      const innerX2 = centerX + innerRadius * Math.cos(endAngle);
-      const innerY2 = centerY + innerRadius * Math.sin(endAngle);
+      const donutInnerRadius = radius * innerRadius;
+      const innerX1 = centerX + donutInnerRadius * Math.cos(startAngle);
+      const innerY1 = centerY + donutInnerRadius * Math.sin(startAngle);
+      const innerX2 = centerX + donutInnerRadius * Math.cos(endAngle);
+      const innerY2 = centerY + donutInnerRadius * Math.sin(endAngle);
       
       const largeArcFlag = angle > Math.PI ? 1 : 0;
       
@@ -2015,13 +2042,13 @@ export const DonutChart: React.FC<ChartProps & {
         `L ${outerX1} ${outerY1}`,
         `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${outerX2} ${outerY2}`,
         `L ${innerX2} ${innerY2}`,
-        `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerX1} ${innerY1}`,
+        `A ${donutInnerRadius} ${donutInnerRadius} 0 ${largeArcFlag} 0 ${innerX1} ${innerY1}`,
         'Z',
       ].join(' ');
       
       // Calculate midpoint for labels
       const midAngle = startAngle + angle / 2;
-      const labelRadius = (radius + innerRadius) / 2;
+      const labelRadius = (radius + donutInnerRadius) / 2;
       const labelX = centerX + labelRadius * Math.cos(midAngle);
       const labelY = centerY + labelRadius * Math.sin(midAngle);
       
@@ -2044,7 +2071,7 @@ export const DonutChart: React.FC<ChartProps & {
   
   // Create slices for multilevel donut chart
   const createMultilevelSlices = () => {
-    return multilevelData.map((dataset, datasetIndex) => {
+    return (multilevelData as MultilevelDataset[]).map((dataset, datasetIndex) => {
       const totalValue = dataset.data.reduce((sum, item) => sum + item.value, 0);
       let startAngle = 0;
       const datasetRadius = radius * (dataset.radius || (1 - (datasetIndex * 0.2)));
@@ -2143,14 +2170,14 @@ export const DonutChart: React.FC<ChartProps & {
       
       {/* Export Menu */}
       <ExportMenu>
-        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)}>
+        <ExportButton onClick={() => setShowExportMenu(!showExportMenu)} $themeStyles={themeStyles}>
           Export
         </ExportButton>
         {showExportMenu && (
           <>
-            <ExportButton onClick={handleExportSVG}>SVG</ExportButton>
-            <ExportButton onClick={handleExportPNG}>PNG</ExportButton>
-            <ExportButton onClick={handleExportCSV}>CSV</ExportButton>
+            <ExportButton onClick={handleExportSVG} $themeStyles={themeStyles}>SVG</ExportButton>
+            <ExportButton onClick={handleExportPNG} $themeStyles={themeStyles}>PNG</ExportButton>
+            <ExportButton onClick={handleExportCSV} $themeStyles={themeStyles}>CSV</ExportButton>
           </>
         )}
       </ExportMenu>
@@ -2191,9 +2218,9 @@ export const DonutChart: React.FC<ChartProps & {
         ))}
         
         {/* Multilevel Donut Chart */}
-        {showMultilevel && multilevelSlices.map((dataset) => (
+        {showMultilevel && (multilevelData as MultilevelDataset[]).map((dataset) => (
           <g key={`dataset-${dataset.id}`}>
-            {dataset.slices.map((slice, sliceIndex) => (
+            {dataset.slices && dataset.slices.map((slice, sliceIndex) => (
               <g key={`dataset-${dataset.id}-slice-${sliceIndex}`}>
                 <path
                   d={slice.path}
@@ -2230,7 +2257,7 @@ export const DonutChart: React.FC<ChartProps & {
             {/* Dataset ring label */}
             <text
               x={centerX}
-              y={centerY - dataset.radius - 10}
+              y={centerY - (dataset.radius || 0) - 10}
               fontSize={themeStyles.fontSize}
               fill={dataset.color || themeStyles.textColor}
               textAnchor="middle"
@@ -2285,7 +2312,7 @@ export const DonutChart: React.FC<ChartProps & {
         <div>
           {/* Dataset Rings Legend */}
           <Legend style={{ marginBottom: '8px' }}>
-            {multilevelData.map((dataset) => (
+            {(multilevelData as MultilevelDataset[]).map((dataset) => (
               <LegendItem key={dataset.id}>
                 <LegendColor color={dataset.color || themeStyles.foregroundColor} />
                 <span style={{ 
