@@ -1,12 +1,8 @@
 import React from 'react';
-import { FeedbackDemo } from '../components/feedback/FeedbackDemo';
+import FormDialogDemo from '../components/demos/FormDialogDemo';
 
 const FeedbackDemoPage: React.FC = () => {
-  return (
-    <div className="page-container">
-      <FeedbackDemo />
-    </div>
-  );
+  return <FormDialogDemo />;
 };
 
 export default FeedbackDemoPage;

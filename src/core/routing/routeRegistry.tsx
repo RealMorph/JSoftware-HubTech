@@ -18,7 +18,10 @@ const LoadingFallback = () => <div className="route-loading">Loading...</div>;
 // Lazy-load components to reduce initial bundle size
 const FormDemo = lazy(() => import('../../components/base/FormDemo'));
 const ButtonDemo = lazy(() => import('../../components/base/ButtonDemo'));
-const TextFieldDemo = lazy(() => import('../../components/base/TextFieldDemo'));
+const TextFieldDemo = lazy(() => 
+  import('../../components/base/TextFieldDemo')
+    .then(module => ({ default: module.TextFieldDemo }))
+);
 const SelectDemo = lazy(() => import('../../components/base/SelectDemo'));
 const CheckboxDemo = lazy(() => import('../../components/base/CheckboxDemo'));
 const RadioDemo = lazy(() => import('../../components/base/RadioDemo'));
@@ -40,9 +43,7 @@ const ModalDemo = lazy(() => import('../../components/feedback/ModalDemo'));
 const ProgressDemo = lazy(() => import('../../components/feedback/ProgressDemo'));
 const FeedbackDemo = lazy(() => import('../../components/feedback/FeedbackDemo'));
 const DialogDemo = lazy(() => import('../../components/feedback/DialogDemo'));
-const FormDialogDemo = lazy(() => Promise.resolve({ 
-  default: () => <div>Form Dialog Demo - Component being developed</div> 
-}));
+const FormDialogDemo = lazy(() => import('../../components/demos/FormDialogDemo'));
 const ConfirmationDialogDemo = lazy(() => import('../../components/feedback/ConfirmationDialogDemo'));
 
 // Data visualization demos
@@ -53,20 +54,12 @@ const DashboardTemplateDemo = lazy(() => import('../../components/dashboard/Dash
 const GraphDemo = lazy(() => import('../../components/data-visualization/GraphDemo'));
 
 // Navigation component demos
-const BreadcrumbsDemo = lazy(() => Promise.resolve({ 
-  default: () => <div>Breadcrumbs Demo - Component being developed</div> 
-}));
+const BreadcrumbsDemo = lazy(() => import('../../components/navigation/BreadcrumbsDemo').then(module => ({ default: module.BreadcrumbsDemo })));
 const TabsDemo = lazy(() => import('../../components/navigation/TabsDemo'));
-const MenuDemo = lazy(() => Promise.resolve({ 
-  default: () => <div>Menu Demo - Component being developed</div> 
-}));
-const PaginationDemo = lazy(() => import('../../components/navigation/PaginationDemo'));
-const RadixSidebarDemo = lazy(() => Promise.resolve({ 
-  default: () => <div>Sidebar Demo - Component being developed</div> 
-}));
-const BreadcrumbsWithTabsDemo = lazy(() => Promise.resolve({ 
-  default: () => <div>Breadcrumbs with Tabs Demo - Component being developed</div> 
-}));
+const MenuDemo = lazy(() => import('../../components/navigation/MenuDemo').then(module => ({ default: module.MenuDemo })));
+const PaginationDemo = lazy(() => import('../../components/navigation/PaginationDemo').then(module => ({ default: module.PaginationDemo })));
+const RadixSidebarDemo = lazy(() => import('../../components/navigation/RadixSidebarDemo').then(module => ({ default: module.RadixSidebarDemo })));
+const BreadcrumbsWithTabsDemo = lazy(() => import('../../components/navigation/BreadcrumbsWithTabsDemo'));
 
 // Demo Landing Page
 const DemoLandingPage = lazy(() => import('../../pages/DemoLandingPage'));
@@ -76,9 +69,7 @@ const DashboardView = lazy(() => Promise.resolve({
   default: () => <div>Dashboard Placeholder</div> 
 }));
 
-const ProfilePage = lazy(() => Promise.resolve({ 
-  default: () => <div>Profile Placeholder</div> 
-}));
+const ProfilePage = lazy(() => import('../../pages/ProfilePage'));
 
 const AdminPage = lazy(() => Promise.resolve({ 
   default: () => <div>Admin Dashboard Placeholder</div> 
@@ -504,6 +495,19 @@ export const protectedRoutes: RouteDefinition[] = [
   })
 ];
 
+// Add a public demo route for the profile page
+export const pageComponentDemos: RouteDefinition[] = [
+  createPublicRoute({
+    path: '/demos/pages/profile',
+    element: wrapWithSuspense(<ProfilePage />),
+    title: 'Profile Page Demo',
+    showInMenu: true,
+    menuOrder: 500,
+    menuIcon: 'person',
+    menuCategory: 'Page Components'
+  })
+];
+
 // Role-based routes requiring specific roles
 export const roleBasedRoutes: RouteDefinition[] = [
   createRoleBasedRoute({
@@ -565,6 +569,7 @@ export const allRoutes: RouteDefinition[] = [
   ...roleBasedRoutes,
   ...permissionBasedRoutes,
   ...demoRoutes,
+  ...pageComponentDemos,
   ...errorRoutes
 ];
 

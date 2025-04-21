@@ -292,7 +292,7 @@ export const feedbackComponentDemos: DemoComponent[] = [
     menuIcon: 'edit_note',
     menuOrder: 206,
     showInMenu: true,
-    component: React.lazy(() => import('../../components/demos/ModalDemo'))
+    component: React.lazy(() => import('../../components/demos/FormDialogDemo'))
   },
   {
     id: 'confirmation-dialog',
@@ -424,7 +424,7 @@ export const navigationComponentDemos: DemoComponent[] = [
     menuIcon: 'last_page',
     menuOrder: 403,
     showInMenu: true,
-    component: React.lazy(() => import('../../components/demos/TabsDemo'))
+    component: React.lazy(() => import('../../components/navigation/PaginationDemo').then(module => ({ default: module.PaginationDemo })))
   },
   {
     id: 'sidebar',
@@ -448,7 +448,7 @@ export const navigationComponentDemos: DemoComponent[] = [
     menuIcon: 'view_comfy',
     menuOrder: 405,
     showInMenu: true,
-    component: React.lazy(() => import('../../components/demos/BreadcrumbsDemo'))
+    component: React.lazy(() => import('../../components/navigation/BreadcrumbsWithTabsDemo'))
   }
 ];
 

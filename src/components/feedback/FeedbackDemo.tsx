@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useDirectTheme } from '../../core/theme/DirectThemeProvider';
+import { useLocation } from 'react-router-dom';
+import FormDialogDemo from '../demos/FormDialogDemo';
 
 import { ToastDemo } from './ToastDemo';
 import { ProgressDemo } from './ProgressDemo';
@@ -40,6 +42,13 @@ const Container = styled.div<{ $themeStyles: ThemeStyles }>`
 export const FeedbackDemo: React.FC = () => {
   const themeContext = useDirectTheme();
   const themeStyles = createThemeStyles(themeContext);
+  const location = useLocation();
+  const path = location.pathname;
+
+  // Check if we're on the form-dialog route
+  if (path.includes('/form-dialog')) {
+    return <FormDialogDemo />;
+  }
 
   return (
     <Container $themeStyles={themeStyles}>
